@@ -1,0 +1,967 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */; };
+		61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5062EF17DC8009E9624 /* UserProfileView.swift */; };
+		61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */; };
+		61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5172EF1E7D1009E9624 /* LoginView.swift */; };
+		61CFB51A2EF1E8FF009E9624 /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */; };
+		61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */; };
+		61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */; };
+		61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5212EF1F0C8009E9624 /* KeychainService.swift */; };
+		61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5242EF1F1A3009E9624 /* ApiClient.swift */; };
+		61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5262EF1F1F4009E9624 /* AuthManager.swift */; };
+		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
+		61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52C2EF44204009E9624 /* ClientsView.swift */; };
+		61CFB52F2EF44338009E9624 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52E2EF44338009E9624 /* Appointment.swift */; };
+		61CFB5312EF44374009E9624 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5302EF44374009E9624 /* Client.swift */; };
+		61CFB5332EF44AB7009E9624 /* AppointmentsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5322EF44AB7009E9624 /* AppointmentsStatus.swift */; };
+		61CFB5352EF453E7009E9624 /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5342EF453E7009E9624 /* TimeSlot.swift */; };
+		61CFB5372EF455FC009E9624 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5362EF455FC009E9624 /* DateFormatter.swift */; };
+		61CFB5392EF457FB009E9624 /* AppointmentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5382EF457FB009E9624 /* AppointmentStatus.swift */; };
+		61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB53A2EF5FB81009E9624 /* JWTDecoder.swift */; };
+		61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB53C2EFAD55D009E9624 /* BodyMeasurement.swift */; };
+		61CFB5482EFC1770009E9624 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5472EFC1770009E9624 /* AppEnvironment.swift */; };
+		61CFB54A2EFC1987009E9624 /* ClientDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5492EFC1987009E9624 /* ClientDetailsView.swift */; };
+		61CFB54C2EFC1E17009E9624 /* ErrorMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB54B2EFC1E17009E9624 /* ErrorMessages.swift */; };
+		61CFB54E2EFC1F39009E9624 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB54D2EFC1F39009E9624 /* Color.swift */; };
+		61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5522F02C658009E9624 /* WorkoutsView.swift */; };
+		61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5552F02D1F4009E9624 /* Permissions.swift */; };
+		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
+		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
+		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
+		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
+		61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F612F0A7633004D74F3 /* BadgeView.swift */; };
+		61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F662F0A7D52004D74F3 /* UserProfile.swift */; };
+		61E63F692F0C357B004D74F3 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F682F0C357B004D74F3 /* ToastView.swift */; };
+		61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6A2F0C368C004D74F3 /* ToastType.swift */; };
+		61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6C2F0EA243004D74F3 /* ToastManager.swift */; };
+		61E63F6F2F0EC655004D74F3 /* ApiErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */; };
+		61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F702F0EC673004D74F3 /* ApiError.swift */; };
+		61E63F732F115CFE004D74F3 /* StatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F722F115CFE004D74F3 /* StatusResponse.swift */; };
+		61E63F752F119D2C004D74F3 /* TextAreaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F742F119D2C004D74F3 /* TextAreaView.swift */; };
+		61E63F772F119EF7004D74F3 /* ButtonContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F762F119EF7004D74F3 /* ButtonContentView.swift */; };
+		61E63F792F11A658004D74F3 /* ButtonContentStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */; };
+		61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */; };
+		61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 61E63F812F151533004D74F3 /* Localizable.xcstrings */; };
+		61E63F862F15414D004D74F3 /* LanguageSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F852F15414D004D74F3 /* LanguageSwitcherView.swift */; };
+		61E63F882F19647A004D74F3 /* CreateAppointmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F872F196479004D74F3 /* CreateAppointmentView.swift */; };
+		61E63F8A2F196E49004D74F3 /* AppointmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F892F196E49004D74F3 /* AppointmentType.swift */; };
+		61E63F8C2F1970C2004D74F3 /* CreateAppointmentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F8B2F1970C2004D74F3 /* CreateAppointmentRequest.swift */; };
+		61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F8D2F1AC915004D74F3 /* GetTimeSlotsRequest.swift */; };
+		61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F8F2F1ACA50004D74F3 /* Coach.swift */; };
+		61E63F922F1C3491004D74F3 /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F912F1C3491004D74F3 /* DateManager.swift */; };
+		61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F932F1D6305004D74F3 /* CatalogData.swift */; };
+		61E9741C2EF0AB9100D225C5 /* ApexPerformanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9741B2EF0AB9100D225C5 /* ApexPerformanceApp.swift */; };
+		61E9741E2EF0AB9100D225C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9741D2EF0AB9100D225C5 /* ContentView.swift */; };
+		61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E9741F2EF0AB9200D225C5 /* Assets.xcassets */; };
+		61E974232EF0AB9200D225C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */; };
+		61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */; };
+		61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */; };
+		61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		61E974292EF0AB9300D225C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 61E974102EF0AB9100D225C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 61E974172EF0AB9100D225C5;
+			remoteInfo = ApexPerformance;
+		};
+		61E974332EF0AB9300D225C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 61E974102EF0AB9100D225C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 61E974172EF0AB9100D225C5;
+			remoteInfo = ApexPerformance;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
+		61CFB5062EF17DC8009E9624 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurementDetailsView.swift; sourceTree = "<group>"; };
+		61CFB5172EF1E7D1009E9624 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = SOURCE_ROOT; };
+		61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
+		61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
+		61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorHandler.swift; sourceTree = "<group>"; };
+		61CFB5212EF1F0C8009E9624 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		61CFB5242EF1F1A3009E9624 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
+		61CFB5262EF1F1F4009E9624 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthManager.swift; path = ApexPerformance/Core/Networking/AuthManager.swift; sourceTree = SOURCE_ROOT; };
+		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		61CFB52C2EF44204009E9624 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
+		61CFB52E2EF44338009E9624 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
+		61CFB5302EF44374009E9624 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		61CFB5322EF44AB7009E9624 /* AppointmentsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsStatus.swift; sourceTree = "<group>"; };
+		61CFB5342EF453E7009E9624 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = "<group>"; };
+		61CFB5362EF455FC009E9624 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		61CFB5382EF457FB009E9624 /* AppointmentStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentStatus.swift; sourceTree = "<group>"; };
+		61CFB53A2EF5FB81009E9624 /* JWTDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoder.swift; sourceTree = "<group>"; };
+		61CFB53C2EFAD55D009E9624 /* BodyMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurement.swift; sourceTree = "<group>"; };
+		61CFB5432EFB2956009E9624 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		61CFB5442EFB2A35009E9624 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		61CFB5452EFB34AF009E9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		61CFB5472EFC1770009E9624 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		61CFB5492EFC1987009E9624 /* ClientDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientDetailsView.swift; sourceTree = "<group>"; };
+		61CFB54B2EFC1E17009E9624 /* ErrorMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessages.swift; sourceTree = "<group>"; };
+		61CFB54D2EFC1F39009E9624 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		61CFB5522F02C658009E9624 /* WorkoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsView.swift; sourceTree = "<group>"; };
+		61CFB5552F02D1F4009E9624 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
+		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
+		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
+		61E63F612F0A7633004D74F3 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		61E63F662F0A7D52004D74F3 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		61E63F6A2F0C368C004D74F3 /* ToastType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastType.swift; sourceTree = "<group>"; };
+		61E63F6C2F0EA243004D74F3 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
+		61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorResponse.swift; sourceTree = "<group>"; };
+		61E63F702F0EC673004D74F3 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
+		61E63F722F115CFE004D74F3 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
+		61E63F742F119D2C004D74F3 /* TextAreaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextAreaView.swift; sourceTree = "<group>"; };
+		61E63F762F119EF7004D74F3 /* ButtonContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonContentView.swift; sourceTree = "<group>"; };
+		61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonContentStyle.swift; sourceTree = "<group>"; };
+		61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelationRequest.swift; sourceTree = "<group>"; };
+		61E63F812F151533004D74F3 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		61E63F852F15414D004D74F3 /* LanguageSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSwitcherView.swift; sourceTree = "<group>"; };
+		61E63F872F196479004D74F3 /* CreateAppointmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAppointmentView.swift; sourceTree = "<group>"; };
+		61E63F892F196E49004D74F3 /* AppointmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentType.swift; sourceTree = "<group>"; };
+		61E63F8B2F1970C2004D74F3 /* CreateAppointmentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAppointmentRequest.swift; sourceTree = "<group>"; };
+		61E63F8D2F1AC915004D74F3 /* GetTimeSlotsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTimeSlotsRequest.swift; sourceTree = "<group>"; };
+		61E63F8F2F1ACA50004D74F3 /* Coach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coach.swift; sourceTree = "<group>"; };
+		61E63F912F1C3491004D74F3 /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
+		61E63F932F1D6305004D74F3 /* CatalogData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogData.swift; sourceTree = "<group>"; };
+		61E974182EF0AB9100D225C5 /* ApexPerformance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApexPerformance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		61E9741B2EF0AB9100D225C5 /* ApexPerformanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceApp.swift; sourceTree = "<group>"; };
+		61E9741D2EF0AB9100D225C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		61E9741F2EF0AB9200D225C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceTests.swift; sourceTree = "<group>"; };
+		61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
+		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		61E974152EF0AB9100D225C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E974252EF0AB9300D225C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E9742F2EF0AB9300D225C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		61CFB50A2EF1E5BB009E9624 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB50C2EF1E643009E9624 /* Appointments */,
+				61CFB50B2EF1E621009E9624 /* Authentication */,
+				61CFB50D2EF1E650009E9624 /* BodyMeasurements */,
+				61CFB52B2EF441F2009E9624 /* Clients */,
+				61CFB5282EF43E45009E9624 /* Home */,
+				61CFB50E2EF1E667009E9624 /* UserProfile */,
+				61CFB54F2F02C599009E9624 /* Workouts */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		61CFB50B2EF1E621009E9624 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5172EF1E7D1009E9624 /* LoginView.swift */,
+				61CFB5262EF1F1F4009E9624 /* AuthManager.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		61CFB50C2EF1E643009E9624 /* Appointments */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */,
+				61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */,
+				61E63F872F196479004D74F3 /* CreateAppointmentView.swift */,
+			);
+			path = Appointments;
+			sourceTree = "<group>";
+		};
+		61CFB50D2EF1E650009E9624 /* BodyMeasurements */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */,
+			);
+			path = BodyMeasurements;
+			sourceTree = "<group>";
+		};
+		61CFB50E2EF1E667009E9624 /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5062EF17DC8009E9624 /* UserProfileView.swift */,
+			);
+			path = UserProfile;
+			sourceTree = "<group>";
+		};
+		61CFB50F2EF1E67B009E9624 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				61E9741F2EF0AB9200D225C5 /* Assets.xcassets */,
+				61E63F812F151533004D74F3 /* Localizable.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		61CFB5102EF1E693009E9624 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB52E2EF44338009E9624 /* Appointment.swift */,
+				61CFB5322EF44AB7009E9624 /* AppointmentsStatus.swift */,
+				61CFB5382EF457FB009E9624 /* AppointmentStatus.swift */,
+				61CFB53C2EFAD55D009E9624 /* BodyMeasurement.swift */,
+				61CFB5302EF44374009E9624 /* Client.swift */,
+				61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */,
+				61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */,
+				61CFB5342EF453E7009E9624 /* TimeSlot.swift */,
+				61E63F662F0A7D52004D74F3 /* UserProfile.swift */,
+				61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */,
+				61E63F722F115CFE004D74F3 /* StatusResponse.swift */,
+				61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */,
+				61E63F892F196E49004D74F3 /* AppointmentType.swift */,
+				61E63F8B2F1970C2004D74F3 /* CreateAppointmentRequest.swift */,
+				61E63F8D2F1AC915004D74F3 /* GetTimeSlotsRequest.swift */,
+				61E63F8F2F1ACA50004D74F3 /* Coach.swift */,
+				61E63F932F1D6305004D74F3 /* CatalogData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		61CFB5112EF1E699009E9624 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5542F02D1D0009E9624 /* Constants */,
+				61CFB5162EF1E72D009E9624 /* Utilities */,
+				61CFB5152EF1E723009E9624 /* Extensions */,
+				61CFB5142EF1E71A009E9624 /* Storage */,
+				61CFB5132EF1E711009E9624 /* Networking */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		61CFB5122EF1E6C9009E9624 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5592F0A6D0D009E9624 /* CardView.swift */,
+				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
+				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
+				61E63F612F0A7633004D74F3 /* BadgeView.swift */,
+				61E63F682F0C357B004D74F3 /* ToastView.swift */,
+				61E63F742F119D2C004D74F3 /* TextAreaView.swift */,
+				61E63F762F119EF7004D74F3 /* ButtonContentView.swift */,
+				61E63F852F15414D004D74F3 /* LanguageSwitcherView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		61CFB5132EF1E711009E9624 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */,
+				61CFB5242EF1F1A3009E9624 /* ApiClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		61CFB5142EF1E71A009E9624 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5212EF1F0C8009E9624 /* KeychainService.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		61CFB5152EF1E723009E9624 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5362EF455FC009E9624 /* DateFormatter.swift */,
+				61CFB53A2EF5FB81009E9624 /* JWTDecoder.swift */,
+				61CFB54D2EFC1F39009E9624 /* Color.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		61CFB5162EF1E72D009E9624 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				61E63F6C2F0EA243004D74F3 /* ToastManager.swift */,
+				61E63F912F1C3491004D74F3 /* DateManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		61CFB5282EF43E45009E9624 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5292EF43E53009E9624 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		61CFB52B2EF441F2009E9624 /* Clients */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB52C2EF44204009E9624 /* ClientsView.swift */,
+				61CFB5492EFC1987009E9624 /* ClientDetailsView.swift */,
+			);
+			path = Clients;
+			sourceTree = "<group>";
+		};
+		61CFB53E2EFB2822009E9624 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5432EFB2956009E9624 /* Debug.xcconfig */,
+				61CFB5442EFB2A35009E9624 /* Release.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		61CFB5462EFC174E009E9624 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5472EFC1770009E9624 /* AppEnvironment.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		61CFB54F2F02C599009E9624 /* Workouts */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5522F02C658009E9624 /* WorkoutsView.swift */,
+			);
+			path = Workouts;
+			sourceTree = "<group>";
+		};
+		61CFB5542F02D1D0009E9624 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB54B2EFC1E17009E9624 /* ErrorMessages.swift */,
+				61CFB5552F02D1F4009E9624 /* Permissions.swift */,
+				61E63F6A2F0C368C004D74F3 /* ToastType.swift */,
+				61E63F702F0EC673004D74F3 /* ApiError.swift */,
+				61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		61E9740F2EF0AB9100D225C5 = {
+			isa = PBXGroup;
+			children = (
+				61E9741A2EF0AB9100D225C5 /* ApexPerformance */,
+				61E9742B2EF0AB9300D225C5 /* ApexPerformanceTests */,
+				61E974352EF0AB9300D225C5 /* ApexPerformanceUITests */,
+				61E974192EF0AB9100D225C5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		61E974192EF0AB9100D225C5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				61E974182EF0AB9100D225C5 /* ApexPerformance.app */,
+				61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */,
+				61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		61E9741A2EF0AB9100D225C5 /* ApexPerformance */ = {
+			isa = PBXGroup;
+			children = (
+				61CFB5452EFB34AF009E9624 /* Info.plist */,
+				61E9741B2EF0AB9100D225C5 /* ApexPerformanceApp.swift */,
+				61E9741D2EF0AB9100D225C5 /* ContentView.swift */,
+				61CFB5462EFC174E009E9624 /* App */,
+				61CFB5122EF1E6C9009E9624 /* Components */,
+				61CFB53E2EFB2822009E9624 /* Config */,
+				61CFB5112EF1E699009E9624 /* Core */,
+				61CFB50A2EF1E5BB009E9624 /* Features */,
+				61CFB5102EF1E693009E9624 /* Models */,
+				61E974212EF0AB9200D225C5 /* Preview Content */,
+				61CFB50F2EF1E67B009E9624 /* Resources */,
+			);
+			path = ApexPerformance;
+			sourceTree = "<group>";
+		};
+		61E974212EF0AB9200D225C5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		61E9742B2EF0AB9300D225C5 /* ApexPerformanceTests */ = {
+			isa = PBXGroup;
+			children = (
+				61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */,
+			);
+			path = ApexPerformanceTests;
+			sourceTree = "<group>";
+		};
+		61E974352EF0AB9300D225C5 /* ApexPerformanceUITests */ = {
+			isa = PBXGroup;
+			children = (
+				61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */,
+				61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */,
+			);
+			path = ApexPerformanceUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		61E974172EF0AB9100D225C5 /* ApexPerformance */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61E9743C2EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformance" */;
+			buildPhases = (
+				61E974142EF0AB9100D225C5 /* Sources */,
+				61E974152EF0AB9100D225C5 /* Frameworks */,
+				61E974162EF0AB9100D225C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ApexPerformance;
+			productName = ApexPerformance;
+			productReference = 61E974182EF0AB9100D225C5 /* ApexPerformance.app */;
+			productType = "com.apple.product-type.application";
+		};
+		61E974272EF0AB9300D225C5 /* ApexPerformanceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61E9743F2EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformanceTests" */;
+			buildPhases = (
+				61E974242EF0AB9300D225C5 /* Sources */,
+				61E974252EF0AB9300D225C5 /* Frameworks */,
+				61E974262EF0AB9300D225C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				61E9742A2EF0AB9300D225C5 /* PBXTargetDependency */,
+			);
+			name = ApexPerformanceTests;
+			productName = ApexPerformanceTests;
+			productReference = 61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		61E974312EF0AB9300D225C5 /* ApexPerformanceUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61E974422EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformanceUITests" */;
+			buildPhases = (
+				61E9742E2EF0AB9300D225C5 /* Sources */,
+				61E9742F2EF0AB9300D225C5 /* Frameworks */,
+				61E974302EF0AB9300D225C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				61E974342EF0AB9300D225C5 /* PBXTargetDependency */,
+			);
+			name = ApexPerformanceUITests;
+			productName = ApexPerformanceUITests;
+			productReference = 61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		61E974102EF0AB9100D225C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					61E974172EF0AB9100D225C5 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					61E974272EF0AB9300D225C5 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 61E974172EF0AB9100D225C5;
+					};
+					61E974312EF0AB9300D225C5 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 61E974172EF0AB9100D225C5;
+					};
+				};
+			};
+			buildConfigurationList = 61E974132EF0AB9100D225C5 /* Build configuration list for PBXProject "ApexPerformance" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				hr,
+				it,
+				Base,
+			);
+			mainGroup = 61E9740F2EF0AB9100D225C5;
+			productRefGroup = 61E974192EF0AB9100D225C5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				61E974172EF0AB9100D225C5 /* ApexPerformance */,
+				61E974272EF0AB9300D225C5 /* ApexPerformanceTests */,
+				61E974312EF0AB9300D225C5 /* ApexPerformanceUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		61E974162EF0AB9100D225C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E974232EF0AB9200D225C5 /* Preview Assets.xcassets in Resources */,
+				61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */,
+				61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E974262EF0AB9300D225C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E974302EF0AB9300D225C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		61E974142EF0AB9100D225C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */,
+				61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */,
+				61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */,
+				61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */,
+				61CFB5482EFC1770009E9624 /* AppEnvironment.swift in Sources */,
+				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
+				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
+				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
+				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
+				61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */,
+				61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */,
+				61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */,
+				61CFB5392EF457FB009E9624 /* AppointmentStatus.swift in Sources */,
+				61CFB5372EF455FC009E9624 /* DateFormatter.swift in Sources */,
+				61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */,
+				61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */,
+				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
+				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
+				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
+				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
+				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
+				61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */,
+				61E63F732F115CFE004D74F3 /* StatusResponse.swift in Sources */,
+				61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */,
+				61E63F8C2F1970C2004D74F3 /* CreateAppointmentRequest.swift in Sources */,
+				61E63F772F119EF7004D74F3 /* ButtonContentView.swift in Sources */,
+				61E63F922F1C3491004D74F3 /* DateManager.swift in Sources */,
+				61E9741E2EF0AB9100D225C5 /* ContentView.swift in Sources */,
+				61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */,
+				61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */,
+				61CFB5352EF453E7009E9624 /* TimeSlot.swift in Sources */,
+				61E63F792F11A658004D74F3 /* ButtonContentStyle.swift in Sources */,
+				61CFB52F2EF44338009E9624 /* Appointment.swift in Sources */,
+				61CFB5332EF44AB7009E9624 /* AppointmentsStatus.swift in Sources */,
+				61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */,
+				61CFB54E2EFC1F39009E9624 /* Color.swift in Sources */,
+				61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */,
+				61CFB54C2EFC1E17009E9624 /* ErrorMessages.swift in Sources */,
+				61E63F862F15414D004D74F3 /* LanguageSwitcherView.swift in Sources */,
+				61E63F8A2F196E49004D74F3 /* AppointmentType.swift in Sources */,
+				61E63F882F19647A004D74F3 /* CreateAppointmentView.swift in Sources */,
+				61E63F752F119D2C004D74F3 /* TextAreaView.swift in Sources */,
+				61E63F6F2F0EC655004D74F3 /* ApiErrorResponse.swift in Sources */,
+				61E63F692F0C357B004D74F3 /* ToastView.swift in Sources */,
+				61E9741C2EF0AB9100D225C5 /* ApexPerformanceApp.swift in Sources */,
+				61CFB54A2EFC1987009E9624 /* ClientDetailsView.swift in Sources */,
+				61CFB51A2EF1E8FF009E9624 /* LoginResponse.swift in Sources */,
+				61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */,
+				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
+				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
+				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
+				61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E974242EF0AB9300D225C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61E9742E2EF0AB9300D225C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */,
+				61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		61E9742A2EF0AB9300D225C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 61E974172EF0AB9100D225C5 /* ApexPerformance */;
+			targetProxy = 61E974292EF0AB9300D225C5 /* PBXContainerItemProxy */;
+		};
+		61E974342EF0AB9300D225C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 61E974172EF0AB9100D225C5 /* ApexPerformance */;
+			targetProxy = 61E974332EF0AB9300D225C5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		61E9743A2EF0AB9300D225C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5432EFB2956009E9624 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		61E9743B2EF0AB9300D225C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5442EFB2A35009E9624 /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		61E9743D2EF0AB9300D225C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5432EFB2956009E9624 /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ApexPerformance/Preview Content\"";
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ApexPerformance/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformance;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		61E9743E2EF0AB9300D225C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5442EFB2A35009E9624 /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ApexPerformance/Preview Content\"";
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ApexPerformance/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformance;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		61E974402EF0AB9300D225C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5432EFB2956009E9624 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformanceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ApexPerformance.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ApexPerformance";
+			};
+			name = Debug;
+		};
+		61E974412EF0AB9300D225C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5442EFB2A35009E9624 /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformanceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ApexPerformance.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ApexPerformance";
+			};
+			name = Release;
+		};
+		61E974432EF0AB9300D225C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5432EFB2956009E9624 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformanceUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ApexPerformance;
+			};
+			name = Debug;
+		};
+		61E974442EF0AB9300D225C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61CFB5442EFB2A35009E9624 /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FAU2V6TT69;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformanceUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ApexPerformance;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		61E974132EF0AB9100D225C5 /* Build configuration list for PBXProject "ApexPerformance" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E9743A2EF0AB9300D225C5 /* Debug */,
+				61E9743B2EF0AB9300D225C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		61E9743C2EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformance" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E9743D2EF0AB9300D225C5 /* Debug */,
+				61E9743E2EF0AB9300D225C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		61E9743F2EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformanceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E974402EF0AB9300D225C5 /* Debug */,
+				61E974412EF0AB9300D225C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		61E974422EF0AB9300D225C5 /* Build configuration list for PBXNativeTarget "ApexPerformanceUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E974432EF0AB9300D225C5 /* Debug */,
+				61E974442EF0AB9300D225C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 61E974102EF0AB9100D225C5 /* Project object */;
+}

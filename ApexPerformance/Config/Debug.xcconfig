@@ -1,0 +1,8 @@
+//
+//  Development.xcconfig
+//  ApexPerformance
+//
+//  Created by Milan Trbojevic on 23.12.2025..
+//
+
+API_URL = http:/$()/localhost:5074/api
