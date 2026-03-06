@@ -74,8 +74,8 @@ struct AppointmentsView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .buttonStyle(.bordered)
                     .accessibilityLabel("new_appointment")
+                    .buttonStyle(.plain)
                 }
             }
             .navigationDestination(isPresented: $showCreateAppointmentForm) {

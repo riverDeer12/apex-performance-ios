@@ -7,6 +7,7 @@ struct ClientsView: View {
     @State private var hasLoaded = false
     
     @State private var searchText = ""
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -34,6 +35,7 @@ struct ClientsView: View {
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .submitLabel(.search)
+                            .focused($isSearchFocused)
                         
                         if !searchText.isEmpty {
                             Button {
@@ -65,6 +67,9 @@ struct ClientsView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .background(Color.clear)
+                                .onTapGesture {
+                                    isSearchFocused = false
+                                }
                                 
                                 if client.id != list.last?.id {
                                     Divider().padding(.leading, 52)

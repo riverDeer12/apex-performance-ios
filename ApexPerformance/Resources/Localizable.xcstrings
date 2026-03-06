@@ -600,6 +600,29 @@
         }
       }
     },
+    "calves" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calves"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listovi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Polpacci"
+          }
+        }
+      }
+    },
     "can_not_be_undone" : {
       "localizations" : {
         "en" : {
@@ -778,25 +801,25 @@
         }
       }
     },
-    "click_me" : {
-      "extractionState" : "stale",
+    "chest" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Click Me"
+            "value" : "Chest"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Klikni me"
+            "value" : "Prsa"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cliccami"
+            "value" : "Petto"
           }
         }
       }
@@ -1092,6 +1115,52 @@
         }
       }
     },
+    "glutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glutes"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gluteus"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glutei"
+          }
+        }
+      }
+    },
+    "height" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Height"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visina"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altezza"
+          }
+        }
+      }
+    },
     "info" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1182,6 +1251,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lingua"
+          }
+        }
+      }
+    },
+    "Last Payment" : {
+      "localizations" : {
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadnje plaćanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo Pagamento"
           }
         }
       }
@@ -1896,29 +1981,6 @@
         }
       }
     },
-    "send" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Send"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pošalji"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invia"
-          }
-        }
-      }
-    },
     "send_cancelation_request" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1960,6 +2022,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Invia richiesta"
+          }
+        }
+      }
+    },
+    "shoulders" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shoulders"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ramena"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spalle"
           }
         }
       }
@@ -2075,6 +2160,29 @@
         }
       }
     },
+    "thigh" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thigh"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bedro"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coscia"
+          }
+        }
+      }
+    },
     "time_slot" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2143,6 +2251,29 @@
         }
       }
     },
+    "upper_arm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper Arm"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadlaktica"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Braccio"
+          }
+        }
+      }
+    },
     "username" : {
       "localizations" : {
         "en" : {
@@ -2165,6 +2296,29 @@
         }
       }
     },
+    "waist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waist"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Struk"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vita"
+          }
+        }
+      }
+    },
     "warning" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2176,14 +2330,37 @@
         },
         "hr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Upozorenje"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Avvertimento"
+          }
+        }
+      }
+    },
+    "weight" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Težina"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peso"
           }
         }
       }
@@ -2255,5 +2432,5 @@
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }

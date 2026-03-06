@@ -57,6 +57,17 @@ struct BodyMeasurementDetailsView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("measurements")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    // TODO: implement save action
+                } label: {
+                    Image(systemName: "checkmark")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("save")
+            }
+        }
     }
     
     private func divider() -> some View {
@@ -70,7 +81,7 @@ struct BodyMeasurementDetailsView: View {
         unit: String
     ) -> some View {
         HStack(spacing: 12) {
-            Text(title)
+            Text(LocalizedStringKey(title))
                 .foregroundStyle(.secondary)
             
             Spacer()

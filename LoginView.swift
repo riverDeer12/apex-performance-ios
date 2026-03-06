@@ -55,6 +55,7 @@ struct LoginView: View {
                                 .focused($focusedField, equals: .username)
                                 .submitLabel(.next)
                                 .onSubmit { focusedField = .password }
+                                .disabled(isLoading)
                             
                             HStack {
                                 Group {
@@ -69,6 +70,7 @@ struct LoginView: View {
                                 .disableAutocorrection(true)
                                 .focused($focusedField, equals: .password)
                                 .submitLabel(.go)
+                                .disabled(isLoading)
                                 
                                 Button {
                                     isPasswordVisible.toggle()
@@ -76,6 +78,7 @@ struct LoginView: View {
                                     Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
                                         .foregroundColor(.apexMainColor)
                                 }
+                                .disabled(isLoading)
                             }
                             .padding()
                             .background(
@@ -87,6 +90,7 @@ struct LoginView: View {
                             Button {
                                 Task {
                                     isLoading = true
+                                    focusedField = nil
                                     defer { isLoading = false }
                                     
                                     do {
@@ -105,15 +109,18 @@ struct LoginView: View {
                                 }
                             } label: {
                                 ZStack {
+                                    // Hidden content to preserve button size
+                                    HStack {
+                                        Text("login")
+                                            .fontWeight(.semibold)
+                                        Image(systemName: "arrow.right.circle.fill")
+                                    }
+                                    .opacity(isLoading ? 0 : 1)
+
                                     if isLoading {
                                         ProgressView()
                                             .progressViewStyle(.circular)
-                                    } else {
-                                        HStack {
-                                            Text("login")
-                                                .fontWeight(.semibold)
-                                            Image(systemName: "arrow.right.circle.fill")
-                                        }
+                                            .tint(.white)
                                     }
                                 }
                                 .frame(height: 48)
@@ -138,3 +145,4 @@ struct LoginView: View {
 #Preview {
     LoginView()
 }
+

@@ -126,10 +126,11 @@ struct CreateAppointmentView: View {
                         ProgressView()
                             .scaleEffect(0.9)
                     } else {
-                        ButtonContentView("save", style: .textWithIcon(systemName: "checkmark"))
+                        Image(systemName: "checkmark")
                     }
                 }
                 .disabled(!canCreateAppointment)
+                .buttonStyle(.plain)
             }
         }
         .task {
@@ -158,7 +159,7 @@ struct CreateAppointmentView: View {
             
             let request = GetTimeSlotsRequest(coaches: selectedCoaches, day: dayString)
         
-            
+        
             let response: [TimeSlot] = try await APIClient.shared.request(url, method: HTTPMethod.post, body: JSONEncoder().encode(request))
             
             timeSlots = response.map {
@@ -289,3 +290,4 @@ struct CreateAppointmentView: View {
         return response;
     }
 }
+

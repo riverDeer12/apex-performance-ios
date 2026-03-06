@@ -105,26 +105,30 @@ struct ClientDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
+                let outOfCredits = (form.credits ?? 0) <= 0
+                
                 CardView(title: "credits") {
                     VStack(spacing: 0) {
                         editableRow(title: "appointments_left") {
                             TextField("appointments_left", value: $form.credits, format: .number)
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
+                                .font(outOfCredits ? .body.weight(.bold) : .body)
                         }
+                        
                         Divider().padding(.leading, 0)
                         editableRow(title: "Last Payment") {
                             Text(DateFormatter.dateAndTimeWithDots.string(from: lastPayment))
-                                .foregroundStyle(.secondary)
-                        }
-                        Divider().padding(.leading, 0)
-                        editableRow(title: "Days until expiration") {
-                            TextField("days_until_expiration", value: $daysUntilExpiration, format: .number)
-                                .keyboardType(.numberPad)
-                                .multilineTextAlignment(.trailing)
+                                .font(outOfCredits ? .body.weight(.bold) : .body)
+                                .foregroundStyle(.primary)
                         }
                     }
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(outOfCredits ? Color.red.opacity(0.12) : Color.clear)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .padding(.horizontal, 20)
                 
                 CardView(title: "body_measurements") {
@@ -231,7 +235,7 @@ struct ClientDetailsView: View {
         lastName: "Doe",
         email: "jane.doe@example.com",
         phone: "+1 555 123 4567",
-        credits: 3,
+        credits: 0,
         bodyMeasurements: [
             BodyMeasurement(
                 id: UUID(),
