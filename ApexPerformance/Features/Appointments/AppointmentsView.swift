@@ -108,7 +108,7 @@ struct AppointmentsView: View {
         do {
             let url = AppEnvironment.apiURL.appendingPathComponent("appointments")
             let response: AppointmentsStatus = try await APIClient.shared.request(url)
-            
+                        
             let mapped = response.approvedAppointments.map {
                 Appointment(
                     id: $0.id,
@@ -158,7 +158,8 @@ struct AppointmentsView: View {
                         email: "miki.mikic@mail.com",
                         phone: "+385911234567",
                         credits: 12,
-                        bodyMeasurements: []
+                        bodyMeasurements: [],
+                        lastCreditsIncrease: .now
                     )
                 ]
             ),
@@ -184,7 +185,8 @@ struct AppointmentsView: View {
                         email: "miki.mikic@mail.com",
                         phone: "+385911234567",
                         credits: 12,
-                        bodyMeasurements: []
+                        bodyMeasurements: [],
+                        lastCreditsIncrease: .now
                     )
                 ]
             ),
@@ -210,7 +212,8 @@ struct AppointmentsView: View {
                         email: "miki.mikic@mail.com",
                         phone: "+385911234567",
                         credits: 12,
-                        bodyMeasurements: []
+                        bodyMeasurements: [],
+                        lastCreditsIncrease: .now
                     )
                 ]
             ),
@@ -236,7 +239,8 @@ struct AppointmentsView: View {
                         email: "miki.mikic@mail.com",
                         phone: "+385911234567",
                         credits: 12,
-                        bodyMeasurements: []
+                        bodyMeasurements: [],
+                        lastCreditsIncrease: .now
                     )
                 ]
             )

@@ -53,6 +53,12 @@ struct ClientsView: View {
                     }
                     .padding(.horizontal, 20)
                     
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 20)
+                    }
+                    
                     // Clients card
                     CardView {
                         VStack(spacing: 0) {
@@ -137,6 +143,8 @@ struct ClientsView: View {
             let url = AppEnvironment.apiURL.appendingPathComponent("clients")
             let response: [Client] = try await APIClient.shared.request(url)
             
+            print(response)
+            
             clients = response.map {
                 Client(
                     id: $0.id,
@@ -145,7 +153,8 @@ struct ClientsView: View {
                     email: $0.email,
                     phone: $0.phone,
                     credits: $0.credits,
-                    bodyMeasurements: $0.bodyMeasurements
+                    bodyMeasurements: $0.bodyMeasurements,
+                    lastCreditsIncrease: $0.lastCreditsIncrease
                 )
             }
         } catch {
@@ -156,9 +165,9 @@ struct ClientsView: View {
 
 #Preview {
     ClientsView(clients: [
-        Client(id: UUID(), firstName: "John", lastName: "Doe", email: "john.doe@email.com", phone: "123456789", credits: 0, bodyMeasurements: []),
-        Client(id: UUID(), firstName: "Ana", lastName: "Kovač", email: "ana.kovac@email.com", phone: "987654321", credits: 1, bodyMeasurements: []),
-        Client(id: UUID(), firstName: "Marko", lastName: "Horvat", email: "marko.h@email.com", phone: "555666777", credits: 5, bodyMeasurements: []),
-        Client(id: UUID(), firstName: "Ivana", lastName: "Marić", email: "ivana.m@email.com", phone: "444333222", credits: 12, bodyMeasurements: [])
+        Client(id: UUID(), firstName: "John", lastName: "Doe", email: "john.doe@email.com", phone: "123456789", credits: 0, bodyMeasurements: [], lastCreditsIncrease: .now),
+        Client(id: UUID(), firstName: "Ana", lastName: "Kovač", email: "ana.kovac@email.com", phone: "987654321", credits: 1, bodyMeasurements: [], lastCreditsIncrease: .now),
+        Client(id: UUID(), firstName: "Marko", lastName: "Horvat", email: "marko.h@email.com", phone: "555666777", credits: 5, bodyMeasurements: [], lastCreditsIncrease: .now),
+        Client(id: UUID(), firstName: "Ivana", lastName: "Marić", email: "ivana.m@email.com", phone: "444333222", credits: 12, bodyMeasurements: [], lastCreditsIncrease: .now)
     ])
 }

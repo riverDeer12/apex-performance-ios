@@ -105,7 +105,7 @@ struct BodyMeasurementDetailsView: View {
 }
 #Preview("BodyMeasurementDetailsView") {
     // Sample data for preview
-    let sampleClient = Client(id: UUID(), firstName: "Preview", lastName: "Client")
+    let sampleClient = Client(id: UUID(), firstName: "Preview", lastName: "Client", lastCreditsIncrease: .now)
     let sample = BodyMeasurement(
         id: UUID(),
         height: 180,

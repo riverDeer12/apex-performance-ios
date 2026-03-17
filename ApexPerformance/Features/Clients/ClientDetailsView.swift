@@ -110,25 +110,23 @@ struct ClientDetailsView: View {
                 CardView(title: "credits") {
                     VStack(spacing: 0) {
                         editableRow(title: "appointments_left") {
-                            TextField("appointments_left", value: $form.credits, format: .number)
-                                .keyboardType(.numberPad)
-                                .multilineTextAlignment(.trailing)
-                                .font(outOfCredits ? .body.weight(.bold) : .body)
+                            TextField("appointments_left", value: Binding(
+                                get: { form.credits ?? 0 },
+                                set: { form.credits = $0 }
+                            ), format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .font(outOfCredits ? .body.weight(.bold) : .body)
                         }
                         
                         Divider().padding(.leading, 0)
                         editableRow(title: "Last Payment") {
-                            Text(DateFormatter.dateAndTimeWithDots.string(from: lastPayment))
+                            Text(DateFormatter.dateAndTimeWithDots.string(from: form.lastCreditsIncrease ?? .now))
                                 .font(outOfCredits ? .body.weight(.bold) : .body)
                                 .foregroundStyle(.primary)
                         }
                     }
                 }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(outOfCredits ? Color.red.opacity(0.12) : Color.clear)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .padding(.horizontal, 20)
                 
                 CardView(title: "body_measurements") {
@@ -249,9 +247,9 @@ struct ClientDetailsView: View {
                 calves: 38,
                 glutes: 94,
                 measuredAt: Date(),
-                client: Client(id: UUID(), firstName: "Jane", lastName: "Doe")
+                client: Client(id: UUID(), firstName: "Jane", lastName: "Doe", lastCreditsIncrease: .now)
             )
-        ]
+        ], lastCreditsIncrease: .now
     )
     NavigationStack {
         ClientDetailsView(client: sample)

@@ -239,7 +239,8 @@ struct AppointmentDetailsView: View {
                     email: "miki.mikic@mail.com",
                     phone: "+385911234567",
                     credits: 12,
-                    bodyMeasurements: []
+                    bodyMeasurements: [],
+                    lastCreditsIncrease: .now
                 )
             ]
         )

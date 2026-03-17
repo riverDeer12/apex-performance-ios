@@ -1,5 +1,9 @@
 import SwiftUI
 
+extension ISO8601DateFormatter {
+    static let shared = ISO8601DateFormatter()
+}
+
 struct CreateAppointmentView: View {
     
     @EnvironmentObject private var authManager: AuthManager
@@ -51,10 +55,10 @@ struct CreateAppointmentView: View {
                 }
                 
                 Picker("select_coaches", selection: $selectedCoachId) {
-                    Text("select_value").tag(UUID?.none)
+                    Text("select_value").tag(nil as UUID?)
                     
                     ForEach(coaches) { coach in
-                        Text(coach.fullName).tag(Optional(coach.id))
+                        Text(coach.fullName).tag(coach.id as UUID?)
                     }
                 }
                 .disabled(isLoadingCoaches || coaches.isEmpty)
@@ -70,6 +74,7 @@ struct CreateAppointmentView: View {
                 }
                 
                 Picker("select_time_slot", selection: $selectedTimeSlot) {
+                    Text("select_value").tag(nil as UUID?)
                     ForEach(timeSlots, id: \.self.id) { timeSlot in
                         Text(timeSlot.name ?? "unknown_value")
                             .tag(Optional(timeSlot.id))
@@ -91,6 +96,7 @@ struct CreateAppointmentView: View {
                 }
                 
                 Picker("select_appointment_type", selection: $selectedAppointmentType) {
+                    Text("select_value").tag(nil as UUID?)
                     ForEach(appointmentTypes, id: \.self.id) { appointmentType in
                         Text(appointmentType.name)
                             .tag(Optional(appointmentType.id))
@@ -140,7 +146,6 @@ struct CreateAppointmentView: View {
     
     @MainActor
     private func loadInitialData() async {
-        // load coaches + clients in parallel
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await loadCoaches() }
             group.addTask { await loadClients() }
@@ -158,10 +163,10 @@ struct CreateAppointmentView: View {
             let dayString = DateManager.apiDateFormatter.string(from: day)
             
             let request = GetTimeSlotsRequest(coaches: selectedCoaches, day: dayString)
-        
+            
         
             let response: [TimeSlot] = try await APIClient.shared.request(url, method: HTTPMethod.post, body: JSONEncoder().encode(request))
-            
+                        
             timeSlots = response.map {
                 TimeSlot(
                     id: $0.id,
@@ -194,6 +199,10 @@ struct CreateAppointmentView: View {
                     phone: $0.phone
                 )
             }
+            if selectedCoachId == nil, let firstCoach = coaches.first {
+                selectedCoachId = firstCoach.id
+                selectedCoaches = [firstCoach.id]
+            }
         } catch {
             errorMessage = mapError(error)
             toastManager.show(Text(errorMessage!), type: ToastType.error)
@@ -216,7 +225,8 @@ struct CreateAppointmentView: View {
                     email: $0.email,
                     phone: $0.phone,
                     credits: $0.credits,
-                    bodyMeasurements: $0.bodyMeasurements
+                    bodyMeasurements: $0.bodyMeasurements,
+                    lastCreditsIncrease: $0.lastCreditsIncrease
                 )
             }
         } catch {
@@ -237,8 +247,11 @@ struct CreateAppointmentView: View {
                 CatalogData(
                     id: $0.id,
                     name: $0.name,
-                    description: $0.name
+                    description: $0.description
                 )
+            }
+            if selectedAppointmentType == nil, let firstType = appointmentTypes.first {
+                selectedAppointmentType = firstType.id
             }
         } catch {
             errorMessage = mapError(error)
@@ -274,19 +287,57 @@ struct CreateAppointmentView: View {
     }
     
     private func sendNewAppointmentToApi() async throws -> StatusResponse {
+        guard let selectedTimeSlot = selectedTimeSlot,
+              let timeSlot = timeSlots.first(where: { $0.id == selectedTimeSlot }) else {
+            throw NSError(domain: "CreateAppointmentView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid or missing time slot"])
+        }
+        
+        let calendar = Calendar.current
+        let selectedDayComponents = calendar.dateComponents([.year, .month, .day], from: selectedDay)
+        
+        func dateFrom(dayComponents: DateComponents, timeString: String) -> Date? {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "HH:mm:ss"
+            
+            guard let timeDate = timeFormatter.date(from: timeString) else {
+                return nil
+            }
+            
+            let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: timeDate)
+            
+            var combinedComponents = DateComponents()
+            combinedComponents.year = dayComponents.year
+            combinedComponents.month = dayComponents.month
+            combinedComponents.day = dayComponents.day
+            combinedComponents.hour = timeComponents.hour
+            combinedComponents.minute = timeComponents.minute
+            combinedComponents.second = timeComponents.second
+            
+            return calendar.date(from: combinedComponents)
+        }
+        
+        guard let startTimeDate = dateFrom(dayComponents: selectedDayComponents, timeString: timeSlot.startTime ?? ""),
+              let endTimeDate = dateFrom(dayComponents: selectedDayComponents, timeString: timeSlot.endTime ?? "") else {
+            throw NSError(domain: "CreateAppointmentView", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to parse time slot start or end time"])
+        }
+        
         let url = AppEnvironment.apiURL.appendingPathComponent("appointments")
+        
+        let isoFormatter = ISO8601DateFormatter()
         
         let request = CreateAppointmentRequest(
             type: selectedAppointmentType!,
-            timeSlot: selectedTimeSlot!,
+            timeSlot: selectedTimeSlot,
             clients: selectedClients,
-            coaches: selectedCoaches
+            coaches: selectedCoaches,
+            startTime: isoFormatter.string(from: startTimeDate),
+            endTime: isoFormatter.string(from: endTimeDate)
         )
         
+        print(request)
+        
         let response: StatusResponse = try await APIClient.shared.request(url, method: HTTPMethod.post, body: JSONEncoder().encode(request))
-        
-        print(response)
-        
+                
         return response;
     }
 }

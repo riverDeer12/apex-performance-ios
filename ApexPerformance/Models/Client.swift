@@ -15,8 +15,10 @@ struct Client: Identifiable, Decodable, Encodable {
     var phone: String?
     var credits: Int?
     var bodyMeasurements: [BodyMeasurement]?
+    var lastCreditsIncrease: Date?
     
     var fullName: String {
         return self.firstName + " " + self.lastName
     }
 }
+

@@ -14,4 +14,6 @@ struct CreateAppointmentRequest: Encodable{
     var location: UUID?
     let clients: [UUID]
     let coaches: [UUID]
+    let startTime: String
+    let endTime: String
 }
