@@ -9,5 +9,4 @@ import Foundation
 
 struct StatusResponse: Decodable{
     let id: UUID
-    let status: Bool
 }

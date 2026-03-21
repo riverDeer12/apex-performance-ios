@@ -122,7 +122,7 @@ struct ClientDetailsView: View {
                         Divider().padding(.leading, 0)
                         editableRow(title: "Last Payment") {
                             Text(DateFormatter.dateAndTimeWithDots.string(from: form.lastCreditsIncrease ?? .now))
-                                .font(outOfCredits ? .body.weight(.bold) : .body)
+                                .font(.body)
                                 .foregroundStyle(.primary)
                         }
                     }

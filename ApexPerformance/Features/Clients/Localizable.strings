@@ -1,0 +1,11 @@
+/* English */
+"welcome" = "Welcome";
+"new_client" = "New Client";
+
+/* Croatian */
+"welcome" = "Dobrodošli";
+"new_client" = "Novi klijent";
+
+/* German */
+"welcome" = "Willkommen";
+"new_client" = "Neuer Kunde";

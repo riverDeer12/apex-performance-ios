@@ -334,8 +334,6 @@ struct CreateAppointmentView: View {
             endTime: isoFormatter.string(from: endTimeDate)
         )
         
-        print(request)
-        
         let response: StatusResponse = try await APIClient.shared.request(url, method: HTTPMethod.post, body: JSONEncoder().encode(request))
                 
         return response;

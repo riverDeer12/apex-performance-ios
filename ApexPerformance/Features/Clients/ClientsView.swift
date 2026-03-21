@@ -8,13 +8,14 @@ struct ClientsView: View {
     
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
+    
+    @State private var showCreateClientForm = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     
-                    // Header (same pattern as Appointments)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("clients")
                             .font(.title.bold())
@@ -102,6 +103,20 @@ struct ClientsView: View {
                 await loadData()
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showCreateClientForm = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .accessibilityLabel("new_client")
+                    .buttonStyle(.plain)
+                }
+            }
+            .navigationDestination(isPresented: $showCreateClientForm) {
+                CreateClientView()
+            }
         }
     }
     
@@ -141,9 +156,8 @@ struct ClientsView: View {
         
         do {
             let url = AppEnvironment.apiURL.appendingPathComponent("clients")
-            let response: [Client] = try await APIClient.shared.request(url)
             
-            print(response)
+            let response: [Client] = try await APIClient.shared.request(url)
             
             clients = response.map {
                 Client(

@@ -65,6 +65,7 @@
 		61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */; };
 		61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */; };
 		61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */; };
+		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +150,7 @@
 		61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C0283CE12F6DEFF700582836 /* CreateClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClientView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -334,6 +336,7 @@
 			children = (
 				61CFB52C2EF44204009E9624 /* ClientsView.swift */,
 				61CFB5492EFC1987009E9624 /* ClientDetailsView.swift */,
+				C0283CE12F6DEFF700582836 /* CreateClientView.swift */,
 			);
 			path = Clients;
 			sourceTree = "<group>";
@@ -592,6 +595,7 @@
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
 				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
+				C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */,
 				61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */,
 				61E63F732F115CFE004D74F3 /* StatusResponse.swift in Sources */,
 				61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */,
