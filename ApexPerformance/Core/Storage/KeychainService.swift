@@ -2,7 +2,6 @@
 //  KeychainService.swift
 //  ApexPerformance
 //
-//  Created by Milan Trbojevic on 16.12.2025..
 //
 
 import Foundation
@@ -59,3 +58,4 @@ final class KeychainService {
         SecItemDelete(query as CFDictionary)
     }
 }
+

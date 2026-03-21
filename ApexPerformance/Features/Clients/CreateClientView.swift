@@ -1,10 +1,3 @@
-//
-//  CreateClientView.swift
-//  ApexPerformance
-//
-//  Created by Sara Husidic on 3/20/26.
-//
-
 import SwiftUI
 
 struct CreateClientRequest: Encodable {
@@ -151,6 +144,9 @@ struct CreateClientView: View {
         do {
             _ = try await sendNewClientToApi()
             toastManager.show(Text("client_created_successfully"), type: ToastType.success)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                dismiss()
+            }
         } catch {
             errorMessage = mapError(error)
             toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)

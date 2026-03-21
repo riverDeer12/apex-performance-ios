@@ -2,7 +2,6 @@
 //  TimeSlot.swift
 //  ApexPerformance
 //
-//  Created by Milan Trbojevic on 18.12.2025..
 //
 
 import Foundation
@@ -15,3 +14,4 @@ struct TimeSlot: Identifiable, Decodable, Equatable {
     var endTime: String? = nil
     var description: String? = nil
 }
+

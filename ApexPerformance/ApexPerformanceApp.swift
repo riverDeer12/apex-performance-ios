@@ -1,9 +1,4 @@
-//
-//  ApexPerformanceApp.swift
-//  ApexPerformance
-//
-//  Created by Milan Trbojevic on 15.12.2025..
-//
+
 
 import SwiftUI
 
