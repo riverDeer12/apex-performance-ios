@@ -1,4 +1,8 @@
 import SwiftUI
+// Import ChangePasswordView if it's in a separate file/module
+// import ChangePasswordView
+// Import ChangeUsernameView if it's in a separate file/module
+// import ChangeUsernameView
 
 struct UserProfileView: View {
     
@@ -11,6 +15,8 @@ struct UserProfileView: View {
     @EnvironmentObject private var toastManager: ToastManager
     
     @State private var showLogoutDialog = false
+    @State private var showChangePasswordSheet = false
+    @State private var showChangeUsernameSheet = false
     
     var body: some View {
         NavigationStack {
@@ -108,6 +114,12 @@ struct UserProfileView: View {
                 Button("cancel", role: .cancel) {}
             } message: {
                 Text("you_will_be_signed_out")
+            }
+            .sheet(isPresented: $showChangePasswordSheet) {
+                ChangePasswordView(onSuccess: { showChangePasswordSheet = false })
+            }
+            .sheet(isPresented: $showChangeUsernameSheet) {
+                ChangeUsernameView(onSuccess: { showChangeUsernameSheet = false })
             }
         }
     }
@@ -231,11 +243,11 @@ struct UserProfileView: View {
     }
     
     private func changePassword() {
-        toastManager.show(Text("successfully_updated_user"), type: ToastType.success)
+        showChangePasswordSheet = true
     }
     
     private func changeUsername() {
-        // navigate to ChangeUsernameView
+        showChangeUsernameSheet = true
     }
 }
 

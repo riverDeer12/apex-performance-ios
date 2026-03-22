@@ -66,6 +66,8 @@
 		61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */; };
 		61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
+		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
+		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +153,8 @@
 		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		C0283CE12F6DEFF700582836 /* CreateClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClientView.swift; sourceTree = "<group>"; };
+		C0283CE52F709F2800582836 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = ApexPerformance/Features/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
+		C0283CE72F709F3800582836 /* ChangeUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangeUsernameView.swift; path = ApexPerformance/Features/ChangeUsernameView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +201,8 @@
 			children = (
 				61CFB5172EF1E7D1009E9624 /* LoginView.swift */,
 				61CFB5262EF1F1F4009E9624 /* AuthManager.swift */,
+				C0283CE52F709F2800582836 /* ChangePasswordView.swift */,
+				C0283CE72F709F3800582836 /* ChangeUsernameView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -590,6 +596,7 @@
 				61CFB5372EF455FC009E9624 /* DateFormatter.swift in Sources */,
 				61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */,
 				61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */,
+				C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */,
 				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
@@ -623,6 +630,7 @@
 				61CFB54A2EFC1987009E9624 /* ClientDetailsView.swift in Sources */,
 				61CFB51A2EF1E8FF009E9624 /* LoginResponse.swift in Sources */,
 				61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */,
+				C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */,
 				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
 				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
 				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
