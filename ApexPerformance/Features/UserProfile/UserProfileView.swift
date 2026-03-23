@@ -197,7 +197,7 @@ struct UserProfileView: View {
     
     private struct InfoRow: View {
         let icon: String
-        let title: String
+        let title: LocalizedStringKey
         let value: String
         
         var body: some View {

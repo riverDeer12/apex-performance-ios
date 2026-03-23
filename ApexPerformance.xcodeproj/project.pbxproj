@@ -68,6 +68,7 @@
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
+		C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +156,7 @@
 		C0283CE12F6DEFF700582836 /* CreateClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClientView.swift; sourceTree = "<group>"; };
 		C0283CE52F709F2800582836 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = ApexPerformance/Features/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CE72F709F3800582836 /* ChangeUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangeUsernameView.swift; path = ApexPerformance/Features/ChangeUsernameView.swift; sourceTree = SOURCE_ROOT; };
+		C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBodyMeasurementView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */,
+				C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */,
 			);
 			path = BodyMeasurements;
 			sourceTree = "<group>";
@@ -601,6 +604,7 @@
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
+				C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */,
 				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
 				C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */,
 				61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */,

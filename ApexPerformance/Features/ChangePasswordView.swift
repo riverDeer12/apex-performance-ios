@@ -16,16 +16,65 @@ struct ChangePasswordView: View {
     @State private var isSaving = false
     @State private var errorMessage: String?
     
+    @State private var showNewPassword = false
+    @State private var showConfirmPassword = false
+    
     var onSuccess: (() -> Void)? = nil
     
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("new_password")) {
-                    SecureField("enter_new_password", text: $newPassword)
+                    ZStack {
+                        if showNewPassword {
+                            TextField("enter_new_password", text: $newPassword)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                        } else {
+                            SecureField("enter_new_password", text: $newPassword)
+                        }
+                        HStack {
+                            Spacer()
+                            Button {
+                                showNewPassword.toggle()
+                            } label: {
+                                Image(systemName: showNewPassword ? "eye.slash" : "eye")
+                                    .font(.system(size: 20, weight: .regular))
+                                    .foregroundColor(Color.apexMainColor)
+                                    .padding(8)
+                                    .contentShape(Rectangle())
+                                    .frame(minWidth: 32, minHeight: 32)
+                            }
+                            .accessibilityLabel(showNewPassword ? "Hide password" : "Show password")
+                        }
+                        .padding(.trailing, 8)
+                    }
                 }
                 Section(header: Text("confirm_password")) {
-                    SecureField("enter_confirm_password", text: $confirmPassword)
+                    ZStack {
+                        if showConfirmPassword {
+                            TextField("enter_confirm_password", text: $confirmPassword)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                        } else {
+                            SecureField("enter_confirm_password", text: $confirmPassword)
+                        }
+                        HStack {
+                            Spacer()
+                            Button {
+                                showConfirmPassword.toggle()
+                            } label: {
+                                Image(systemName: showConfirmPassword ? "eye.slash" : "eye")
+                                    .font(.system(size: 20, weight: .regular))
+                                    .foregroundColor(Color.apexMainColor)
+                                    .padding(8)
+                                    .contentShape(Rectangle())
+                                    .frame(minWidth: 32, minHeight: 32)
+                            }
+                            .accessibilityLabel(showConfirmPassword ? "Hide password" : "Show password")
+                        }
+                        .padding(.trailing, 8)
+                    }
                 }
                 if let errorMessage {
                     Text(errorMessage)
@@ -78,7 +127,7 @@ struct ChangePasswordView: View {
     
     private func sendChangePasswordRequest() async throws {
         struct ChangePasswordRequest: Encodable { let newPassword: String }
-        let url = AppEnvironment.apiURL.appendingPathComponent("authentication/change-password")
+        let url = AppEnvironment.apiURL.appendingPathComponent("authentication/reset-password")
         let request = ChangePasswordRequest(newPassword: newPassword)
         _ = try await APIClient.shared.request(url, method: .post, body: JSONEncoder().encode(request)) as StatusResponse
     }
@@ -88,3 +137,4 @@ struct ChangePasswordView: View {
     ChangePasswordView()
         .environmentObject(ToastManager())
 }
+

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ClientDetailsView: View {
     
     @EnvironmentObject private var toastManager: ToastManager
@@ -20,6 +18,7 @@ struct ClientDetailsView: View {
     @State private var errorMessage: String?
     @State private var lastPayment: Date = Date()
     @State private var daysUntilExpiration: Int = 0
+    @State private var showCreateBodyMeasurementSheet = false
     
     init(client: Client) {
         self.client = client
@@ -130,6 +129,17 @@ struct ClientDetailsView: View {
                 .padding(.horizontal, 20)
                 
                 CardView(title: "body_measurements") {
+                    HStack {
+                        Spacer()
+                        Button {
+                            showCreateBodyMeasurementSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.headline)
+                                .frame(width: 32, height: 32)
+                        }
+                        .buttonStyle(.borderless)
+                    }
                     if (form.bodyMeasurements ?? []).isEmpty {
                         Text("no_measurements")
                             .foregroundStyle(.secondary)
@@ -139,7 +149,6 @@ struct ClientDetailsView: View {
                         VStack(spacing: 0) {
                             let measurements = (form.bodyMeasurements ?? [])
                                 .sorted { $0.measuredAt > $1.measuredAt }
-                            
                             ForEach(measurements) { bodyMeasurement in
                                 NavigationLink {
                                     BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement)
@@ -153,7 +162,6 @@ struct ClientDetailsView: View {
                                     )
                                 }
                                 .buttonStyle(.plain)
-                                
                                 if bodyMeasurement.id != measurements.last?.id {
                                     Divider().padding(.leading, 52)
                                 }
@@ -162,6 +170,11 @@ struct ClientDetailsView: View {
                     }
                 }
                 .padding(.horizontal, 20)
+                .sheet(isPresented: $showCreateBodyMeasurementSheet) {
+                    CreateBodyMeasurementView(client: client) {
+                        showCreateBodyMeasurementSheet = false
+                    }
+                }
                 
             }
             .padding(.bottom, 24)

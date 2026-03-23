@@ -67,9 +67,9 @@ struct ChangeUsernameView: View {
     }
     
     private func sendChangeUsernameRequest() async throws {
-        struct ChangeUsernameRequest: Encodable { let newUsername: String }
+        struct ChangeUsernameRequest: Encodable { let username: String }
         let url = AppEnvironment.apiURL.appendingPathComponent("authentication/change-username")
-        let request = ChangeUsernameRequest(newUsername: newUsername.trimmingCharacters(in: .whitespaces))
+        let request = ChangeUsernameRequest(username: newUsername.trimmingCharacters(in: .whitespaces))
         _ = try await APIClient.shared.request(url, method: .post, body: JSONEncoder().encode(request)) as StatusResponse
     }
 }
