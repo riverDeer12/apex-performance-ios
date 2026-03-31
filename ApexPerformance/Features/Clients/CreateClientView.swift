@@ -116,7 +116,8 @@ struct CreateClientView: View {
                             ProgressView()
                                 .scaleEffect(0.9)
                         } else {
-                            Text("Save")
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.apexMainColor)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

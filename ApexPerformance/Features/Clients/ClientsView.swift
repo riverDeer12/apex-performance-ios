@@ -109,6 +109,7 @@ struct ClientsView: View {
                         showCreateClientForm = true
                     } label: {
                         Image(systemName: "plus")
+                            .foregroundStyle(Color.apexMainColor)
                     }
                     .accessibilityLabel("new_client")
                     .buttonStyle(.plain)

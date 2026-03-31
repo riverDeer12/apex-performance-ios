@@ -10,6 +10,7 @@ import SwiftUI
 struct ClientDetailsView: View {
     
     @EnvironmentObject private var toastManager: ToastManager
+    @Environment(\.dismiss) private var dismiss
     
     let client: Client
     
@@ -137,6 +138,7 @@ struct ClientDetailsView: View {
                             Image(systemName: "plus")
                                 .font(.headline)
                                 .frame(width: 32, height: 32)
+                                .foregroundStyle(Color.apexMainColor)
                         }
                         .buttonStyle(.borderless)
                     }
@@ -183,6 +185,14 @@ struct ClientDetailsView: View {
         .navigationTitle(client.fullName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task { await save() }
@@ -192,7 +202,8 @@ struct ClientDetailsView: View {
                             ProgressView()
                                 .scaleEffect(0.9)
                         } else {
-                            Text("Save")
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.apexMainColor)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -201,6 +212,7 @@ struct ClientDetailsView: View {
                 .disabled(isSaving)
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func editableRow<Content: View>(

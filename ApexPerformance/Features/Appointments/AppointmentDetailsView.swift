@@ -1,16 +1,10 @@
-//
-//  AppointmentDetailsView.swift
-//  ApexPerformance
-//
-//  Created by Milan Trbojevic on 31.12.2025..
-//
-
 import SwiftUI
 
 struct AppointmentDetailsView: View {
     
     @EnvironmentObject private var authManager: AuthManager
     @EnvironmentObject private var toastManager: ToastManager
+    @Environment(\.dismiss) private var dismiss
     
     let appointment: Appointment
     
@@ -72,20 +66,20 @@ struct AppointmentDetailsView: View {
                 
                 // Clients card (like settings list)
                 CardView(title: "clients") {
-                        VStack(spacing: 0) {
-                            ForEach(appointment.clients) { client in
-                                SettingsRowView(
-                                    icon: "person",
-                                    iconTint: Color.apexMainColor,
-                                    title: Text("\(client.firstName) \(client.lastName)"),
-                                    subtitle: nil,
-                                    showChevron: false
-                                )
-                                if client.id != appointment.clients.last?.id {
-                                    Divider().padding(.leading, 52)
-                                }
+                    VStack(spacing: 0) {
+                        ForEach(appointment.clients) { client in
+                            SettingsRowView(
+                                icon: "person",
+                                iconTint: Color.apexMainColor,
+                                title: Text("\(client.firstName) \(client.lastName)"),
+                                subtitle: nil,
+                                showChevron: false
+                            )
+                            if client.id != appointment.clients.last?.id {
+                                Divider().padding(.leading, 52)
                             }
                         }
+                    }
                 }
                 .padding(.horizontal, 20)
                 
@@ -174,6 +168,17 @@ struct AppointmentDetailsView: View {
             .padding()
             .presentationDetents([.height(220)])
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func sendCancelation() async {

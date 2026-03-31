@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BodyMeasurementDetailsView: View {
     let bodyMeasurement: BodyMeasurement
+    @Environment(\.dismiss) private var dismiss
     
     @State private var form: BodyMeasurement
     
@@ -57,12 +58,22 @@ struct BodyMeasurementDetailsView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("measurements")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     // TODO: implement save action
                 } label: {
                     Image(systemName: "checkmark")
+                        .foregroundStyle(Color.apexMainColor)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("save")

@@ -73,6 +73,8 @@ struct AppointmentsView: View {
                         showCreateAppointmentForm = true
                     } label: {
                         Image(systemName: "plus")
+                            .foregroundStyle(Color.apexMainColor)
+                        
                     }
                     .accessibilityLabel("new_appointment")
                     .buttonStyle(.plain)

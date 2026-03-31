@@ -133,6 +133,14 @@ struct CreateAppointmentView: View {
         }
         .navigationTitle("new_appointment")
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task { await createAppointment() }
@@ -142,12 +150,15 @@ struct CreateAppointmentView: View {
                             .scaleEffect(0.9)
                     } else {
                         Image(systemName: "checkmark")
+                            .foregroundStyle(Color.apexMainColor)
+                        
                     }
                 }
                 .disabled(!canCreateAppointment)
                 .buttonStyle(.plain)
             }
         }
+        .navigationBarBackButtonHidden(true)
         .task {
             await loadInitialData()
         }

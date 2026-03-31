@@ -33,14 +33,20 @@ struct ChangeUsernameView: View {
                             if isSaving {
                                 ProgressView().scaleEffect(0.9)
                             } else {
-                                Text("Save")
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.apexMainColor)
                             }
                         }
                     }
                     .disabled(isSaving || newUsername.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button{
+                        dismiss()
+                    } label : {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
                 }
             }
         }

@@ -40,45 +40,169 @@ struct CreateBodyMeasurementView: View {
     var body: some View {
         ZStack {
             NavigationStack {
-                Form {
-                    Section(header: Text("Body Measurements")) {
-                        measurementField("height", value: $height, unit: "cm")
-                        measurementField("weight", value: $weight, unit: "kg")
-                        measurementField("shoulders", value: $shoulders, unit: "cm")
-                        measurementField("chest", value: $chest, unit: "cm")
-                        measurementField("upper_arm", value: $upperArm, unit: "cm")
-                        measurementField("waist", value: $waist, unit: "cm")
-                        measurementField("thigh", value: $thigh, unit: "cm")
-                        measurementField("calves", value: $calves, unit: "cm")
-                        measurementField("glutes", value: $glutes, unit: "cm")
+                ScrollView {
+                    VStack(spacing: 0) {
+                        Group {
+                            HStack {
+                                Text("height").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $height, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("weight").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $weight, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("kg").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("shoulders").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $shoulders, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("chest").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $chest, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("upper_arm").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $upperArm, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("waist").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $waist, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("thigh").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $thigh, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("calves").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $calves, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                            Divider()
+                            HStack {
+                                Text("glutes").foregroundStyle(.secondary)
+                                Spacer()
+                                TextField("", value: $glutes, format: .number)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                    .frame(minWidth: 60)
+                                Text("cm").font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 8)
+                        }
+                        
+                        if let errorMessage {
+                            Text(errorMessage)
+                                .foregroundColor(.red)
+                                .padding(.top, 10)
+                        }
                     }
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color(.systemBackground))
+                            .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 2)
+                    )
+                    .padding([.horizontal, .top])
                 }
                 .navigationTitle("new_body_measurement")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task { await save() }
                         } label: {
-                            ZStack {
-                                if isSaving {
-                                    ProgressView().scaleEffect(0.9)
-                                } else {
-                                    Text("Save")
-                                }
+                            if isSaving {
+                                ProgressView()
+                                    .scaleEffect(0.9)
+                            } else {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(Color.apexMainColor)
                             }
                         }
                         .disabled(isSaving)
                     }
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                    }
                 }
             }
+            
             if isSaving {
                 Color.black.opacity(0.25).ignoresSafeArea()
                 ProgressView()
@@ -86,19 +210,6 @@ struct CreateBodyMeasurementView: View {
                     .progressViewStyle(CircularProgressViewStyle())
             }
         }
-    }
-    
-    @ViewBuilder
-    private func measurementField(_ title: LocalizedStringKey, value: Binding<Decimal>, unit: String) -> some View {
-        HStack {
-            Text(title).foregroundStyle(.secondary)
-            Spacer()
-            TextField("", value: value, format: .number)
-                .multilineTextAlignment(.trailing)
-                .keyboardType(.decimalPad)
-                .frame(minWidth: 60)
-            Text(unit).font(.subheadline).foregroundStyle(.secondary)
-        }.padding(.vertical, 10)
     }
     
     private func save() async {
@@ -143,3 +254,4 @@ struct CreateBodyMeasurementView: View {
     )
     .environmentObject(ToastManager())
 }
+
