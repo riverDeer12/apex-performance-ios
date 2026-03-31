@@ -8,6 +8,7 @@ struct CreateAppointmentView: View {
     
     @EnvironmentObject private var authManager: AuthManager
     @EnvironmentObject private var toastManager: ToastManager
+    @Environment(\.dismiss) private var dismiss  // Environment dismiss to close view
     
     @State private var errorMessage: String? = nil
     
@@ -35,92 +36,100 @@ struct CreateAppointmentView: View {
     @State private var isLoadingCoaches: Bool = false
     
     var body: some View {
-        Form {
-            DatePicker(
-                "select_day",
-                selection: $selectedDay,
-                in: getStartDate()...,
-                displayedComponents: [.date]
-            )
-            .datePickerStyle(.compact)
-            .onChange(of: selectedDay) { _, newValue in
-                Task {
-                    await loadTimeSlots(for: newValue)
-                }
-            }
-            
-            Section {
-                if isLoadingCoaches {
-                    ProgressView("loading_coaches")
+        ZStack {
+            Form {
+                DatePicker(
+                    "select_day",
+                    selection: $selectedDay,
+                    in: getStartDate()...,
+                    displayedComponents: [.date]
+                )
+                .datePickerStyle(.compact)
+                .onChange(of: selectedDay) { _, newValue in
+                    Task {
+                        await loadTimeSlots(for: newValue)
+                    }
                 }
                 
-                Picker("select_coaches", selection: $selectedCoachId) {
-                    Text("select_value").tag(nil as UUID?)
+                Section {
+                    if isLoadingCoaches {
+                        ProgressView("loading_coaches")
+                    }
                     
-                    ForEach(coaches) { coach in
-                        Text(coach.fullName).tag(coach.id as UUID?)
-                    }
-                }
-                .disabled(isLoadingCoaches || coaches.isEmpty)
-                .onChange(of: selectedCoachId) { _, newValue in
-                    selectedCoaches = newValue.map { [$0] } ?? []
-                    Task { await loadTimeSlots(for: selectedDay) }
-                }
-            }
-            
-            Section{
-                if isLoadingTimeSlots {
-                    ProgressView("loading_time_slots")
-                }
-                
-                Picker("select_time_slot", selection: $selectedTimeSlot) {
-                    Text("select_value").tag(nil as UUID?)
-                    ForEach(timeSlots, id: \.self.id) { timeSlot in
-                        Text(timeSlot.name ?? "unknown_value")
-                            .tag(Optional(timeSlot.id))
-                    }
-                }
-                .disabled(isLoadingTimeSlots || timeSlots.isEmpty)
-                .onChange(of: timeSlots) { _, timeSlots in
-                    if timeSlots.count == 1 {
-                        selectedTimeSlot = timeSlots.first?.id
-                    } else if timeSlots.isEmpty {
-                        selectedTimeSlot = nil
-                    }
-                }
-            }
-            
-            Section{
-                if isLoadingAppointmentTypes {
-                    ProgressView("loading_appointment_types")
-                }
-                
-                Picker("select_appointment_type", selection: $selectedAppointmentType) {
-                    Text("select_value").tag(nil as UUID?)
-                    ForEach(appointmentTypes, id: \.self.id) { appointmentType in
-                        Text(appointmentType.name)
-                            .tag(Optional(appointmentType.id))
-                    }
-                }
-                .disabled(isLoadingAppointmentTypes)
-            }
-            
-            Section("select_clients") {
-                if isLoadingClients {
-                    ProgressView("loading_clients")
-                }
-                
-                ForEach(clients) { client in
-                    Toggle(client.fullName, isOn: Binding(
-                        get: { selectedClients.contains(client.id) },
-                        set: { isOn in
-                            if isOn { selectedClients.append(client.id) }
-                            else { selectedClients.removeAll { $0 == client.id } }
+                    Picker("select_coaches", selection: $selectedCoachId) {
+                        Text("select_value").tag(nil as UUID?)
+                        
+                        ForEach(coaches) { coach in
+                            Text(coach.fullName).tag(coach.id as UUID?)
                         }
-                    ))
+                    }
+                    .disabled(isLoadingCoaches || coaches.isEmpty)
+                    .onChange(of: selectedCoachId) { _, newValue in
+                        selectedCoaches = newValue.map { [$0] } ?? []
+                        Task { await loadTimeSlots(for: selectedDay) }
+                    }
                 }
+                
+                Section{
+                    if isLoadingTimeSlots {
+                        ProgressView("loading_time_slots")
+                    }
+                    
+                    Picker("select_time_slot", selection: $selectedTimeSlot) {
+                        Text("select_value").tag(nil as UUID?)
+                        ForEach(timeSlots, id: \.self.id) { timeSlot in
+                            Text(timeSlot.name ?? "unknown_value")
+                                .tag(Optional(timeSlot.id))
+                        }
+                    }
+                    .disabled(isLoadingTimeSlots || timeSlots.isEmpty)
+                    .onChange(of: timeSlots) { _, timeSlots in
+                        if timeSlots.count == 1 {
+                            selectedTimeSlot = timeSlots.first?.id
+                        } else if timeSlots.isEmpty {
+                            selectedTimeSlot = nil
+                        }
+                    }
+                }
+                
+                Section{
+                    if isLoadingAppointmentTypes {
+                        ProgressView("loading_appointment_types")
+                    }
+                    
+                    Picker("select_appointment_type", selection: $selectedAppointmentType) {
+                        Text("select_value").tag(nil as UUID?)
+                        ForEach(appointmentTypes, id: \.self.id) { appointmentType in
+                            Text(appointmentType.name)
+                                .tag(Optional(appointmentType.id))
+                        }
+                    }
+                    .disabled(isLoadingAppointmentTypes)
+                }
+                
+                Section("select_clients") {
+                    if isLoadingClients {
+                        ProgressView("loading_clients")
+                    }
+                    
+                    ForEach(clients) { client in
+                        Toggle(client.fullName, isOn: Binding(
+                            get: { selectedClients.contains(client.id) },
+                            set: { isOn in
+                                if isOn { selectedClients.append(client.id) }
+                                else { selectedClients.removeAll { $0 == client.id } }
+                            }
+                        ))
+                    }
+                }
+                .disabled(isLoadingClients || clients.isEmpty)
             }
-            .disabled(isLoadingClients || clients.isEmpty)
+            if isSaving {
+                Color.black.opacity(0.25).ignoresSafeArea()
+                ProgressView()
+                    .scaleEffect(1.3)
+                    .progressViewStyle(CircularProgressViewStyle())
+            }
         }
         .navigationTitle("new_appointment")
         .toolbar {
@@ -280,6 +289,7 @@ struct CreateAppointmentView: View {
         do {
             _ = try await sendNewAppointmentToApi()
             toastManager.show(Text("successfully_created_appointment"), type: ToastType.success)
+            dismiss()  // Dismiss view after successful creation
         } catch {
             errorMessage = mapError(error)
             toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)

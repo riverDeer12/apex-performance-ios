@@ -11,7 +11,11 @@ struct CreateBodyMeasurementView: View {
     let client: Client
     var onSuccess: (() -> Void)? = nil
     
+    /// Optional binding to control the presentation of this view.
+    @Binding var isPresented: Bool?
+    
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var toastManager: ToastManager
     
     // Body measurement fields (initialize empty)
@@ -27,45 +31,59 @@ struct CreateBodyMeasurementView: View {
     @State private var isSaving = false
     @State private var errorMessage: String?
     
+    init(client: Client, onSuccess: (() -> Void)? = nil, isPresented: Binding<Bool?> = .constant(nil)) {
+        self.client = client
+        self.onSuccess = onSuccess
+        self._isPresented = isPresented
+    }
+    
     var body: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("Body Measurements")) {
-                    measurementField("height", value: $height, unit: "cm")
-                    measurementField("weight", value: $weight, unit: "kg")
-                    measurementField("shoulders", value: $shoulders, unit: "cm")
-                    measurementField("chest", value: $chest, unit: "cm")
-                    measurementField("upper_arm", value: $upperArm, unit: "cm")
-                    measurementField("waist", value: $waist, unit: "cm")
-                    measurementField("thigh", value: $thigh, unit: "cm")
-                    measurementField("calves", value: $calves, unit: "cm")
-                    measurementField("glutes", value: $glutes, unit: "cm")
+        ZStack {
+            NavigationStack {
+                Form {
+                    Section(header: Text("Body Measurements")) {
+                        measurementField("height", value: $height, unit: "cm")
+                        measurementField("weight", value: $weight, unit: "kg")
+                        measurementField("shoulders", value: $shoulders, unit: "cm")
+                        measurementField("chest", value: $chest, unit: "cm")
+                        measurementField("upper_arm", value: $upperArm, unit: "cm")
+                        measurementField("waist", value: $waist, unit: "cm")
+                        measurementField("thigh", value: $thigh, unit: "cm")
+                        measurementField("calves", value: $calves, unit: "cm")
+                        measurementField("glutes", value: $glutes, unit: "cm")
+                    }
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                    }
                 }
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                }
-            }
-            .navigationTitle("new_body_measurement")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task { await save() }
-                    } label: {
-                        ZStack {
-                            if isSaving {
-                                ProgressView().scaleEffect(0.9)
-                            } else {
-                                Text("Save")
+                .navigationTitle("new_body_measurement")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            Task { await save() }
+                        } label: {
+                            ZStack {
+                                if isSaving {
+                                    ProgressView().scaleEffect(0.9)
+                                } else {
+                                    Text("Save")
+                                }
                             }
                         }
+                        .disabled(isSaving)
                     }
-                    .disabled(isSaving)
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
                 }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
+            }
+            if isSaving {
+                Color.black.opacity(0.25).ignoresSafeArea()
+                ProgressView()
+                    .scaleEffect(1.3)
+                    .progressViewStyle(CircularProgressViewStyle())
             }
         }
     }
@@ -90,8 +108,12 @@ struct CreateBodyMeasurementView: View {
             try await sendBodyMeasurementToAPI()
             toastManager.show(Text("body_measurement_created_successfully"), type: .success)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                dismiss()
-                onSuccess?()
+                isPresented = false
+                if let onSuccess = onSuccess {
+                    onSuccess()
+                } else {
+                    dismiss()
+                }
             }
         } catch {
             errorMessage = mapError(error)
@@ -115,6 +137,9 @@ struct CreateBodyMeasurementView: View {
 }
 
 #Preview {
-    CreateBodyMeasurementView(client: Client(id: UUID(), firstName: "Test", lastName: "User"))
-        .environmentObject(ToastManager())
+    CreateBodyMeasurementView(
+        client: Client(id: UUID(), firstName: "Test", lastName: "User"),
+        isPresented: .constant(nil)
+    )
+    .environmentObject(ToastManager())
 }
