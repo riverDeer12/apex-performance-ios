@@ -4,7 +4,6 @@ struct CreateBodyMeasurementView: View {
     let client: Client
     var onSuccess: (() -> Void)? = nil
     
-    /// Optional binding to control the presentation of this view.
     @Binding var isPresented: Bool?
     
     @Environment(\.dismiss) private var dismiss
@@ -210,9 +209,12 @@ struct CreateBodyMeasurementView: View {
         defer { isSaving = false }
         do {
             try await sendBodyMeasurementToAPI()
+            
             toastManager.show("body_measurement_created_successfully", type: .success)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
                 isPresented = false
+                
                 if let onSuccess = onSuccess {
                     onSuccess()
                 } else {
@@ -226,16 +228,24 @@ struct CreateBodyMeasurementView: View {
     }
     
     private func sendBodyMeasurementToAPI() async throws {
+        
         struct CreateBodyMeasurementRequest: Encodable {
-            let clientId: UUID
+            let client: UUID
             let height, weight, shoulders, chest, upperArm, waist, thigh, calves, glutes: Decimal
         }
+        
         let url = AppEnvironment.apiURL.appendingPathComponent("body-measurements")
+        
         let request = CreateBodyMeasurementRequest(
-            clientId: client.id,
+            client: client.id,
             height: height, weight: weight, shoulders: shoulders, chest: chest,
             upperArm: upperArm, waist: waist, thigh: thigh, calves: calves, glutes: glutes
         )
+        
+        let encoder = JSONEncoder()
+        
+        encoder.outputFormatting = .prettyPrinted
+        
         _ = try await APIClient.shared.request(url, method: .post, body: JSONEncoder().encode(request)) as StatusResponse
     }
 }

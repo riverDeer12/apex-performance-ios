@@ -46,9 +46,23 @@ struct ClientDetailsView: View {
                             Text("\(client.firstName) \(client.lastName)")
                                 .font(.headline)
                             
-                            Text(form.email ?? "no_email")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(form.email ?? "no_email")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                
+                                if let email = form.email {
+                                    Button {
+                                        UIPasteboard.general.string = email
+                                        toastManager.show("email_copied", type: .success)
+                                    } label: {
+                                        Image(systemName: "doc.on.doc")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .buttonStyle(.borderless)
+                                }
+                            }
                         }
                         
                         Spacer()
@@ -75,31 +89,59 @@ struct ClientDetailsView: View {
                 CardView(title: "contact") {
                     VStack(spacing: 0) {
                         editableRow(title: "email") {
-                            TextField(
-                                "email",
-                                text: Binding(
-                                    get: { form.email ?? "" },
-                                    set: { form.email = $0.isEmpty ? nil : $0 }
+                            HStack(spacing: 8) {
+                                TextField(
+                                    "email",
+                                    text: Binding(
+                                        get: { form.email ?? "" },
+                                        set: { form.email = $0.isEmpty ? nil : $0 }
+                                    )
                                 )
-                            )
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .keyboardType(.emailAddress)
-                            .multilineTextAlignment(.trailing)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .keyboardType(.emailAddress)
+                                .multilineTextAlignment(.trailing)
+                                
+                                if let email = form.email, !email.isEmpty {
+                                    Button {
+                                        UIPasteboard.general.string = email
+                                        toastManager.show("email_copied", type: .success)
+                                    } label: {
+                                        Image(systemName: "doc.on.doc")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .buttonStyle(.borderless)
+                                }
+                            }
                         }
                         Divider()
                         editableRow(title: "mobile_phone") {
-                            TextField(
-                                "mobile_phone",
-                                text: Binding(
-                                    get: { form.phone ?? "" },
-                                    set: { form.phone = $0.isEmpty ? nil : $0 }
+                            HStack(spacing: 8) {
+                                TextField(
+                                    "mobile_phone",
+                                    text: Binding(
+                                        get: { form.phone ?? "" },
+                                        set: { form.phone = $0.isEmpty ? nil : $0 }
+                                    )
                                 )
-                            )
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .keyboardType(.phonePad)
-                            .multilineTextAlignment(.trailing)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .keyboardType(.phonePad)
+                                .multilineTextAlignment(.trailing)
+                                
+                                if let phone = form.phone, !phone.isEmpty {
+                                    Button {
+                                        UIPasteboard.general.string = phone
+                                        toastManager.show("phone_copied", type: .success)
+                                    } label: {
+                                        Image(systemName: "doc.on.doc")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .buttonStyle(.borderless)
+                                }
+                            }
                         }
                     }
                 }
@@ -129,43 +171,55 @@ struct ClientDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
-                CardView(title: "body_measurements") {
-                    HStack {
-                        Spacer()
-                        Button {
-                            showCreateBodyMeasurementSheet = true
-                        } label: {
-                            Image(systemName: "plus")
+                CardView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("body_measurements")
                                 .font(.headline)
-                                .frame(width: 32, height: 32)
-                                .foregroundStyle(Color.apexMainColor)
-                        }
-                        .buttonStyle(.borderless)
-                    }
-                    if (form.bodyMeasurements ?? []).isEmpty {
-                        Text("no_measurements")
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 6)
-                    } else {
-                        VStack(spacing: 0) {
-                            let measurements = (form.bodyMeasurements ?? [])
-                                .sorted { $0.measuredAt > $1.measuredAt }
-                            ForEach(measurements) { bodyMeasurement in
-                                NavigationLink {
-                                    BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement)
-                                } label: {
-                                    SettingsRowView(
-                                        icon: "ruler",
-                                        iconTint: .blue,
-                                        title: Text(DateFormatter.dateAndTimeWithDots.string(from: bodyMeasurement.measuredAt)),
-                                        subtitle: nil,
-                                        showChevron: true
+                                .padding(.top, 2)
+                            
+                            Spacer()
+                            
+                            Button {
+                                showCreateBodyMeasurementSheet = true
+                            } label: {
+                                Image(systemName: "plus")
+                                    .font(.title2)
+                                    .foregroundStyle(Color.apexMainColor)
+                                    .frame(width: 48, height: 48)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                            .fill(Color(.systemGray6))
                                     )
-                                }
-                                .buttonStyle(.plain)
-                                if bodyMeasurement.id != measurements.last?.id {
-                                    Divider().padding(.leading, 52)
+                            }
+                            .buttonStyle(.borderless)
+                        }
+                        
+                        if (form.bodyMeasurements ?? []).isEmpty {
+                            Text("no_measurements")
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 6)
+                        } else {
+                            VStack(spacing: 0) {
+                                let measurements = (form.bodyMeasurements ?? [])
+                                    .sorted { $0.measuredAt > $1.measuredAt }
+                                ForEach(measurements) { bodyMeasurement in
+                                    NavigationLink {
+                                        BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement)
+                                    } label: {
+                                        SettingsRowView(
+                                            icon: "ruler",
+                                            iconTint: .blue,
+                                            title: Text(DateFormatter.dateAndTimeWithDots.string(from: bodyMeasurement.measuredAt)),
+                                            subtitle: nil,
+                                            showChevron: true
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                    if bodyMeasurement.id != measurements.last?.id {
+                                        Divider().padding(.leading, 52)
+                                    }
                                 }
                             }
                         }
