@@ -8,26 +8,30 @@
 import SwiftUI
 
 struct ToastView: View {
-    let message: Text
+    let messageKey: LocalizedStringKey
     let toastType: ToastType
     
+    private var accessibilityText: Text {
+        Text(toastType.title) + Text(": ") + Text(messageKey)
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: toastType.icon)
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(.white)
-            
+
             VStack(alignment: .leading, spacing: 2) {
-                toastType.title
+                Text(toastType.title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
-                
-                message
+
+                Text(messageKey)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.95))
                     .lineLimit(2)
             }
-            
+
             Spacer(minLength: 0)
         }
         .padding(.vertical, 15)
@@ -43,10 +47,13 @@ struct ToastView: View {
         .shadow(radius: 12, y: 6)
         .transition(.move(edge: .bottom).combined(with: .opacity))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(toastType.title): \(message)")
+        .accessibilityLabel(accessibilityText)
     }
 }
 
 #Preview {
-    ToastView(message: Text("successfully_updated_user"), toastType: ToastType.success)
+    ToastView(
+        messageKey: LocalizedStringKey("successfully_updated_user"),
+        toastType: ToastType.success
+    )
 }

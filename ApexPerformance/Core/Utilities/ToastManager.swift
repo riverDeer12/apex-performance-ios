@@ -12,9 +12,9 @@ import SwiftUI
 
 @MainActor
 final class ToastManager: ObservableObject {
-    @Published var toast: (message: Text, type: ToastType)?
+    @Published var toast: (message: LocalizedStringKey, type: ToastType)?
     
-    func show(_ message: Text, type: ToastType, duration: Double = 5) {
+    func show(_ message: LocalizedStringKey, type: ToastType, duration: Double = 5) {
         withAnimation {
             toast = (message, type)
         }

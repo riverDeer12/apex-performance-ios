@@ -1,10 +1,3 @@
-//
-//  CreateBodyMeasurementView.swift
-//  ApexPerformance
-//
-//  Created by Sara Husidic on 3/23/26.
-//
-
 import SwiftUI
 
 struct CreateBodyMeasurementView: View {
@@ -217,7 +210,7 @@ struct CreateBodyMeasurementView: View {
         defer { isSaving = false }
         do {
             try await sendBodyMeasurementToAPI()
-            toastManager.show(Text("body_measurement_created_successfully"), type: .success)
+            toastManager.show("body_measurement_created_successfully", type: .success)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 isPresented = false
                 if let onSuccess = onSuccess {
@@ -228,7 +221,7 @@ struct CreateBodyMeasurementView: View {
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: .error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: .error)
         }
     }
     

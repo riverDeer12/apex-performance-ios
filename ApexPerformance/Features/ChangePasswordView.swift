@@ -120,14 +120,14 @@ struct ChangePasswordView: View {
         defer { isSaving = false }
         do {
             try await sendChangePasswordRequest()
-            toastManager.show(Text("password_changed_successfully"), type: .success)
+            toastManager.show("password_changed_successfully", type: .success)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 dismiss()
                 onSuccess?()
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: .error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: .error)
         }
     }
     

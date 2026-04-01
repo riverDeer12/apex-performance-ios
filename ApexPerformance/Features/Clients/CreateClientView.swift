@@ -144,13 +144,13 @@ struct CreateClientView: View {
     private func save() async {
         do {
             _ = try await sendNewClientToApi()
-            toastManager.show(Text("client_created_successfully"), type: ToastType.success)
+            toastManager.show("client_created_successfully", type: ToastType.success)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 dismiss()
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
 
@@ -183,7 +183,7 @@ struct CreateClientView: View {
             coaches = response
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
 }

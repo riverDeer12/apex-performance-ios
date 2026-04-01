@@ -23,7 +23,7 @@ import SwiftUI
                 }
                 .overlay(alignment: .bottom) {
                     if let toast = toastManager.toast {
-                        ToastView(message: toast.message, toastType: toast.type)
+                        ToastView(messageKey: toast.message, toastType: toast.type)
                             .padding(.horizontal, 16)
                             .padding(.bottom, 60)
                     }

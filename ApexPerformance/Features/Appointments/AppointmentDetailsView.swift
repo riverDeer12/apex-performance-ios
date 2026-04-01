@@ -184,20 +184,20 @@ struct AppointmentDetailsView: View {
     private func sendCancelation() async {
         do {
             _ = try await sendCancelationRequest()
-            toastManager.show(Text("successfully_sent_cancelation_request"), type: ToastType.success)
+            toastManager.show("successfully_sent_cancelation_request", type: ToastType.success)
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
     private func cancelAppointment() async {
         do {
             _ = try await cancelAppointmentRequest()
-            toastManager.show(Text("successfully_canceled_appointment"), type: ToastType.success)
+            toastManager.show("successfully_canceled_appointment", type: ToastType.success)
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     

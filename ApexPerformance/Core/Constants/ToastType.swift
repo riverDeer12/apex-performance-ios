@@ -37,12 +37,12 @@ enum ToastType {
         }
     }
     
-    var title: Text {
+    var title: LocalizedStringKey {
         switch self {
-        case .success: return Text("success")
-        case .warning: return Text("warning")
-        case .error: return Text("error")
-        case .info: return Text("info")
+        case .success: return LocalizedStringKey("success")
+        case .warning: return LocalizedStringKey("warning")
+        case .error: return LocalizedStringKey("error")
+        case .info: return LocalizedStringKey("info")
         }
     }
 }

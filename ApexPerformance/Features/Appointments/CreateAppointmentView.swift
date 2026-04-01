@@ -198,7 +198,7 @@ struct CreateAppointmentView: View {
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
@@ -225,7 +225,7 @@ struct CreateAppointmentView: View {
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
@@ -251,7 +251,7 @@ struct CreateAppointmentView: View {
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
@@ -275,7 +275,7 @@ struct CreateAppointmentView: View {
             }
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
@@ -299,11 +299,11 @@ struct CreateAppointmentView: View {
     private func createAppointment() async {
         do {
             _ = try await sendNewAppointmentToApi()
-            toastManager.show(Text("successfully_created_appointment"), type: ToastType.success)
+            toastManager.show("successfully_created_appointment", type: ToastType.success)
             dismiss()  // Dismiss view after successful creation
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage ?? "unknown_error_message"), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     

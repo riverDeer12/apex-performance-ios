@@ -236,10 +236,10 @@ struct ClientDetailsView: View {
         
         do {
             _ = try await updateUser()
-            toastManager.show(Text("successfully_updated_user"), type: ToastType.success)
+            toastManager.show("successfully_updated_user", type: ToastType.success)
         } catch {
             errorMessage = mapError(error)
-            toastManager.show(Text(errorMessage!), type: ToastType.error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
