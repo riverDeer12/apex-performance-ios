@@ -88,7 +88,7 @@ struct AppointmentDetailsView: View {
                 if(!appointment.isCompleted){
                     CardView(title: "actions") {
                         VStack(spacing: 0) {
-                            if(!authManager.hasRole(role: "Client")){
+                            if(authManager.hasRole(role: "Client")){
                                 Button {
                                     showCancelRequestDialog = true
                                 } label: {
@@ -155,13 +155,14 @@ struct AppointmentDetailsView: View {
                 TextAreaView(placeholder: "cancelation_comment_placeholder",
                              text: $cancelationComment)
                 
-                
-                HStack {
-                    Button {
-                        Task { await sendCancelation() }
-                        showCancelRequestDialog = false
-                    } label: {
-                        ButtonContentView("send_request", style: .textWithIcon(systemName: "paperplane"))
+                if(!authManager.hasRole(role: "Client")){
+                    HStack {
+                        Button {
+                            Task { await sendCancelation() }
+                            showCancelRequestDialog = false
+                        } label: {
+                            ButtonContentView("send_request", style: .textWithIcon(systemName: "paperplane"))
+                        }
                     }
                 }
             }
@@ -195,16 +196,19 @@ struct AppointmentDetailsView: View {
         do {
             _ = try await cancelAppointmentRequest()
             toastManager.show("successfully_canceled_appointment", type: ToastType.success)
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                dismiss()
+            }
         } catch {
             errorMessage = mapError(error)
             toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
     }
     
-    private func cancelAppointmentRequest() async throws -> Bool {
+    private func cancelAppointmentRequest() async throws -> StatusResponse {
         let url = AppEnvironment.apiURL.appendingPathComponent("appointments/cancel/" + appointment.id.uuidString)
         
-        let response: Bool = try await APIClient.shared.request(url)
+        let response: StatusResponse = try await APIClient.shared.request(url)
         
         return response;
     }

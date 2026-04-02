@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct UserProfile: Decodable {
+struct UserProfile: Codable {
     let firstName: String
     let lastName: String
     let email: String
-    let credits: Int
+    let credits: Int?
 }

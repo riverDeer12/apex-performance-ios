@@ -36,9 +36,12 @@ struct UserProfileView: View {
                     .padding(.top, 8)
                     
                     // Content
-                    if authManager.hasRole(role: "Client") {
+                    switch true {
+                    case authManager.hasRole(role: "Client"):
                         clientProfileContent
-                    } else {
+                    case authManager.hasRole(role: "Coach"):
+                        coachProfileContent
+                    default:
                         nonClientProfileContent
                     }
                     
@@ -102,10 +105,11 @@ struct UserProfileView: View {
             }
             .task {
                 guard !hasLoaded else { return }
+                
                 hasLoaded = true
             
-                if authManager.hasRole(role: "Client") {
-                    await loadClientProfile()
+                if !authManager.hasRole(role: "SuperAdmin") {
+                    await loadUserProfile()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -176,6 +180,51 @@ struct UserProfileView: View {
         }
     }
     
+    private var coachProfileContent: some View {
+        Group {
+            // Top card
+            CardView{
+                HStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color.apexMainColor.opacity(0.25))
+                            .frame(width: 60, height: 60)
+                        
+                        Image(systemName: "person")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(Color.apexMainColor)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(fullName)
+                            .font(.headline)
+                        Text("@\(authManager.username)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+            }
+            .padding(.horizontal, 20)
+            
+            
+            // Details
+            CardView(title: "details") {
+                VStack(spacing: 0) {
+                    InfoRow(icon: "person", title: "first_name", value: profile?.firstName ?? "—")
+                    Divider().padding(.leading, 52)
+                    InfoRow(icon: "person", title: "last_name", value: profile?.lastName ?? "—")
+                    Divider().padding(.leading, 52)
+                    InfoRow(icon: "at", title: "username", value: authManager.username)
+                    Divider().padding(.leading, 52)
+                    InfoRow(icon: "envelope", title: "email", value: profile?.email ?? "—")
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+    
     private var nonClientProfileContent: some View {
         CardView {
             VStack(alignment: .leading, spacing: 8) {
@@ -227,12 +276,16 @@ struct UserProfileView: View {
     }
     
     @MainActor
-    private func loadClientProfile() async {
+    private func loadUserProfile() async {
         isLoading = true
         defer { isLoading = false }
         
+        let appendingPath = authManager.hasRole(role: "Client") ?
+                "clients/current-client" :
+                "coaches/current-coach"
+        
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent("clients/current-client")
+            let url = AppEnvironment.apiURL.appendingPathComponent(appendingPath)
             let response: UserProfile = try await APIClient.shared.request(url)
             profile = response
         } catch is CancellationError {

@@ -51,25 +51,27 @@ struct CreateAppointmentView: View {
                     }
                 }
                 
-                Section {
-                    if isLoadingCoaches {
-                        ProgressView("loading_coaches")
-                    }
-                    
-                    Picker("select_coaches", selection: $selectedCoachId) {
-                        Text("select_value").tag(nil as UUID?)
+                if !authManager.hasRole(role: "Coach"){
+                    Section {
+                        if isLoadingCoaches {
+                            ProgressView("loading_coaches")
+                        }
                         
-                        ForEach(coaches) { coach in
-                            Text(coach.fullName).tag(coach.id as UUID?)
+                        Picker("select_coaches", selection: $selectedCoachId) {
+                            Text("select_value").tag(nil as UUID?)
+                            
+                            ForEach(coaches) { coach in
+                                Text(coach.fullName).tag(coach.id as UUID?)
+                            }
+                        }
+                        .disabled(isLoadingCoaches || coaches.isEmpty)
+                        .onChange(of: selectedCoachId) { _, newValue in
+                            selectedCoaches = newValue.map { [$0] } ?? []
+                            Task { await loadTimeSlots(for: selectedDay) }
                         }
                     }
-                    .disabled(isLoadingCoaches || coaches.isEmpty)
-                    .onChange(of: selectedCoachId) { _, newValue in
-                        selectedCoaches = newValue.map { [$0] } ?? []
-                        Task { await loadTimeSlots(for: selectedDay) }
-                    }
                 }
-                
+
                 Section{
                     if isLoadingTimeSlots {
                         ProgressView("loading_time_slots")
@@ -167,7 +169,15 @@ struct CreateAppointmentView: View {
     @MainActor
     private func loadInitialData() async {
         await withTaskGroup(of: Void.self) { group in
-            group.addTask { await loadCoaches() }
+            
+            if authManager.hasRole(role: "Coach"){
+                group.addTask {
+                    await setCurrentCoach()
+                }
+            } else {
+                group.addTask { await loadCoaches() }
+            }
+            
             group.addTask { await loadClients() }
             group.addTask { await loadAppointmentTypes() }
         }
@@ -197,6 +207,44 @@ struct CreateAppointmentView: View {
                 )
             }
         } catch {
+            errorMessage = mapError(error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
+        }
+    }
+    
+    @MainActor
+    private func setCurrentCoach() async {
+        isLoadingCoaches = true
+        defer { isLoadingCoaches = false }
+        
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("coaches/current-coach")
+            let response: Coach = try await APIClient.shared.request(url)
+            
+            // Debug: Print current coach response
+            print("=== Set Current Coach Response ===")
+            print("Coach ID: \(response.id)")
+            print("Coach Name: \(response.fullName)")
+            print("Coach Email: \(response.email)")
+            print("==================================")
+            
+            selectedCoachId = response.id
+            selectedCoaches = [response.id]
+            
+            // Optionally, you can also add the coach to the coaches array if needed
+            coaches = [response]
+            
+            await loadTimeSlots(for: selectedDay)
+        } catch {
+            print("=== Set Current Coach Error ===")
+            print("Error: \(error)")
+            print("Error type: \(type(of: error))")
+            if let localizedError = error as? LocalizedError {
+                print("Error description: \(localizedError.errorDescription ?? "N/A")")
+                print("Failure reason: \(localizedError.failureReason ?? "N/A")")
+            }
+            print("===============================")
+            
             errorMessage = mapError(error)
             toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
