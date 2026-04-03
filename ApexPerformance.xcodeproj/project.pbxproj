@@ -69,6 +69,7 @@
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
 		C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */; };
+		C0283CED2F7FFF3500582836 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CEC2F7FFF3500582836 /* LanguageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +158,7 @@
 		C0283CE52F709F2800582836 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = ApexPerformance/Features/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CE72F709F3800582836 /* ChangeUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangeUsernameView.swift; path = ApexPerformance/Features/ChangeUsernameView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBodyMeasurementView.swift; sourceTree = "<group>"; };
+		C0283CEC2F7FFF3500582836 /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -421,6 +423,7 @@
 				61CFB5102EF1E693009E9624 /* Models */,
 				61E974212EF0AB9200D225C5 /* Preview Content */,
 				61CFB50F2EF1E67B009E9624 /* Resources */,
+				C0283CEC2F7FFF3500582836 /* LanguageManager.swift */,
 			);
 			path = ApexPerformance;
 			sourceTree = "<group>";
@@ -531,7 +534,7 @@
 			};
 			buildConfigurationList = 61E974132EF0AB9100D225C5 /* Build configuration list for PBXProject "ApexPerformance" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = hr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -586,6 +589,7 @@
 				61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */,
 				61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */,
 				61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */,
+				C0283CED2F7FFF3500582836 /* LanguageManager.swift in Sources */,
 				61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */,
 				61CFB5482EFC1770009E9624 /* AppEnvironment.swift in Sources */,
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,

@@ -39,10 +39,10 @@ enum ToastType {
     
     var title: LocalizedStringKey {
         switch self {
-        case .success: return LocalizedStringKey("success")
-        case .warning: return LocalizedStringKey("warning")
-        case .error: return LocalizedStringKey("error")
-        case .info: return LocalizedStringKey("info")
+        case .success: return "success"
+        case .warning: return "warning"
+        case .error: return "error"
+        case .info: return "info"
         }
     }
 }

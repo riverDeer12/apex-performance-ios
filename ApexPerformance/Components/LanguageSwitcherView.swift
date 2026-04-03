@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LanguageSwitcherView: View {
-    @AppStorage("appLanguage") private var appLanguage: String = "en"
+    @AppStorage("appLanguage") private var appLanguage: String = LanguageManager.getDefaultLanguage()
     
     var body: some View {
         Menu {

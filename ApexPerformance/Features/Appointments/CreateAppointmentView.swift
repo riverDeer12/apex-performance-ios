@@ -221,30 +221,13 @@ struct CreateAppointmentView: View {
             let url = AppEnvironment.apiURL.appendingPathComponent("coaches/current-coach")
             let response: Coach = try await APIClient.shared.request(url)
             
-            // Debug: Print current coach response
-            print("=== Set Current Coach Response ===")
-            print("Coach ID: \(response.id)")
-            print("Coach Name: \(response.fullName)")
-            print("Coach Email: \(response.email)")
-            print("==================================")
-            
             selectedCoachId = response.id
             selectedCoaches = [response.id]
             
-            // Optionally, you can also add the coach to the coaches array if needed
             coaches = [response]
             
             await loadTimeSlots(for: selectedDay)
         } catch {
-            print("=== Set Current Coach Error ===")
-            print("Error: \(error)")
-            print("Error type: \(type(of: error))")
-            if let localizedError = error as? LocalizedError {
-                print("Error description: \(localizedError.errorDescription ?? "N/A")")
-                print("Failure reason: \(localizedError.failureReason ?? "N/A")")
-            }
-            print("===============================")
-            
             errorMessage = mapError(error)
             toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
         }
@@ -347,8 +330,8 @@ struct CreateAppointmentView: View {
     private func createAppointment() async {
         do {
             _ = try await sendNewAppointmentToApi()
-            toastManager.show("successfully_created_appointment", type: ToastType.success)
-            dismiss()  // Dismiss view after successful creation
+            toastManager.show(LocalizedStringKey("successfully_created_appointment"), type: ToastType.success)
+            dismiss()
         } catch {
             errorMessage = mapError(error)
             toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
