@@ -155,7 +155,7 @@ struct AppointmentDetailsView: View {
                 TextAreaView(placeholder: "cancelation_comment_placeholder",
                              text: $cancelationComment)
                 
-                if(!authManager.hasRole(role: "Client")){
+                if(authManager.hasRole(role: "Client")){
                     HStack {
                         Button {
                             Task { await sendCancelation() }
