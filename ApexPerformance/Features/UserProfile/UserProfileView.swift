@@ -47,11 +47,7 @@ struct UserProfileView: View {
                     
                     CardView(title: "profile_management") {
                         VStack(spacing: 0) {
-                            
-                            LanguageSwitcherView()
-                            
-                            Divider().padding(.leading, 52)
-                            
+     
                             Button { changeUsername() } label: {
                                 SettingsRowView(
                                     icon: "pencil",

@@ -14,30 +14,21 @@ enum LanguageManager {
             return saved
         }
         
-        // Detect if user has Croatian locale (including en-HR)
-        let locale = Locale.current.identifier
-        let preferredLanguages = Locale.preferredLanguages
-        
-        // Check if any preferred language contains "hr" (Croatian)
-        if preferredLanguages.contains(where: { $0.lowercased().contains("hr") }) {
-            return "hr"
+        // Get the device's preferred language (first in the list)
+        guard let preferredLanguage = Locale.preferredLanguages.first else {
+            return "en" // Fallback to English
         }
         
-        // Check if current locale is Croatia-based
-        if locale.lowercased().contains("hr") {
-            return "hr"
+        // Extract language code (e.g., "en" from "en-US" or "hr" from "hr-HR")
+        let languageCode = String(preferredLanguage.prefix(2))
+        
+        // Check if we support this language
+        let supportedLanguages = ["en", "hr", "it"]
+        if supportedLanguages.contains(languageCode) {
+            return languageCode
         }
         
-        // Check if any preferred language contains "it" (Italian)
-        if preferredLanguages.contains(where: { $0.lowercased().contains("it") }) {
-            return "it"
-        }
-        
-        // Check if current locale is Italy-based
-        if locale.lowercased().contains("it") {
-            return "it"
-        }
-        
+        // Default to English if language not supported
         return "en"
     }
 }
