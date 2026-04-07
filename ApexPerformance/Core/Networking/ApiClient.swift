@@ -73,25 +73,49 @@ final class APIClient {
             request.setValue($0.value, forHTTPHeaderField: $0.key)
         }
         
+        print("🌐 API Request Debug")
+        print("URL: \(url.absoluteString)")
+        print("Method: \(method.rawValue)")
+        if let body, let bodyString = String(data: body, encoding: .utf8) {
+            print("Body: \(bodyString)")
+        }
+        
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let http = response as? HTTPURLResponse else {
+            print("❌ Bad server response")
             throw URLError(.badServerResponse)
         }
         
+        print("📥 Response Status: \(http.statusCode)")
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("📥 Response Body: \(responseString)")
+        }
+        
         if http.statusCode == 401 {
+            print("❌ Unauthorized (401)")
             throw AuthError.unauthorized
         }
         
         guard 200..<300 ~= http.statusCode else {
+            print("❌ Error status code: \(http.statusCode)")
             if let apiError = try? JSONDecoder().decode(ApiErrorResponse.self, from: data) {
+                print("❌ API Error: \(apiError)")
                 throw ApiError.validation(apiError)
             } else {
+                print("❌ Unknown server error - couldn't parse error response")
                 throw ApiError.server(message: "Unknown server error.")
             }
         }
         
-        return try Self.decoder.decode(T.self, from: data)
+        do {
+            let decoded = try Self.decoder.decode(T.self, from: data)
+            print("✅ Successfully decoded response")
+            return decoded
+        } catch {
+            print("❌ Decoding error: \(error)")
+            throw error
+        }
     }
 }
 

@@ -22,7 +22,7 @@ extension Appointment {
     }
     
     var isCompleted: Bool {
-        !isActive && status.name != BusinessStatus.approved.rawValue
+        !isActive && status.name == BusinessStatus.approved.rawValue
     }
 }
 

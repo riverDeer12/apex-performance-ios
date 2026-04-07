@@ -11,6 +11,7 @@ import SwiftUI
             ContentView()
                 .environmentObject(authManager)
                 .environmentObject(toastManager)
+                .preferredColorScheme(.light)
                 .overlay(alignment: .bottom) {
                     if let toast = toastManager.toast {
                         ToastView(messageKey: toast.message, toastType: toast.type)

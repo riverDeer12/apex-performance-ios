@@ -133,9 +133,9 @@ struct ChangePasswordView: View {
     
     private func sendChangePasswordRequest() async throws {
         struct ChangePasswordRequest: Encodable { let newPassword: String }
-        let url = AppEnvironment.apiURL.appendingPathComponent("authentication/reset-password")
+        let url = AppEnvironment.apiURL.appendingPathComponent("users/reset-password")
         let request = ChangePasswordRequest(newPassword: newPassword)
-        _ = try await APIClient.shared.request(url, method: .post, body: JSONEncoder().encode(request)) as StatusResponse
+        let response: StatusResponse = try await APIClient.shared.request(url, method: .post, body: JSONEncoder().encode(request))
     }
 }
 

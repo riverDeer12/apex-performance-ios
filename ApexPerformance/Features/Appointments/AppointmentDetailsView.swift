@@ -16,6 +16,16 @@ struct AppointmentDetailsView: View {
     @FocusState private var isFocused: Bool
     
     var body: some View {
+        let _ = print("=== Appointment isCompleted Debug ===")
+        let _ = print("isCompleted: \(appointment.isCompleted)")
+        let _ = print("isActive: \(appointment.isActive)")
+        let _ = print("Status name: '\(appointment.status.name)'")
+        let _ = print("Start time: \(appointment.startTime)")
+        let _ = print("Current time: \(Date())")
+        let _ = print("Is start time > now: \(appointment.startTime > Date())")
+        let _ = print("Status == Approved: \(appointment.status.name == BusinessStatus.approved.rawValue)")
+        let _ = print("====================================")
+        
         ScrollView {
             VStack(spacing: 16) {
                 
