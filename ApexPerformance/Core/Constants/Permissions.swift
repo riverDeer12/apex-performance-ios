@@ -16,4 +16,6 @@ enum Permissions {
     static let canGetAppointments = "CanGetAppointments"
     
     static let canCreateAppointment = "CanCreateAppointment"
+    
+    static let canGetAppointmentRequests = "CanGetAppointmentRequests"
 }

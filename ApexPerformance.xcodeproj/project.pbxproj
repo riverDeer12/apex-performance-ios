@@ -68,6 +68,10 @@
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
 		C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */; };
+		C0283CF02F8C1B5A00582836 /* AppointmentRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CEF2F8C1B5A00582836 /* AppointmentRequestsView.swift */; };
+		C0283CF42F8C265600582836 /* AppointmentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF32F8C265600582836 /* AppointmentRequest.swift */; };
+		C0283CF62F8C26CF00582836 /* AppointmentRequestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF52F8C26CF00582836 /* AppointmentRequestType.swift */; };
+		C0283CF82F8C36B200582836 /* AppointmentRequestDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF72F8C36B200582836 /* AppointmentRequestDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +159,10 @@
 		C0283CE52F709F2800582836 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = ApexPerformance/Features/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CE72F709F3800582836 /* ChangeUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangeUsernameView.swift; path = ApexPerformance/Features/ChangeUsernameView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBodyMeasurementView.swift; sourceTree = "<group>"; };
+		C0283CEF2F8C1B5A00582836 /* AppointmentRequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentRequestsView.swift; sourceTree = "<group>"; };
+		C0283CF32F8C265600582836 /* AppointmentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentRequest.swift; sourceTree = "<group>"; };
+		C0283CF52F8C26CF00582836 /* AppointmentRequestType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentRequestType.swift; sourceTree = "<group>"; };
+		C0283CF72F8C36B200582836 /* AppointmentRequestDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentRequestDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,6 +221,8 @@
 				61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */,
 				61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */,
 				61E63F872F196479004D74F3 /* CreateAppointmentView.swift */,
+				C0283CEF2F8C1B5A00582836 /* AppointmentRequestsView.swift */,
+				C0283CF72F8C36B200582836 /* AppointmentRequestDetailsView.swift */,
 			);
 			path = Appointments;
 			sourceTree = "<group>";
@@ -252,6 +262,7 @@
 				61CFB53C2EFAD55D009E9624 /* BodyMeasurement.swift */,
 				61CFB5302EF44374009E9624 /* Client.swift */,
 				61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */,
+				C0283CF32F8C265600582836 /* AppointmentRequest.swift */,
 				61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */,
 				61CFB5342EF453E7009E9624 /* TimeSlot.swift */,
 				61E63F662F0A7D52004D74F3 /* UserProfile.swift */,
@@ -259,6 +270,7 @@
 				61E63F722F115CFE004D74F3 /* StatusResponse.swift */,
 				61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */,
 				61E63F892F196E49004D74F3 /* AppointmentType.swift */,
+				C0283CF52F8C26CF00582836 /* AppointmentRequestType.swift */,
 				61E63F8B2F1970C2004D74F3 /* CreateAppointmentRequest.swift */,
 				61E63F8D2F1AC915004D74F3 /* GetTimeSlotsRequest.swift */,
 				61E63F8F2F1ACA50004D74F3 /* Coach.swift */,
@@ -593,6 +605,7 @@
 				61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */,
 				61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */,
 				61CFB5392EF457FB009E9624 /* AppointmentStatus.swift in Sources */,
+				C0283CF82F8C36B200582836 /* AppointmentRequestDetailsView.swift in Sources */,
 				61CFB5372EF455FC009E9624 /* DateFormatter.swift in Sources */,
 				61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */,
 				61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */,
@@ -603,10 +616,12 @@
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
 				C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */,
 				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
+				C0283CF62F8C26CF00582836 /* AppointmentRequestType.swift in Sources */,
 				C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */,
 				61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */,
 				61E63F732F115CFE004D74F3 /* StatusResponse.swift in Sources */,
 				61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */,
+				C0283CF42F8C265600582836 /* AppointmentRequest.swift in Sources */,
 				61E63F8C2F1970C2004D74F3 /* CreateAppointmentRequest.swift in Sources */,
 				61E63F772F119EF7004D74F3 /* ButtonContentView.swift in Sources */,
 				61E63F922F1C3491004D74F3 /* DateManager.swift in Sources */,
@@ -634,6 +649,7 @@
 				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
 				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
 				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
+				C0283CF02F8C1B5A00582836 /* AppointmentRequestsView.swift in Sources */,
 				61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
