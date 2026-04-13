@@ -470,19 +470,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Actions"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Upravljanje termina"
+            "value" : "Upravljanje"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Azioni"
           }
         }
@@ -580,19 +580,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Approve"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odobri"
+            "value" : "Prihvati"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Approva"
           }
         }
@@ -602,19 +602,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Approve request"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odobri zahtjev"
+            "value" : "Prihvati izmjenu"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Richiesta approvata"
           }
         }
@@ -625,18 +625,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Approve request"
+            "value" : "Approve client’s request."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odobri zahtjev"
+            "value" : "Odobravanje poslanog zahtjeva klijenta."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Richiesta approvata"
           }
         }
@@ -646,19 +646,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Approve request"
+            "state" : "needs_review",
+            "value" : "Approve client’s request"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odobri zahtjev"
+            "value" : "Odobravanje poslanog zahtjeva klijenta."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Richiesta approvata"
           }
         }
@@ -883,6 +883,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inserisci il motivo della cancellazione dell’appuntamento…"
+          }
+        }
+      }
+    },
+    "cancelation-request" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cancelation Request"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otkazivanje termina"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Richiesta di cancellazione"
           }
         }
       }
@@ -2383,19 +2406,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reject appointment"
+            "state" : "needs_review",
+            "value" : "Reject"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odbij zahtjev"
+            "value" : "Odbij izmjenu"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rifiuta richiesta"
           }
         }
@@ -2406,18 +2429,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reject appointment"
+            "value" : "Reject"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odbij zahtjev"
+            "value" : "Odbijanje poslanog zahtjeva klijenta."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rifiuta richiesta"
           }
         }
@@ -2428,18 +2451,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reject appointment"
+            "value" : "Reject client’s request."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odbij zahtjev"
+            "value" : "Odbijanje poslanog zahtjeva klijenta."
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rifiuta richiesta"
           }
         }
@@ -2603,19 +2626,19 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Review and action"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregled i akcija"
+            "value" : "Pregled i upravljanje zahtjevom"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rivedi e agisci"
           }
         }

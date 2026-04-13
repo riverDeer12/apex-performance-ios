@@ -76,7 +76,7 @@ struct AppointmentRequestsView: View {
                 icon: requestIcon(for: request.type.name),
                 iconTint: requestColor(for: request.type.name),
                 title: Text(request.sender.fullName),
-                subtitle: Text(request.type.name),
+                subtitle: Text(LocalizedStringKey(request.type.description.lowercased())),
                 showChevron: true
             )
             
@@ -99,10 +99,8 @@ struct AppointmentRequestsView: View {
     
     private func requestIcon(for typeName: String) -> String {
         switch typeName.lowercased() {
-        case "cancellationrequest", "cancelation":
-            return "xmark.circle"
-        case "reschedule":
-            return "calendar.badge.clock"
+        case "cancelationrequest":
+            return "calendar.badge.minus"
         default:
             return "questionmark.circle"
         }
@@ -110,10 +108,8 @@ struct AppointmentRequestsView: View {
     
     private func requestColor(for typeName: String) -> Color {
         switch typeName.lowercased() {
-        case "cancellationrequest", "cancelation":
+        case "cancelationrequest":
             return .red
-        case "reschedule":
-            return .orange
         default:
             return Color.apexMainColor
         }

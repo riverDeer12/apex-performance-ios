@@ -46,7 +46,7 @@ struct AppointmentRequestDetailsView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             Spacer()
-                            Text(request.type.name)
+                            Text(LocalizedStringKey(request.type.description.lowercased()))
                                 .font(.subheadline.weight(.medium))
                         }
                         
@@ -177,7 +177,7 @@ struct AppointmentRequestDetailsView: View {
         defer { isProcessing = false }
         
         do {
-            try await processRequest(action: "reject")
+            try await processRequest(action: "decline")
             toastManager.show("request_rejected_successfully", type: .success)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 dismiss()
@@ -190,7 +190,7 @@ struct AppointmentRequestDetailsView: View {
     
     private func processRequest(action: String) async throws {
         let url = AppEnvironment.apiURL.appendingPathComponent("appointment-requests/\(action)/\(request.id.uuidString)")
-        let _: StatusResponse = try await APIClient.shared.request(url, method: .post)
+        let _: StatusResponse = try await APIClient.shared.request(url)
     }
 }
 
