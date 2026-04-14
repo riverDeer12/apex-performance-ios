@@ -710,6 +710,28 @@
         }
       }
     },
+    "body_measurement_updated_successfully" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body Measurement updated successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mjera je uspješno ažurirana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misurazione corporea aggiornata con successo."
+          }
+        }
+      }
+    },
     "body_measurements" : {
       "localizations" : {
         "en" : {

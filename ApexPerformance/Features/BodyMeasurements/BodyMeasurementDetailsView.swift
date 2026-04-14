@@ -3,8 +3,10 @@ import SwiftUI
 struct BodyMeasurementDetailsView: View {
     let bodyMeasurement: BodyMeasurement
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toastManager: ToastManager
     
     @State private var form: BodyMeasurement
+    @State private var isSaving = false
     
     init(bodyMeasurement: BodyMeasurement) {
         self.bodyMeasurement = bodyMeasurement
@@ -70,13 +72,19 @@ struct BodyMeasurementDetailsView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    // TODO: implement save action
+                    Task { await updateBodyMeasurement() }
                 } label: {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(Color.apexMainColor)
+                    if isSaving {
+                        ProgressView()
+                            .scaleEffect(0.9)
+                    } else {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("save")
+                .disabled(isSaving)
             }
         }
     }
@@ -113,6 +121,48 @@ struct BodyMeasurementDetailsView: View {
         }
         .padding(.vertical, 10)
     }
+    
+    private func updateBodyMeasurement() async {
+        isSaving = true
+        defer { isSaving = false }
+        
+        do {
+            try await sendUpdateToAPI()
+            toastManager.show("body_measurement_updated_successfully", type: .success)
+            dismiss()
+        } catch {
+            let errorMessage = mapError(error)
+            toastManager.show(LocalizedStringKey(errorMessage), type: .error)
+        }
+    }
+    
+    private func sendUpdateToAPI() async throws {
+        struct UpdateBodyMeasurementRequest: Encodable {
+            let height, weight, shoulders, chest, upperArm, waist, thigh, calves, glutes: Decimal
+        }
+        
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("body-measurements")
+            .appendingPathComponent(bodyMeasurement.id.uuidString)
+        
+        let request = UpdateBodyMeasurementRequest(
+            height: form.height,
+            weight: form.weight,
+            shoulders: form.shoulders,
+            chest: form.chest,
+            upperArm: form.upperArm,
+            waist: form.waist,
+            thigh: form.thigh,
+            calves: form.calves,
+            glutes: form.glutes
+        )
+        
+        _ = try await APIClient.shared.request(
+            url,
+            method: .put,
+            body: JSONEncoder().encode(request)
+        ) as StatusResponse
+    }
 }
 #Preview("BodyMeasurementDetailsView") {
     // Sample data for preview
@@ -133,6 +183,7 @@ struct BodyMeasurementDetailsView: View {
     )
     NavigationStack {
         BodyMeasurementDetailsView(bodyMeasurement: sample)
+            .environmentObject(ToastManager())
     }
 }
 
