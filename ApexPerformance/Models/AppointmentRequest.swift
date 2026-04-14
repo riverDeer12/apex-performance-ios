@@ -6,5 +6,6 @@ struct AppointmentRequest: Identifiable, Decodable {
     let sender: Client
     let type: CatalogData
     let appointment: Appointment
+    let createdAt: Date
 }
 

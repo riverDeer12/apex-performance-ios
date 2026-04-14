@@ -66,17 +66,33 @@ struct AppointmentRequestsView: View {
             .task {
                 await loadData(showInitialSpinner: true)
             }
+            .onAppear {
+                if hasLoaded {
+                    Task {
+                        await loadData(showInitialSpinner: false)
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     private func requestRow(_ request: AppointmentRequest) -> some View {
         VStack(spacing: 0) {
+            
+            let title = authManager.hasRole(role: "Client") ?
+            request.type.description.lowercased() : request.sender.fullName
+            
+            let subtitle = authManager.hasRole(role: "Client") ?
+            DateFormatter.dateWithDots.string(from: request.appointment.startTime) + " - " +
+            (request.appointment.timeSlot.description ?? "") :
+                request.type.description.lowercased()
+ 
             SettingsRowView(
                 icon: requestIcon(for: request.type.name),
                 iconTint: requestColor(for: request.type.name),
-                title: Text(request.sender.fullName),
-                subtitle: Text(LocalizedStringKey(request.type.description.lowercased())),
+                title: Text(LocalizedStringKey(title)),
+                subtitle: Text(LocalizedStringKey(subtitle)),
                 showChevron: true
             )
             

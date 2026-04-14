@@ -20,6 +20,7 @@ struct CreateAppointmentView: View {
     @State var selectedAppointmentType: UUID? = nil
     @State var selectedClients: [UUID] = []
     @State var selectedCoachId: UUID? = nil
+    @State var selectedClientId: UUID? = nil
     @State var selectedCoaches: [UUID] = []
     
     // Data
@@ -102,29 +103,31 @@ struct CreateAppointmentView: View {
                     Picker("select_appointment_type", selection: $selectedAppointmentType) {
                         Text("select_value").tag(nil as UUID?)
                         ForEach(appointmentTypes, id: \.self.id) { appointmentType in
-                            Text(appointmentType.name)
+                            Text(LocalizedStringKey(appointmentType.description.lowercased()))
                                 .tag(Optional(appointmentType.id))
                         }
                     }
                     .disabled(isLoadingAppointmentTypes)
                 }
                 
-                Section("select_clients") {
-                    if isLoadingClients {
-                        ProgressView("loading_clients")
+                if(!authManager.hasRole(role: "Client")){
+                    Section("select_clients") {
+                        if isLoadingClients {
+                            ProgressView("loading_clients")
+                        }
+                        
+                        ForEach(clients) { client in
+                            Toggle(client.fullName, isOn: Binding(
+                                get: { selectedClients.contains(client.id) },
+                                set: { isOn in
+                                    if isOn { selectedClients.append(client.id) }
+                                    else { selectedClients.removeAll { $0 == client.id } }
+                                }
+                            ))
+                        }
                     }
-                    
-                    ForEach(clients) { client in
-                        Toggle(client.fullName, isOn: Binding(
-                            get: { selectedClients.contains(client.id) },
-                            set: { isOn in
-                                if isOn { selectedClients.append(client.id) }
-                                else { selectedClients.removeAll { $0 == client.id } }
-                            }
-                        ))
-                    }
+                    .disabled(isLoadingClients || clients.isEmpty)
                 }
-                .disabled(isLoadingClients || clients.isEmpty)
             }
             if isSaving {
                 Color.black.opacity(0.25).ignoresSafeArea()
@@ -178,7 +181,15 @@ struct CreateAppointmentView: View {
                 group.addTask { await loadCoaches() }
             }
             
-            group.addTask { await loadClients() }
+            if authManager.hasRole(role: "Client"){
+                group.addTask {
+                    await setCurrentClient()
+                }
+            } else {
+                group.addTask { await loadClients() }
+            }
+            
+            
             group.addTask { await loadAppointmentTypes() }
         }
     }
@@ -233,12 +244,37 @@ struct CreateAppointmentView: View {
         }
     }
     
+    @MainActor
+    private func setCurrentClient() async {
+        isLoadingClients = true
+        defer { isLoadingClients = false }
+        
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("clients/current-client")
+            let response: Client = try await APIClient.shared.request(url)
+            
+            selectedClientId = response.id
+            selectedClients = [response.id]
+            
+            clients = [response]
+            
+            await loadTimeSlots(for: selectedDay)
+        } catch {
+            errorMessage = mapError(error)
+            toastManager.show(LocalizedStringKey(errorMessage!), type: ToastType.error)
+        }
+    }
+    
     private func loadCoaches() async {
         isLoadingCoaches = true
         defer { isLoadingCoaches = false }
         
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent("coaches/all")
+            
+            let urlPrefix = authManager.hasRole(role: "Client") ? "client" : "all"
+            
+            let url = AppEnvironment.apiURL.appendingPathComponent("coaches/" + urlPrefix)
+            
             let response: [Coach] = try await APIClient.shared.request(url)
             
             coaches = response.map {

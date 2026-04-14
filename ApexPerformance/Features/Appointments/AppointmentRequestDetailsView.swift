@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AppointmentRequestDetailsView: View {
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
     @Environment(\.dismiss) private var dismiss
     
     let request: AppointmentRequest
@@ -36,6 +37,17 @@ struct AppointmentRequestDetailsView: View {
                                 .foregroundStyle(.secondary)
                             Spacer()
                             Text(request.sender.fullName)
+                                .font(.subheadline.weight(.medium))
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            Text("created_at")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text(DateFormatter.dateAndTimeWithDots.string(from: request.createdAt))
                                 .font(.subheadline.weight(.medium))
                         }
                         
@@ -83,43 +95,46 @@ struct AppointmentRequestDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
-                // Actions card
-                CardView(title: "actions") {
-                    VStack(spacing: 0) {
-                        Button {
-                            showApproveDialog = true
-                        } label: {
-                            SettingsRowView(
-                                icon: "checkmark.circle",
-                                iconTint: .green,
-                                title: Text("approve_request"),
-                                subtitle: Text("approve_request_info"),
-                                showChevron: true,
-                                titleColor: .green
-                            )
+                
+                if !authManager.hasRole(role: "Client") {
+                    // Actions card
+                    CardView(title: "actions") {
+                        VStack(spacing: 0) {
+                            Button {
+                                showApproveDialog = true
+                            } label: {
+                                SettingsRowView(
+                                    icon: "checkmark.circle",
+                                    iconTint: .green,
+                                    title: Text("approve_request"),
+                                    subtitle: Text("approve_request_info"),
+                                    showChevron: true,
+                                    titleColor: .green
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(isProcessing)
+                            
+                            Divider().padding(.leading, 52)
+                            
+                            Button(role: .destructive) {
+                                showRejectDialog = true
+                            } label: {
+                                SettingsRowView(
+                                    icon: "xmark.circle",
+                                    iconTint: .red,
+                                    title: Text("reject_request"),
+                                    subtitle: Text("reject_request_info"),
+                                    showChevron: true,
+                                    titleColor: .red
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(isProcessing)
                         }
-                        .buttonStyle(.plain)
-                        .disabled(isProcessing)
-                        
-                        Divider().padding(.leading, 52)
-                        
-                        Button(role: .destructive) {
-                            showRejectDialog = true
-                        } label: {
-                            SettingsRowView(
-                                icon: "xmark.circle",
-                                iconTint: .red,
-                                title: Text("reject_request"),
-                                subtitle: Text("reject_request_info"),
-                                showChevron: true,
-                                titleColor: .red
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(isProcessing)
                     }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
                 
                 Spacer(minLength: 12)
             }
@@ -230,7 +245,8 @@ struct AppointmentRequestDetailsView: View {
                         description: "Approved"
                     ),
                     clients: []
-                )
+                ),
+                createdAt: Date.now
             )
         )
         .environmentObject(AuthManager())

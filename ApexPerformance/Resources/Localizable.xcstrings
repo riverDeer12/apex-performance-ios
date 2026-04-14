@@ -510,6 +510,50 @@
         }
       }
     },
+    "appointment_approved_successfully" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appointment approved successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termin je uspješno odobren."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuntamento approvato con successo."
+          }
+        }
+      }
+    },
+    "appointment_declined_successfully" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appointment declined succ"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termin je uspješno odbijen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuntamento rifiutato con successo."
+          }
+        }
+      }
+    },
     "appointment_requests" : {
       "localizations" : {
         "en" : {
@@ -682,6 +726,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vuoi approvare l'appuntamento?"
+          }
+        }
+      }
+    },
+    "approved_appointments" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Appointments"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trenutni termini"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuntamenti in corso"
+          }
+        }
+      }
+    },
+    "arms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arms"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruke"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Braccia"
+          }
+        }
+      }
+    },
+    "back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leđa"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schiena"
           }
         }
       }
@@ -932,6 +1044,29 @@
         }
       }
     },
+    "cardio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kardio"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio"
+          }
+        }
+      }
+    },
     "change_password" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1155,6 +1290,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contatto"
+          }
+        }
+      }
+    },
+    "created_at" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created at"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrijeme kreiranja"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creato a"
           }
         }
       }
@@ -1728,6 +1885,29 @@
         }
       }
     },
+    "legs" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legs"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noge"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gambe"
+          }
+        }
+      }
+    },
     "loading_appointment_types" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2183,19 +2363,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No requests"
+            "value" : "No new requests."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nema zahtjeva"
+            "value" : "Nema novih zahtjeva."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nessuna richiesta"
+            "value" : "Nessuna nuova richiesta."
           }
         }
       }
@@ -2287,6 +2467,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Password modificata con successo"
+          }
+        }
+      }
+    },
+    "pending_approvals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending approvals"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novi termini"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuntamenti in attesa approvazione"
           }
         }
       }
@@ -2958,6 +3160,29 @@
         }
       }
     },
+    "strength-and-conditioning" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Strength and Conditioning"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snaga i kondicija"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Forza e condizionamento"
+          }
+        }
+      }
+    },
     "success" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3143,19 +3368,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "List of upcoming and new sessions"
+            "value" : "List of all registered appointments"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nadolazeći i prošli termini"
+            "value" : "Pregled svih termina"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sessioni future e passate"
+            "state" : "needs_review",
+            "value" : "Elenco degli appuntamenti registrati"
           }
         }
       }
