@@ -4,5 +4,9 @@
 <dict>
 	<key>API_URL</key>
 	<string>${API_URL}</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

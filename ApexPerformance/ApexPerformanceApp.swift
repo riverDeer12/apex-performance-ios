@@ -1,7 +1,10 @@
 
 import SwiftUI
+import FirebaseCore
 
 @main struct ApexPerformanceApp: App {
+    // AppDelegate connection to handle Firebase and push notifications
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     @StateObject private var authManager = AuthManager()
     @StateObject private var toastManager = ToastManager()
