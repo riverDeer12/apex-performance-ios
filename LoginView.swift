@@ -123,12 +123,13 @@ struct LoginView: View {
                                             .tint(.white)
                                     }
                                 }
+                                .frame(maxWidth: .infinity)
                                 .frame(height: 48)
+                                .background(Color.apexMainColor)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
                             }
-                            .frame(maxWidth: .infinity)
-                            .background(Color.apexMainColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .buttonStyle(.plain)
                             .disabled(isLoading)
                         }
                     }

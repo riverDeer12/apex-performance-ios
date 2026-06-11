@@ -1635,6 +1635,31 @@
         }
       }
     },
+    "generate_recurring_appointments" : {
+
+    },
+    "generating_recurring_appointments" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating new appointments..."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generiranje novih termina…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generazione di nuovi termini…"
+          }
+        }
+      }
+    },
     "glutes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2336,6 +2361,9 @@
         }
       }
     },
+    "no_client" : {
+
+    },
     "no_measurements" : {
       "localizations" : {
         "en" : {
@@ -2600,6 +2628,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gestione del profilo"
+          }
+        }
+      }
+    },
+    "recurring_appointments_generated_successfully" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appointments are successfully generated."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termini su uspješno generirani."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le date sono state generate correttamente."
           }
         }
       }

@@ -9,8 +9,10 @@ struct AppointmentsView: View {
     @State private var processingAppointmentId: UUID?
     
     @State private var showCreateAppointmentForm = false
+    @State private var isGeneratingRecurring = false
     
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
     
     var body: some View {
         NavigationStack {
@@ -96,6 +98,37 @@ struct AppointmentsView: View {
                     ProgressView()
                 }
             }
+            .overlay {
+                if isGeneratingRecurring {
+                    ZStack {
+                        Color.black.opacity(0.4)
+                            .ignoresSafeArea()
+                        
+                        VStack(spacing: 20) {
+                            Image("logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                            
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(Color.apexMainColor)
+                            
+                            Text("generating_recurring_appointments")
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(40)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                        )
+                        .padding(.horizontal, 40)
+                    }
+                }
+            }
             .refreshable {
                 await loadData(showInitialSpinner: false)
             }
@@ -104,7 +137,21 @@ struct AppointmentsView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    
+                    if(authManager.hasRole(role: "Coach")){
+                        Button {
+                            Task { await generateRecurringAppointments() }
+                        } label: {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel("generate_recurring_appointments")
+                        .buttonStyle(.plain)
+                        .disabled(isGeneratingRecurring)
+                        .padding(.trailing, 8)
+                    }
+                    
                     Button {
                         showCreateAppointmentForm = true
                     } label: {
@@ -123,13 +170,59 @@ struct AppointmentsView: View {
     }
     
     private func appointmentRow(_ appointment: Appointment) -> some View {
-        SettingsRowView(
-            icon: appointment.isActive ? "calendar" : "checkmark.diamond",
-            iconTint: appointment.isActive ? Color.apexMainColor : .green,
-            title: Text(DateFormatter.dateWithDots.string(from: appointment.startTime)),
-            subtitle: Text(appointment.timeSlot.description ?? "unknown_value"),
-            showChevron: true
-        )
+        HStack(spacing: 12) {
+            // Icon
+            ZStack {
+                Circle()
+                    .fill((appointment.isActive ? Color.apexMainColor : Color.green).opacity(0.15))
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: appointment.isActive ? "calendar" : "checkmark.diamond")
+                    .foregroundStyle(appointment.isActive ? Color.apexMainColor : .green)
+                    .font(.system(size: 18))
+            }
+            
+            // Client name(s) on the left
+            VStack(alignment: .leading, spacing: 2) {
+                if !appointment.clients.isEmpty {
+                    // Display first client's name split into two lines
+                    let client = appointment.clients[0]
+                    Text(client.firstName)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    
+                    Text(client.lastName)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                } else {
+                    Text("no_client")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            // Date and Time on the right
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(appointment.timeSlot.description ?? "unknown_value")
+                    .font(.body.bold())
+                    .foregroundStyle(.primary)
+                
+                Text(DateFormatter.dateWithDots.string(from: appointment.startTime))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
         .contentShape(Rectangle())
     }
     
@@ -295,6 +388,23 @@ struct AppointmentsView: View {
             toastManager.show("appointment_declined_successfully", type: .success)
             
             // Reload data to refresh the lists
+            await loadData(showInitialSpinner: false)
+        } catch {
+            let errorMessage = mapError(error)
+            toastManager.show(LocalizedStringKey(errorMessage), type: .error)
+        }
+    }
+    
+    private func generateRecurringAppointments() async {
+        isGeneratingRecurring = true
+        defer { isGeneratingRecurring = false }
+        
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("recurring-appointments/generate-next-week")
+            let _: Int = try await APIClient.shared.request(url)
+            
+            toastManager.show("recurring_appointments_generated_successfully", type: .success)
+
             await loadData(showInitialSpinner: false)
         } catch {
             let errorMessage = mapError(error)

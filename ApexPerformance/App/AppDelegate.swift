@@ -102,16 +102,39 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     let platform: String = "ios"
                 }
                 
-                let request = FCMTokenRequest(token: token)
-                let _: StatusResponse = try await APIClient.shared.request(
-                    url,
-                    method: .post,
-                    body: JSONEncoder().encode(request)
-                )
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.setValue("application/json", forHTTPHeaderField: "Accept")
+                
+                if let authToken = KeychainService.shared.getToken() {
+                    request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+                }
+                
+                let tokenRequest = FCMTokenRequest(token: token)
+                request.httpBody = try JSONEncoder().encode(tokenRequest)
+                
+                print("🌐 Sending FCM token to server...")
+                
+                let (data, response) = try await URLSession.shared.data(for: request)
+                
+                guard let http = response as? HTTPURLResponse else {
+                    throw URLError(.badServerResponse)
+                }
+                
+                print("📥 FCM Token Response Status: \(http.statusCode)")
+                if let responseString = String(data: data, encoding: .utf8), !responseString.isEmpty {
+                    print("📥 FCM Token Response Body: \(responseString)")
+                }
+                
+                guard 200..<300 ~= http.statusCode else {
+                    throw URLError(.badServerResponse)
+                }
                 
                 print("✅ FCM token sent to server successfully")
             } catch {
                 print("❌ Failed to send FCM token to server: \(error)")
+                // Don't fail silently - this is important for debugging but not critical for app functionality
             }
         }
     }
