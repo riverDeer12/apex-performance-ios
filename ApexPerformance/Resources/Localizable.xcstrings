@@ -1636,7 +1636,26 @@
       }
     },
     "generate_recurring_appointments" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate next week appointments."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generiraj raspored za slijedeći tjedan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generare un programma per la settimana successiva"
+          }
+        }
+      }
     },
     "generating_recurring_appointments" : {
       "localizations" : {
@@ -2362,7 +2381,26 @@
       }
     },
     "no_client" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No client."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema klijenta."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non c'è nessun cliente"
+          }
+        }
+      }
     },
     "no_measurements" : {
       "localizations" : {
@@ -3296,6 +3334,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuntamento creato con successo."
+          }
+        }
+      }
+    },
+    "successfully_joined_appointment" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join request successfully sent."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uspješno poslan zahtjev."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richiesta inviata con successo."
           }
         }
       }

@@ -154,7 +154,7 @@ struct CreateAppointmentView: View {
                         ProgressView()
                             .scaleEffect(0.9)
                     } else {
-                        Image(systemName: "checkmark")
+                        Image(systemName: isSelectedTimeSlotTaken ? "person.line.dotted.person" : "checkmark")
                             .foregroundStyle(Color.apexMainColor)
                         
                     }
@@ -214,7 +214,9 @@ struct CreateAppointmentView: View {
                     name: $0.name,
                     day: $0.day,
                     startTime: $0.startTime,
-                    endTime: $0.endTime
+                    endTime: $0.endTime,
+                    isTaken: $0.isTaken,
+                    appointmentId: $0.appointmentId
                 )
             }
         } catch {
@@ -363,10 +365,23 @@ struct CreateAppointmentView: View {
         !isSaving
     }
     
+    private var isSelectedTimeSlotTaken: Bool {
+        guard let selectedTimeSlot = selectedTimeSlot,
+              let timeSlot = timeSlots.first(where: { $0.id == selectedTimeSlot }) else {
+            return false
+        }
+        return timeSlot.isTaken ?? false
+    }
+    
     private func createAppointment() async {
         do {
-            _ = try await sendNewAppointmentToApi()
-            toastManager.show(LocalizedStringKey("successfully_created_appointment"), type: ToastType.success)
+            if isSelectedTimeSlotTaken {
+                _ = try await joinExistingAppointment()
+                toastManager.show(LocalizedStringKey("successfully_joined_appointment"), type: ToastType.success)
+            } else {
+                _ = try await sendNewAppointmentToApi()
+                toastManager.show(LocalizedStringKey("successfully_created_appointment"), type: ToastType.success)
+            }
             dismiss()
         } catch {
             errorMessage = mapError(error)
@@ -425,6 +440,20 @@ struct CreateAppointmentView: View {
         let response: StatusResponse = try await APIClient.shared.request(url, method: HTTPMethod.post, body: JSONEncoder().encode(request))
                 
         return response;
+    }
+    
+    private func joinExistingAppointment() async throws -> StatusResponse {
+        guard let selectedTimeSlot = selectedTimeSlot,
+              let timeSlot = timeSlots.first(where: { $0.id == selectedTimeSlot }),
+              let appointmentId = timeSlot.appointmentId else {
+            throw NSError(domain: "CreateAppointmentView", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid or missing appointment ID"])
+        }
+        
+        let url = AppEnvironment.apiURL.appendingPathComponent("appointment-requests/join/\(appointmentId)")
+        
+        let response: StatusResponse = try await APIClient.shared.request(url, method: HTTPMethod.get, body: nil)
+        
+        return response
     }
 }
 
