@@ -25,11 +25,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
             completionHandler: { granted, error in
+                #if DEBUG
                 if granted {
                     print("✅ Notification permission granted")
                 } else {
                     print("❌ Notification permission denied")
                 }
+                #endif
             }
         )
         
@@ -43,8 +45,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // MARK: - FCM Token
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("🔑 FCM Token: \(fcmToken ?? "nil")")
-        
         // Send this token to your backend server
         if let token = fcmToken {
             sendTokenToServer(token)
@@ -55,34 +55,33 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        print("📱 APNs Token registered")
     }
-    
+
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        #if DEBUG
         print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
+        #endif
     }
-    
+
     // MARK: - Handle Notifications
-    
+
     // Called when notification arrives while app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
-        print("📩 Notification received in foreground: \(userInfo)")
-        
+
         // Show notification even when app is in foreground
         completionHandler([[.banner, .sound, .badge]])
     }
-    
+
     // Called when user taps on notification
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        print("👆 Notification tapped: \(userInfo)")
-        
+
         // Handle notification tap
         handleNotificationTap(userInfo: userInfo)
         
@@ -113,28 +112,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 
                 let tokenRequest = FCMTokenRequest(token: token)
                 request.httpBody = try JSONEncoder().encode(tokenRequest)
-                
-                print("🌐 Sending FCM token to server...")
-                
-                let (data, response) = try await URLSession.shared.data(for: request)
-                
-                guard let http = response as? HTTPURLResponse else {
+
+                let (_, response) = try await URLSession.shared.data(for: request)
+
+                guard let http = response as? HTTPURLResponse,
+                      200..<300 ~= http.statusCode else {
                     throw URLError(.badServerResponse)
                 }
-                
-                print("📥 FCM Token Response Status: \(http.statusCode)")
-                if let responseString = String(data: data, encoding: .utf8), !responseString.isEmpty {
-                    print("📥 FCM Token Response Body: \(responseString)")
-                }
-                
-                guard 200..<300 ~= http.statusCode else {
-                    throw URLError(.badServerResponse)
-                }
-                
-                print("✅ FCM token sent to server successfully")
             } catch {
+                #if DEBUG
                 print("❌ Failed to send FCM token to server: \(error)")
-                // Don't fail silently - this is important for debugging but not critical for app functionality
+                #endif
             }
         }
     }

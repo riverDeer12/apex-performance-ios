@@ -73,47 +73,59 @@ final class APIClient {
             request.setValue($0.value, forHTTPHeaderField: $0.key)
         }
         
+        #if DEBUG
         print("🌐 API Request Debug")
         print("URL: \(url.absoluteString)")
         print("Method: \(method.rawValue)")
-        if let body, let bodyString = String(data: body, encoding: .utf8) {
-            print("Body: \(bodyString)")
-        }
-        
+        #endif
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let http = response as? HTTPURLResponse else {
+            #if DEBUG
             print("❌ Bad server response")
+            #endif
             throw URLError(.badServerResponse)
         }
-        
+
+        #if DEBUG
         print("📥 Response Status: \(http.statusCode)")
-        if let responseString = String(data: data, encoding: .utf8) {
-            print("📥 Response Body: \(responseString)")
-        }
-        
+        #endif
+
         if http.statusCode == 401 {
+            #if DEBUG
             print("❌ Unauthorized (401)")
+            #endif
             throw AuthError.unauthorized
         }
-        
+
         guard 200..<300 ~= http.statusCode else {
+            #if DEBUG
             print("❌ Error status code: \(http.statusCode)")
+            #endif
             if let apiError = try? JSONDecoder().decode(ApiErrorResponse.self, from: data) {
+                #if DEBUG
                 print("❌ API Error: \(apiError)")
+                #endif
                 throw ApiError.validation(apiError)
             } else {
+                #if DEBUG
                 print("❌ Unknown server error - couldn't parse error response")
+                #endif
                 throw ApiError.server(message: "Unknown server error.")
             }
         }
-        
+
         do {
             let decoded = try Self.decoder.decode(T.self, from: data)
+            #if DEBUG
             print("✅ Successfully decoded response")
+            #endif
             return decoded
         } catch {
+            #if DEBUG
             print("❌ Decoding error: \(error)")
+            #endif
             throw error
         }
     }
