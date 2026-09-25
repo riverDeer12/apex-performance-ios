@@ -29,7 +29,7 @@ final class NotificationRouter: ObservableObject {
         switch notificationType {
         case "appointment_request":
             pendingTab = .appointmentRequests
-        case "appointment_approved":
+        case "appointment_updated":
             pendingTab = .appointments
         case "body_measurement":
             pendingTab = .bodyMeasurements
