@@ -21,14 +21,13 @@ struct HomeView: View {
                     }
             }
             
-            // TODO: add permission check in future
-            AppointmentRequestsView()
-                .tabItem {
-                    Label("", systemImage: "calendar.badge.clock")
+            if(authManager.hasPermission(permission: Permissions.canGetAppointmentRequests)){
+                AppointmentRequestsView()
+                    .tabItem {
+                        Label("", systemImage: "calendar.badge.clock")
+                    }
             }
-        
 
-            
             if(authManager.hasPermission(permission: Permissions.canGetWorkouts)){
                 WorkoutsView()
                     .tabItem {
