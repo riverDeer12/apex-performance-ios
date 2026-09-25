@@ -36,7 +36,8 @@ struct MyBodyMeasurementsView: View {
                                 .foregroundStyle(.secondary)
                                 .padding(.horizontal, 20)
 
-                            HStack(spacing: 12) {
+                            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                                StatTileView(value: DateFormatter.dateWithDots.string(from: latest.measuredAt), label: "date")
                                 StatTileView(value: formatted(latest.weight, unit: "kg"), label: "weight")
                                 StatTileView(value: formatted(latest.waist, unit: "cm"), label: "waist")
                                 StatTileView(value: formatted(latest.chest, unit: "cm"), label: "chest")
