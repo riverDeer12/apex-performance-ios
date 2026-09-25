@@ -62,6 +62,8 @@
 		61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E9741F2EF0AB9200D225C5 /* Assets.xcassets */; };
 		61E974232EF0AB9200D225C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */; };
 		61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */; };
+		0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */; };
+		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */; };
 		61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
@@ -156,6 +158,8 @@
 		61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceTests.swift; sourceTree = "<group>"; };
+		6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoderTests.swift; sourceTree = "<group>"; };
+		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -458,6 +462,8 @@
 			isa = PBXGroup;
 			children = (
 				61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */,
+				6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */,
+				F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */,
 			);
 			path = ApexPerformanceTests;
 			sourceTree = "<group>";
@@ -676,6 +682,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */,
+				0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */,
+				B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,7 +17,7 @@ struct JWTPayload: Decodable {
     let nbf: Int
 }
 
-enum JWTDecoderError: Error {
+enum JWTDecoderError: Error, Equatable {
     case invalidFormat
     case invalidBase64
     case invalidJSON
