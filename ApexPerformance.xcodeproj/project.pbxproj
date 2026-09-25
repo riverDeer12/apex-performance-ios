@@ -34,6 +34,7 @@
 		61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5522F02C658009E9624 /* WorkoutsView.swift */; };
 		61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5552F02D1F4009E9624 /* Permissions.swift */; };
 		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
+		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
@@ -128,6 +129,7 @@
 		61CFB5522F02C658009E9624 /* WorkoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsView.swift; sourceTree = "<group>"; };
 		61CFB5552F02D1F4009E9624 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
+		1C0D873D691520A8AD453624 /* CalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMonthView.swift; sourceTree = "<group>"; };
 		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
@@ -236,6 +238,7 @@
 				61E63F872F196479004D74F3 /* CreateAppointmentView.swift */,
 				C0283CEF2F8C1B5A00582836 /* AppointmentRequestsView.swift */,
 				C0283CF72F8C36B200582836 /* AppointmentRequestDetailsView.swift */,
+				1C0D873D691520A8AD453624 /* CalendarMonthView.swift */,
 			);
 			path = Appointments;
 			sourceTree = "<group>";
@@ -636,6 +639,7 @@
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
+				ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */,
 				C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */,
 				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
 				C0283CF62F8C26CF00582836 /* AppointmentRequestType.swift in Sources */,

@@ -2380,6 +2380,28 @@
         }
       }
     },
+    "no_appointments_for_selected_day" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No appointments for this day."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema termina za ovaj dan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun appuntamento per questo giorno"
+          }
+        }
+      }
+    },
     "no_client" : {
       "localizations" : {
         "en" : {

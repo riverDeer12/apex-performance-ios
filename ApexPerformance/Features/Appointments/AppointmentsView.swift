@@ -10,6 +10,7 @@ struct AppointmentsView: View {
     
     @State private var showCreateAppointmentForm = false
     @State private var isGeneratingRecurring = false
+    @State private var selectedDate = Calendar.current.startOfDay(for: Date())
     
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
@@ -62,33 +63,50 @@ struct AppointmentsView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
                     }
-                    
-                    // Content card
+
+                    // Calendar
                     CardView {
-                        if appointments.isEmpty, !isInitialLoading {
-                            Text("no_appointments")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 8)
-                        } else {
-                            VStack(spacing: 0) {
-                                ForEach(appointments) { appointment in
-                                    NavigationLink {
-                                        AppointmentDetailsView(appointment: appointment)
-                                    } label: {
-                                        appointmentRow(appointment)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .opacity(appointment.isActive ? 1 : 0.80)
-                                    
-                                    if appointment.id != appointments.last?.id {
-                                        Divider().padding(.leading, 52)
+                        CalendarMonthView(
+                            selectedDate: $selectedDate,
+                            approvedDates: approvedDates,
+                            pendingDates: pendingDatesByDay
+                        )
+                    }
+                    .padding(.horizontal, 20)
+
+                    // Selected day appointments
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(DateFormatter.dateWithDots.string(from: selectedDate))
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 20)
+
+                        CardView {
+                            if appointmentsForSelectedDate.isEmpty, !isInitialLoading {
+                                Text("no_appointments_for_selected_day")
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 8)
+                            } else {
+                                VStack(spacing: 0) {
+                                    ForEach(appointmentsForSelectedDate) { appointment in
+                                        NavigationLink {
+                                            AppointmentDetailsView(appointment: appointment)
+                                        } label: {
+                                            appointmentRow(appointment)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .opacity(appointment.isActive ? 1 : 0.80)
+
+                                        if appointment.id != appointmentsForSelectedDate.last?.id {
+                                            Divider().padding(.leading, 52)
+                                        }
                                     }
                                 }
                             }
                         }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal, 20)
                 }
                 .padding(.bottom, 24)
             }
@@ -168,7 +186,21 @@ struct AppointmentsView: View {
             }
         }
     }
-    
+
+    private var approvedDates: Set<Date> {
+        Set(appointments.map { Calendar.current.startOfDay(for: $0.startTime) })
+    }
+
+    private var pendingDatesByDay: Set<Date> {
+        Set(pendingAppointments.map { Calendar.current.startOfDay(for: $0.startTime) })
+    }
+
+    private var appointmentsForSelectedDate: [Appointment] {
+        appointments
+            .filter { Calendar.current.isDate($0.startTime, inSameDayAs: selectedDate) }
+            .sorted { $0.startTime < $1.startTime }
+    }
+
     private func appointmentRow(_ appointment: Appointment) -> some View {
         HStack(spacing: 12) {
             // Icon
