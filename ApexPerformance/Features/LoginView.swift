@@ -100,7 +100,8 @@ struct LoginView: View {
                                         )
                                                                                 
                                         authManager.login(token: response.token)
-                                    
+                                        PushTokenService.registerCurrentToken()
+
                                     } catch {
                                         errorMessage = mapError(error)
                                         print(error)

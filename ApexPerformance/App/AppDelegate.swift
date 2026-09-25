@@ -45,9 +45,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // MARK: - FCM Token
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        // Send this token to your backend server
         if let token = fcmToken {
-            sendTokenToServer(token)
+            PushTokenService.register(token)
         }
     }
     
@@ -70,8 +69,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        let userInfo = notification.request.content.userInfo
-
         // Show notification even when app is in foreground
         completionHandler([[.banner, .sound, .badge]])
     }
@@ -80,86 +77,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
+        if let type = response.notification.request.content.userInfo["type"] as? String {
+            Task { @MainActor in
+                NotificationRouter.shared.handle(notificationType: type)
+            }
+        }
 
-        // Handle notification tap
-        handleNotificationTap(userInfo: userInfo)
-        
         completionHandler()
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func sendTokenToServer(_ token: String) {
-        // Send FCM token to your backend
-        Task {
-            do {
-                let url = AppEnvironment.apiURL.appendingPathComponent("fcm-tokens")
-                
-                struct FCMTokenRequest: Encodable {
-                    let token: String
-                    let platform: String = "ios"
-                }
-                
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.setValue("application/json", forHTTPHeaderField: "Accept")
-                
-                if let authToken = KeychainService.shared.getToken() {
-                    request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-                }
-                
-                let tokenRequest = FCMTokenRequest(token: token)
-                request.httpBody = try JSONEncoder().encode(tokenRequest)
-
-                let (_, response) = try await URLSession.shared.data(for: request)
-
-                guard let http = response as? HTTPURLResponse,
-                      200..<300 ~= http.statusCode else {
-                    throw URLError(.badServerResponse)
-                }
-            } catch {
-                #if DEBUG
-                print("❌ Failed to send FCM token to server: \(error)")
-                #endif
-            }
-        }
-    }
-    
-    private func handleNotificationTap(userInfo: [AnyHashable: Any]) {
-        // Handle deep linking based on notification data
-        // You can post notifications to navigate to specific screens
-        
-        if let type = userInfo["type"] as? String {
-            switch type {
-            case "appointment_request":
-                // Navigate to appointment requests screen
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("NavigateToAppointmentRequests"),
-                    object: nil,
-                    userInfo: userInfo
-                )
-                
-            case "appointment_approved":
-                // Navigate to appointments screen
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("NavigateToAppointments"),
-                    object: nil,
-                    userInfo: userInfo
-                )
-                
-            case "body_measurement":
-                // Navigate to measurements screen
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("NavigateToBodyMeasurements"),
-                    object: nil,
-                    userInfo: userInfo
-                )
-                
-            default:
-                print("⚠️ Unknown notification type: \(type)")
-            }
-        }
     }
 }

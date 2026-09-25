@@ -16,6 +16,8 @@
 		61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */; };
 		61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5212EF1F0C8009E9624 /* KeychainService.swift */; };
 		61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5242EF1F1A3009E9624 /* ApiClient.swift */; };
+		850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96920DE3EEA0A6620BD41065 /* PushTokenService.swift */; };
+		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
 		61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5262EF1F1F4009E9624 /* AuthManager.swift */; };
 		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
 		61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52C2EF44204009E9624 /* ClientsView.swift */; };
@@ -108,6 +110,7 @@
 		61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorHandler.swift; sourceTree = "<group>"; };
 		61CFB5212EF1F0C8009E9624 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		61CFB5242EF1F1A3009E9624 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
+		96920DE3EEA0A6620BD41065 /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		61CFB5262EF1F1F4009E9624 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthManager.swift; path = ApexPerformance/Core/Networking/AuthManager.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		61CFB52C2EF44204009E9624 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
@@ -138,6 +141,7 @@
 		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		61E63F6A2F0C368C004D74F3 /* ToastType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastType.swift; sourceTree = "<group>"; };
 		61E63F6C2F0EA243004D74F3 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
+		A884F28D08EB4F168066D594 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorResponse.swift; sourceTree = "<group>"; };
 		61E63F702F0EC673004D74F3 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		61E63F722F115CFE004D74F3 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
@@ -326,6 +330,7 @@
 			children = (
 				61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */,
 				61CFB5242EF1F1A3009E9624 /* ApiClient.swift */,
+				96920DE3EEA0A6620BD41065 /* PushTokenService.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 			children = (
 				61E63F6C2F0EA243004D74F3 /* ToastManager.swift */,
 				61E63F912F1C3491004D74F3 /* DateManager.swift */,
+				A884F28D08EB4F168066D594 /* NotificationRouter.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -675,6 +681,8 @@
 				C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */,
 				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
 				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
+				850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */,
+				8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */,
 				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
 				C0283CF02F8C1B5A00582836 /* AppointmentRequestsView.swift in Sources */,
 				61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */,
