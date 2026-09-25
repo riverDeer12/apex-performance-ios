@@ -10,6 +10,7 @@ enum AppTab: Hashable {
     case appointmentRequests
     case workouts
     case clients
+    case bodyMeasurements
     case profile
 }
 
@@ -31,7 +32,7 @@ final class NotificationRouter: ObservableObject {
         case "appointment_approved":
             pendingTab = .appointments
         case "body_measurement":
-            pendingTab = .clients
+            pendingTab = .bodyMeasurements
         default:
             #if DEBUG
             print("⚠️ Unknown notification type: \(notificationType)")

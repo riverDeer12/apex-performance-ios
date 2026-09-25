@@ -20,6 +20,7 @@ struct HomeView: View {
         if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) { tabs.append(.appointmentRequests) }
         if authManager.hasPermission(permission: Permissions.canGetWorkouts) { tabs.append(.workouts) }
         if !authManager.hasRole(role: "Client") { tabs.append(.clients) }
+        if authManager.hasRole(role: "Client") { tabs.append(.bodyMeasurements) }
         tabs.append(.profile)
         return tabs
     }
@@ -59,6 +60,14 @@ struct HomeView: View {
                     .tag(AppTab.clients)
             }
 
+            if availableTabs.contains(.bodyMeasurements) {
+                MyBodyMeasurementsView()
+                    .tabItem {
+                        Label("", systemImage: "ruler")
+                    }
+                    .tag(AppTab.bodyMeasurements)
+            }
+
             UserProfileView()
                 .tabItem {
                     Label("", systemImage: "person")
@@ -78,8 +87,12 @@ struct HomeView: View {
     }
 
     private func openPendingTab() {
-        guard let tab = notificationRouter.pendingTab else { return }
+        guard var tab = notificationRouter.pendingTab else { return }
         notificationRouter.pendingTab = nil
+        // Coaches see measurements through their clients list.
+        if tab == .bodyMeasurements && !availableTabs.contains(.bodyMeasurements) {
+            tab = .clients
+        }
         if availableTabs.contains(tab) {
             selectedTab = tab
         }

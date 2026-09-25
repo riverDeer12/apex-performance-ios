@@ -2,14 +2,16 @@ import SwiftUI
 
 struct BodyMeasurementDetailsView: View {
     let bodyMeasurement: BodyMeasurement
+    let isEditable: Bool
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
-    
+
     @State private var form: BodyMeasurement
     @State private var isSaving = false
-    
-    init(bodyMeasurement: BodyMeasurement) {
+
+    init(bodyMeasurement: BodyMeasurement, isEditable: Bool = true) {
         self.bodyMeasurement = bodyMeasurement
+        self.isEditable = isEditable
         self._form = State(initialValue: bodyMeasurement)
     }
     
@@ -70,21 +72,23 @@ struct BodyMeasurementDetailsView: View {
                         .foregroundStyle(Color.apexMainColor)
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    Task { await updateBodyMeasurement() }
-                } label: {
-                    if isSaving {
-                        ProgressView()
-                            .scaleEffect(0.9)
-                    } else {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.apexMainColor)
+            if isEditable {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task { await updateBodyMeasurement() }
+                    } label: {
+                        if isSaving {
+                            ProgressView()
+                                .scaleEffect(0.9)
+                        } else {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("save")
+                    .disabled(isSaving)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("save")
-                .disabled(isSaving)
             }
         }
     }
@@ -106,14 +110,19 @@ struct BodyMeasurementDetailsView: View {
             Spacer()
             
             HStack(spacing: 6) {
-                TextField("",
-                          value: binding,
-                          format: .number
-                )
-                .multilineTextAlignment(.trailing)
-                .keyboardType(.decimalPad)
-                .frame(minWidth: 60) // keeps alignment consistent
-                
+                if isEditable {
+                    TextField("",
+                              value: binding,
+                              format: .number
+                    )
+                    .multilineTextAlignment(.trailing)
+                    .keyboardType(.decimalPad)
+                    .frame(minWidth: 60) // keeps alignment consistent
+                } else {
+                    Text(binding.wrappedValue, format: .number)
+                        .fontWeight(.semibold)
+                }
+
                 Text(unit)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

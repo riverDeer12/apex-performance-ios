@@ -48,4 +48,16 @@ enum PushTokenService {
             }
         }
     }
+
+    // Invalidates this device's token so the backend can no longer reach the
+    // logged-out user here; the next login registers a fresh token.
+    static func unregister() {
+        Messaging.messaging().deleteToken { error in
+            #if DEBUG
+            if let error {
+                print("❌ Failed to delete FCM token: \(error)")
+            }
+            #endif
+        }
+    }
 }

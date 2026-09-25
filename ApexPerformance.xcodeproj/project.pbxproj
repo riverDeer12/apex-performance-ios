@@ -10,6 +10,7 @@
 		61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */; };
 		61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5062EF17DC8009E9624 /* UserProfileView.swift */; };
 		61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */; };
+		7C751E9FD5C3EF02DCC6C9D8 /* MyBodyMeasurementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */; };
 		61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5172EF1E7D1009E9624 /* LoginView.swift */; };
 		61CFB51A2EF1E8FF009E9624 /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */; };
 		61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */; };
@@ -104,6 +105,7 @@
 		61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
 		61CFB5062EF17DC8009E9624 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurementDetailsView.swift; sourceTree = "<group>"; };
+		AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBodyMeasurementsView.swift; sourceTree = "<group>"; };
 		61CFB5172EF1E7D1009E9624 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginView.swift; path = ApexPerformance/Features/LoginView.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */,
+				AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */,
 				C0283CEA2F71EBAA00582836 /* CreateBodyMeasurementView.swift */,
 			);
 			path = BodyMeasurements;
@@ -660,6 +663,7 @@
 				61E9741E2EF0AB9100D225C5 /* ContentView.swift in Sources */,
 				61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */,
 				61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */,
+				7C751E9FD5C3EF02DCC6C9D8 /* MyBodyMeasurementsView.swift in Sources */,
 				61CFB5352EF453E7009E9624 /* TimeSlot.swift in Sources */,
 				61E63F792F11A658004D74F3 /* ButtonContentStyle.swift in Sources */,
 				61CFB52F2EF44338009E9624 /* Appointment.swift in Sources */,

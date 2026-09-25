@@ -110,7 +110,10 @@ struct UserProfileView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {
-                Button("logout", role: .destructive) { authManager.logout() }
+                Button("logout", role: .destructive) {
+                    PushTokenService.unregister()
+                    authManager.logout()
+                }
                 Button("cancel", role: .cancel) {}
             } message: {
                 Text("you_will_be_signed_out")
