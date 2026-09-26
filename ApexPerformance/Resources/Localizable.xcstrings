@@ -1929,6 +1929,28 @@
         }
       }
     },
+    "latest_measurement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latest measurement"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadnje mjerenje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultima misurazione"
+          }
+        }
+      }
+    },
     "legs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2174,6 +2196,28 @@
         }
       }
     },
+    "measurement_history" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povijest mjerenja"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cronologia misurazioni"
+          }
+        }
+      }
+    },
     "measurements" : {
       "localizations" : {
         "en" : {
@@ -2214,6 +2258,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cellulare"
+          }
+        }
+      }
+    },
+    "my_measurements_subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track your progress over time"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pratite svoj napredak kroz vrijeme"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitora i tuoi progressi nel tempo"
           }
         }
       }
@@ -2358,28 +2424,6 @@
         }
       }
     },
-    "no_appointments" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Appointments."
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nema termina"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun appuntamento"
-          }
-        }
-      }
-    },
     "no_appointments_for_selected_day" : {
       "localizations" : {
         "en" : {
@@ -2420,72 +2464,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non c'è nessun cliente"
-          }
-        }
-      }
-    },
-    "latest_measurement" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Latest measurement"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zadnje mjerenje"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ultima misurazione"
-          }
-        }
-      }
-    },
-    "measurement_history" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "History"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Povijest mjerenja"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cronologia misurazioni"
-          }
-        }
-      }
-    },
-    "my_measurements_subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Track your progress over time"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pratite svoj napredak kroz vrijeme"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Monitora i tuoi progressi nel tempo"
           }
         }
       }

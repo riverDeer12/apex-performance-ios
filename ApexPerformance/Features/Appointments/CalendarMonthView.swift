@@ -143,7 +143,7 @@ struct CalendarMonthView: View {
                 selectedDate = day
             } label: {
                 VStack(spacing: 4) {
-                    Text("\(calendar.component(.day, from: day))")
+                    Text(verbatim: "\(calendar.component(.day, from: day))")
                         .font(.subheadline.weight(isToday ? .bold : .regular))
                         .foregroundStyle(isSelected ? .white : (isToday ? Color.apexMainColor : .primary))
                         .frame(width: 32, height: 32)
