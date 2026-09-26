@@ -7,18 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */; };
 		61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */; };
 		61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5062EF17DC8009E9624 /* UserProfileView.swift */; };
 		61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */; };
-		7C751E9FD5C3EF02DCC6C9D8 /* MyBodyMeasurementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */; };
 		61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5172EF1E7D1009E9624 /* LoginView.swift */; };
 		61CFB51A2EF1E8FF009E9624 /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */; };
 		61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */; };
 		61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */; };
 		61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5212EF1F0C8009E9624 /* KeychainService.swift */; };
 		61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5242EF1F1A3009E9624 /* ApiClient.swift */; };
-		850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96920DE3EEA0A6620BD41065 /* PushTokenService.swift */; };
-		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
 		61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5262EF1F1F4009E9624 /* AuthManager.swift */; };
 		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
 		61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52C2EF44204009E9624 /* ClientsView.swift */; };
@@ -37,7 +35,6 @@
 		61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5522F02C658009E9624 /* WorkoutsView.swift */; };
 		61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5552F02D1F4009E9624 /* Permissions.swift */; };
 		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
-		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
@@ -66,10 +63,13 @@
 		61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E9741F2EF0AB9200D225C5 /* Assets.xcassets */; };
 		61E974232EF0AB9200D225C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */; };
 		61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */; };
-		0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */; };
-		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */; };
 		61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */; };
+		7C751E9FD5C3EF02DCC6C9D8 /* MyBodyMeasurementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */; };
+		850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96920DE3EEA0A6620BD41065 /* PushTokenService.swift */; };
+		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
+		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
+		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
@@ -102,17 +102,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C0D873D691520A8AD453624 /* CalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMonthView.swift; sourceTree = "<group>"; };
 		61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
 		61CFB5062EF17DC8009E9624 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurementDetailsView.swift; sourceTree = "<group>"; };
-		AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBodyMeasurementsView.swift; sourceTree = "<group>"; };
 		61CFB5172EF1E7D1009E9624 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginView.swift; path = ApexPerformance/Features/LoginView.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5192EF1E8FF009E9624 /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		61CFB51B2EF1E91C009E9624 /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
 		61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorHandler.swift; sourceTree = "<group>"; };
 		61CFB5212EF1F0C8009E9624 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		61CFB5242EF1F1A3009E9624 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
-		96920DE3EEA0A6620BD41065 /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		61CFB5262EF1F1F4009E9624 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthManager.swift; path = ApexPerformance/Core/Networking/AuthManager.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		61CFB52C2EF44204009E9624 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
@@ -134,7 +133,6 @@
 		61CFB5522F02C658009E9624 /* WorkoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsView.swift; sourceTree = "<group>"; };
 		61CFB5552F02D1F4009E9624 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
-		1C0D873D691520A8AD453624 /* CalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMonthView.swift; sourceTree = "<group>"; };
 		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		61E63F6A2F0C368C004D74F3 /* ToastType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastType.swift; sourceTree = "<group>"; };
 		61E63F6C2F0EA243004D74F3 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
-		A884F28D08EB4F168066D594 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorResponse.swift; sourceTree = "<group>"; };
 		61E63F702F0EC673004D74F3 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		61E63F722F115CFE004D74F3 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
@@ -166,11 +163,13 @@
 		61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceTests.swift; sourceTree = "<group>"; };
-		6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoderTests.swift; sourceTree = "<group>"; };
-		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		61E974322EF0AB9300D225C5 /* ApexPerformanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoderTests.swift; sourceTree = "<group>"; };
+		96920DE3EEA0A6620BD41065 /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
+		A884F28D08EB4F168066D594 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
+		AA8B4D7D1B899F544123D70A /* MyBodyMeasurementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBodyMeasurementsView.swift; sourceTree = "<group>"; };
 		C0283CE12F6DEFF700582836 /* CreateClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClientView.swift; sourceTree = "<group>"; };
 		C0283CE52F709F2800582836 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = ApexPerformance/Features/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
 		C0283CE72F709F3800582836 /* ChangeUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChangeUsernameView.swift; path = ApexPerformance/Features/ChangeUsernameView.swift; sourceTree = SOURCE_ROOT; };
@@ -182,6 +181,7 @@
 		C0BF34EE2F900CC0002BFF76 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C0BF34F02F900E5C002BFF76 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0BF34F22F900F3B002BFF76 /* ApexPerformance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApexPerformance.entitlements; sourceTree = "<group>"; };
+		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -858,7 +858,7 @@
 				CODE_SIGN_ENTITLEMENTS = ApexPerformance/ApexPerformance.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"ApexPerformance/Preview Content\"";
 				DEVELOPMENT_TEAM = FAU2V6TT69;
 				ENABLE_PREVIEWS = YES;
@@ -877,7 +877,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -896,7 +896,7 @@
 				CODE_SIGN_ENTITLEMENTS = ApexPerformance/ApexPerformance.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"ApexPerformance/Preview Content\"";
 				DEVELOPMENT_TEAM = FAU2V6TT69;
 				ENABLE_PREVIEWS = YES;
@@ -915,7 +915,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = software.rdd.ApexPerformance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
