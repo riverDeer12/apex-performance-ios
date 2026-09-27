@@ -8,9 +8,7 @@
 import Foundation
 
 enum Permissions {
-    
-    static let canGetWorkouts = "CanGetWorkouts"
-    
+
     static let canGetClients = "CanGetClients"
     
     static let canGetAppointments = "CanGetAppointments"

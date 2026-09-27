@@ -1429,6 +1429,28 @@
         }
       }
     },
+    "description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descrizione"
+          }
+        }
+      }
+    },
     "details" : {
       "localizations" : {
         "en" : {
@@ -1447,6 +1469,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dettagli"
+          }
+        }
+      }
+    },
+    "download_template" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Template"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predložak"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modello"
+          }
+        }
+      }
+    },
+    "edit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uredi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica"
+          }
+        }
+      }
+    },
+    "edit_workout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit workout"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uredi vježbu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica esercizio"
           }
         }
       }
@@ -1749,6 +1837,28 @@
         }
       }
     },
+    "import_workouts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvezi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa"
+          }
+        }
+      }
+    },
     "info" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1768,6 +1878,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Info"
+          }
+        }
+      }
+    },
+    "invalid_youtube_url" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a valid YouTube link."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unesite ispravnu YouTube poveznicu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci un link YouTube valido."
           }
         }
       }
@@ -2306,6 +2438,28 @@
         }
       }
     },
+    "name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naziv"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome"
+          }
+        }
+      }
+    },
     "new_appointment" : {
       "localizations" : {
         "en" : {
@@ -2508,6 +2662,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nessuna nuova richiesta."
+          }
+        }
+      }
+    },
+    "no_workouts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema vježbi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun esercizio"
+          }
+        }
+      }
+    },
+    "no_workouts_found" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts match your search."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema vježbi koje odgovaraju pretrazi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun esercizio corrisponde alla ricerca"
           }
         }
       }
@@ -3066,6 +3264,28 @@
         }
       }
     },
+    "search_workouts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by name, description or type"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži po nazivu, opisu ili vrsti"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca per nome, descrizione o tipo"
+          }
+        }
+      }
+    },
     "select_appointment_type" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3493,6 +3713,50 @@
         }
       }
     },
+    "thumbnail_url" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thumbnail link"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poveznica na sličicu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link della miniatura"
+          }
+        }
+      }
+    },
+    "thumbnail_url_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave empty to use the YouTube video thumbnail."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostavite prazno za sličicu s YouTube videa."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascia vuoto per usare la miniatura del video YouTube."
+          }
+        }
+      }
+    },
     "time_slot" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3630,6 +3894,28 @@
         }
       }
     },
+    "video_url" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video link (YouTube)"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poveznica na video (YouTube)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link del video (YouTube)"
+          }
+        }
+      }
+    },
     "waist" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3699,6 +3985,72 @@
         }
       }
     },
+    "workout_duplicate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A workout with the same name and description already exists."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vježba s istim nazivom i opisom već postoji."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esiste già un esercizio con lo stesso nome e descrizione."
+          }
+        }
+      }
+    },
+    "workout_types" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout types"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrste vježbi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipi di esercizio"
+          }
+        }
+      }
+    },
+    "workout_updated_successfully" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout updated successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vježba je uspješno ažurirana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercizio aggiornato con successo."
+          }
+        }
+      }
+    },
     "workouts" : {
       "localizations" : {
         "en" : {
@@ -3717,6 +4069,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allenamenti"
+          }
+        }
+      }
+    },
+    "workouts_import_started" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import started. You will receive the result by email."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvoz je pokrenut. Rezultat ćete dobiti e-poštom."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importazione avviata. Riceverai il risultato via email."
+          }
+        }
+      }
+    },
+    "workouts_subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browse all workouts"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pregled svih vježbi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elenco di tutti gli esercizi"
           }
         }
       }

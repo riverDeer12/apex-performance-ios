@@ -33,6 +33,10 @@
 		61CFB54C2EFC1E17009E9624 /* ErrorMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB54B2EFC1E17009E9624 /* ErrorMessages.swift */; };
 		61CFB54E2EFC1F39009E9624 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB54D2EFC1F39009E9624 /* Color.swift */; };
 		61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5522F02C658009E9624 /* WorkoutsView.swift */; };
+		04837399F611C40D5C8068E0 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3ED39D82612CDBC15BEA47B /* Workout.swift */; };
+		12B9955E8BB5E6142FEA270A /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C49604A1D3B1BC797529EA0 /* WorkoutDetailView.swift */; };
+		0C2FF8F0E05DAB971157BFB3 /* WorkoutEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213ABCAEFE80E4161E00087B /* WorkoutEditView.swift */; };
+		FFF0DDBBAC4CF57EA2D584F3 /* YouTubePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29974DACD73885AB9D2BA101 /* YouTubePlayerView.swift */; };
 		61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5552F02D1F4009E9624 /* Permissions.swift */; };
 		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
 		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
@@ -131,6 +135,10 @@
 		61CFB54B2EFC1E17009E9624 /* ErrorMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessages.swift; sourceTree = "<group>"; };
 		61CFB54D2EFC1F39009E9624 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		61CFB5522F02C658009E9624 /* WorkoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsView.swift; sourceTree = "<group>"; };
+		D3ED39D82612CDBC15BEA47B /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
+		3C49604A1D3B1BC797529EA0 /* WorkoutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetailView.swift; sourceTree = "<group>"; };
+		213ABCAEFE80E4161E00087B /* WorkoutEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditView.swift; sourceTree = "<group>"; };
+		29974DACD73885AB9D2BA101 /* YouTubePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePlayerView.swift; sourceTree = "<group>"; };
 		61CFB5552F02D1F4009E9624 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
 		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
@@ -279,6 +287,7 @@
 		61CFB5102EF1E693009E9624 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
 				61CFB52E2EF44338009E9624 /* Appointment.swift */,
 				61CFB5322EF44AB7009E9624 /* AppointmentsStatus.swift */,
 				61CFB5382EF457FB009E9624 /* AppointmentStatus.swift */,
@@ -406,6 +415,9 @@
 			isa = PBXGroup;
 			children = (
 				61CFB5522F02C658009E9624 /* WorkoutsView.swift */,
+				3C49604A1D3B1BC797529EA0 /* WorkoutDetailView.swift */,
+				213ABCAEFE80E4161E00087B /* WorkoutEditView.swift */,
+				29974DACD73885AB9D2BA101 /* YouTubePlayerView.swift */,
 			);
 			path = Workouts;
 			sourceTree = "<group>";
@@ -651,6 +663,10 @@
 				ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */,
 				C0283CEB2F71EBAA00582836 /* CreateBodyMeasurementView.swift in Sources */,
 				61CFB5532F02C658009E9624 /* WorkoutsView.swift in Sources */,
+				04837399F611C40D5C8068E0 /* Workout.swift in Sources */,
+				12B9955E8BB5E6142FEA270A /* WorkoutDetailView.swift in Sources */,
+				0C2FF8F0E05DAB971157BFB3 /* WorkoutEditView.swift in Sources */,
+				FFF0DDBBAC4CF57EA2D584F3 /* YouTubePlayerView.swift in Sources */,
 				C0283CF62F8C26CF00582836 /* AppointmentRequestType.swift in Sources */,
 				C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */,
 				61E63F942F1D6305004D74F3 /* CatalogData.swift in Sources */,

@@ -18,7 +18,8 @@ struct HomeView: View {
         var tabs: [AppTab] = []
         if authManager.hasPermission(permission: Permissions.canGetAppointments) { tabs.append(.appointments) }
         if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) { tabs.append(.appointmentRequests) }
-        if authManager.hasPermission(permission: Permissions.canGetWorkouts) { tabs.append(.workouts) }
+        // Role-based like the web: coaches and administrators manage workouts.
+        if !authManager.hasRole(role: "Client") { tabs.append(.workouts) }
         if !authManager.hasRole(role: "Client") { tabs.append(.clients) }
         if authManager.hasRole(role: "Client") { tabs.append(.bodyMeasurements) }
         tabs.append(.profile)
@@ -47,7 +48,7 @@ struct HomeView: View {
             if availableTabs.contains(.workouts) {
                 WorkoutsView()
                     .tabItem {
-                        Label("", systemImage: "person.3")
+                        Label("", systemImage: "dumbbell.fill")
                     }
                     .tag(AppTab.workouts)
             }
