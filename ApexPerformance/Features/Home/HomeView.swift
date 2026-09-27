@@ -18,8 +18,8 @@ struct HomeView: View {
         var tabs: [AppTab] = []
         if authManager.hasPermission(permission: Permissions.canGetAppointments) { tabs.append(.appointments) }
         if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) { tabs.append(.appointmentRequests) }
-        // Role-based like the web: coaches and administrators manage workouts.
-        if !authManager.hasRole(role: "Client") { tabs.append(.workouts) }
+        // Everyone sees workouts; only coaches and administrators can import or edit them.
+        tabs.append(.workouts)
         if !authManager.hasRole(role: "Client") { tabs.append(.clients) }
         if authManager.hasRole(role: "Client") { tabs.append(.bodyMeasurements) }
         tabs.append(.profile)

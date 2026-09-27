@@ -20,7 +20,7 @@ struct WorkoutsView: View {
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
 
-    // Same audience as the web: coaches and administrators manage workouts.
+    // Clients can only browse; coaches and administrators manage workouts.
     private var canManageWorkouts: Bool {
         !authManager.hasRole(role: "Client")
     }
