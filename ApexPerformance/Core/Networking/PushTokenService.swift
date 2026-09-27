@@ -17,6 +17,10 @@ enum PushTokenService {
             struct FCMTokenRequest: Encodable {
                 let token: String
                 let platform: String = "ios"
+                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+                let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+                let osVersion = PushTokenService.osVersion
+                let deviceModel = PushTokenService.deviceModelIdentifier
             }
 
             do {
@@ -38,6 +42,23 @@ enum PushTokenService {
                 print("❌ Failed to send FCM token to server: \(error)")
                 #endif
             }
+        }
+    }
+
+    private static var osVersion: String {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+    }
+
+    // Hardware identifier such as "iPhone17,3"; the simulator reports the simulated device's.
+    private static var deviceModelIdentifier: String {
+        if let simulatorModel = ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] {
+            return simulatorModel
+        }
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return withUnsafeBytes(of: &systemInfo.machine) { buffer in
+            String(decoding: buffer.prefix(while: { $0 != 0 }), as: UTF8.self)
         }
     }
 
