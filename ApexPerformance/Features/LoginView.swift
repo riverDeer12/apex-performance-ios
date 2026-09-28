@@ -36,9 +36,10 @@ struct LoginView: View {
                         Image("logo")
                             .resizable()
                             .scaledToFit()
+                            // The logo artwork has wide transparent margins, so its frame is larger.
                             .frame(
-                                maxWidth: geo.size.width * 0.6,
-                                maxHeight: geo.size.height * 0.18
+                                maxWidth: geo.size.width * 0.9,
+                                maxHeight: geo.size.height * 0.22
                             )
                         
                         VStack(spacing: 30) {
