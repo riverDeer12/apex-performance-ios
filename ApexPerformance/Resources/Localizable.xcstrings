@@ -1090,6 +1090,29 @@
         }
       }
     },
+    "change_profile_picture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change profile picture"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promijeni profilnu sliku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia foto profilo"
+          }
+        }
+      }
+    },
     "change_username" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1517,6 +1540,29 @@
         }
       }
     },
+    "edit_profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit profile"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uredi profil"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica profilo"
+          }
+        }
+      }
+    },
     "edit_workout" : {
       "localizations" : {
         "en" : {
@@ -1878,6 +1924,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Info"
+          }
+        }
+      }
+    },
+    "invalid_profile_picture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected image is not valid."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odabrana slika nije valjana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'immagine selezionata non è valida."
           }
         }
       }
@@ -2934,6 +3003,98 @@
         }
       }
     },
+    "profile_picture_removed_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile picture removed."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilna slika je uklonjena."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto profilo rimossa."
+          }
+        }
+      }
+    },
+    "profile_picture_too_large" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The picture is too large (max 2 MB)."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slika je prevelika (najviše 2 MB)."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'immagine è troppo grande (max 2 MB)."
+          }
+        }
+      }
+    },
+    "profile_picture_updated_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile picture updated successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilna slika je uspješno ažurirana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto profilo aggiornata con successo."
+          }
+        }
+      }
+    },
+    "profile_updated_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile updated successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil je uspješno ažuriran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilo aggiornato con successo."
+          }
+        }
+      }
+    },
     "recurring_appointments_generated_successfully" : {
       "localizations" : {
         "en" : {
@@ -3084,6 +3245,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuntamento"
+          }
+        }
+      }
+    },
+    "remove_profile_picture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove profile picture"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukloni profilnu sliku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi foto profilo"
+          }
+        }
+      }
+    },
+    "remove_profile_picture_question" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove profile picture?"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukloniti profilnu sliku?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovere la foto profilo?"
           }
         }
       }
@@ -3821,6 +4028,29 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Elenco degli appuntamenti registrati"
+          }
+        }
+      }
+    },
+    "upload_profile_picture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload profile picture"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj profilnu sliku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carica foto profilo"
           }
         }
       }

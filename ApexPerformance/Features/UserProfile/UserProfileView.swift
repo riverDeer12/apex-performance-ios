@@ -7,6 +7,8 @@ import SwiftUI
 struct UserProfileView: View {
     
     @State private var profile: UserProfile?
+    // Account data from api/profile, same for all roles.
+    @State private var accountProfile: Profile?
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var hasLoaded = false
@@ -17,6 +19,13 @@ struct UserProfileView: View {
     @State private var showLogoutDialog = false
     @State private var showChangePasswordSheet = false
     @State private var showChangeUsernameSheet = false
+    @State private var showEditProfileSheet = false
+    
+    // Preview data is shown as is, without loading from the API.
+    init(previewProfile: Profile? = nil) {
+        _accountProfile = State(initialValue: previewProfile)
+        _hasLoaded = State(initialValue: previewProfile != nil)
+    }
     
     var body: some View {
         NavigationStack {
@@ -36,17 +45,25 @@ struct UserProfileView: View {
                     .padding(.top, 8)
                     
                     // Content
-                    switch true {
-                    case authManager.hasRole(role: "Client"):
-                        clientProfileContent
-                    case authManager.hasRole(role: "Coach"):
-                        coachProfileContent
-                    default:
-                        nonClientProfileContent
-                    }
+                    profileContent
                     
                     CardView(title: "profile_management") {
                         VStack(spacing: 0) {
+                            
+                            if accountProfile != nil {
+                                Button { showEditProfileSheet = true } label: {
+                                    SettingsRowView(
+                                        icon: "person.crop.circle",
+                                        iconTint: Color.apexMainColor,
+                                        title: Text("edit_profile"),
+                                        subtitle: nil,
+                                        showChevron: true
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                                
+                                Divider().padding(.leading, 52)
+                            }
      
                             Button { changeUsername() } label: {
                                 SettingsRowView(
@@ -95,7 +112,7 @@ struct UserProfileView: View {
             }
             .background(Color(.systemGroupedBackground))
             .overlay {
-                if isLoading && profile == nil && authManager.hasRole(role: "Client") {
+                if isLoading && accountProfile == nil {
                     ProgressView()
                 }
             }
@@ -104,9 +121,7 @@ struct UserProfileView: View {
                 
                 hasLoaded = true
             
-                if !authManager.hasRole(role: "SuperAdmin") {
-                    await loadUserProfile()
-                }
+                await loadUserProfile()
             }
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {
@@ -124,23 +139,23 @@ struct UserProfileView: View {
             .sheet(isPresented: $showChangeUsernameSheet) {
                 ChangeUsernameView(onSuccess: { showChangeUsernameSheet = false })
             }
+            .sheet(isPresented: $showEditProfileSheet) {
+                if let accountProfile {
+                    EditProfileView(profile: accountProfile) { updated in
+                        self.accountProfile = updated
+                    }
+                }
+            }
         }
     }
     
-    private var clientProfileContent: some View {
-        Group {
+    @ViewBuilder
+    private var profileContent: some View {
+        if let accountProfile {
             // Top card
-            CardView{
+            CardView {
                 HStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.apexMainColor.opacity(0.25))
-                            .frame(width: 60, height: 60)
-                        
-                        Image(systemName: "person")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(Color.apexMainColor)
-                    }
+                    ProfilePictureView(profile: accountProfile)
                     
                     VStack(alignment: .leading, spacing: 6) {
                         Text(fullName)
@@ -155,72 +170,39 @@ struct UserProfileView: View {
             }
             .padding(.horizontal, 20)
             
-            // Credits tile
-            HStack(spacing: 12) {
-                StatTileView(value: "\(profile?.credits ?? 0)", label: "credits")
+            if isClient {
+                // Credits tile
+                HStack(spacing: 12) {
+                    StatTileView(value: "\(profile?.credits ?? 0)", label: "credits")
+                }
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 20)
             
             // Details
             CardView(title: "details") {
                 VStack(spacing: 0) {
-                    InfoRow(icon: "person", title: "first_name", value: profile?.firstName ?? "—")
-                    Divider().padding(.leading, 52)
-                    InfoRow(icon: "person", title: "last_name", value: profile?.lastName ?? "—")
-                    Divider().padding(.leading, 52)
+                    if accountProfile.hasPersonalData {
+                        InfoRow(icon: "person", title: "first_name", value: accountProfile.firstName ?? "—")
+                        Divider().padding(.leading, 52)
+                        InfoRow(icon: "person", title: "last_name", value: accountProfile.lastName ?? "—")
+                        Divider().padding(.leading, 52)
+                    }
                     InfoRow(icon: "at", title: "username", value: authManager.username)
                     Divider().padding(.leading, 52)
-                    InfoRow(icon: "envelope", title: "email", value: profile?.email ?? "—")
-                    Divider().padding(.leading, 52)
-                    InfoRow(icon: "creditcard", title: "credits", value: "\(profile?.credits ?? 0)")
-                }
-            }
-            .padding(.horizontal, 20)
-        }
-    }
-    
-    private var coachProfileContent: some View {
-        Group {
-            // Top card
-            CardView{
-                HStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.apexMainColor.opacity(0.25))
-                            .frame(width: 60, height: 60)
-                        
-                        Image(systemName: "person")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(Color.apexMainColor)
+                    InfoRow(icon: "envelope", title: "email", value: accountProfile.email)
+                    if accountProfile.hasPhone {
+                        Divider().padding(.leading, 52)
+                        InfoRow(icon: "phone", title: "mobile_phone", value: accountProfile.phone ?? "—")
                     }
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(fullName)
-                            .font(.headline)
-                        Text("@\(authManager.username)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                    if isClient {
+                        Divider().padding(.leading, 52)
+                        InfoRow(icon: "creditcard", title: "credits", value: "\(profile?.credits ?? 0)")
                     }
-                    
-                    Spacer()
                 }
             }
             .padding(.horizontal, 20)
-            
-            
-            // Details
-            CardView(title: "details") {
-                VStack(spacing: 0) {
-                    InfoRow(icon: "person", title: "first_name", value: profile?.firstName ?? "—")
-                    Divider().padding(.leading, 52)
-                    InfoRow(icon: "person", title: "last_name", value: profile?.lastName ?? "—")
-                    Divider().padding(.leading, 52)
-                    InfoRow(icon: "at", title: "username", value: authManager.username)
-                    Divider().padding(.leading, 52)
-                    InfoRow(icon: "envelope", title: "email", value: profile?.email ?? "—")
-                }
-            }
-            .padding(.horizontal, 20)
+        } else if !isLoading {
+            nonClientProfileContent
         }
     }
     
@@ -236,10 +218,17 @@ struct UserProfileView: View {
         }
         .padding(.horizontal, 20)
     }
+
+    private var isClient: Bool {
+        authManager.hasRole(role: "Client")
+    }
     
     private var fullName: String {
-        let first = profile?.firstName ?? "—"
-        let last = profile?.lastName ?? ""
+        guard let accountProfile, accountProfile.hasPersonalData else {
+            return authManager.username
+        }
+        let first = accountProfile.firstName ?? "—"
+        let last = accountProfile.lastName ?? ""
         return "\(first) \(last)".trimmingCharacters(in: .whitespaces)
     }
     
@@ -279,14 +268,17 @@ struct UserProfileView: View {
         isLoading = true
         defer { isLoading = false }
         
-        let appendingPath = authManager.hasRole(role: "Client") ?
-                "clients/current-client" :
-                "coaches/current-coach"
-        
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent(appendingPath)
-            let response: UserProfile = try await APIClient.shared.request(url)
-            profile = response
+            let url = AppEnvironment.apiURL.appendingPathComponent("profile")
+            let response: Profile = try await APIClient.shared.request(url)
+            accountProfile = response
+            
+            // Credits are only on client data.
+            if isClient {
+                let clientURL = AppEnvironment.apiURL.appendingPathComponent("clients/current-client")
+                let client: UserProfile = try await APIClient.shared.request(clientURL)
+                profile = client
+            }
         } catch is CancellationError {
             return
         } catch {
@@ -304,7 +296,7 @@ struct UserProfileView: View {
 }
 
 #Preview{
-    UserProfileView()
+    UserProfileView(previewProfile: .previewClient)
         .environmentObject(AuthManager())
         .environmentObject(ToastManager())
 }
