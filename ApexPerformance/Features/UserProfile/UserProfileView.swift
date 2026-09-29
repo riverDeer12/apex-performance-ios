@@ -21,6 +21,12 @@ struct UserProfileView: View {
     @State private var showChangeUsernameSheet = false
     @State private var showEditProfileSheet = false
     
+    // Preview data is shown as is, without loading from the API.
+    init(previewProfile: Profile? = nil) {
+        _accountProfile = State(initialValue: previewProfile)
+        _hasLoaded = State(initialValue: previewProfile != nil)
+    }
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -290,7 +296,7 @@ struct UserProfileView: View {
 }
 
 #Preview{
-    UserProfileView()
+    UserProfileView(previewProfile: .previewClient)
         .environmentObject(AuthManager())
         .environmentObject(ToastManager())
 }

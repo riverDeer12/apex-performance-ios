@@ -273,3 +273,13 @@ struct EditProfileView: View {
         value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
+
+#Preview("Client") {
+    EditProfileView(profile: .previewClient)
+        .environmentObject(ToastManager())
+}
+
+#Preview("Super admin") {
+    EditProfileView(profile: .previewSuperAdmin)
+        .environmentObject(ToastManager())
+}

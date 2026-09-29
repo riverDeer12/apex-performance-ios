@@ -54,3 +54,11 @@ struct ProfilePictureView: View {
         }
     }
 }
+
+#Preview {
+    HStack(spacing: 16) {
+        ProfilePictureView(profile: .previewClient)
+        ProfilePictureView(profile: .previewClient, size: 96)
+    }
+    .padding()
+}

@@ -36,3 +36,32 @@ struct UpdateProfileRequest: Encodable {
     let lastName: String?
     let phone: String?
 }
+
+// Sample data for SwiftUI previews, no API calls needed.
+extension Profile {
+    static let previewClient = Profile(
+        userId: UUID(),
+        username: "ana.horvat",
+        email: "ana.horvat@example.com",
+        roles: ["Client"],
+        profileType: "Client",
+        firstName: "Ana",
+        lastName: "Horvat",
+        phone: "+385 91 123 4567",
+        hasProfilePicture: false,
+        profilePictureUpdatedAt: nil
+    )
+
+    static let previewSuperAdmin = Profile(
+        userId: UUID(),
+        username: "admin",
+        email: "admin@example.com",
+        roles: ["SuperAdmin"],
+        profileType: nil,
+        firstName: nil,
+        lastName: nil,
+        phone: nil,
+        hasProfilePicture: false,
+        profilePictureUpdatedAt: nil
+    )
+}
