@@ -488,6 +488,29 @@
         }
       }
     },
+    "active_straight_leg_raise" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active Straight Leg Raise"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivno podizanje ispružene noge"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sollevamento attivo della gamba tesa"
+          }
+        }
+      }
+    },
     "appointment" : {
       "localizations" : {
         "en" : {
@@ -1452,6 +1475,29 @@
         }
       }
     },
+    "deep_squat" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep Squat"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duboki čučanj"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squat profondo"
+          }
+        }
+      }
+    },
     "description" : {
       "localizations" : {
         "en" : {
@@ -1769,6 +1815,75 @@
         }
       }
     },
+    "fms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS"
+          }
+        }
+      }
+    },
+    "fms_created_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS created successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS je uspješno kreiran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS creato con successo."
+          }
+        }
+      }
+    },
+    "fms_updated_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS updated successfully."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS je uspješno ažuriran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FMS aggiornato con successo."
+          }
+        }
+      }
+    },
     "generate_recurring_appointments" : {
       "localizations" : {
         "en" : {
@@ -1883,6 +1998,29 @@
         }
       }
     },
+    "hurdle_step" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hurdle Step"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korak preko prepreke"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passo sull’ostacolo"
+          }
+        }
+      }
+    },
     "import_workouts" : {
       "localizations" : {
         "en" : {
@@ -1901,6 +2039,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Importa"
+          }
+        }
+      }
+    },
+    "in_line_lunge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inline Lunge"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iskorak u liniji"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affondo in linea"
           }
         }
       }
@@ -2599,6 +2760,29 @@
         }
       }
     },
+    "new_fms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New FMS"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novi FMS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo FMS"
+          }
+        }
+      }
+    },
     "new_password" : {
       "comment" : "A label for the new password field.",
       "isCommentAutoGenerated" : true,
@@ -2687,6 +2871,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non c'è nessun cliente"
+          }
+        }
+      }
+    },
+    "no_fms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No FMS assessments."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema FMS procjena."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna valutazione FMS."
           }
         }
       }
@@ -3427,6 +3634,29 @@
         }
       }
     },
+    "rotary_stability" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotary Stability"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotacijska stabilnost"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stabilità rotatoria"
+          }
+        }
+      }
+    },
     "save" : {
       "localizations" : {
         "en" : {
@@ -3690,6 +3920,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mittente"
+          }
+        }
+      }
+    },
+    "shoulder_mobility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shoulder Mobility"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokretljivost ramena"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobilità della spalla"
           }
         }
       }
@@ -3983,6 +4236,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fascia oraria"
+          }
+        }
+      }
+    },
+    "trunk_stability_push_up" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trunk Stability Push-Up"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stabilnost trupa - sklek"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piegamento per la stabilità del tronco"
           }
         }
       }

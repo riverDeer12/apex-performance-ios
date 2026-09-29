@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */; };
+		302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */; };
 		90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */; };
 		59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */; };
 		0D2D386D2A68155933107B52 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFEE2C8B62315F575C1AD89 /* Profile.swift */; };
@@ -109,6 +111,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreen.swift; sourceTree = "<group>"; };
+		CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreenView.swift; sourceTree = "<group>"; };
 		4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePictureView.swift; sourceTree = "<group>"; };
 		AAFEE2C8B62315F575C1AD89 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
@@ -231,6 +235,7 @@
 				61CFB50C2EF1E643009E9624 /* Appointments */,
 				61CFB50B2EF1E621009E9624 /* Authentication */,
 				61CFB50D2EF1E650009E9624 /* BodyMeasurements */,
+				54E9F9AE4853A9E169D0F011 /* FunctionalMovementScreens */,
 				61CFB52B2EF441F2009E9624 /* Clients */,
 				61CFB5282EF43E45009E9624 /* Home */,
 				61CFB50E2EF1E667009E9624 /* UserProfile */,
@@ -261,6 +266,14 @@
 				1C0D873D691520A8AD453624 /* CalendarMonthView.swift */,
 			);
 			path = Appointments;
+			sourceTree = "<group>";
+		};
+		54E9F9AE4853A9E169D0F011 /* FunctionalMovementScreens */ = {
+			isa = PBXGroup;
+			children = (
+				CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */,
+			);
+			path = FunctionalMovementScreens;
 			sourceTree = "<group>";
 		};
 		61CFB50D2EF1E650009E9624 /* BodyMeasurements */ = {
@@ -294,6 +307,7 @@
 		61CFB5102EF1E693009E9624 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */,
 				AAFEE2C8B62315F575C1AD89 /* Profile.swift */,
 				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
 				61CFB52E2EF44338009E9624 /* Appointment.swift */,
@@ -655,6 +669,8 @@
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
 				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
 				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
+				0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */,
+				302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */,
 				90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */,
 				59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */,
 				0D2D386D2A68155933107B52 /* Profile.swift in Sources */,
