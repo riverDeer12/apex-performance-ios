@@ -20,6 +20,9 @@ struct ClientDetailsView: View {
     @State private var lastPayment: Date = Date()
     @State private var daysUntilExpiration: Int = 0
     @State private var showCreateBodyMeasurementSheet = false
+    @State private var functionalMovementScreens: [FunctionalMovementScreen] = []
+    @State private var isLoadingFunctionalMovementScreens = false
+    @State private var showCreateFunctionalMovementScreenSheet = false
     
     init(client: Client) {
         self.client = client
@@ -232,6 +235,9 @@ struct ClientDetailsView: View {
                     }
                 }
                 
+                functionalMovementScreensCard
+                    .padding(.horizontal, 20)
+                
             }
             .padding(.bottom, 24)
         }
@@ -267,6 +273,97 @@ struct ClientDetailsView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            await loadFunctionalMovementScreens()
+        }
+        .sheet(isPresented: $showCreateFunctionalMovementScreenSheet) {
+            NavigationStack {
+                FunctionalMovementScreenView(clientId: client.id) {
+                    Task { await loadFunctionalMovementScreens() }
+                }
+            }
+        }
+    }
+    
+    private var functionalMovementScreensCard: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("fms")
+                        .font(.headline)
+                        .padding(.top, 2)
+                    
+                    Spacer()
+                    
+                    Button {
+                        showCreateFunctionalMovementScreenSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundStyle(Color.apexMainColor)
+                            .frame(width: 48, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                    .fill(Color(.systemGray6))
+                            )
+                    }
+                    .buttonStyle(.borderless)
+                }
+                
+                if isLoadingFunctionalMovementScreens && functionalMovementScreens.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                } else if functionalMovementScreens.isEmpty {
+                    Text("no_fms")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(functionalMovementScreens) { screen in
+                            NavigationLink {
+                                FunctionalMovementScreenView(clientId: client.id, screen: screen) {
+                                    Task { await loadFunctionalMovementScreens() }
+                                }
+                            } label: {
+                                SettingsRowView(
+                                    icon: "figure.strengthtraining.functional",
+                                    iconTint: .blue,
+                                    title: Text(DateFormatter.dateAndTimeWithDots.string(from: screen.createdAt)),
+                                    subtitle: nil,
+                                    showChevron: true
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            if screen.id != functionalMovementScreens.last?.id {
+                                Divider().padding(.leading, 52)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // API returns all FMS the logged user can see,
+    // so only this client's are kept, newest first.
+    @MainActor
+    private func loadFunctionalMovementScreens() async {
+        isLoadingFunctionalMovementScreens = true
+        defer { isLoadingFunctionalMovementScreens = false }
+        
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("functional-movement-screens")
+            let screens: [FunctionalMovementScreen] = try await APIClient.shared.request(url)
+            functionalMovementScreens = screens
+                .filter { $0.client.id == client.id }
+                .sorted { $0.createdAt > $1.createdAt }
+        } catch is CancellationError {
+            return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
     }
     
     private func editableRow<Content: View>(
