@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */; };
+		59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */; };
+		0D2D386D2A68155933107B52 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFEE2C8B62315F575C1AD89 /* Profile.swift */; };
 		0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */; };
 		61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */; };
 		61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5062EF17DC8009E9624 /* UserProfileView.swift */; };
@@ -106,6 +109,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePictureView.swift; sourceTree = "<group>"; };
+		AAFEE2C8B62315F575C1AD89 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		1C0D873D691520A8AD453624 /* CalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMonthView.swift; sourceTree = "<group>"; };
 		61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
 		61CFB5062EF17DC8009E9624 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
@@ -271,6 +277,7 @@
 			isa = PBXGroup;
 			children = (
 				61CFB5062EF17DC8009E9624 /* UserProfileView.swift */,
+				4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -287,6 +294,7 @@
 		61CFB5102EF1E693009E9624 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AAFEE2C8B62315F575C1AD89 /* Profile.swift */,
 				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
 				61CFB52E2EF44338009E9624 /* Appointment.swift */,
 				61CFB5322EF44AB7009E9624 /* AppointmentsStatus.swift */,
@@ -326,6 +334,7 @@
 		61CFB5122EF1E6C9009E9624 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */,
 				61CFB5592F0A6D0D009E9624 /* CardView.swift */,
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
@@ -646,6 +655,9 @@
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
 				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
 				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
+				90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */,
+				59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */,
+				0D2D386D2A68155933107B52 /* Profile.swift in Sources */,
 				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
 				61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */,
 				61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */,

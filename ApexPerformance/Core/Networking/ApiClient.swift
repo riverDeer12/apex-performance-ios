@@ -52,6 +52,32 @@ final class APIClient {
         headers: [String: String] = [:]
     ) async throws -> T {
         
+        let data = try await requestData(url, method: method, body: body, headers: headers)
+
+        do {
+            let decoded = try Self.decoder.decode(T.self, from: data)
+            #if DEBUG
+            print("✅ Successfully decoded response")
+            #endif
+            return decoded
+        } catch {
+            #if DEBUG
+            print("❌ Decoding error: \(error)")
+            #endif
+            throw error
+        }
+    }
+
+    // Raw response body, for endpoints that return files
+    // or no content (e.g. 204 on delete).
+    @discardableResult
+    func requestData(
+        _ url: URL,
+        method: HTTPMethod = .get,
+        body: Data? = nil,
+        headers: [String: String] = [:]
+    ) async throws -> Data {
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         
@@ -116,18 +142,7 @@ final class APIClient {
             }
         }
 
-        do {
-            let decoded = try Self.decoder.decode(T.self, from: data)
-            #if DEBUG
-            print("✅ Successfully decoded response")
-            #endif
-            return decoded
-        } catch {
-            #if DEBUG
-            print("❌ Decoding error: \(error)")
-            #endif
-            throw error
-        }
+        return data
     }
 }
 
