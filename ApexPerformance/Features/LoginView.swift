@@ -57,6 +57,7 @@ struct LoginView: View {
                                 .submitLabel(.next)
                                 .onSubmit { focusedField = .password }
                                 .disabled(isLoading)
+                                .accessibilityIdentifier("login-username")
                             
                             HStack {
                                 Group {
@@ -72,6 +73,7 @@ struct LoginView: View {
                                 .focused($focusedField, equals: .password)
                                 .submitLabel(.go)
                                 .disabled(isLoading)
+                                .accessibilityIdentifier("login-password")
                                 
                                 Button {
                                     isPasswordVisible.toggle()
@@ -133,6 +135,7 @@ struct LoginView: View {
                             }
                             .buttonStyle(.plain)
                             .disabled(isLoading)
+                            .accessibilityIdentifier("login-button")
                         }
                     }
                     .padding(.horizontal, 24)
