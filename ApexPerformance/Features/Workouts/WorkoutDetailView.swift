@@ -37,7 +37,7 @@ struct WorkoutDetailView: View {
 
                 CardView(title: "workout_types") {
                     if workout.workoutTypes.isEmpty {
-                        Text("—")
+                        Text(verbatim: "—")
                             .foregroundStyle(.secondary)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {

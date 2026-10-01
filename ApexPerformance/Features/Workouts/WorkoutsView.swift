@@ -66,7 +66,7 @@ struct WorkoutsView: View {
 
                     CardView {
                         if filteredWorkouts.isEmpty, !isLoading {
-                            Text(searchText.isEmpty ? "no_workouts" : "no_workouts_found")
+                            (searchText.isEmpty ? Text("no_workouts") : Text("no_workouts_found"))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 8)

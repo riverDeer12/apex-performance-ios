@@ -87,7 +87,7 @@ struct WeightProgressChartView: View {
                 AxisGridLine()
                 AxisValueLabel {
                     if let weight = value.as(Double.self) {
-                        Text("\(format(weight)) kg")
+                        Text(verbatim: "\(format(weight)) kg")
                     }
                 }
             }
