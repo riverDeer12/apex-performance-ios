@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E20EB7E37D29FB0574B3D943 /* WeightProgressChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0324B3307091769C04277E /* WeightProgressChartView.swift */; };
 		0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */; };
 		302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */; };
 		90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */; };
@@ -111,6 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD0324B3307091769C04277E /* WeightProgressChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressChartView.swift; sourceTree = "<group>"; };
 		4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreen.swift; sourceTree = "<group>"; };
 		CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreenView.swift; sourceTree = "<group>"; };
 		4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 			isa = PBXGroup;
 			children = (
 				B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */,
+				AD0324B3307091769C04277E /* WeightProgressChartView.swift */,
 				61CFB5592F0A6D0D009E9624 /* CardView.swift */,
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
@@ -673,6 +676,7 @@
 				302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */,
 				90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */,
 				59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */,
+				E20EB7E37D29FB0574B3D943 /* WeightProgressChartView.swift in Sources */,
 				0D2D386D2A68155933107B52 /* Profile.swift in Sources */,
 				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
 				61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */,

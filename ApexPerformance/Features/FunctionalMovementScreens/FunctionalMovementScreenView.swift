@@ -22,6 +22,8 @@ struct FunctionalMovementScreenView: View {
     @State private var trunkStabilityPushUp: String
     @State private var rotaryStability: String
     @State private var shoulderMobility: String
+    @State private var xTest: String
+    @State private var descriptionText: String
     @State private var isSaving = false
 
     init(clientId: UUID, screen: FunctionalMovementScreen? = nil, onSaved: (() -> Void)? = nil) {
@@ -35,15 +37,23 @@ struct FunctionalMovementScreenView: View {
         _trunkStabilityPushUp = State(initialValue: screen?.trunkStabilityPushUp ?? "")
         _rotaryStability = State(initialValue: screen?.rotaryStability ?? "")
         _shoulderMobility = State(initialValue: screen?.shoulderMobility ?? "")
+        _xTest = State(initialValue: screen?.xTest ?? "")
+        _descriptionText = State(initialValue: screen?.description ?? "")
     }
 
     private var isNew: Bool { screen == nil }
 
-    // API requires a result for every test.
+    // Same limits as the API.
+    private static let xTestMaxLength = 50
+    private static let descriptionMaxLength = 2000
+
+    // API requires a result for every test, description is optional.
     private var isValid: Bool {
         [deepSquat, hurdleStep, inLineLunge, activeStraightLegRaise,
-         trunkStabilityPushUp, rotaryStability, shoulderMobility]
+         trunkStabilityPushUp, rotaryStability, shoulderMobility, xTest]
             .allSatisfy { !trimmed($0).isEmpty }
+            && trimmed(xTest).count <= Self.xTestMaxLength
+            && trimmed(descriptionText).count <= Self.descriptionMaxLength
     }
 
     var body: some View {
@@ -62,6 +72,23 @@ struct FunctionalMovementScreenView: View {
             testSection("trunk_stability_push_up", text: $trunkStabilityPushUp)
             testSection("rotary_stability", text: $rotaryStability)
             testSection("shoulder_mobility", text: $shoulderMobility)
+
+            Section {
+                TextField("x_test", text: $xTest, axis: .vertical)
+                    .lineLimit(1...3)
+            } header: {
+                Text("x_test")
+            } footer: {
+                if trimmed(xTest).count > Self.xTestMaxLength {
+                    Text("fms_max_length_50")
+                        .foregroundStyle(.red)
+                }
+            }
+
+            Section(header: Text("description")) {
+                TextField("description", text: $descriptionText, axis: .vertical)
+                    .lineLimit(3...10)
+            }
         }
         .navigationTitle(LocalizedStringKey(isNew ? "new_fms" : "fms"))
         .navigationBarTitleDisplayMode(.inline)
@@ -113,7 +140,9 @@ struct FunctionalMovementScreenView: View {
             activeStraightLegRaise: trimmed(activeStraightLegRaise),
             trunkStabilityPushUp: trimmed(trunkStabilityPushUp),
             rotaryStability: trimmed(rotaryStability),
-            shoulderMobility: trimmed(shoulderMobility)
+            shoulderMobility: trimmed(shoulderMobility),
+            xTest: trimmed(xTest),
+            description: trimmed(descriptionText).isEmpty ? nil : trimmed(descriptionText)
         )
 
         var url = AppEnvironment.apiURL.appendingPathComponent("functional-movement-screens")
@@ -161,6 +190,8 @@ struct FunctionalMovementScreenView: View {
                 trunkStabilityPushUp: "1",
                 rotaryStability: "2",
                 shoulderMobility: "2 - right side limited",
+                xTest: "2",
+                description: "Focus on hip mobility before the next assessment.",
                 createdAt: .now,
                 client: .init(id: UUID(), firstName: "Jane", lastName: "Doe")
             )
