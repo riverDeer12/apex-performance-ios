@@ -7,6 +7,9 @@ struct AppointmentsView: View {
     @State private var errorMessage: String?
     @State private var hasLoaded = false
     @State private var processingAppointmentId: UUID?
+    // Pending cancelation and join requests, shown to staff above the calendar.
+    @State private var appointmentRequests: [AppointmentRequest] = []
+    @State private var processingRequestId: UUID?
     
     @State private var showCreateAppointmentForm = false
     @State private var isGeneratingRecurring = false
@@ -55,8 +58,12 @@ struct AppointmentsView: View {
                         }
                     }
                     
+                    requestsSection(title: "cancelation_requests", requests: cancelationRequests)
+                    
+                    requestsSection(title: "join_requests", requests: joinRequests)
+                    
                     // Approved Appointments Section Header
-                    if !pendingAppointments.isEmpty {
+                    if !pendingAppointments.isEmpty || !cancelationRequests.isEmpty || !joinRequests.isEmpty {
                         Text("approved_appointments")
                             .font(.headline)
                             .foregroundStyle(.secondary)
@@ -185,6 +192,150 @@ struct AppointmentsView: View {
             .navigationDestination(isPresented: $showCreateAppointmentForm) {
                 CreateAppointmentView()
             }
+        }
+    }
+
+    private var canManageRequests: Bool {
+        !authManager.hasRole(role: "Client")
+    }
+    
+    private var cancelationRequests: [AppointmentRequest] {
+        appointmentRequests.filter { $0.type.name.lowercased() == "cancelationrequest" }
+    }
+    
+    private var joinRequests: [AppointmentRequest] {
+        appointmentRequests.filter { $0.type.name.lowercased() == "joinrequest" }
+    }
+    
+    @ViewBuilder
+    private func requestsSection(title: LocalizedStringKey, requests: [AppointmentRequest]) -> some View {
+        if !requests.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 20)
+                
+                CardView {
+                    VStack(spacing: 0) {
+                        ForEach(requests) { request in
+                            appointmentRequestRow(request)
+                            
+                            if request.id != requests.last?.id {
+                                Divider().padding(.leading, 52)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+    }
+    
+    private func appointmentRequestRow(_ request: AppointmentRequest) -> some View {
+        let isCancelation = request.type.name.lowercased() == "cancelationrequest"
+        let tint: Color = isCancelation ? .red : .blue
+        let isProcessing = processingRequestId == request.id
+        
+        return VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(tint.opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    
+                    Image(systemName: isCancelation ? "calendar.badge.minus" : "person.badge.plus")
+                        .foregroundStyle(tint)
+                        .font(.system(size: 18))
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(request.sender.fullName)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+                    
+                    Text(DateFormatter.dateWithDots.string(from: request.appointment.startTime)
+                         + " · " + (request.appointment.timeSlot.description ?? ""))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    if !request.comment.isEmpty {
+                        Text(request.comment)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding(.vertical, 12)
+            
+            HStack(spacing: 12) {
+                Button {
+                    Task { await processRequest(request, action: "approve") }
+                } label: {
+                    HStack {
+                        if isProcessing {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .tint(.green)
+                        } else {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        Text("approve")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.green.opacity(0.1))
+                    .foregroundStyle(.green)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(isProcessing)
+                
+                Button {
+                    Task { await processRequest(request, action: "decline") }
+                } label: {
+                    HStack {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("reject")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.red.opacity(0.1))
+                    .foregroundStyle(.red)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(isProcessing)
+            }
+            .padding(.bottom, 8)
+        }
+    }
+    
+    // action is "approve" or "decline", same endpoints as the requests tab.
+    private func processRequest(_ request: AppointmentRequest, action: String) async {
+        processingRequestId = request.id
+        defer { processingRequestId = nil }
+        
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("appointment-requests/\(action)/\(request.id.uuidString)")
+            let _: StatusResponse = try await APIClient.shared.request(url)
+            
+            toastManager.show(
+                action == "approve" ? "request_approved_successfully" : "request_rejected_successfully",
+                type: .success
+            )
+            
+            // Approving changes appointments too, so reload everything.
+            await loadData(showInitialSpinner: false)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
 
@@ -379,9 +530,21 @@ struct AppointmentsView: View {
                 )
             }
             
+            // Requests are loaded separately so a failure there
+            // doesn't hide the appointments.
+            let requests: [AppointmentRequest]
+            if canManageRequests {
+                let requestsURL = AppEnvironment.apiURL.appendingPathComponent("appointment-requests/pending")
+                let fetched: [AppointmentRequest]? = try? await APIClient.shared.request(requestsURL)
+                requests = fetched ?? appointmentRequests
+            } else {
+                requests = []
+            }
+            
             await MainActor.run {
                 appointments = mapped
                 pendingAppointments = mappedPending
+                appointmentRequests = requests.sorted { $0.appointment.startTime < $1.appointment.startTime }
             }
         } catch is CancellationError {
             return
