@@ -43,3 +43,13 @@ func mapError(_ error: Error) -> String {
     return "Something went wrong."
 }
 
+
+extension Error {
+    // Request was cancelled because the view went away or a refresh
+    // started again. Not a real error, so nothing should be shown.
+    var isCancellation: Bool {
+        if self is CancellationError { return true }
+        if let urlError = self as? URLError, urlError.code == .cancelled { return true }
+        return false
+    }
+}

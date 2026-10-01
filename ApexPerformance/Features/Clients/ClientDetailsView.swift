@@ -174,6 +174,11 @@ struct ClientDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
+                if let bodyMeasurements = form.bodyMeasurements, !bodyMeasurements.isEmpty {
+                    WeightProgressChartView(measurements: bodyMeasurements)
+                        .padding(.horizontal, 20)
+                }
+                
                 CardView {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -359,7 +364,7 @@ struct ClientDetailsView: View {
             functionalMovementScreens = screens
                 .filter { $0.client.id == client.id }
                 .sorted { $0.createdAt > $1.createdAt }
-        } catch is CancellationError {
+        } catch let error where error.isCancellation {
             return
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)

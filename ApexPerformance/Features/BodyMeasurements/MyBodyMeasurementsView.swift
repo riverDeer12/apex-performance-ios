@@ -46,6 +46,11 @@ struct MyBodyMeasurementsView: View {
                         }
                     }
 
+                    if !measurements.isEmpty {
+                        WeightProgressChartView(measurements: measurements)
+                            .padding(.horizontal, 20)
+                    }
+
                     VStack(alignment: .leading, spacing: 8) {
                         Text("measurement_history")
                             .font(.headline)
