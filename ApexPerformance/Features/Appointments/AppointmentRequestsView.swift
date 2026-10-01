@@ -159,6 +159,7 @@ struct AppointmentRequestsView: View {
         switch typeName.lowercased() {
         case "cancelationrequest": return "cancelation-request"
         case "joinrequest": return "join-request"
+        case "newappointment": return "new_appointment_request"
         default: return LocalizedStringKey(typeName)
         }
     }
@@ -168,7 +169,7 @@ struct AppointmentRequestsView: View {
         switch statusName.lowercased() {
         case "approved": return ("request_status_approved", .green)
         case "declined": return ("request_status_declined", .red)
-        case "canceled": return ("request_status_canceled", .gray)
+        case "canceled", "cancelled": return ("request_status_canceled", .gray)
         case "inprogress": return ("request_status_in_progress", .blue)
         default: return ("request_status_pending", .orange)
         }
@@ -216,6 +217,8 @@ struct AppointmentRequestsView: View {
             return "calendar.badge.minus"
         case "joinrequest":
             return "person.badge.plus"
+        case "newappointment":
+            return "calendar.badge.plus"
         default:
             return "questionmark.circle"
         }
@@ -246,7 +249,14 @@ struct AppointmentRequestsView: View {
             if isClient {
                 let url = AppEnvironment.apiURL.appendingPathComponent("appointment-requests")
                 let response: [SentAppointmentRequest] = try await APIClient.shared.request(url)
-                sentRequests = response.sorted { $0.createdAt > $1.createdAt }
+                
+                // New appointment requests come from a separate endpoint. If it
+                // fails, the other requests are still shown.
+                let myRequestsURL = AppEnvironment.apiURL.appendingPathComponent("appointments/my-requests")
+                let newAppointments: [MyAppointmentRequest]? = try? await APIClient.shared.request(myRequestsURL)
+                
+                sentRequests = (response + (newAppointments ?? []).map(SentAppointmentRequest.init(newAppointment:)))
+                    .sorted { $0.createdAt > $1.createdAt }
             } else {
                 requests = try await fetchAppointmentRequests()
             }
