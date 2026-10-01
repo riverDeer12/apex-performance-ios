@@ -16,6 +16,8 @@ struct FunctionalMovementScreen: Identifiable, Decodable {
     var trunkStabilityPushUp: String
     var rotaryStability: String
     var shoulderMobility: String
+    var xTest: String?
+    var description: String?
     let createdAt: Date
     let client: Person
 
@@ -36,4 +38,6 @@ struct FunctionalMovementScreenRequest: Encodable {
     let trunkStabilityPushUp: String
     let rotaryStability: String
     let shoulderMobility: String
+    let xTest: String
+    let description: String?
 }

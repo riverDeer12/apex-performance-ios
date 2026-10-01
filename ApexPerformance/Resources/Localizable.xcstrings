@@ -1861,6 +1861,29 @@
         }
       }
     },
+    "fms_max_length_50" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum length is 50 characters."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najviše 50 znakova."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunghezza massima 50 caratteri."
+          }
+        }
+      }
+    },
     "fms_updated_successfully" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2313,6 +2336,29 @@
         }
       }
     },
+    "latest_weight" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latest weight"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadnja težina"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo peso"
+          }
+        }
+      }
+    },
     "legs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2592,6 +2638,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mjerenja"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misurazioni"
+          }
+        }
+      }
+    },
+    "measurements_count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Measurements"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broj mjerenja"
           }
         },
         "it" : {
@@ -2982,6 +3051,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nessun esercizio corrisponde alla ricerca"
+          }
+        }
+      }
+    },
+    "not_enough_for_chart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least two measurements are needed to show the chart."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za prikaz grafa potrebna su barem dva mjerenja."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per mostrare il grafico servono almeno due misurazioni."
           }
         }
       }
@@ -3994,6 +4086,29 @@
         }
       }
     },
+    "since_first_measurement" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "since first measurement"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "od prvog mjerenja"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dalla prima misurazione"
+          }
+        }
+      }
+    },
     "strength-and-conditioning" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4491,6 +4606,52 @@
         }
       }
     },
+    "weight_change" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promjena"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variazione"
+          }
+        }
+      }
+    },
+    "weight_progress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight Progress"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napredak u težini"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andamento del peso"
+          }
+        }
+      }
+    },
     "workout_duplicate" : {
       "localizations" : {
         "en" : {
@@ -4641,6 +4802,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scrivi qui sotto il motivo dell’annullamento:"
+          }
+        }
+      }
+    },
+    "x_test" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "X Test"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "X test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test X"
           }
         }
       }

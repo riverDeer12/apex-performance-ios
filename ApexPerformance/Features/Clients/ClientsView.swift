@@ -100,7 +100,9 @@ struct ClientsView: View {
                 await loadData()
             }
             .refreshable {
-                await loadData()
+                // Own task so the request isn't cancelled when the
+                // view updates during pull-to-refresh.
+                await Task { await loadData() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -172,6 +174,9 @@ struct ClientsView: View {
                     lastCreditsIncrease: $0.lastCreditsIncrease
                 )
             }
+            errorMessage = nil
+        } catch let error where error.isCancellation {
+            return
         } catch {
             errorMessage = mapError(error)
         }
