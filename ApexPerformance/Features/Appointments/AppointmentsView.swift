@@ -167,7 +167,8 @@ struct AppointmentsView: View {
                         .accessibilityLabel("generate_recurring_appointments")
                         .buttonStyle(.plain)
                         .disabled(isGeneratingRecurring)
-                        .padding(.trailing, 8)
+                        // Same inset from the left edge as + has from the right.
+                        .padding(.horizontal, 8)
                     }
                     
                     Button {
