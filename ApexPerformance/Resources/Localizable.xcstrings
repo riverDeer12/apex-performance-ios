@@ -1067,6 +1067,29 @@
         }
       }
     },
+    "cancelation_requests" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelation requests"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahtjevi za otkazivanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richieste di cancellazione"
+          }
+        }
+      }
+    },
     "cardio" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2176,6 +2199,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Italiano"
+          }
+        }
+      }
+    },
+    "join_requests" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join requests"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahtjevi za pridruživanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richieste di partecipazione"
           }
         }
       }
