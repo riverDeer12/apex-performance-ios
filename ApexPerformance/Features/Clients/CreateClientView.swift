@@ -12,6 +12,7 @@ struct CreateClientRequest: Encodable {
 struct CreateClientView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
     
     @State private var errorMessage: String? = nil
 
@@ -26,6 +27,12 @@ struct CreateClientView: View {
     @State private var isLoadingCoaches = false
     @State private var coaches: [Coach] = []
     @State private var selectedCoaches: [UUID] = []
+
+    // API always adds the coach who creates the client as
+    // the client's coach, so a coach doesn't pick coaches.
+    private var canSelectCoaches: Bool {
+        !authManager.hasRole(role: "Coach")
+    }
 
     var body: some View {
         ScrollView {
@@ -78,30 +85,34 @@ struct CreateClientView: View {
                 }
                 .padding(.horizontal, 20)
                 
-                CardView(title: "select_coaches") {
-                    if isLoadingCoaches {
-                        ProgressView("loading_coaches")
-                    }
-                    ForEach(coaches) { coach in
-                        Toggle(coach.fullName, isOn: Binding(
-                            get: { selectedCoaches.contains(coach.id) },
-                            set: { isOn in
-                                if isOn {
-                                    selectedCoaches.append(coach.id)
-                                } else {
-                                    selectedCoaches.removeAll { $0 == coach.id }
+                if canSelectCoaches {
+                    CardView(title: "select_coaches") {
+                        if isLoadingCoaches {
+                            ProgressView("loading_coaches")
+                        }
+                        ForEach(coaches) { coach in
+                            Toggle(coach.fullName, isOn: Binding(
+                                get: { selectedCoaches.contains(coach.id) },
+                                set: { isOn in
+                                    if isOn {
+                                        selectedCoaches.append(coach.id)
+                                    } else {
+                                        selectedCoaches.removeAll { $0 == coach.id }
+                                    }
                                 }
-                            }
-                        ))
+                            ))
+                        }
                     }
+                    .padding(.horizontal, 20)
+                    .disabled(isLoadingCoaches || coaches.isEmpty)
                 }
-                .padding(.horizontal, 20)
-                .disabled(isLoadingCoaches || coaches.isEmpty)
             }
             .padding(.bottom, 24)
         }
         .task {
-            await loadCoaches()
+            if canSelectCoaches {
+                await loadCoaches()
+            }
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("new_client")
@@ -164,7 +175,7 @@ struct CreateClientView: View {
             email: email.isEmpty ? nil : email,
             phone: phone.isEmpty ? nil : phone,
             credits: credits,
-            coaches: selectedCoaches
+            coaches: canSelectCoaches ? selectedCoaches : []
         )
 
         let url = AppEnvironment.apiURL.appendingPathComponent("clients")
@@ -192,5 +203,6 @@ struct CreateClientView: View {
     NavigationStack {
         CreateClientView()
             .environmentObject(ToastManager())
+            .environmentObject(AuthManager())
     }
 }
