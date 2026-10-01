@@ -5,16 +5,18 @@
 
 import XCTest
 
-/// Takes App Store screenshots of the main coach screens.
+/// Takes App Store screenshots of the main coach and client screens.
+/// Screenshots are always taken in English.
 ///
-/// Needs a coach account on the server the build uses (Debug uses the
-/// test API). Credentials are read from the environment so they are
-/// never committed:
-///   APEX_SCREENSHOT_USERNAME, APEX_SCREENSHOT_PASSWORD
-/// Optional: APEX_SCREENSHOT_LANGUAGE (hr, en or it; default hr).
+/// Needs a coach and a client account on the server the build uses
+/// (Debug uses the test API). Credentials are read from the scheme's
+/// Test environment variables so they are never committed:
+///   APEX_SCREENSHOT_COACH_USERNAME, APEX_SCREENSHOT_COACH_PASSWORD
+///   APEX_SCREENSHOT_CLIENT_USERNAME, APEX_SCREENSHOT_CLIENT_PASSWORD
+/// A test whose credentials are missing is skipped.
 ///
-/// PNGs are saved to ~/Desktop/ApexScreenshots/<language>/<device>/ on
-/// the Mac and are also attached to the test report.
+/// PNGs are saved to ~/Desktop/ApexScreenshots/<device>/ on the Mac
+/// and are also attached to the test report.
 final class AppStoreScreenshotTests: XCTestCase {
 
     private var app: XCUIApplication!
@@ -24,21 +26,22 @@ final class AppStoreScreenshotTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
 
-        let environment = ProcessInfo.processInfo.environment
-        let language = environment["APEX_SCREENSHOT_LANGUAGE"] ?? "hr"
-
         app = XCUIApplication()
         app.launchArguments += [
-            "-AppleLanguages", "(\(language))",
-            "-AppleLocale", language == "en" ? "en_US" : "\(language)_\(language.uppercased())"
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US",
+            // Overrides a language picked earlier in the app's language switcher.
+            "-appLanguage", "en",
+            // Start logged out, every test logs in with its own account.
+            "-uiTestResetLogin"
         ]
 
         // Simulator processes can write to the Mac's file system.
+        let environment = ProcessInfo.processInfo.environment
         if let hostHome = environment["SIMULATOR_HOST_HOME"] {
             let device = environment["SIMULATOR_DEVICE_NAME"] ?? "Simulator"
             let directory = URL(fileURLWithPath: hostHome)
                 .appendingPathComponent("Desktop/ApexScreenshots")
-                .appendingPathComponent(language)
                 .appendingPathComponent(device)
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             outputDirectory = directory
@@ -47,72 +50,111 @@ final class AppStoreScreenshotTests: XCTestCase {
 
     func testCoachScreenshots() throws {
         app.launch()
-        try logInIfNeeded()
+        try logIn(role: "COACH")
 
-        let tabBar = app.tabBars.firstMatch
-        XCTAssertTrue(tabBar.waitForExistence(timeout: 15), "Tab bar not shown, is the login correct?")
+        let tabs = try tabButtons()
+        let tabCount = tabs.count
 
         // Coach tabs: appointments, appointment requests (with permission),
         // workouts, clients, profile. Tabs have no titles, so they are
         // found by position from the end.
-        let tabs = tabBar.buttons
-        let tabCount = tabs.count
-        XCTAssertGreaterThanOrEqual(tabCount, 3, "Expected coach tabs")
+        XCTAssertGreaterThanOrEqual(tabCount, 4, "Expected coach tabs")
 
-        // 1. Appointments calendar (first tab, opened on launch).
+        // Appointments calendar with requests above it.
         tabs.element(boundBy: 0).tap()
         waitForContent()
-        takeScreenshot("appointments")
+        takeScreenshot("coach", "appointments")
 
-        // 2. Appointment requests, when the coach has that tab.
         if tabCount >= 5 {
             tabs.element(boundBy: 1).tap()
             waitForContent()
-            takeScreenshot("appointment-requests")
+            takeScreenshot("coach", "appointment-requests")
         }
 
-        // 3. Workouts library.
+        // Workouts library.
         tabs.element(boundBy: tabCount - 3).tap()
         waitForContent()
-        takeScreenshot("workouts")
+        takeScreenshot("coach", "workouts")
 
-        // 4. Clients list.
+        // Clients list.
         tabs.element(boundBy: tabCount - 2).tap()
         let clientRow = app.buttons["client-row"].firstMatch
         XCTAssertTrue(clientRow.waitForExistence(timeout: 15), "Coach has no clients to show")
         waitForContent()
-        takeScreenshot("clients")
+        takeScreenshot("coach", "clients")
 
-        // 5. Client details with body measurements and FMS.
+        // Client details: weight chart, body measurements and FMS.
         clientRow.tap()
         waitForContent()
-        takeScreenshot("client-details")
+        takeScreenshot("coach", "client-details")
 
         app.swipeUp()
         waitForContent(seconds: 1)
-        takeScreenshot("client-measurements-fms")
+        takeScreenshot("coach", "client-progress")
 
-        // 6. Profile.
+        app.swipeUp()
+        waitForContent(seconds: 1)
+        takeScreenshot("coach", "client-measurements-fms")
+
+        // Profile.
         tabs.element(boundBy: tabCount - 1).tap()
         waitForContent()
-        takeScreenshot("profile")
+        takeScreenshot("coach", "profile")
+    }
+
+    func testClientScreenshots() throws {
+        app.launch()
+        try logIn(role: "CLIENT")
+
+        let tabs = try tabButtons()
+        let tabCount = tabs.count
+
+        // Client tabs: appointments (with permission), requests,
+        // body measurements, profile. Found by position from the end.
+        XCTAssertGreaterThanOrEqual(tabCount, 3, "Expected client tabs")
+
+        if tabCount >= 4 {
+            tabs.element(boundBy: 0).tap()
+            waitForContent()
+            takeScreenshot("client", "appointments")
+        }
+
+        // Sent requests with their status.
+        tabs.element(boundBy: tabCount - 3).tap()
+        waitForContent()
+        takeScreenshot("client", "requests")
+
+        // Body measurements with weight progress chart.
+        tabs.element(boundBy: tabCount - 2).tap()
+        waitForContent()
+        takeScreenshot("client", "body-measurements")
+
+        let measurementRow = app.buttons["measurement-row"].firstMatch
+        if measurementRow.waitForExistence(timeout: 5) {
+            measurementRow.tap()
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "measurement-details")
+        }
+
+        // Profile with credits.
+        tabs.element(boundBy: tabCount - 1).tap()
+        waitForContent()
+        takeScreenshot("client", "profile")
     }
 
     // MARK: - Helpers
 
-    private func logInIfNeeded() throws {
-        let usernameField = app.textFields["login-username"]
-        guard usernameField.waitForExistence(timeout: 5) else {
-            return // already logged in from an earlier run
-        }
-
+    /// role is COACH or CLIENT, matching the environment variable names.
+    private func logIn(role: String) throws {
         let environment = ProcessInfo.processInfo.environment
-        guard let username = environment["APEX_SCREENSHOT_USERNAME"],
-              let password = environment["APEX_SCREENSHOT_PASSWORD"],
+        guard let username = environment["APEX_SCREENSHOT_\(role)_USERNAME"],
+              let password = environment["APEX_SCREENSHOT_\(role)_PASSWORD"],
               !username.isEmpty, !password.isEmpty else {
-            throw XCTSkip("Set APEX_SCREENSHOT_USERNAME and APEX_SCREENSHOT_PASSWORD in the scheme's Test environment variables.")
+            throw XCTSkip("Set APEX_SCREENSHOT_\(role)_USERNAME and APEX_SCREENSHOT_\(role)_PASSWORD in the scheme's Test environment variables.")
         }
 
+        let usernameField = app.textFields["login-username"]
+        XCTAssertTrue(usernameField.waitForExistence(timeout: 10), "Login screen not shown")
         usernameField.tap()
         usernameField.typeText(username)
 
@@ -123,14 +165,20 @@ final class AppStoreScreenshotTests: XCTestCase {
         app.buttons["login-button"].tap()
     }
 
+    private func tabButtons() throws -> XCUIElementQuery {
+        let tabBar = app.tabBars.firstMatch
+        XCTAssertTrue(tabBar.waitForExistence(timeout: 15), "Tab bar not shown, is the login correct?")
+        return tabBar.buttons
+    }
+
     /// Gives the API time to answer and images time to load.
     private func waitForContent(seconds: TimeInterval = 3) {
         Thread.sleep(forTimeInterval: seconds)
     }
 
-    private func takeScreenshot(_ name: String) {
+    private func takeScreenshot(_ role: String, _ name: String) {
         screenshotIndex += 1
-        let fileName = String(format: "%02d-%@", screenshotIndex, name)
+        let fileName = String(format: "%@-%02d-%@", role, screenshotIndex, name)
         let screenshot = XCUIScreen.main.screenshot()
 
         let attachment = XCTAttachment(screenshot: screenshot)

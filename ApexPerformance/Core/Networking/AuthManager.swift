@@ -12,6 +12,11 @@ final class AuthManager: ObservableObject {
     @Published var isAuthenticated = false
     
     init() {
+        // UI tests (App Store screenshots) start logged out,
+        // so each test can log in with its own account.
+        if ProcessInfo.processInfo.arguments.contains("-uiTestResetLogin") {
+            KeychainService.shared.deleteToken()
+        }
         validateToken()
     }
     
