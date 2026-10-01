@@ -20,7 +20,7 @@ struct AppointmentRequestsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("appointment_requests")
                             .font(.title.bold())
-                        Text(isClient ? "my_requests_subtitle" : "manage_client_requests")
+                        (isClient ? Text("my_requests_subtitle") : Text("manage_client_requests"))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
