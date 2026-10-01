@@ -74,6 +74,7 @@ struct MyBodyMeasurementsView: View {
                                             measurementRow(measurement, previous: previous)
                                         }
                                         .buttonStyle(.plain)
+                                        .accessibilityIdentifier("measurement-row")
 
                                         if measurement.id != measurements.last?.id {
                                             Divider().padding(.leading, 52)

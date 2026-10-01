@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28252712328D382CB4C32AD0 /* AppStoreScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F8A313CB578D65914A565F /* AppStoreScreenshotTests.swift */; };
 		E20EB7E37D29FB0574B3D943 /* WeightProgressChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0324B3307091769C04277E /* WeightProgressChartView.swift */; };
 		0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */; };
 		302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */; };
@@ -112,6 +113,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D4F8A313CB578D65914A565F /* AppStoreScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreScreenshotTests.swift; sourceTree = "<group>"; };
 		AD0324B3307091769C04277E /* WeightProgressChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressChartView.swift; sourceTree = "<group>"; };
 		4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreen.swift; sourceTree = "<group>"; };
 		CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreenView.swift; sourceTree = "<group>"; };
@@ -522,6 +524,7 @@
 			isa = PBXGroup;
 			children = (
 				61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */,
+				D4F8A313CB578D65914A565F /* AppStoreScreenshotTests.swift */,
 				61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */,
 			);
 			path = ApexPerformanceUITests;
@@ -756,6 +759,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61E974372EF0AB9300D225C5 /* ApexPerformanceUITests.swift in Sources */,
+				28252712328D382CB4C32AD0 /* AppStoreScreenshotTests.swift in Sources */,
 				61E974392EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -74,6 +74,7 @@ struct ClientsView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .background(Color.clear)
+                                .accessibilityIdentifier("client-row")
                                 .onTapGesture {
                                     isSearchFocused = false
                                 }
