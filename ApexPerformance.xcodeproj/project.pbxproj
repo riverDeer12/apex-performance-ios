@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D622A39CA7EBD8D52316FEC /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216BB30FEB24A3355AA0D78A /* AppUpdateChecker.swift */; };
 		28252712328D382CB4C32AD0 /* AppStoreScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F8A313CB578D65914A565F /* AppStoreScreenshotTests.swift */; };
 		E20EB7E37D29FB0574B3D943 /* WeightProgressChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0324B3307091769C04277E /* WeightProgressChartView.swift */; };
 		0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */; };
@@ -113,6 +114,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		216BB30FEB24A3355AA0D78A /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
 		D4F8A313CB578D65914A565F /* AppStoreScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreScreenshotTests.swift; sourceTree = "<group>"; };
 		AD0324B3307091769C04277E /* WeightProgressChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressChartView.swift; sourceTree = "<group>"; };
 		4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreen.swift; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 		61CFB5162EF1E72D009E9624 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				216BB30FEB24A3355AA0D78A /* AppUpdateChecker.swift */,
 				61E63F6C2F0EA243004D74F3 /* ToastManager.swift */,
 				61E63F912F1C3491004D74F3 /* DateManager.swift */,
 				A884F28D08EB4F168066D594 /* NotificationRouter.swift */,
@@ -675,6 +678,7 @@
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
 				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
 				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
+				5D622A39CA7EBD8D52316FEC /* AppUpdateChecker.swift in Sources */,
 				0A2BD113BD1FC7288C8F6399 /* FunctionalMovementScreen.swift in Sources */,
 				302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */,
 				90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */,
