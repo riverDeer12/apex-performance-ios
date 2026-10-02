@@ -10,6 +10,8 @@ struct ClientsView: View {
     @FocusState private var isSearchFocused: Bool
     
     @State private var showCreateClientForm = false
+    // nil shows clients of all plans.
+    @State private var planFilter: ClientPlan?
 
     var body: some View {
         NavigationStack {
@@ -108,6 +110,22 @@ struct ClientsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("plan", selection: $planFilter) {
+                            Text("all_plans").tag(ClientPlan?.none)
+                            ForEach(ClientPlan.allCases) { plan in
+                                Text(plan.title).tag(ClientPlan?.some(plan))
+                            }
+                        }
+                    } label: {
+                        Image(systemName: planFilter == nil
+                              ? "line.3.horizontal.decrease.circle"
+                              : "line.3.horizontal.decrease.circle.fill")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
+                    .accessibilityLabel("plan")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showCreateClientForm = true
                     } label: {
@@ -126,6 +144,7 @@ struct ClientsView: View {
     
     private var filteredClients: [Client] {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let clients = planFilter.map { plan in self.clients.filter { $0.plan == plan.rawValue } } ?? self.clients
         guard !q.isEmpty else { return clients }
         
         return clients.filter { c in
@@ -137,6 +156,13 @@ struct ClientsView: View {
         }
     }
     
+    // Credits and, when known, the client's plan.
+    private func planSubtitle(for client: Client) -> Text {
+        let credits = Text("\(client.credits ?? 0) credits_remaining.")
+        guard let plan = ClientPlan.title(for: client.plan) else { return credits }
+        return credits + Text(verbatim: " · ") + Text(plan)
+    }
+    
     private func clientRow(_ client: Client) -> some View {
         
         let outOfCredits = client.credits ?? 0 < 1
@@ -145,7 +171,7 @@ struct ClientsView: View {
             icon: "person",
             iconTint: Color.apexMainColor,
             title: Text("\(client.firstName) \(client.lastName)"),
-            subtitle: Text("\(client.credits ?? 0) credits_remaining."),
+            subtitle: planSubtitle(for: client),
             showChevron: true,
             badge: outOfCredits ? "out_of_credits" : nil
         )
@@ -172,7 +198,8 @@ struct ClientsView: View {
                     phone: $0.phone,
                     credits: $0.credits,
                     bodyMeasurements: $0.bodyMeasurements,
-                    lastCreditsIncrease: $0.lastCreditsIncrease
+                    lastCreditsIncrease: $0.lastCreditsIncrease,
+                    plan: $0.plan
                 )
             }
             errorMessage = nil
