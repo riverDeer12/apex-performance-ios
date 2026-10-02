@@ -12,4 +12,5 @@ struct UserProfile: Codable {
     let lastName: String
     let email: String
     let credits: Int?
+    let plan: String?
 }

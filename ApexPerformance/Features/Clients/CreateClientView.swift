@@ -7,6 +7,7 @@ struct CreateClientRequest: Encodable {
     var phone: String?
     var credits: Int?
     var coaches: [UUID]
+    var plan: String
 }
 
 struct CreateClientView: View {
@@ -22,6 +23,7 @@ struct CreateClientView: View {
     @State private var email: String = ""
     @State private var phone: String = ""
     @State private var credits: Int? = nil
+    @State private var plan: ClientPlan = .privateCoaching
     @State private var isSaving = false
     
     @State private var isLoadingCoaches = false
@@ -81,6 +83,19 @@ struct CreateClientView: View {
                         ), format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
+                    }
+                }
+                .padding(.horizontal, 20)
+                
+                CardView(title: "plan") {
+                    editableRow(title: "plan") {
+                        Picker("plan", selection: $plan) {
+                            ForEach(ClientPlan.allCases) { plan in
+                                Text(plan.title).tag(plan)
+                            }
+                        }
+                        .labelsHidden()
+                        .tint(Color.apexMainColor)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -175,7 +190,8 @@ struct CreateClientView: View {
             email: email.isEmpty ? nil : email,
             phone: phone.isEmpty ? nil : phone,
             credits: credits,
-            coaches: canSelectCoaches ? selectedCoaches : []
+            coaches: canSelectCoaches ? selectedCoaches : [],
+            plan: plan.rawValue
         )
 
         let url = AppEnvironment.apiURL.appendingPathComponent("clients")

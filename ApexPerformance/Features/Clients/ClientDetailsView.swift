@@ -150,6 +150,22 @@ struct ClientDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
+                CardView(title: "plan") {
+                    editableRow(title: "plan") {
+                        Picker("plan", selection: Binding(
+                            get: { ClientPlan(rawValue: form.plan ?? "") ?? .privateCoaching },
+                            set: { form.plan = $0.rawValue }
+                        )) {
+                            ForEach(ClientPlan.allCases) { plan in
+                                Text(plan.title).tag(plan)
+                            }
+                        }
+                        .labelsHidden()
+                        .tint(Color.apexMainColor)
+                    }
+                }
+                .padding(.horizontal, 20)
+                
                 let outOfCredits = (form.credits ?? 0) <= 0
                 
                 CardView(title: "credits") {

@@ -197,6 +197,10 @@ struct UserProfileView: View {
                     if isClient {
                         Divider().padding(.leading, 52)
                         InfoRow(icon: "creditcard", title: "credits", value: "\(profile?.credits ?? 0)")
+                        if let plan = profile?.plan.flatMap(ClientPlan.init(rawValue:)) {
+                            Divider().padding(.leading, 52)
+                            InfoRow(icon: "figure.strengthtraining.traditional", title: "plan", value: plan.localizedTitle)
+                        }
                     }
                 }
             }
