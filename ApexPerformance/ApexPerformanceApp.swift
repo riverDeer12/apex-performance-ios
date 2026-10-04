@@ -9,6 +9,9 @@ import FirebaseCore
     @StateObject private var authManager = AuthManager()
     @StateObject private var toastManager = ToastManager()
     
+    // Animated splash shown over the app right after the launch screen.
+    @State private var showSplash = true
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -23,6 +26,11 @@ import FirebaseCore
                     }
                 }
                 .animation(.easeInOut, value: toastManager.toast != nil)
+                .overlay {
+                    if showSplash {
+                        SplashView { showSplash = false }
+                    }
+                }
         }
     }
 }
