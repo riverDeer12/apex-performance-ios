@@ -97,7 +97,9 @@ struct WorkoutsView: View {
                 }
             }
             .refreshable {
-                await loadWorkouts()
+                // Own task so the request isn't cancelled when the
+                // view updates during pull-to-refresh.
+                await Task { await loadWorkouts() }.value
             }
             .task {
                 guard !hasLoaded else { return }
@@ -126,7 +128,7 @@ struct WorkoutsView: View {
                 HStack(spacing: 6) {
                     if isImporting {
                         ProgressView()
-                            .tint(.white)
+                            .tint(Color(.systemBackground))
                     } else {
                         Image(systemName: "square.and.arrow.down")
                     }
@@ -136,7 +138,8 @@ struct WorkoutsView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .background(Color.apexMainColor)
-                .foregroundStyle(.white)
+                // apexMainColor is white in dark mode.
+                .foregroundStyle(Color(.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
             .buttonStyle(.plain)
@@ -222,7 +225,7 @@ struct WorkoutsView: View {
         do {
             let url = AppEnvironment.apiURL.appendingPathComponent("workouts")
             workouts = try await APIClient.shared.request(url)
-        } catch is CancellationError {
+        } catch let error where error.isCancellation {
             return
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
