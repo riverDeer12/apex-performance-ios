@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     
     @EnvironmentObject var authManager: AuthManager
-    @Environment(\.openURL) private var openURL
     
     // Newer App Store version found when the app started.
     @State private var availableUpdate: AppUpdateChecker.AvailableUpdate?
@@ -35,7 +34,7 @@ struct ContentView: View {
             presenting: availableUpdate
         ) { update in
             Button("update") {
-                openURL(update.storeURL)
+                AppStoreProductPresenter.show(update)
             }
             Button("later", role: .cancel) {}
         } message: { update in
