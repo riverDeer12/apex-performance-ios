@@ -91,6 +91,10 @@ struct UserProfileView: View {
                             
                             Divider().padding(.leading, 52)
                             
+                            AppearanceSwitcherView()
+                            
+                            Divider().padding(.leading, 52)
+                            
                             Button(role: .destructive) { showLogoutDialog = true } label: {
                                 SettingsRowView(
                                     icon: "arrow.left.square",

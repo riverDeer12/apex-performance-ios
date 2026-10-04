@@ -12,12 +12,14 @@ import FirebaseCore
     // Animated splash shown over the app right after the launch screen.
     @State private var showSplash = true
     
+    // Light, dark or system, picked in the user's profile.
+    @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(authManager)
                 .environmentObject(toastManager)
-                .preferredColorScheme(.light)
                 .overlay(alignment: .bottom) {
                     if let toast = toastManager.toast {
                         ToastView(messageKey: toast.message, toastType: toast.type)
@@ -31,6 +33,23 @@ import FirebaseCore
                         SplashView { showSplash = false }
                     }
                 }
+                .onAppear { applyAppearance() }
+                .onChange(of: appearance) { applyAppearance() }
         }
+    }
+    
+    // Set on the windows instead of preferredColorScheme, which doesn't
+    // switch back to the system setting reliably once dark or light was set.
+    private func applyAppearance() {
+        let style: UIUserInterfaceStyle = switch appearance {
+        case .system: .unspecified
+        case .light: .light
+        case .dark: .dark
+        }
+        
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .forEach { $0.overrideUserInterfaceStyle = style }
     }
 }
