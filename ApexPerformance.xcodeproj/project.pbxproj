@@ -90,7 +90,6 @@
 		C0283CF42F8C265600582836 /* AppointmentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF32F8C265600582836 /* AppointmentRequest.swift */; };
 		C0283CF62F8C26CF00582836 /* AppointmentRequestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF52F8C26CF00582836 /* AppointmentRequestType.swift */; };
 		C0283CF82F8C36B200582836 /* AppointmentRequestDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CF72F8C36B200582836 /* AppointmentRequestDetailsView.swift */; };
-		C0BF34EB2F900B16002BFF76 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C0BF34EA2F900B16002BFF76 /* FirebaseAnalytics */; };
 		C0BF34ED2F900B16002BFF76 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C0BF34EC2F900B16002BFF76 /* FirebaseMessaging */; };
 		C0BF34EF2F900CC0002BFF76 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C0BF34EE2F900CC0002BFF76 /* GoogleService-Info.plist */; };
 		C0BF34F12F900E5C002BFF76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BF34F02F900E5C002BFF76 /* AppDelegate.swift */; };
@@ -214,7 +213,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0BF34ED2F900B16002BFF76 /* FirebaseMessaging in Frameworks */,
-				C0BF34EB2F900B16002BFF76 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1114,11 +1112,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C0BF34EA2F900B16002BFF76 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C0BF34E92F900B16002BFF76 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
 		C0BF34EC2F900B16002BFF76 /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C0BF34E92F900B16002BFF76 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
