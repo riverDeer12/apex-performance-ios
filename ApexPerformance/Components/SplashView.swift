@@ -10,26 +10,34 @@ import UIKit
 /// launch screen (same logo, size, position and background), so the switch
 /// is invisible, then the logo pulses and zooms out to reveal the app.
 struct SplashView: View {
+    /// Appearance picked in the app; nil follows the system.
+    var appearance: ColorScheme? = nil
     var onFinished: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var logoScale: CGFloat = 1
     @State private var opacity: Double = 1
+    // The launch screen always follows the system appearance. When the app
+    // uses a different one, the splash starts like the launch screen and
+    // crossfades to the app's appearance.
+    @State private var systemLayerOpacity: Double = 1
 
-    // The launch screen follows the system appearance, while the app is
-    // always light, so assets are resolved with the system's scheme.
-    @State private var systemColorScheme: ColorScheme = SplashView.currentSystemColorScheme
+    private let systemColorScheme: ColorScheme = SplashView.currentSystemColorScheme
+
+    private var appColorScheme: ColorScheme {
+        appearance ?? systemColorScheme
+    }
 
     var body: some View {
         ZStack {
-            Color("LaunchBackground")
-                .ignoresSafeArea()
+            splash(in: appColorScheme)
 
-            Image("LaunchLogo")
-                .scaleEffect(logoScale)
+            if appColorScheme != systemColorScheme {
+                splash(in: systemColorScheme)
+                    .opacity(systemLayerOpacity)
+            }
         }
-        .environment(\.colorScheme, systemColorScheme)
         .opacity(opacity)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
@@ -38,10 +46,23 @@ struct SplashView: View {
         }
     }
 
+    private func splash(in colorScheme: ColorScheme) -> some View {
+        ZStack {
+            Color("LaunchBackground")
+                .ignoresSafeArea()
+
+            Image("LaunchLogo")
+                .scaleEffect(logoScale)
+        }
+        .environment(\.colorScheme, colorScheme)
+    }
+
     @MainActor
     private func animate() async {
         if reduceMotion {
-            try? await Task.sleep(for: .milliseconds(400))
+            try? await Task.sleep(for: .milliseconds(300))
+            withAnimation(.easeInOut(duration: 0.25)) { systemLayerOpacity = 0 }
+            try? await Task.sleep(for: .milliseconds(250))
             withAnimation(.easeOut(duration: 0.3)) { opacity = 0 }
             try? await Task.sleep(for: .milliseconds(300))
             onFinished()
@@ -50,6 +71,12 @@ struct SplashView: View {
 
         // Short pause so the first frame matches the launch screen.
         try? await Task.sleep(for: .milliseconds(150))
+
+        // Switch from the system appearance to the app's one.
+        if appColorScheme != systemColorScheme {
+            withAnimation(.easeInOut(duration: 0.25)) { systemLayerOpacity = 0 }
+            try? await Task.sleep(for: .milliseconds(250))
+        }
 
         // Logo "breathes in".
         withAnimation(.easeInOut(duration: 0.35)) { logoScale = 0.88 }
