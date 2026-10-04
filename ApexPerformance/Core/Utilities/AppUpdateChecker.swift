@@ -4,6 +4,8 @@
 //
 
 import Foundation
+import StoreKit
+import UIKit
 
 /// Checks the App Store for a newer version of the app, using
 /// Apple's public lookup API (no backend needed).
@@ -11,6 +13,8 @@ enum AppUpdateChecker {
 
     struct AvailableUpdate: Equatable {
         let version: String
+        // App Store id of the app, used to show its page inside the app.
+        let appId: Int
         let storeURL: URL
     }
 
@@ -19,6 +23,7 @@ enum AppUpdateChecker {
 
         struct Result: Decodable {
             let version: String
+            let trackId: Int
             let trackViewUrl: String
         }
     }
@@ -44,7 +49,7 @@ enum AppUpdateChecker {
             guard isVersion(result.version, newerThan: installedVersion),
                   let url = URL(string: result.trackViewUrl) else { return nil }
 
-            return AvailableUpdate(version: result.version, storeURL: url)
+            return AvailableUpdate(version: result.version, appId: result.trackId, storeURL: url)
         }
 
         return nil
@@ -81,5 +86,59 @@ enum AppUpdateChecker {
             if left != right { return left > right }
         }
         return false
+    }
+}
+
+/// Shows the app's App Store page inside the app, so the user can update
+/// without leaving it. Falls back to opening the App Store app.
+@MainActor
+enum AppStoreProductPresenter {
+
+    private static let delegate = ProductViewDelegate()
+
+    static func show(_ update: AppUpdateChecker.AvailableUpdate) {
+        Task { @MainActor in
+            // Give the update alert time to close before presenting.
+            try? await Task.sleep(for: .milliseconds(350))
+
+            guard let presenter = topViewController() else {
+                _ = await UIApplication.shared.open(update.storeURL)
+                return
+            }
+
+            let controller = SKStoreProductViewController()
+            controller.delegate = delegate
+
+            // Shown right away with a spinner while the page loads.
+            presenter.present(controller, animated: true)
+
+            let parameters = [SKStoreProductParameterITunesItemIdentifier: NSNumber(value: update.appId)]
+            controller.loadProduct(withParameters: parameters) { loaded, _ in
+                guard !loaded else { return }
+                Task { @MainActor in
+                    controller.dismiss(animated: true)
+                    _ = await UIApplication.shared.open(update.storeURL)
+                }
+            }
+        }
+    }
+
+    private static func topViewController() -> UIViewController? {
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first { $0.isKeyWindow }
+
+        var controller = window?.rootViewController
+        while let presented = controller?.presentedViewController, !presented.isBeingDismissed {
+            controller = presented
+        }
+        return controller
+    }
+}
+
+private final class ProductViewDelegate: NSObject, SKStoreProductViewControllerDelegate {
+    func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
+        viewController.dismiss(animated: true)
     }
 }
