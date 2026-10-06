@@ -9,13 +9,20 @@ struct WorkoutDetailView: View {
 
     @State private var workout: Workout
     @State private var isPlayingVideo = false
+    @State private var showDeleteDialog = false
+    @State private var isDeleting = false
     let canEdit: Bool
     var onSaved: (Workout) -> Void
+    var onDeleted: (() -> Void)?
 
-    init(workout: Workout, canEdit: Bool, onSaved: @escaping (Workout) -> Void) {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toastManager: ToastManager
+
+    init(workout: Workout, canEdit: Bool, onSaved: @escaping (Workout) -> Void, onDeleted: (() -> Void)? = nil) {
         self._workout = State(initialValue: workout)
         self.canEdit = canEdit
         self.onSaved = onSaved
+        self.onDeleted = onDeleted
     }
 
     private var videoId: String? {
@@ -84,7 +91,44 @@ struct WorkoutDetailView: View {
                             .foregroundStyle(Color.apexMainColor)
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .destructive) {
+                        showDeleteDialog = true
+                    } label: {
+                        if isDeleting {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    .accessibilityLabel("delete_workout")
+                    .disabled(isDeleting)
+                }
             }
+        }
+        .confirmationDialog("delete_workout_question", isPresented: $showDeleteDialog, titleVisibility: .visible) {
+            Button("delete", role: .destructive) {
+                Task { await deleteWorkout() }
+            }
+            Button("cancel", role: .cancel) {}
+        } message: {
+            Text("can_not_be_undone")
+        }
+    }
+
+    @MainActor
+    private func deleteWorkout() async {
+        isDeleting = true
+        defer { isDeleting = false }
+
+        do {
+            try await Workout.delete(id: workout.id)
+            toastManager.show("workout_deleted_successfully", type: .success)
+            onDeleted?()
+            dismiss()
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
 

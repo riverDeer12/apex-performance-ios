@@ -16,6 +16,8 @@ struct WorkoutsView: View {
     @State private var hasLoaded = false
     @State private var showFileImporter = false
     @State private var isImporting = false
+    // Workout picked for deletion from the long-press menu.
+    @State private var workoutToDelete: Workout?
 
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
@@ -77,6 +79,13 @@ struct WorkoutsView: View {
                                         workoutRow(workout)
                                     }
                                     .buttonStyle(.plain)
+                                    .contextMenu {
+                                        if canManageWorkouts {
+                                            Button("delete_workout", systemImage: "trash", role: .destructive) {
+                                                workoutToDelete = workout
+                                            }
+                                        }
+                                    }
 
                                     if workout.id != filteredWorkouts.last?.id {
                                         Divider().padding(.leading, 108)
@@ -111,7 +120,25 @@ struct WorkoutsView: View {
                     if let index = workouts.firstIndex(where: { $0.id == updated.id }) {
                         workouts[index] = updated
                     }
+                } onDeleted: {
+                    workouts.removeAll { $0.id == workout.id }
                 }
+            }
+            .confirmationDialog(
+                "delete_workout_question",
+                isPresented: Binding(
+                    get: { workoutToDelete != nil },
+                    set: { if !$0 { workoutToDelete = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: workoutToDelete
+            ) { workout in
+                Button("delete", role: .destructive) {
+                    Task { await deleteWorkout(workout) }
+                }
+                Button("cancel", role: .cancel) {}
+            } message: { _ in
+                Text("can_not_be_undone")
             }
             .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [Self.xlsxType]) { result in
                 Task { await importWorkouts(from: result) }
@@ -227,6 +254,17 @@ struct WorkoutsView: View {
             workouts = try await APIClient.shared.request(url)
         } catch let error where error.isCancellation {
             return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
+    private func deleteWorkout(_ workout: Workout) async {
+        do {
+            try await Workout.delete(id: workout.id)
+            workouts.removeAll { $0.id == workout.id }
+            toastManager.show("workout_deleted_successfully", type: .success)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }

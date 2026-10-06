@@ -96,3 +96,14 @@ struct LocalizedText: Codable, Hashable {
         Array(translations.values)
     }
 }
+
+extension Workout {
+    /// Deletes the workout (soft delete on the API, staff only).
+    @MainActor
+    static func delete(id: UUID) async throws {
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("workouts")
+            .appendingPathComponent(id.uuidString)
+        try await APIClient.shared.requestData(url, method: .delete)
+    }
+}
