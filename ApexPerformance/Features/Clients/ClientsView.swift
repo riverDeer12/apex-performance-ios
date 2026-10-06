@@ -93,7 +93,7 @@ struct ClientsView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .overlay {
                 if isLoading && clients.isEmpty {
                     ProgressView()

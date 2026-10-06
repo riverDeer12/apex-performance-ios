@@ -74,7 +74,7 @@ struct WorkoutDetailView: View {
             }
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationTitle(Text(workout.name.localized))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

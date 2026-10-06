@@ -33,16 +33,9 @@ struct UserProfileView: View {
                 VStack(spacing: 16) {
                     
                     // Header
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("my_profile")
-                            .font(.title.bold())
-                        Text("account_details_and_settings")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    ApexScreenHeader(title: "my_profile", subtitle: "account_details_and_settings")
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
                     
                     // Content
                     profileContent
@@ -114,7 +107,7 @@ struct UserProfileView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .overlay {
                 if isLoading && accountProfile == nil {
                     ProgressView()
@@ -156,21 +149,38 @@ struct UserProfileView: View {
     @ViewBuilder
     private var profileContent: some View {
         if let accountProfile {
-            // Top card
+            // Top card with a big picture
             CardView {
-                HStack(spacing: 14) {
-                    ProfilePictureView(profile: accountProfile, opensFullScreen: true)
+                VStack(spacing: 12) {
+                    ProfilePictureView(profile: accountProfile, size: 180, opensFullScreen: true)
                     
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(spacing: 4) {
                         Text(fullName)
-                            .font(.headline)
+                            .font(.system(size: 18, weight: .bold))
+                            .tracking(1.5)
+                            .textCase(.uppercase)
                         Text("@\(authManager.username)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                     
-                    Spacer()
+                    Button {
+                        showEditProfileSheet = true
+                    } label: {
+                        Text(accountProfile.hasProfilePicture ? LocalizedStringKey("change_profile_picture") : LocalizedStringKey("upload_profile_picture"))
+                            .font(.system(size: 12, weight: .bold))
+                            .tracking(1.2)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.primary)
+                            .frame(maxWidth: .infinity, minHeight: 40)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Color.primary.opacity(0.06))
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
+                .frame(maxWidth: .infinity)
             }
             .padding(.horizontal, 20)
             
@@ -259,8 +269,7 @@ struct UserProfileView: View {
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .apexLabel()
                     Text(value)
                         .font(.subheadline.weight(.semibold))
                 }

@@ -1,0 +1,191 @@
+//
+//  ApexStyle.swift
+//  ApexPerformance
+//
+
+import SwiftUI
+
+// Shared look of the app: dark or warm light background, flat cards,
+// uppercase spaced headings and a sky blue accent.
+
+extension Color {
+    static let apexAccent = Color("ApexAccent")
+    static let apexBackground = Color("ApexBackground")
+    static let apexCard = Color("ApexCard")
+    // Text and icons on top of the accent color, dark in both appearances.
+    static let apexOnAccent = Color(red: 0.03, green: 0.08, blue: 0.13)
+    // Hairline around cards and table rows.
+    static let apexBorder = Color.primary.opacity(0.08)
+}
+
+extension View {
+    /// Big uppercase screen title, e.g. "MOJI TRENINZI".
+    func apexTitle() -> some View {
+        font(.system(size: 22, weight: .bold))
+            .tracking(2)
+            .textCase(.uppercase)
+    }
+
+    /// Small uppercase label above values and sections, e.g. "SLJEDEĆI TRENING".
+    func apexLabel() -> some View {
+        font(.system(size: 11, weight: .semibold))
+            .tracking(1.2)
+            .textCase(.uppercase)
+            .foregroundStyle(.secondary)
+    }
+
+    /// Flat card background used across the app.
+    func apexCardBackground(cornerRadius: CGFloat = 14) -> some View {
+        background(Color.apexCard)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(Color.apexBorder, lineWidth: 1)
+            )
+    }
+}
+
+/// "APEX" wordmark with an uppercase screen title and an optional subtitle.
+struct ApexScreenHeader: View {
+    let title: LocalizedStringKey
+    var subtitle: LocalizedStringKey? = nil
+    var showsWordmark = true
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if showsWordmark {
+                Text(verbatim: "APEX")
+                    .font(.system(size: 13, weight: .heavy))
+                    .tracking(3)
+                    .foregroundStyle(.secondary)
+            }
+            Text(title)
+                .apexTitle()
+            if let subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// Full width accent button with an uppercase title and an arrow,
+/// e.g. "REZERVIRAJ TERMIN  →".
+struct ApexPrimaryButtonStyle: ButtonStyle {
+    var systemImage: String? = "arrow.right"
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+                .font(.system(size: 14, weight: .bold))
+                .tracking(1.2)
+                .textCase(.uppercase)
+            Spacer(minLength: 8)
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.system(size: 14, weight: .bold))
+            }
+        }
+        .foregroundStyle(Color.apexOnAccent)
+        .padding(.horizontal, 18)
+        .frame(maxWidth: .infinity, minHeight: 48)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.apexAccent)
+        )
+        .opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+/// Outlined red button for destructive actions, e.g. "OTKAŽI TERMIN".
+struct ApexDestructiveButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 14, weight: .bold))
+            .tracking(1.2)
+            .textCase(.uppercase)
+            .foregroundStyle(.red)
+            .frame(maxWidth: .infinity, minHeight: 46)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(Color.red.opacity(0.8), lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+            .opacity(configuration.isPressed ? 0.7 : 1)
+    }
+}
+
+/// Thin progress bar in the accent color.
+struct ApexProgressBar: View {
+    // 0...1
+    let value: Double
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Color.primary.opacity(0.1))
+                Capsule()
+                    .fill(Color.apexAccent)
+                    .frame(width: proxy.size.width * min(max(value, 0), 1))
+            }
+        }
+        .frame(height: 5)
+        .accessibilityValue(Text(value, format: .percent.precision(.fractionLength(0))))
+    }
+}
+
+/// Dark picture used on tiles and heroes. Shows a remote picture when
+/// there is one, otherwise a gradient with a big faint symbol.
+struct ApexPictureBackground: View {
+    var imageURL: URL? = nil
+    var systemImage: String = "figure.strengthtraining.traditional"
+
+    var body: some View {
+        // Overlays keep the picture from changing the size it is given.
+        LinearGradient(
+            colors: [Color(red: 0.16, green: 0.19, blue: 0.23), Color(red: 0.05, green: 0.06, blue: 0.08)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay(alignment: .trailing) {
+            Image(systemName: systemImage)
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(.white.opacity(0.12))
+                .padding(18)
+        }
+        .overlay {
+            if let imageURL {
+                AsyncImage(url: imageURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    }
+                }
+            }
+        }
+        .clipped()
+    }
+}
+
+#Preview {
+    ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+            ApexScreenHeader(title: "trainings", subtitle: "completed_trainings_subtitle")
+            Text("date").apexLabel()
+            Button("save") {}
+                .buttonStyle(ApexPrimaryButtonStyle())
+            Button("cancel") {}
+                .buttonStyle(ApexDestructiveButtonStyle())
+            ApexProgressBar(value: 5.0 / 12.0)
+            ApexPictureBackground()
+                .frame(height: 140)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .padding(20)
+    }
+    .background(Color.apexBackground)
+}

@@ -63,7 +63,7 @@ struct StatefulPreviewWrapper<Value, Content: View>: View {
             text: text
         )
         .padding()
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
     }
 }
 
@@ -74,6 +74,6 @@ struct StatefulPreviewWrapper<Value, Content: View>: View {
             text: text
         )
         .padding()
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
     }
 }

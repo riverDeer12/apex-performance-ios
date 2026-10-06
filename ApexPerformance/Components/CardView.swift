@@ -15,7 +15,7 @@ struct CardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             if let title {
                 Text(title)
-                    .font(.headline)
+                    .apexLabel()
                     .padding(.top, 2)
             }
             
@@ -23,8 +23,6 @@ struct CardView<Content: View>: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 4)
+        .apexCardBackground()
     }
 }

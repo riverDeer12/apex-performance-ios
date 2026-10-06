@@ -130,7 +130,7 @@ struct AppointmentDetailsView: View {
             }
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("cancel_appointment_question", isPresented: $showCancelConfirmation) {
             Button("cancel_appointment", role: .destructive) {

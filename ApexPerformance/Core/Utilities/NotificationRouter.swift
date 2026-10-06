@@ -6,6 +6,7 @@
 import Foundation
 
 enum AppTab: Hashable {
+    case home
     case appointments
     case appointmentRequests
     case workouts

@@ -73,26 +73,23 @@ struct CreateAppointmentView: View {
                     }
                 }
 
-                Section{
+                Section {
                     if isLoadingTimeSlots {
                         ProgressView("loading_time_slots")
                     }
                     
-                    Picker("select_time_slot", selection: $selectedTimeSlot) {
-                        Text("select_value").tag(nil as UUID?)
-                        ForEach(timeSlots, id: \.self.id) { timeSlot in
-                            Text(timeSlot.name ?? "unknown_value")
-                                .tag(Optional(timeSlot.id))
-                        }
-                    }
-                    .disabled(isLoadingTimeSlots || timeSlots.isEmpty)
-                    .onChange(of: timeSlots) { _, timeSlots in
+                    // Time slots as chips, taken ones can be joined.
+                    timeSlotChips
+                        .disabled(isLoadingTimeSlots)
+                        .onChange(of: timeSlots) { _, timeSlots in
                         if timeSlots.count == 1 {
                             selectedTimeSlot = timeSlots.first?.id
                         } else if timeSlots.isEmpty {
                             selectedTimeSlot = nil
                         }
                     }
+                } header: {
+                    Text("select_time_slot")
                 }
                 
                 Section{
@@ -128,7 +125,23 @@ struct CreateAppointmentView: View {
                     }
                     .disabled(isLoadingClients || clients.isEmpty)
                 }
+                
+                Section {
+                    Button {
+                        Task { await createAppointment() }
+                    } label: {
+                        Text(isSelectedTimeSlotTaken ? LocalizedStringKey("join_appointment") : LocalizedStringKey("confirm_booking"))
+                    }
+                    .buttonStyle(ApexPrimaryButtonStyle())
+                    .disabled(!canCreateAppointment)
+                    .opacity(canCreateAppointment ? 1 : 0.5)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .accessibilityIdentifier("confirm-booking-button")
+                }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.apexBackground)
             if isSaving {
                 Color.black.opacity(0.25).ignoresSafeArea()
                 ProgressView()
@@ -356,6 +369,44 @@ struct CreateAppointmentView: View {
         )
         
         return authManager.hasRole(role: "Client") ? tomorrow : today
+    }
+    
+    private var timeSlotChips: some View {
+        Group {
+            if timeSlots.isEmpty {
+                Text("no_time_slots")
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 8)], spacing: 8) {
+                    ForEach(timeSlots) { timeSlot in
+                        let isSelected = selectedTimeSlot == timeSlot.id
+                        Button {
+                            selectedTimeSlot = isSelected ? nil : timeSlot.id
+                        } label: {
+                            HStack(spacing: 4) {
+                                if timeSlot.isTaken == true {
+                                    Image(systemName: "person.2.fill")
+                                        .font(.system(size: 10))
+                                }
+                                Text(verbatim: timeSlot.name ?? timeSlot.description ?? "—")
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                            }
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(isSelected ? Color.apexOnAccent : Color.primary)
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(isSelected ? Color.apexAccent : Color.primary.opacity(0.06))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(isSelected ? .isSelected : [])
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        }
     }
     
     private var canCreateAppointment: Bool {

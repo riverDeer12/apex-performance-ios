@@ -98,7 +98,7 @@ struct WorkoutsView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .scrollDismissesKeyboard(.interactively)
             .overlay {
                 if isLoading && workouts.isEmpty {
