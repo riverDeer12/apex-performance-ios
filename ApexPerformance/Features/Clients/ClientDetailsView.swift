@@ -23,7 +23,8 @@ struct ClientDetailsView: View {
     @State private var functionalMovementScreens: [FunctionalMovementScreen] = []
     @State private var isLoadingFunctionalMovementScreens = false
     @State private var showCreateFunctionalMovementScreenSheet = false
-    @State private var completedTrainings: [Training] = []
+    @State private var trainings: [Training] = []
+    @State private var showCreateTrainingSheet = false
     
     init(client: Client) {
         self.client = client
@@ -260,17 +261,8 @@ struct ClientDetailsView: View {
                 functionalMovementScreensCard
                     .padding(.horizontal, 20)
                 
-                CardView(title: "completed_trainings") {
-                    if completedTrainings.isEmpty {
-                        Text("no_completed_trainings")
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 6)
-                    } else {
-                        TrainingRowsView(trainings: completedTrainings)
-                    }
-                }
-                .padding(.horizontal, 20)
+                trainingsCard
+                    .padding(.horizontal, 20)
                 
             }
             .padding(.bottom, 24)
@@ -311,12 +303,57 @@ struct ClientDetailsView: View {
             await loadFunctionalMovementScreens()
         }
         .task {
-            await loadCompletedTrainings()
+            await loadTrainings()
+        }
+        .sheet(isPresented: $showCreateTrainingSheet) {
+            TrainingFormView(clientId: client.id, history: trainings) { saved in
+                upsertTraining(saved)
+            }
         }
         .sheet(isPresented: $showCreateFunctionalMovementScreenSheet) {
             NavigationStack {
                 FunctionalMovementScreenView(clientId: client.id) {
                     Task { await loadFunctionalMovementScreens() }
+                }
+            }
+        }
+    }
+    
+    private var trainingsCard: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("trainings")
+                        .font(.headline)
+                        .padding(.top, 2)
+                    
+                    Spacer()
+                    
+                    Button {
+                        showCreateTrainingSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundStyle(Color.apexMainColor)
+                            .frame(width: 48, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                    .fill(Color(.systemGray6))
+                            )
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(Text("new_training"))
+                }
+                
+                if trainings.isEmpty {
+                    Text("no_trainings")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                } else {
+                    TrainingRowsView(trainings: trainings) { saved in
+                        upsertTraining(saved)
+                    }
                 }
             }
         }
@@ -383,14 +420,12 @@ struct ClientDetailsView: View {
         }
     }
     
-    // API returns all FMS the logged user can see,
-    // so only this client's are kept, newest first.
     // API returns the trainings of all the coach's clients,
-    // so only this client's are kept.
+    // so only this client's are kept, newest first.
     @MainActor
-    private func loadCompletedTrainings() async {
+    private func loadTrainings() async {
         do {
-            completedTrainings = try await Training.loadCompleted()
+            trainings = try await Training.loadAll()
                 .filter { $0.client.id == client.id }
         } catch let error where error.isCancellation {
             return
@@ -399,6 +434,14 @@ struct ClientDetailsView: View {
         }
     }
     
+    private func upsertTraining(_ training: Training) {
+        trainings.removeAll { $0.id == training.id }
+        trainings.append(training)
+        trainings.sort { $0.date > $1.date }
+    }
+    
+    // API returns all FMS the logged user can see,
+    // so only this client's are kept, newest first.
     @MainActor
     private func loadFunctionalMovementScreens() async {
         isLoadingFunctionalMovementScreens = true
