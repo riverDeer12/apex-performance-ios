@@ -159,7 +159,7 @@ struct UserProfileView: View {
             // Top card
             CardView {
                 HStack(spacing: 14) {
-                    ProfilePictureView(profile: accountProfile)
+                    ProfilePictureView(profile: accountProfile, opensFullScreen: true)
                     
                     VStack(alignment: .leading, spacing: 6) {
                         Text(fullName)
