@@ -11,6 +11,7 @@ enum AppTab: Hashable {
     case workouts
     case clients
     case bodyMeasurements
+    case trainings
     case profile
 }
 

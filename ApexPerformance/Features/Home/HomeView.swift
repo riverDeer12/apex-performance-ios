@@ -25,6 +25,7 @@ struct HomeView: View {
         if !authManager.hasRole(role: "Client") { tabs.append(.workouts) }
         if !authManager.hasRole(role: "Client") { tabs.append(.clients) }
         if authManager.hasRole(role: "Client") { tabs.append(.bodyMeasurements) }
+        if authManager.hasRole(role: "Client") { tabs.append(.trainings) }
         tabs.append(.profile)
         return tabs
     }
@@ -70,6 +71,14 @@ struct HomeView: View {
                         Label("", systemImage: "ruler")
                     }
                     .tag(AppTab.bodyMeasurements)
+            }
+
+            if availableTabs.contains(.trainings) {
+                CompletedTrainingsView()
+                    .tabItem {
+                        Label("", systemImage: "figure.strengthtraining.traditional")
+                    }
+                    .tag(AppTab.trainings)
             }
 
             UserProfileView()

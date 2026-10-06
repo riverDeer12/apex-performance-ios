@@ -109,23 +109,23 @@ final class AppStoreScreenshotTests: XCTestCase {
         let tabs = try tabButtons()
         let tabCount = tabs.count
 
-        // Client tabs: appointments (with permission), requests,
-        // body measurements, profile. Found by position from the end.
-        XCTAssertGreaterThanOrEqual(tabCount, 3, "Expected client tabs")
+        // Client tabs: appointments (with permission), requests, body
+        // measurements, completed trainings, profile. Found from the end.
+        XCTAssertGreaterThanOrEqual(tabCount, 4, "Expected client tabs")
 
-        if tabCount >= 4 {
+        if tabCount >= 5 {
             tabs.element(boundBy: 0).tap()
             waitForContent()
             takeScreenshot("client", "appointments")
         }
 
         // Sent requests with their status.
-        tabs.element(boundBy: tabCount - 3).tap()
+        tabs.element(boundBy: tabCount - 4).tap()
         waitForContent()
         takeScreenshot("client", "requests")
 
         // Body measurements with weight progress chart.
-        tabs.element(boundBy: tabCount - 2).tap()
+        tabs.element(boundBy: tabCount - 3).tap()
         waitForContent()
         takeScreenshot("client", "body-measurements")
 
@@ -135,6 +135,11 @@ final class AppStoreScreenshotTests: XCTestCase {
             waitForContent(seconds: 1)
             takeScreenshot("client", "measurement-details")
         }
+
+        // Completed trainings.
+        tabs.element(boundBy: tabCount - 2).tap()
+        waitForContent()
+        takeScreenshot("client", "completed-trainings")
 
         // Profile with credits.
         tabs.element(boundBy: tabCount - 1).tap()

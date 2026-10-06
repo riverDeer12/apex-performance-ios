@@ -23,6 +23,7 @@ struct ClientDetailsView: View {
     @State private var functionalMovementScreens: [FunctionalMovementScreen] = []
     @State private var isLoadingFunctionalMovementScreens = false
     @State private var showCreateFunctionalMovementScreenSheet = false
+    @State private var completedTrainings: [Training] = []
     
     init(client: Client) {
         self.client = client
@@ -259,6 +260,18 @@ struct ClientDetailsView: View {
                 functionalMovementScreensCard
                     .padding(.horizontal, 20)
                 
+                CardView(title: "completed_trainings") {
+                    if completedTrainings.isEmpty {
+                        Text("no_completed_trainings")
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 6)
+                    } else {
+                        TrainingRowsView(trainings: completedTrainings)
+                    }
+                }
+                .padding(.horizontal, 20)
+                
             }
             .padding(.bottom, 24)
         }
@@ -296,6 +309,9 @@ struct ClientDetailsView: View {
         .navigationBarBackButtonHidden(true)
         .task {
             await loadFunctionalMovementScreens()
+        }
+        .task {
+            await loadCompletedTrainings()
         }
         .sheet(isPresented: $showCreateFunctionalMovementScreenSheet) {
             NavigationStack {
@@ -369,6 +385,20 @@ struct ClientDetailsView: View {
     
     // API returns all FMS the logged user can see,
     // so only this client's are kept, newest first.
+    // API returns the trainings of all the coach's clients,
+    // so only this client's are kept.
+    @MainActor
+    private func loadCompletedTrainings() async {
+        do {
+            completedTrainings = try await Training.loadCompleted()
+                .filter { $0.client.id == client.id }
+        } catch let error where error.isCancellation {
+            return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+    
     @MainActor
     private func loadFunctionalMovementScreens() async {
         isLoadingFunctionalMovementScreens = true
