@@ -80,16 +80,18 @@ struct CompletedTrainingsView: View {
 /// tab and on client details for coaches.
 struct TrainingRowsView: View {
     let trainings: [Training]
+    // Set for staff, trainings can then be edited from their details.
+    var onSaved: ((Training) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(trainings) { training in
                 NavigationLink {
-                    TrainingDetailView(training: training)
+                    TrainingDetailView(training: training, history: trainings, onSaved: onSaved)
                 } label: {
                     SettingsRowView(
-                        icon: "figure.strengthtraining.traditional",
-                        iconTint: .green,
+                        icon: training.isCompleted ? "checkmark.circle" : "calendar",
+                        iconTint: training.isCompleted ? .green : .orange,
                         title: Text(verbatim: training.name),
                         subtitle: Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
                             + Text(verbatim: " · ")
@@ -107,9 +109,20 @@ struct TrainingRowsView: View {
     }
 }
 
-/// Exercises and sets of one training, read only.
+/// Exercises and sets of one training. Staff can edit it.
 struct TrainingDetailView: View {
-    let training: Training
+    @State private var training: Training
+    // Client's trainings, for the "last time" sets while editing.
+    private let history: [Training]
+    private let onSaved: ((Training) -> Void)?
+
+    @State private var showEditSheet = false
+
+    init(training: Training, history: [Training] = [], onSaved: ((Training) -> Void)? = nil) {
+        _training = State(initialValue: training)
+        self.history = history
+        self.onSaved = onSaved
+    }
 
     var body: some View {
         ScrollView {
@@ -128,6 +141,10 @@ struct TrainingDetailView: View {
                         }
                         .font(.subheadline)
                         .foregroundStyle(.green)
+                    } else {
+                        Label("planned", systemImage: "calendar")
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -161,6 +178,25 @@ struct TrainingDetailView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle(Text(verbatim: training.name))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if onSaved != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showEditSheet = true
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
+                    .accessibilityLabel(Text("edit_training"))
+                }
+            }
+        }
+        .sheet(isPresented: $showEditSheet) {
+            TrainingFormView(clientId: training.client.id, training: training, history: history) { saved in
+                training = saved
+                onSaved?(saved)
+            }
+        }
     }
 
     private func exerciseCard(_ exercise: Training.Exercise) -> some View {
