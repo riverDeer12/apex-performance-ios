@@ -129,7 +129,7 @@ struct CreateClientView: View {
                 await loadCoaches()
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationTitle("new_client")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

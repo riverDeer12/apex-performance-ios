@@ -19,13 +19,10 @@ struct StatTileView: View {
                 .minimumScaleFactor(0.8)
             
             Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .apexLabel()
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
+        .apexCardBackground()
     }
 }

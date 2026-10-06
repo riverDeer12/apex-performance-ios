@@ -13,19 +13,39 @@ struct HomeView: View {
     @ObservedObject private var notificationRouter = NotificationRouter.shared
 
     @State private var selectedTab: AppTab = .appointments
+    // Opens progress (body measurements) on the client's home.
+    @State private var showsProgress = false
+    @State private var hasSelectedFirstTab = false
+
+    private var isClient: Bool {
+        authManager.hasRole(role: "Client")
+    }
+
+    private var canGetAppointments: Bool {
+        authManager.hasPermission(permission: Permissions.canGetAppointments)
+    }
 
     private var availableTabs: [AppTab] {
         var tabs: [AppTab] = []
-        if authManager.hasPermission(permission: Permissions.canGetAppointments) { tabs.append(.appointments) }
-        // Clients always get the tab to follow the status of requests they sent.
-        if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) || authManager.hasRole(role: "Client") {
-            tabs.append(.appointmentRequests)
+        if isClient {
+            // Clients: home, appointments, trainings and profile. Sent requests
+            // open from appointments, body measurements from home (progress).
+            tabs.append(.home)
+            if canGetAppointments {
+                tabs.append(.appointments)
+            } else {
+                tabs.append(.appointmentRequests)
+            }
+            tabs.append(.trainings)
+        } else {
+            if canGetAppointments { tabs.append(.appointments) }
+            if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) {
+                tabs.append(.appointmentRequests)
+            }
+            // Role-based like the web: coaches and administrators manage workouts.
+            tabs.append(.workouts)
+            tabs.append(.clients)
         }
-        // Role-based like the web: coaches and administrators manage workouts.
-        if !authManager.hasRole(role: "Client") { tabs.append(.workouts) }
-        if !authManager.hasRole(role: "Client") { tabs.append(.clients) }
-        if authManager.hasRole(role: "Client") { tabs.append(.bodyMeasurements) }
-        if authManager.hasRole(role: "Client") { tabs.append(.trainings) }
         tabs.append(.profile)
         return tabs
     }
@@ -33,10 +53,18 @@ struct HomeView: View {
     var body: some View {
 
         TabView(selection: $selectedTab) {
+            if availableTabs.contains(.home) {
+                ClientHomeView(selectedTab: $selectedTab, showsProgress: $showsProgress)
+                    .tabItem {
+                        Label("tab_home", systemImage: "house")
+                    }
+                    .tag(AppTab.home)
+            }
+
             if availableTabs.contains(.appointments) {
                 AppointmentsView()
                     .tabItem {
-                        Label("", systemImage: "calendar")
+                        Label("tab_appointments", systemImage: "calendar")
                     }
                     .tag(AppTab.appointments)
             }
@@ -44,7 +72,7 @@ struct HomeView: View {
             if availableTabs.contains(.appointmentRequests) {
                 AppointmentRequestsView()
                     .tabItem {
-                        Label("", systemImage: "calendar.badge.clock")
+                        Label("tab_requests", systemImage: "calendar.badge.clock")
                     }
                     .tag(AppTab.appointmentRequests)
             }
@@ -52,7 +80,7 @@ struct HomeView: View {
             if availableTabs.contains(.workouts) {
                 WorkoutsView()
                     .tabItem {
-                        Label("", systemImage: "dumbbell.fill")
+                        Label("tab_workouts", systemImage: "dumbbell.fill")
                     }
                     .tag(AppTab.workouts)
             }
@@ -60,36 +88,30 @@ struct HomeView: View {
             if availableTabs.contains(.clients) {
                 ClientsView()
                     .tabItem {
-                        Label("", systemImage: "person.3")
+                        Label("tab_clients", systemImage: "person.3")
                     }
                     .tag(AppTab.clients)
-            }
-
-            if availableTabs.contains(.bodyMeasurements) {
-                MyBodyMeasurementsView()
-                    .tabItem {
-                        Label("", systemImage: "ruler")
-                    }
-                    .tag(AppTab.bodyMeasurements)
             }
 
             if availableTabs.contains(.trainings) {
                 CompletedTrainingsView()
                     .tabItem {
-                        Label("", systemImage: "figure.strengthtraining.traditional")
+                        Label("tab_trainings", systemImage: "dumbbell")
                     }
                     .tag(AppTab.trainings)
             }
 
             UserProfileView()
                 .tabItem {
-                    Label("", systemImage: "person")
+                    Label("tab_profile", systemImage: "person")
                 }
                 .tag(AppTab.profile)
         }
-        .tint(.apexMainColor)
+        .tint(.apexAccent)
         .onAppear {
-            if !availableTabs.contains(selectedTab) {
+            // Clients start on home, others on their first tab.
+            if !hasSelectedFirstTab || !availableTabs.contains(selectedTab) {
+                hasSelectedFirstTab = true
                 selectedTab = availableTabs.first ?? .profile
             }
             openPendingTab()
@@ -102,9 +124,21 @@ struct HomeView: View {
     private func openPendingTab() {
         guard var tab = notificationRouter.pendingTab else { return }
         notificationRouter.pendingTab = nil
-        // Coaches see measurements through their clients list.
-        if tab == .bodyMeasurements && !availableTabs.contains(.bodyMeasurements) {
-            tab = .clients
+        switch tab {
+        case .bodyMeasurements:
+            // Clients see measurements in progress on home,
+            // coaches through their clients list.
+            if isClient {
+                tab = .home
+                showsProgress = true
+            } else {
+                tab = .clients
+            }
+        case .appointmentRequests where !availableTabs.contains(.appointmentRequests):
+            // Clients open their sent requests from appointments.
+            tab = .appointments
+        default:
+            break
         }
         if availableTabs.contains(tab) {
             selectedTab = tab

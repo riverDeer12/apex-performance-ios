@@ -140,7 +140,7 @@ struct AppointmentRequestDetailsView: View {
             }
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("approve_request_question", isPresented: $showApproveDialog) {
             Button("approve") {

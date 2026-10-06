@@ -109,37 +109,63 @@ final class AppStoreScreenshotTests: XCTestCase {
         let tabs = try tabButtons()
         let tabCount = tabs.count
 
-        // Client tabs: appointments (with permission), requests, body
-        // measurements, completed trainings, profile. Found from the end.
+        // Client tabs: home, appointments (or requests without the
+        // permission), trainings, profile.
         XCTAssertGreaterThanOrEqual(tabCount, 4, "Expected client tabs")
 
-        if tabCount >= 5 {
-            tabs.element(boundBy: 0).tap()
+        // Home with the next appointment.
+        tabs.element(boundBy: 0).tap()
+        waitForContent()
+        takeScreenshot("client", "home")
+
+        // Progress: body mass and circumferences, then training charts.
+        let progressTile = app.buttons["progress-tile"].firstMatch
+        if progressTile.waitForExistence(timeout: 5) {
+            progressTile.tap()
             waitForContent()
-            takeScreenshot("client", "appointments")
+            takeScreenshot("client", "body-progress")
+
+            let measurementRow = app.buttons["measurement-row"].firstMatch
+            if measurementRow.waitForExistence(timeout: 5) {
+                app.swipeUp()
+                waitForContent(seconds: 1)
+                takeScreenshot("client", "body-circumferences")
+            }
+
+            let sections = app.segmentedControls["progress-section"].buttons
+            if sections.count > 1 {
+                sections.element(boundBy: 1).tap()
+                waitForContent(seconds: 1)
+                takeScreenshot("client", "training-progress")
+            }
         }
+
+        // Appointments with booking.
+        tabs.element(boundBy: 1).tap()
+        waitForContent()
+        takeScreenshot("client", "appointments")
 
         // Sent requests with their status.
-        tabs.element(boundBy: tabCount - 4).tap()
-        waitForContent()
-        takeScreenshot("client", "requests")
-
-        // Body measurements with weight progress chart.
-        tabs.element(boundBy: tabCount - 3).tap()
-        waitForContent()
-        takeScreenshot("client", "body-measurements")
-
-        let measurementRow = app.buttons["measurement-row"].firstMatch
-        if measurementRow.waitForExistence(timeout: 5) {
-            measurementRow.tap()
+        let requestsButton = app.buttons["requests-button"].firstMatch
+        if requestsButton.waitForExistence(timeout: 3) {
+            requestsButton.tap()
+            waitForContent()
+            takeScreenshot("client", "requests")
+            app.swipeDown(velocity: .fast)
             waitForContent(seconds: 1)
-            takeScreenshot("client", "measurement-details")
         }
 
-        // Completed trainings.
+        // Completed trainings and the details of the latest one.
         tabs.element(boundBy: tabCount - 2).tap()
         waitForContent()
-        takeScreenshot("client", "completed-trainings")
+        takeScreenshot("client", "trainings")
+
+        let trainingRow = app.buttons["training-row"].firstMatch
+        if trainingRow.waitForExistence(timeout: 5) {
+            trainingRow.tap()
+            waitForContent()
+            takeScreenshot("client", "training-details")
+        }
 
         // Profile with credits.
         tabs.element(boundBy: tabCount - 1).tap()

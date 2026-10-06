@@ -59,7 +59,7 @@ struct BodyMeasurementDetailsView: View {
             }
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationTitle("measurements")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)

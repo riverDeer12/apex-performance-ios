@@ -136,5 +136,5 @@ struct WeightProgressChartView: View {
         WeightProgressChartView(measurements: measurements)
             .padding()
     }
-    .background(Color(.systemGroupedBackground))
+    .background(Color.apexBackground)
 }

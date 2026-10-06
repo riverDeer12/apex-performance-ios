@@ -60,7 +60,7 @@ struct AppointmentRequestsView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .overlay {
                 if isInitialLoading && requests.isEmpty && sentRequests.isEmpty {
                     ProgressView()

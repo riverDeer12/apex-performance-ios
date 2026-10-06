@@ -12,6 +12,7 @@ struct AppointmentsView: View {
     @State private var processingRequestId: UUID?
     
     @State private var showCreateAppointmentForm = false
+    @State private var showSentRequests = false
     @State private var isGeneratingRecurring = false
     @State private var selectedDate = Calendar.current.startOfDay(for: Date())
     
@@ -24,23 +25,23 @@ struct AppointmentsView: View {
                 VStack(spacing: 16) {
                     
                     // Header
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("appointments")
-                            .font(.title.bold())
-                        Text("upcoming_past_sessions")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                    ApexScreenHeader(title: "appointments", subtitle: "upcoming_past_sessions")
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
+                    
+                    if isClient {
+                        Button("book_appointment") {
+                            showCreateAppointmentForm = true
+                        }
+                        .buttonStyle(ApexPrimaryButtonStyle())
+                        .padding(.horizontal, 20)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
                     
                     // Pending Appointments Section
                     if !pendingAppointments.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("pending_approvals")
-                                .font(.headline)
-                                .foregroundStyle(.secondary)
+                                .apexLabel()
                                 .padding(.horizontal, 20)
                             
                             CardView {
@@ -65,8 +66,7 @@ struct AppointmentsView: View {
                     // Approved Appointments Section Header
                     if !pendingAppointments.isEmpty || !cancelationRequests.isEmpty || !joinRequests.isEmpty {
                         Text("approved_appointments")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
+                            .apexLabel()
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
                     }
@@ -84,8 +84,7 @@ struct AppointmentsView: View {
                     // Selected day appointments
                     VStack(alignment: .leading, spacing: 8) {
                         Text(DateFormatter.dateWithDots.string(from: selectedDate))
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
+                            .apexLabel()
                             .padding(.horizontal, 20)
 
                         CardView {
@@ -117,7 +116,7 @@ struct AppointmentsView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .overlay {
                 if isInitialLoading && appointments.isEmpty {
                     ProgressView()
@@ -164,6 +163,20 @@ struct AppointmentsView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     
+                    if isClient {
+                        // Requests the client sent, with their status.
+                        Button {
+                            showSentRequests = true
+                        } label: {
+                            Image(systemName: "calendar.badge.clock")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel("appointment_requests")
+                        .accessibilityIdentifier("requests-button")
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 8)
+                    }
+                    
                     if(authManager.hasRole(role: "Coach")){
                         Button {
                             Task { await generateRecurringAppointments() }
@@ -192,11 +205,19 @@ struct AppointmentsView: View {
             .navigationDestination(isPresented: $showCreateAppointmentForm) {
                 CreateAppointmentView()
             }
+            .sheet(isPresented: $showSentRequests) {
+                AppointmentRequestsView()
+                    .presentationDragIndicator(.visible)
+            }
         }
     }
 
+    private var isClient: Bool {
+        authManager.hasRole(role: "Client")
+    }
+    
     private var canManageRequests: Bool {
-        !authManager.hasRole(role: "Client")
+        !isClient
     }
     
     private var cancelationRequests: [AppointmentRequest] {
@@ -212,8 +233,7 @@ struct AppointmentsView: View {
         if !requests.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
+                    .apexLabel()
                     .padding(.horizontal, 20)
                 
                 CardView {

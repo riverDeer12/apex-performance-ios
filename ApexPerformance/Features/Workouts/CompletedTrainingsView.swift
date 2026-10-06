@@ -9,41 +9,60 @@ import SwiftUI
 struct CompletedTrainingsView: View {
 
     @State private var trainings: [Training] = []
+    // Used for the exercise pictures.
+    @State private var workouts: [UUID: Workout] = [:]
+    @State private var searchText = ""
     @State private var isLoading = false
     @State private var hasLoaded = false
 
     @EnvironmentObject private var toastManager: ToastManager
 
+    private var filteredTrainings: [Training] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return trainings }
+        return trainings.filter { training in
+            training.name.localizedStandardContains(query)
+                || training.exercises.contains { $0.workoutName.allValues.contains { $0.localizedStandardContains(query) } }
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("completed_trainings")
-                            .font(.title.bold())
-                        Text("completed_trainings_subtitle")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    ApexScreenHeader(title: "my_trainings")
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
 
-                    CardView {
-                        if trainings.isEmpty, !isLoading {
-                            Text("no_completed_trainings")
+                    searchField
+                        .padding(.horizontal, 20)
+
+                    if filteredTrainings.isEmpty, !isLoading {
+                        CardView {
+                            (searchText.isEmpty ? Text("no_completed_trainings") : Text("no_trainings_found"))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 8)
-                        } else {
-                            TrainingRowsView(trainings: trainings)
                         }
+                        .padding(.horizontal, 20)
+                    } else {
+                        LazyVStack(spacing: 12) {
+                            ForEach(filteredTrainings) { training in
+                                NavigationLink {
+                                    TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
+                                } label: {
+                                    TrainingCardView(training: training, imageURL: imageURL(for: training))
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityIdentifier("training-row")
+                            }
+                        }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal, 20)
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.apexBackground)
             .overlay {
                 if isLoading && trainings.isEmpty {
                     ProgressView()
@@ -61,6 +80,39 @@ struct CompletedTrainingsView: View {
         }
     }
 
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField("search_trainings", text: $searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityLabel(Text("clear"))
+            }
+        }
+        .font(.subheadline)
+        .padding(.horizontal, 14)
+        .frame(height: 44)
+        .apexCardBackground(cornerRadius: 10)
+    }
+
+    /// Picture of the training's first exercise, when the workout has one.
+    private func imageURL(for training: Training) -> URL? {
+        training.exercises
+            .sorted { $0.order < $1.order }
+            .lazy
+            .compactMap { self.workouts[$0.workoutId]?.thumbnailUrl }
+            .compactMap { URL(string: $0) }
+            .first
+    }
+
     @MainActor
     private func load() async {
         isLoading = true
@@ -73,6 +125,68 @@ struct CompletedTrainingsView: View {
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
+
+        // Only pictures, the list works without them.
+        if workouts.isEmpty {
+            let url = AppEnvironment.apiURL.appendingPathComponent("workouts")
+            if let loaded: [Workout] = try? await APIClient.shared.request(url) {
+                workouts = Dictionary(loaded.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            }
+        }
+    }
+}
+
+/// Training card with a picture, date and its exercises.
+struct TrainingCardView: View {
+    let training: Training
+    var imageURL: URL? = nil
+
+    private var exerciseNames: [String] {
+        training.exercises
+            .sorted { $0.order < $1.order }
+            .map(\.workoutName.localized)
+    }
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ApexPictureBackground(imageURL: imageURL)
+                .frame(width: 96, height: 112)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
+                    .font(.system(size: 13, weight: .bold))
+                    .tracking(1)
+
+                Text(verbatim: training.name)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(Array(exerciseNames.prefix(3).enumerated()), id: \.offset) { _, name in
+                        Text(verbatim: name)
+                            .lineLimit(1)
+                    }
+                    if exerciseNames.count > 3 {
+                        Text(verbatim: "+\(exerciseNames.count - 3)")
+                    }
+                }
+                .font(.system(size: 11, weight: .medium))
+                .tracking(0.8)
+                .textCase(.uppercase)
+                .foregroundStyle(.secondary)
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.apexAccent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(10)
+        .apexCardBackground()
+        .contentShape(Rectangle())
     }
 }
 
@@ -112,14 +226,17 @@ struct TrainingRowsView: View {
 /// Exercises and sets of one training. Staff can edit it.
 struct TrainingDetailView: View {
     @State private var training: Training
+    private let heroImageURL: URL?
     // Client's trainings, for the "last time" sets while editing.
     private let history: [Training]
     private let onSaved: ((Training) -> Void)?
 
     @State private var showEditSheet = false
 
-    init(training: Training, history: [Training] = [], onSaved: ((Training) -> Void)? = nil) {
+    init(training: Training, heroImageURL: URL? = nil, history: [Training] = [],
+         onSaved: ((Training) -> Void)? = nil) {
         _training = State(initialValue: training)
+        self.heroImageURL = heroImageURL
         self.history = history
         self.onSaved = onSaved
     }
@@ -127,12 +244,18 @@ struct TrainingDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(verbatim: training.name)
-                        .font(.title2.bold())
+                ApexPictureBackground(imageURL: heroImageURL)
+                    .frame(height: 170)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+
+                VStack(alignment: .leading, spacing: 6) {
                     Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 15, weight: .bold))
+                        .tracking(1)
+                    Text(verbatim: training.name)
+                        .apexTitle()
                     if let completedAt = training.completedAt {
                         Label {
                             Text("completed_at \(DateFormatter.dateAndTimeWithDots.string(from: completedAt))")
@@ -149,15 +272,6 @@ struct TrainingDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
-                .padding(.top, 8)
-
-                if let note = training.note, !note.isEmpty {
-                    CardView(title: "note") {
-                        Text(verbatim: note)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding(.horizontal, 20)
-                }
 
                 if training.exercises.isEmpty {
                     CardView {
@@ -172,10 +286,18 @@ struct TrainingDetailView: View {
                     exerciseCard(exercise)
                         .padding(.horizontal, 20)
                 }
+
+                if let note = training.note, !note.isEmpty {
+                    CardView(title: "notes") {
+                        Text(verbatim: note)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 20)
+                }
             }
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.apexBackground)
         .navigationTitle(Text(verbatim: training.name))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -201,44 +323,53 @@ struct TrainingDetailView: View {
 
     private func exerciseCard(_ exercise: Training.Exercise) -> some View {
         CardView {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(verbatim: exercise.workoutName.localized)
-                    .font(.headline)
+                    .font(.system(size: 15, weight: .bold))
+                    .tracking(1)
+                    .textCase(.uppercase)
+                    .padding(.bottom, 10)
 
                 let sets = exercise.sets.sorted { $0.order < $1.order }
+                if !sets.isEmpty {
+                    setRow(Text("set"), Text("reps"), Text("kg"), isHeader: true)
+                }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
-                    HStack {
-                        Text("set_number \(index + 1)")
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(verbatim: setDescription(set))
-                            .fontWeight(.semibold)
-                    }
-                    .font(.subheadline)
+                    Divider().overlay(Color.apexBorder)
+                    setRow(
+                        Text(verbatim: "\(index + 1)"),
+                        Text(verbatim: set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
+                        Text(verbatim: set.weight.map(Self.formatWeight) ?? "—")
+                    )
                 }
 
                 if let note = exercise.note, !note.isEmpty {
                     Text(verbatim: note)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .padding(.top, 10)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
-    // For example "10 × 40 kg", "10" or "40 kg".
-    private func setDescription(_ set: Training.ExerciseSet) -> String {
-        let reps = set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty
-        let weight = set.weight.map {
-            NSDecimalNumber(decimal: $0).doubleValue.formatted(.number.precision(.fractionLength(0...2))) + " kg"
+    /// Row of the sets table: set number, repetitions and weight.
+    private func setRow(_ set: Text, _ reps: Text, _ weight: Text, isHeader: Bool = false) -> some View {
+        HStack {
+            set.frame(width: 56, alignment: .leading)
+            reps.frame(maxWidth: .infinity, alignment: .leading)
+            weight.frame(width: 64, alignment: .trailing)
         }
-        switch (reps, weight) {
-        case let (reps?, weight?): return "\(reps) × \(weight)"
-        case let (reps?, nil): return reps
-        case let (nil, weight?): return weight
-        default: return "—"
-        }
+        .font(isHeader ? .system(size: 11, weight: .semibold) : .subheadline)
+        .tracking(isHeader ? 1 : 0)
+        .textCase(isHeader ? .uppercase : nil)
+        .foregroundStyle(isHeader ? Color.secondary : Color.primary)
+        .padding(.vertical, isHeader ? 6 : 9)
+    }
+
+    private static func formatWeight(_ weight: Decimal) -> String {
+        NSDecimalNumber(decimal: weight).doubleValue.formatted(.number.precision(.fractionLength(0...2)))
     }
 }
 
