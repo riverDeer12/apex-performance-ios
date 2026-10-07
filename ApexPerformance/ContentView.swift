@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @EnvironmentObject var authManager: AuthManager
+    @Environment(\.scenePhase) private var scenePhase
     
     // Newer App Store version found when the app started.
     @State private var availableUpdate: AppUpdateChecker.AvailableUpdate?
@@ -24,6 +25,12 @@ struct ContentView: View {
         }
         .task {
             availableUpdate = await AppUpdateChecker.availableUpdate()
+        }
+        // A token can expire while the app is in the background.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                authManager.checkSession()
+            }
         }
         .alert(
             "update_available_title",
