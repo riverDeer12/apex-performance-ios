@@ -55,3 +55,46 @@ enum ClientPlan: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// Which workouts a client can see in the library, agreed with the coach.
+enum WorkoutLibraryAccess {
+    /// Private coaching: only mobility and stretching workouts.
+    case mobilityAndStretching
+    /// Online coaching: all workouts.
+    case all
+    /// Membership or no plan: no library.
+    case none
+
+    init(plan: String?) {
+        switch plan.flatMap(ClientPlan.init(rawValue:)) {
+        case .privateCoaching: self = .mobilityAndStretching
+        case .onlineCoaching: self = .all
+        case .membership, nil: self = .none
+        }
+    }
+
+    func allows(_ workout: Workout) -> Bool {
+        switch self {
+        case .mobilityAndStretching: return workout.isMobilityOrStretching
+        case .all: return true
+        case .none: return false
+        }
+    }
+}
+
+extension Workout {
+    // Parts of workout type names, in any language, for mobility and stretching.
+    private static let mobilityAndStretchingKeywords = [
+        "mobil", "stretch", "istez", "fleksib", "flexib", "allung"
+    ]
+
+    /// True when one of the workout's types is mobility or stretching.
+    var isMobilityOrStretching: Bool {
+        workoutTypes.contains { type in
+            type.name.allValues.contains { name in
+                let name = name.lowercased()
+                return Self.mobilityAndStretchingKeywords.contains { name.contains($0) }
+            }
+        }
+    }
+}

@@ -18,6 +18,24 @@ struct WorkoutsView: View {
     @State private var isImporting = false
     // Workout picked for deletion from the long-press menu.
     @State private var workoutToDelete: Workout?
+    @State private var showCreateWorkout = false
+
+    // Clients open the library from home, limited by their plan.
+    private let workoutFilter: ((Workout) -> Bool)?
+    private let title: LocalizedStringKey
+    private let subtitle: LocalizedStringKey
+    // False when pushed inside another navigation stack.
+    private let wrapsInNavigationStack: Bool
+
+    init(workoutFilter: ((Workout) -> Bool)? = nil,
+         title: LocalizedStringKey = "workouts",
+         subtitle: LocalizedStringKey = "workouts_subtitle",
+         wrapsInNavigationStack: Bool = true) {
+        self.workoutFilter = workoutFilter
+        self.title = title
+        self.subtitle = subtitle
+        self.wrapsInNavigationStack = wrapsInNavigationStack
+    }
 
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
@@ -29,6 +47,7 @@ struct WorkoutsView: View {
 
     private var filteredWorkouts: [Workout] {
         workouts
+            .filter { workoutFilter?($0) ?? true }
             .filter { $0.matches(searchText) }
             .sorted { $0.name.localized.localizedStandardCompare($1.name.localized) == .orderedAscending }
     }
@@ -43,20 +62,22 @@ struct WorkoutsView: View {
     private static let xlsxType = UTType(filenameExtension: "xlsx") ?? .data
 
     var body: some View {
-        NavigationStack {
+        if wrapsInNavigationStack {
+            NavigationStack {
+                content
+            }
+        } else {
+            content
+        }
+    }
+
+    private var content: some View {
             ScrollView {
                 VStack(spacing: 16) {
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("workouts")
-                            .font(.title.bold())
-                        Text("workouts_subtitle")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    ApexScreenHeader(title: title, subtitle: subtitle)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
 
                     if canManageWorkouts {
                         importSection
@@ -143,8 +164,25 @@ struct WorkoutsView: View {
             .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [Self.xlsxType]) { result in
                 Task { await importWorkouts(from: result) }
             }
+            .toolbar {
+                if canManageWorkouts {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showCreateWorkout = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel(Text("new_workout"))
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $showCreateWorkout) {
+                WorkoutEditView { created in
+                    workouts.append(created)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
-        }
     }
 
     private var importSection: some View {

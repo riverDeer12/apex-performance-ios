@@ -56,6 +56,26 @@ struct ClientHomeView: View {
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("progress-tile")
                     }
+
+                    // Workout library depends on the plan agreed with the coach.
+                    let access = WorkoutLibraryAccess(plan: client?.plan)
+                    if access != .none {
+                        NavigationLink {
+                            WorkoutsView(
+                                workoutFilter: access.allows,
+                                title: access == .all ? "exercise_library" : "mobility_and_stretching",
+                                subtitle: access == .all ? "exercise_library_subtitle" : "mobility_and_stretching_subtitle",
+                                wrapsInNavigationStack: false
+                            )
+                        } label: {
+                            tile(
+                                title: access == .all ? "exercise_library" : "mobility_and_stretching",
+                                systemImage: access == .all ? "figure.strengthtraining.functional" : "figure.flexibility"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("library-tile")
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
