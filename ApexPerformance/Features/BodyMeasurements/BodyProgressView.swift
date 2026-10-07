@@ -72,7 +72,7 @@ struct BodyProgressView: View {
                         let change = last.weight - first.weight
                         Text(verbatim: "\(Self.signed(change)) kg")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(change < 0 ? Color.green : change > 0 ? Color.orange : Color.secondary)
+                            .foregroundStyle(Self.changeColor(change))
                     }
                 }
 
@@ -92,6 +92,12 @@ struct BodyProgressView: View {
         let padding = max(1, ((weights.max() ?? 0) - (weights.min() ?? 0)) * 0.15)
         let lower = (weights.min() ?? 0) - padding
         let domain = lower...((weights.max() ?? 0) + padding)
+        let lastId = points.last?.id
+        let areaStyle = LinearGradient(
+            colors: [Color.apexAccent.opacity(0.25), Color.apexAccent.opacity(0)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
 
         return Chart {
             ForEach(points) { point in
@@ -101,10 +107,7 @@ struct BodyProgressView: View {
                     yEnd: .value("weight", point.weight)
                 )
                 .interpolationMethod(.catmullRom)
-                .foregroundStyle(
-                    LinearGradient(colors: [Color.apexAccent.opacity(0.25), Color.apexAccent.opacity(0)],
-                                   startPoint: .top, endPoint: .bottom)
-                )
+                .foregroundStyle(areaStyle)
 
                 LineMark(
                     x: .value("date", point.date),
@@ -119,9 +122,9 @@ struct BodyProgressView: View {
                     y: .value("weight", point.weight)
                 )
                 .foregroundStyle(Color.apexAccent)
-                .symbolSize(point.id == points.last?.id ? 60 : 24)
+                .symbolSize(point.id == lastId ? CGFloat(60) : CGFloat(24))
                 .annotation(position: .top, alignment: .trailing) {
-                    if point.id == points.last?.id {
+                    if point.id == lastId {
                         Text(verbatim: Self.format(point.weight))
                             .font(.caption2.weight(.semibold))
                     }
@@ -187,7 +190,7 @@ struct BodyProgressView: View {
                         label: Text(row.0),
                         value: Text(verbatim: value > 0 ? Self.format(value) : "—"),
                         change: Text(verbatim: change.map(Self.signed) ?? "—"),
-                        changeColor: change.map { $0 < 0 ? Color.green : $0 > 0 ? Color.orange : Color.secondary } ?? .secondary
+                        changeColor: change.map(Self.changeColor) ?? Color.secondary
                     )
                 }
             }
@@ -261,6 +264,12 @@ struct BodyProgressView: View {
     }
 
     // MARK: - Formatting
+
+    static func changeColor(_ change: Double) -> Color {
+        if change < 0 { return .green }
+        if change > 0 { return .orange }
+        return .secondary
+    }
 
     static func double(_ value: Decimal) -> Double {
         NSDecimalNumber(decimal: value).doubleValue

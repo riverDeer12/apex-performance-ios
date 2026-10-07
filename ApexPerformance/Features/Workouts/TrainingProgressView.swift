@@ -39,46 +39,69 @@ struct TrainingProgressView: View {
             } else {
                 summaryCard(sessions)
                 maxWeightCard(sessions)
-                chartCard(title: "volume_per_training") {
-                    Chart(sessions) { session in
-                        BarMark(
-                            x: .value("date", session.date, unit: .day),
-                            y: .value("volume", session.volume)
-                        )
-                        .foregroundStyle(Color.apexAccent)
-                        .cornerRadius(2)
-                    }
-                    .chartXAxis { dateAxis }
-                    .chartYAxis { numberAxis }
-                }
-                chartCard(title: "total_reps_per_training") {
-                    lineChart(sessions.map { ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps)) })
-                }
-                chartCard(title: "average_reps_per_set") {
-                    lineChart(sessions.filter { $0.repSets > 0 }.map {
-                        ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps) / Double($0.repSets))
-                    })
-                }
-                chartCard(title: "trainings_per_week") {
-                    Chart(trainingsPerWeek(sessions), id: \.week) { item in
-                        BarMark(
-                            x: .value("week", item.week, unit: .weekOfYear),
-                            y: .value("trainings", item.count)
-                        )
-                        .foregroundStyle(Color.apexAccent)
-                        .cornerRadius(2)
-                    }
-                    .chartXAxis { dateAxis }
-                    .chartYAxis {
-                        AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { _ in
-                            AxisGridLine().foregroundStyle(Color.apexBorder)
-                            AxisValueLabel()
-                        }
-                    }
-                }
+                volumeCard(sessions)
+                totalRepsCard(sessions)
+                averageRepsCard(sessions)
+                weeklyCard(sessions)
                 muscleGroupsCard(sessions)
             }
         }
+    }
+
+    // MARK: - Charts
+
+    // Each chart is its own function to keep type checking fast.
+
+    private func volumeCard(_ sessions: [Session]) -> some View {
+        let points = sessions.map { ChartPoint(id: $0.id, date: $0.date, value: $0.volume) }
+        return chartCard(title: "volume_per_training") {
+            barChart(points)
+        }
+    }
+
+    private func totalRepsCard(_ sessions: [Session]) -> some View {
+        let points = sessions.map { ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps)) }
+        return chartCard(title: "total_reps_per_training") {
+            lineChart(points)
+        }
+    }
+
+    private func averageRepsCard(_ sessions: [Session]) -> some View {
+        let points = sessions
+            .filter { $0.repSets > 0 }
+            .map { ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps) / Double($0.repSets)) }
+        return chartCard(title: "average_reps_per_set") {
+            lineChart(points)
+        }
+    }
+
+    private func weeklyCard(_ sessions: [Session]) -> some View {
+        let weeks: [WeekCount] = trainingsPerWeek(sessions)
+        return chartCard(title: "trainings_per_week") {
+            Chart(weeks, id: \.week) { item in
+                BarMark(
+                    x: .value("week", item.week, unit: .weekOfYear),
+                    y: .value("trainings", item.count)
+                )
+                .foregroundStyle(Color.apexAccent)
+                .cornerRadius(2)
+            }
+            .chartXAxis { dateAxis }
+            .chartYAxis { numberAxis }
+        }
+    }
+
+    private func barChart(_ points: [ChartPoint]) -> some View {
+        Chart(points) { point in
+            BarMark(
+                x: .value("date", point.date, unit: .day),
+                y: .value("value", point.value)
+            )
+            .foregroundStyle(Color.apexAccent)
+            .cornerRadius(2)
+        }
+        .chartXAxis { dateAxis }
+        .chartYAxis { numberAxis }
     }
 
     // MARK: - Data
@@ -239,17 +262,8 @@ struct TrainingProgressView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 } else {
-                    Chart(points) { point in
-                        BarMark(
-                            x: .value("date", point.date, unit: .day),
-                            y: .value("kg", point.value)
-                        )
-                        .foregroundStyle(Color.apexAccent)
-                        .cornerRadius(2)
-                    }
-                    .chartXAxis { dateAxis }
-                    .chartYAxis { numberAxis }
-                    .frame(height: 150)
+                    barChart(points)
+                        .frame(height: 150)
                 }
             }
         }
