@@ -5,9 +5,11 @@
 
 import SwiftUI
 
+/// Edits a workout, or creates a new one when no workout is given.
 struct WorkoutEditView: View {
 
-    let workout: Workout
+    // nil when creating a new workout.
+    let workout: Workout?
     var onSaved: (Workout) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -32,16 +34,20 @@ struct WorkoutEditView: View {
     // ErrorCodes.AlreadyExists on the API.
     private static let duplicateErrorCode = "1300"
 
-    init(workout: Workout, onSaved: @escaping (Workout) -> Void) {
+    init(workout: Workout? = nil, onSaved: @escaping (Workout) -> Void) {
         self.workout = workout
         self.onSaved = onSaved
-        _nameHr = State(initialValue: workout.name.value(for: "HR") ?? "")
-        _nameEn = State(initialValue: workout.name.value(for: "EN") ?? "")
-        _descriptionHr = State(initialValue: workout.description.value(for: "HR") ?? "")
-        _descriptionEn = State(initialValue: workout.description.value(for: "EN") ?? "")
-        _videoUrl = State(initialValue: workout.videoUrl ?? "")
-        _thumbnailUrl = State(initialValue: workout.thumbnailUrl ?? "")
-        _selectedWorkoutTypeIds = State(initialValue: Set(workout.workoutTypes.map(\.id)))
+        _nameHr = State(initialValue: workout?.name.value(for: "HR") ?? "")
+        _nameEn = State(initialValue: workout?.name.value(for: "EN") ?? "")
+        _descriptionHr = State(initialValue: workout?.description.value(for: "HR") ?? "")
+        _descriptionEn = State(initialValue: workout?.description.value(for: "EN") ?? "")
+        _videoUrl = State(initialValue: workout?.videoUrl ?? "")
+        _thumbnailUrl = State(initialValue: workout?.thumbnailUrl ?? "")
+        _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
+    }
+
+    private var isNew: Bool {
+        workout == nil
     }
 
     private var isVideoUrlValid: Bool {
@@ -55,7 +61,8 @@ struct WorkoutEditView: View {
             && trimmedNameHr.count <= Self.maxNameLength
             && nameEn.trimmingCharacters(in: .whitespacesAndNewlines).count <= Self.maxNameLength
             && !descriptionHr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && isVideoUrlValid
+            // The API accepts a new workout without a video, it can be added later.
+            && (isVideoUrlValid || (isNew && videoUrl.trimmingCharacters(in: .whitespaces).isEmpty))
     }
 
     var body: some View {
@@ -123,7 +130,7 @@ struct WorkoutEditView: View {
                 }
             }
         }
-        .navigationTitle("edit_workout")
+        .navigationTitle(isNew ? LocalizedStringKey("new_workout") : LocalizedStringKey("edit_workout"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -188,9 +195,10 @@ struct WorkoutEditView: View {
         isSaving = true
         defer { isSaving = false }
 
+        let empty = LocalizedText(translations: [:])
         let request = UpdateWorkoutRequest(
-            name: localizedText(from: workout.name, hr: nameHr, en: nameEn),
-            description: localizedText(from: workout.description, hr: descriptionHr, en: descriptionEn),
+            name: localizedText(from: workout?.name ?? empty, hr: nameHr, en: nameEn),
+            description: localizedText(from: workout?.description ?? empty, hr: descriptionHr, en: descriptionEn),
             // An empty thumbnail is generated from the YouTube video on the API.
             thumbnailUrl: thumbnailUrl.trimmingCharacters(in: .whitespaces),
             videoUrl: videoUrl.trimmingCharacters(in: .whitespaces),
@@ -198,15 +206,21 @@ struct WorkoutEditView: View {
         )
 
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent("workouts/\(workout.id.uuidString)")
-            let updated: Workout = try await APIClient.shared.request(
+            var url = AppEnvironment.apiURL.appendingPathComponent("workouts")
+            if let workout {
+                url = url.appendingPathComponent(workout.id.uuidString)
+            }
+            let saved: Workout = try await APIClient.shared.request(
                 url,
-                method: .put,
+                method: isNew ? .post : .put,
                 body: JSONEncoder().encode(request)
             )
 
-            onSaved(updated)
-            toastManager.show("workout_updated_successfully", type: .success)
+            onSaved(saved)
+            toastManager.show(
+                isNew ? "workout_created_successfully" : "workout_updated_successfully",
+                type: .success
+            )
             dismiss()
         } catch ApiError.validation(let response)
                     where response.errors?["generalErrors"]?.contains(Self.duplicateErrorCode) == true {

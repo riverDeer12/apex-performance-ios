@@ -19,6 +19,7 @@ struct LoginView: View {
     @State private var errorMessage = ""
     @State private var isLoading = false
     @State private var isPasswordVisible = false
+    @State private var showForgotPassword = false
     
     @FocusState private var focusedField: Field?
     enum Field { case username, password }
@@ -138,6 +139,14 @@ struct LoginView: View {
                             .buttonStyle(.plain)
                             .disabled(isLoading)
                             .accessibilityIdentifier("login-button")
+                            
+                            Button("forgot_password") {
+                                showForgotPassword = true
+                            }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color.apexMainColor)
+                            .disabled(isLoading)
+                            .accessibilityIdentifier("forgot-password-button")
                         }
                     }
                     .padding(.horizontal, 24)
@@ -146,6 +155,115 @@ struct LoginView: View {
                 }
                 .frame(minHeight: geo.size.height)
             }
+        }
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView()
+        }
+    }
+}
+
+/// Sends the password reset email, same as "Forgot password?" on the web.
+/// The email links to the web app where the new password is set.
+struct ForgotPasswordView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var email = ""
+    @State private var isSending = false
+    @State private var isSent = false
+    @State private var errorMessage: String?
+
+    private var trimmedEmail: String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isValid: Bool {
+        trimmedEmail.contains("@") && trimmedEmail.contains(".")
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                if isSent {
+                    Section {
+                        Label {
+                            Text("forgot_password_sent")
+                        } icon: {
+                            Image(systemName: "envelope.badge")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                    }
+                } else {
+                    Section {
+                        TextField("email", text: $email)
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .submitLabel(.send)
+                            .onSubmit {
+                                guard isValid else { return }
+                                Task { await send() }
+                            }
+                    } footer: {
+                        if let errorMessage {
+                            Text(LocalizedStringKey(errorMessage))
+                                .foregroundStyle(.red)
+                        } else {
+                            Text("forgot_password_hint")
+                        }
+                    }
+
+                    Section {
+                        Button {
+                            Task { await send() }
+                        } label: {
+                            HStack {
+                                Spacer()
+                                if isSending {
+                                    ProgressView()
+                                } else {
+                                    Text("send_reset_link")
+                                        .fontWeight(.semibold)
+                                }
+                                Spacer()
+                            }
+                        }
+                        .disabled(!isValid || isSending)
+                    }
+                }
+            }
+            .navigationTitle("forgot_password")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("close") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    @MainActor
+    private func send() async {
+        isSending = true
+        errorMessage = nil
+        defer { isSending = false }
+
+        struct Request: Encodable { let email: String }
+
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("authentication/forgot-password")
+            // The API answers the same whether the email exists or not.
+            try await APIClient.shared.requestData(
+                url,
+                method: .post,
+                body: JSONEncoder().encode(Request(email: trimmedEmail))
+            )
+            isSent = true
+        } catch {
+            errorMessage = mapError(error)
         }
     }
 }

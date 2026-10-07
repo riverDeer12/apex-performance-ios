@@ -3,15 +3,20 @@ import SwiftUI
 struct BodyMeasurementDetailsView: View {
     let bodyMeasurement: BodyMeasurement
     let isEditable: Bool
+    // Set for staff, shows the delete button.
+    var onDeleted: ((UUID) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var form: BodyMeasurement
     @State private var isSaving = false
+    @State private var isDeleting = false
+    @State private var showDeleteDialog = false
 
-    init(bodyMeasurement: BodyMeasurement, isEditable: Bool = true) {
+    init(bodyMeasurement: BodyMeasurement, isEditable: Bool = true, onDeleted: ((UUID) -> Void)? = nil) {
         self.bodyMeasurement = bodyMeasurement
         self.isEditable = isEditable
+        self.onDeleted = onDeleted
         self._form = State(initialValue: bodyMeasurement)
     }
     
@@ -55,6 +60,21 @@ struct BodyMeasurementDetailsView: View {
                 }
                 .padding(.horizontal, 20)
                 
+                if isEditable && onDeleted != nil {
+                    Button {
+                        showDeleteDialog = true
+                    } label: {
+                        if isDeleting {
+                            ProgressView()
+                        } else {
+                            Text("delete_measurement")
+                        }
+                    }
+                    .buttonStyle(ApexDestructiveButtonStyle())
+                    .disabled(isDeleting || isSaving)
+                    .padding(.horizontal, 20)
+                }
+                
                 Spacer(minLength: 12)
             }
             .padding(.bottom, 24)
@@ -63,6 +83,14 @@ struct BodyMeasurementDetailsView: View {
         .navigationTitle("measurements")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .confirmationDialog("delete_measurement_question", isPresented: $showDeleteDialog, titleVisibility: .visible) {
+            Button("delete", role: .destructive) {
+                Task { await deleteBodyMeasurement() }
+            }
+            Button("cancel", role: .cancel) {}
+        } message: {
+            Text("can_not_be_undone")
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -90,6 +118,24 @@ struct BodyMeasurementDetailsView: View {
                     .disabled(isSaving)
                 }
             }
+        }
+    }
+    
+    @MainActor
+    private func deleteBodyMeasurement() async {
+        isDeleting = true
+        defer { isDeleting = false }
+        
+        do {
+            let url = AppEnvironment.apiURL
+                .appendingPathComponent("body-measurements")
+                .appendingPathComponent(bodyMeasurement.id.uuidString)
+            try await APIClient.shared.requestData(url, method: .delete)
+            onDeleted?(bodyMeasurement.id)
+            toastManager.show("body_measurement_deleted_successfully", type: .success)
+            dismiss()
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
     

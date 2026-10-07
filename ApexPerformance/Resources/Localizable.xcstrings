@@ -1075,6 +1075,29 @@
         }
       }
     },
+    "body_measurement_deleted_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Measurement deleted."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mjerenje je obrisano."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misurazione eliminata."
+          }
+        }
+      }
+    },
     "body_measurement_updated_successfully" : {
       "localizations" : {
         "en" : {
@@ -2004,6 +2027,52 @@
         }
       }
     },
+    "delete_measurement" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete measurement"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obriši mjerenje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimina misurazione"
+          }
+        }
+      }
+    },
+    "delete_measurement_question" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this measurement?"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrisati mjerenje?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminare la misurazione?"
+          }
+        }
+      }
+    },
     "delete_training" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2437,6 +2506,52 @@
         }
       }
     },
+    "exercise_library" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise library"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biblioteka vježbi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Libreria esercizi"
+          }
+        }
+      }
+    },
+    "exercise_library_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All exercises with instructions and video"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sve vježbe s uputama i videom"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutti gli esercizi con istruzioni e video"
+          }
+        }
+      }
+    },
     "exercise_number %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2593,6 +2708,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FMS aggiornato con successo."
+          }
+        }
+      }
+    },
+    "forgot_password" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgot password?"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaboravljena lozinka?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password dimenticata?"
+          }
+        }
+      }
+    },
+    "forgot_password_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your account's email and we'll send you a link to set a new password."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upiši e-mail svog računa i poslat ćemo ti poveznicu za postavljanje nove lozinke."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci l'email del tuo account e ti invieremo un link per impostare una nuova password."
+          }
+        }
+      }
+    },
+    "forgot_password_sent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If an account with that email exists, we've sent a link to set a new password. Check your inbox."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako postoji račun s tim e-mailom, poslali smo poveznicu za novu lozinku. Provjeri poštu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se esiste un account con questa email, abbiamo inviato un link per impostare una nuova password. Controlla la posta."
           }
         }
       }
@@ -3590,6 +3774,52 @@
         }
       }
     },
+    "mobility_and_stretching" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobility and stretching"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobilnost i istezanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobilità e stretching"
+          }
+        }
+      }
+    },
+    "mobility_and_stretching_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobility and stretching exercises in your plan"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vježbe mobilnosti i istezanja iz tvog plana"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercizi di mobilità e stretching del tuo piano"
+          }
+        }
+      }
+    },
     "move_down" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3954,6 +4184,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuovo nome utente"
+          }
+        }
+      }
+    },
+    "new_workout" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New workout"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nova vježba"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo esercizio"
           }
         }
       }
@@ -5949,6 +6202,29 @@
         }
       }
     },
+    "send_reset_link" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send link"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pošalji poveznicu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia link"
+          }
+        }
+      }
+    },
     "sender" : {
       "localizations" : {
         "en" : {
@@ -7293,6 +7569,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Andamento del peso"
+          }
+        }
+      }
+    },
+    "workout_created_successfully" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout added."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vježba je dodana."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercizio aggiunto."
           }
         }
       }

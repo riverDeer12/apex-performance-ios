@@ -232,7 +232,9 @@ struct ClientDetailsView: View {
                                     .sorted { $0.measuredAt > $1.measuredAt }
                                 ForEach(measurements) { bodyMeasurement in
                                     NavigationLink {
-                                        BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement)
+                                        BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement) { id in
+                                            form.bodyMeasurements?.removeAll { $0.id == id }
+                                        }
                                     } label: {
                                         SettingsRowView(
                                             icon: "ruler",
