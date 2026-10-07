@@ -580,6 +580,29 @@
         }
       }
     },
+    "add_to_appointment" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to existing appointment"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj u postojeći termin"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi all'appuntamento esistente"
+          }
+        }
+      }
+    },
     "all_monthly_reviews" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1615,6 +1638,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Clienti"
+          }
+        }
+      }
+    },
+    "clients_added_to_appointment" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clients added to the appointment."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klijenti su dodani u termin."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clienti aggiunti all'appuntamento."
           }
         }
       }
