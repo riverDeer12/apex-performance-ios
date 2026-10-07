@@ -25,6 +25,12 @@ struct ClientDetailsView: View {
     @State private var showCreateFunctionalMovementScreenSheet = false
     @State private var trainings: [Training] = []
     @State private var showCreateTrainingSheet = false
+    @State private var goal = ClientGoal()
+    @State private var showGoalSheet = false
+    @State private var monthlyReviews: [MonthlyReview] = []
+    // Review opened for editing; a new one when the sheet is shown without it.
+    @State private var editedReview: MonthlyReview?
+    @State private var showReviewSheet = false
     
     init(client: Client) {
         self.client = client
@@ -263,6 +269,12 @@ struct ClientDetailsView: View {
                 functionalMovementScreensCard
                     .padding(.horizontal, 20)
                 
+                goalCard
+                    .padding(.horizontal, 20)
+                
+                monthlyReviewsCard
+                    .padding(.horizontal, 20)
+                
                 trainingsCard
                     .padding(.horizontal, 20)
                 
@@ -307,6 +319,19 @@ struct ClientDetailsView: View {
         .task {
             await loadTrainings()
         }
+        .task {
+            await loadGoalAndReviews()
+        }
+        .sheet(isPresented: $showGoalSheet) {
+            ClientGoalFormView(clientId: client.id, goal: goal) { saved in
+                goal = saved
+            }
+        }
+        .sheet(isPresented: $showReviewSheet, onDismiss: { editedReview = nil }) {
+            MonthlyReviewFormView(clientId: client.id, reviews: monthlyReviews, review: editedReview) {
+                Task { await loadGoalAndReviews() }
+            }
+        }
         .sheet(isPresented: $showCreateTrainingSheet) {
             TrainingFormView(clientId: client.id, history: trainings) { saved in
                 upsertTraining(saved)
@@ -318,6 +343,116 @@ struct ClientDetailsView: View {
                     Task { await loadFunctionalMovementScreens() }
                 }
             }
+        }
+    }
+    
+    private var goalCard: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("goal_and_plan")
+                        .font(.headline)
+                        .padding(.top, 2)
+                    
+                    Spacer()
+                    
+                    Button {
+                        showGoalSheet = true
+                    } label: {
+                        Image(systemName: "pencil")
+                            .font(.title3)
+                            .foregroundStyle(Color.apexMainColor)
+                            .frame(width: 48, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                    .fill(Color(.systemGray6))
+                            )
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(Text("edit_goal_and_plan"))
+                }
+                
+                if goal.isEmpty {
+                    Text("no_goal_and_plan")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                } else {
+                    ClientGoalContentView(goal: goal)
+                }
+            }
+        }
+    }
+    
+    private var monthlyReviewsCard: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("monthly_reviews")
+                        .font(.headline)
+                        .padding(.top, 2)
+                    
+                    Spacer()
+                    
+                    Button {
+                        editedReview = nil
+                        showReviewSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundStyle(Color.apexMainColor)
+                            .frame(width: 48, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                    .fill(Color(.systemGray6))
+                            )
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(Text("new_monthly_review"))
+                }
+                
+                if monthlyReviews.isEmpty {
+                    Text("no_monthly_reviews")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(monthlyReviews) { review in
+                            Button {
+                                editedReview = review
+                                showReviewSheet = true
+                            } label: {
+                                SettingsRowView(
+                                    icon: "doc.text",
+                                    iconTint: Color.apexAccent,
+                                    title: Text(review.monthDate, format: .dateTime.month(.wide).year()),
+                                    subtitle: Text(verbatim: review.content),
+                                    showChevron: true
+                                )
+                                .lineLimit(2)
+                            }
+                            .buttonStyle(.plain)
+                            
+                            if review.id != monthlyReviews.last?.id {
+                                Divider().padding(.leading, 52)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    private func loadGoalAndReviews() async {
+        do {
+            goal = try await ClientGoal.load(clientId: client.id)
+            monthlyReviews = try await MonthlyReview.load(clientId: client.id)
+        } catch let error where error.isCancellation {
+            return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
     

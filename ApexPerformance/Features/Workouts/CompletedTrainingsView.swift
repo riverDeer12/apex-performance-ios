@@ -5,8 +5,7 @@
 
 import SwiftUI
 
-/// Client's tab with the trainings their coach planned and the ones
-/// marked as completed.
+/// Client's tab with the trainings their coach marked as completed.
 struct CompletedTrainingsView: View {
 
     @State private var trainings: [Training] = []
@@ -47,7 +46,7 @@ struct CompletedTrainingsView: View {
                         }
                         .padding(.horizontal, 20)
                     } else {
-                        trainingsSection(title: "planned_trainings", trainings: plannedTrainings)
+                        // Planned trainings are for the coach, the API only returns completed ones.
                         trainingsSection(title: "completed_trainings", trainings: completedTrainings)
                     }
                 }
@@ -69,13 +68,6 @@ struct CompletedTrainingsView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
         }
-    }
-
-    // Next planned training first.
-    private var plannedTrainings: [Training] {
-        filteredTrainings
-            .filter { !$0.isCompleted }
-            .sorted { $0.date < $1.date }
     }
 
     private var completedTrainings: [Training] {
@@ -144,7 +136,7 @@ struct CompletedTrainingsView: View {
         defer { isLoading = false }
 
         do {
-            trainings = try await Training.loadAll()
+            trainings = try await Training.loadCompleted()
         } catch let error where error.isCancellation {
             return
         } catch {
@@ -396,8 +388,12 @@ struct TrainingDetailView: View {
                     .padding(.horizontal, 20)
                 }
 
-                ForEach(training.exercises.sorted { $0.order < $1.order }) { exercise in
-                    exerciseCard(exercise)
+                let exercises = training.exercises.sorted { $0.order < $1.order }
+                let labels = SupersetLabels.labels(linked: exercises.map(\.isSupersetWithPrevious))
+                ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
+                    let isInSuperset = exercise.isSupersetWithPrevious
+                        || (index + 1 < exercises.count && exercises[index + 1].isSupersetWithPrevious)
+                    exerciseCard(exercise, label: labels[index], isInSuperset: isInSuperset)
                         .padding(.horizontal, 20)
                 }
 
@@ -497,10 +493,23 @@ struct TrainingDetailView: View {
         }
     }
 
-    private func exerciseCard(_ exercise: Training.Exercise) -> some View {
+    private func exerciseCard(_ exercise: Training.Exercise, label: String, isInSuperset: Bool) -> some View {
         CardView {
             VStack(alignment: .leading, spacing: 0) {
-                Text(verbatim: exercise.workoutName.localized)
+                if isInSuperset {
+                    // Exercises of a superset are done one after another without rest.
+                    Text("superset")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(0.8)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.apexOnAccent)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Color.apexAccent))
+                        .padding(.bottom, 6)
+                }
+
+                Text(verbatim: "\(label) \(exercise.workoutName.localized)")
                     .font(.system(size: 15, weight: .bold))
                     .tracking(1)
                     .textCase(.uppercase)
