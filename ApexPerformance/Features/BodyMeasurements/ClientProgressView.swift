@@ -33,6 +33,33 @@ enum ProgressPeriod: Int, CaseIterable, Identifiable {
     }
 }
 
+/// Menu to pick the period of the progress charts, e.g. "6 MJESECI ▾".
+struct ProgressPeriodMenu: View {
+    @Binding var period: ProgressPeriod
+
+    var body: some View {
+        Menu {
+            Picker(selection: $period) {
+                ForEach(ProgressPeriod.allCases) { period in
+                    Text(period.title).tag(period)
+                }
+            } label: {
+                EmptyView()
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(period.title)
+                Image(systemName: "chevron.down")
+            }
+            .font(.system(size: 11, weight: .semibold))
+            .tracking(1)
+            .textCase(.uppercase)
+            .foregroundStyle(.secondary)
+        }
+        .accessibilityIdentifier("progress-period")
+    }
+}
+
 /// Client's progress: body (weight and circumferences) and training
 /// (charts from completed trainings), opened from home.
 struct ClientProgressView: View {
@@ -58,25 +85,7 @@ struct ClientProgressView: View {
                 HStack(alignment: .bottom) {
                     ApexScreenHeader(title: "progress")
 
-                    Menu {
-                        Picker(selection: $period) {
-                            ForEach(ProgressPeriod.allCases) { period in
-                                Text(period.title).tag(period)
-                            }
-                        } label: {
-                            EmptyView()
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(period.title)
-                            Image(systemName: "chevron.down")
-                        }
-                        .font(.system(size: 11, weight: .semibold))
-                        .tracking(1)
-                        .textCase(.uppercase)
-                        .foregroundStyle(.secondary)
-                    }
-                    .accessibilityIdentifier("progress-period")
+                    ProgressPeriodMenu(period: $period)
                 }
 
                 Picker(selection: $section) {

@@ -5,7 +5,8 @@
 
 import SwiftUI
 
-/// Client's tab with all trainings their coach marked as completed.
+/// Client's tab with the trainings their coach planned and the ones
+/// marked as completed.
 struct CompletedTrainingsView: View {
 
     @State private var trainings: [Training] = []
@@ -39,25 +40,15 @@ struct CompletedTrainingsView: View {
 
                     if filteredTrainings.isEmpty, !isLoading {
                         CardView {
-                            (searchText.isEmpty ? Text("no_completed_trainings") : Text("no_trainings_found"))
+                            (searchText.isEmpty ? Text("no_client_trainings") : Text("no_trainings_found"))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 8)
                         }
                         .padding(.horizontal, 20)
                     } else {
-                        LazyVStack(spacing: 12) {
-                            ForEach(filteredTrainings) { training in
-                                NavigationLink {
-                                    TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
-                                } label: {
-                                    TrainingCardView(training: training, imageURL: imageURL(for: training))
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityIdentifier("training-row")
-                            }
-                        }
-                        .padding(.horizontal, 20)
+                        trainingsSection(title: "planned_trainings", trainings: plannedTrainings)
+                        trainingsSection(title: "completed_trainings", trainings: completedTrainings)
                     }
                 }
                 .padding(.bottom, 24)
@@ -77,6 +68,40 @@ struct CompletedTrainingsView: View {
                 await load()
             }
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    // Next planned training first.
+    private var plannedTrainings: [Training] {
+        filteredTrainings
+            .filter { !$0.isCompleted }
+            .sorted { $0.date < $1.date }
+    }
+
+    private var completedTrainings: [Training] {
+        filteredTrainings.filter(\.isCompleted)
+    }
+
+    @ViewBuilder
+    private func trainingsSection(title: LocalizedStringKey, trainings: [Training]) -> some View {
+        if !trainings.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(title)
+                    .apexLabel()
+
+                LazyVStack(spacing: 12) {
+                    ForEach(trainings) { training in
+                        NavigationLink {
+                            TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
+                        } label: {
+                            TrainingCardView(training: training, imageURL: imageURL(for: training))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("training-row")
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
         }
     }
 
@@ -119,7 +144,7 @@ struct CompletedTrainingsView: View {
         defer { isLoading = false }
 
         do {
-            trainings = try await Training.loadCompleted()
+            trainings = try await Training.loadAll()
         } catch let error where error.isCancellation {
             return
         } catch {
@@ -154,9 +179,22 @@ struct TrainingCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                    .font(.system(size: 13, weight: .bold))
-                    .tracking(1)
+                HStack(spacing: 8) {
+                    Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
+                        .font(.system(size: 13, weight: .bold))
+                        .tracking(1)
+
+                    if !training.isCompleted {
+                        Text("planned")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(0.8)
+                            .textCase(.uppercase)
+                            .foregroundStyle(.orange)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(Color.orange.opacity(0.15)))
+                    }
+                }
 
                 Text(verbatim: training.name)
                     .font(.subheadline.weight(.semibold))
@@ -194,14 +232,19 @@ struct TrainingCardView: View {
 /// tab and on client details for coaches.
 struct TrainingRowsView: View {
     let trainings: [Training]
-    // Set for staff, trainings can then be edited from their details.
+    // Set for staff: trainings can then be edited, marked as completed
+    // or deleted. Long press a row for the quick actions.
     var onSaved: ((Training) -> Void)? = nil
+    var onDeleted: ((UUID) -> Void)? = nil
+
+    @EnvironmentObject private var toastManager: ToastManager
+    @State private var trainingToDelete: Training?
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(trainings) { training in
                 NavigationLink {
-                    TrainingDetailView(training: training, history: trainings, onSaved: onSaved)
+                    TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
                 } label: {
                     SettingsRowView(
                         icon: training.isCompleted ? "checkmark.circle" : "calendar",
@@ -214,12 +257,76 @@ struct TrainingRowsView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                .contextMenu {
+                    if onSaved != nil {
+                        Button {
+                            Task { await toggleCompletion(training) }
+                        } label: {
+                            completionLabel(isCompleted: training.isCompleted)
+                        }
+
+                        Button(role: .destructive) {
+                            trainingToDelete = training
+                        } label: {
+                            Label("delete_training", systemImage: "trash")
+                        }
+                    }
+                }
 
                 if training.id != trainings.last?.id {
                     Divider().padding(.leading, 52)
                 }
             }
         }
+        .confirmationDialog(
+            "delete_training_question",
+            isPresented: Binding(
+                get: { trainingToDelete != nil },
+                set: { if !$0 { trainingToDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: trainingToDelete
+        ) { training in
+            Button("delete", role: .destructive) {
+                Task { await delete(training) }
+            }
+            Button("cancel", role: .cancel) {}
+        }
+    }
+
+    @MainActor
+    private func toggleCompletion(_ training: Training) async {
+        do {
+            let updated = try await training.settingCompletion(!training.isCompleted)
+            onSaved?(updated)
+            toastManager.show(
+                updated.isCompleted ? "training_marked_completed" : "training_marked_planned",
+                type: .success
+            )
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
+    private func delete(_ training: Training) async {
+        do {
+            try await Training.delete(id: training.id)
+            onDeleted?(training.id)
+            toastManager.show("training_deleted_successfully", type: .success)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+}
+
+/// "Mark as completed" or "Mark as planned", depending on the current state.
+@ViewBuilder
+func completionLabel(isCompleted: Bool) -> some View {
+    if isCompleted {
+        Label("mark_as_planned", systemImage: "arrow.uturn.backward.circle")
+    } else {
+        Label("mark_as_completed", systemImage: "checkmark.circle")
     }
 }
 
@@ -230,15 +337,22 @@ struct TrainingDetailView: View {
     // Client's trainings, for the "last time" sets while editing.
     private let history: [Training]
     private let onSaved: ((Training) -> Void)?
+    private let onDeleted: ((UUID) -> Void)?
+
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toastManager: ToastManager
 
     @State private var showEditSheet = false
+    @State private var showDeleteDialog = false
+    @State private var isUpdating = false
 
     init(training: Training, heroImageURL: URL? = nil, history: [Training] = [],
-         onSaved: ((Training) -> Void)? = nil) {
+         onSaved: ((Training) -> Void)? = nil, onDeleted: ((UUID) -> Void)? = nil) {
         _training = State(initialValue: training)
         self.heroImageURL = heroImageURL
         self.history = history
         self.onSaved = onSaved
+        self.onDeleted = onDeleted
     }
 
     var body: some View {
@@ -303,21 +417,83 @@ struct TrainingDetailView: View {
         .toolbar {
             if onSaved != nil {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showEditSheet = true
+                    Menu {
+                        Button {
+                            showEditSheet = true
+                        } label: {
+                            Label("edit_training", systemImage: "pencil")
+                        }
+
+                        Button {
+                            Task { await toggleCompletion() }
+                        } label: {
+                            completionLabel(isCompleted: training.isCompleted)
+                        }
+
+                        if onDeleted != nil {
+                            Button(role: .destructive) {
+                                showDeleteDialog = true
+                            } label: {
+                                Label("delete_training", systemImage: "trash")
+                            }
+                        }
                     } label: {
-                        Image(systemName: "pencil")
-                            .foregroundStyle(Color.apexMainColor)
+                        if isUpdating {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "ellipsis.circle")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
                     }
-                    .accessibilityLabel(Text("edit_training"))
+                    .disabled(isUpdating)
+                    .accessibilityLabel(Text("training_actions"))
                 }
             }
+        }
+        .confirmationDialog("delete_training_question", isPresented: $showDeleteDialog, titleVisibility: .visible) {
+            Button("delete", role: .destructive) {
+                Task { await delete() }
+            }
+            Button("cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showEditSheet) {
             TrainingFormView(clientId: training.client.id, training: training, history: history) { saved in
                 training = saved
                 onSaved?(saved)
             }
+        }
+    }
+
+    @MainActor
+    private func toggleCompletion() async {
+        isUpdating = true
+        defer { isUpdating = false }
+
+        do {
+            let updated = try await training.settingCompletion(!training.isCompleted)
+            training = updated
+            onSaved?(updated)
+            toastManager.show(
+                updated.isCompleted ? "training_marked_completed" : "training_marked_planned",
+                type: .success
+            )
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
+    private func delete() async {
+        isUpdating = true
+        defer { isUpdating = false }
+
+        do {
+            try await Training.delete(id: training.id)
+            onDeleted?(training.id)
+            toastManager.show("training_deleted_successfully", type: .success)
+            dismiss()
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
 
@@ -391,4 +567,5 @@ private extension String {
                              .init(id: UUID(), order: 1, reps: "8", weight: 45)])
             ]))
     }
+    .environmentObject(ToastManager())
 }

@@ -351,9 +351,28 @@ struct ClientDetailsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 6)
                 } else {
-                    TrainingRowsView(trainings: trainings) { saved in
-                        upsertTraining(saved)
+                    if trainings.contains(where: \.isCompleted) {
+                        NavigationLink {
+                            ClientTrainingProgressView(clientName: client.fullName, trainings: trainings)
+                        } label: {
+                            SettingsRowView(
+                                icon: "chart.line.uptrend.xyaxis",
+                                iconTint: Color.apexAccent,
+                                title: Text("training_progress_title"),
+                                subtitle: nil,
+                                showChevron: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Divider().padding(.leading, 52)
                     }
+                    
+                    TrainingRowsView(
+                        trainings: trainings,
+                        onSaved: { saved in upsertTraining(saved) },
+                        onDeleted: { id in trainings.removeAll { $0.id == id } }
+                    )
                 }
             }
         }
