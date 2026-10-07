@@ -377,36 +377,89 @@ struct CreateAppointmentView: View {
                 Text("no_time_slots")
                     .foregroundStyle(.secondary)
             } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 8)], spacing: 8) {
-                    ForEach(timeSlots) { timeSlot in
-                        let isSelected = selectedTimeSlot == timeSlot.id
-                        Button {
-                            selectedTimeSlot = isSelected ? nil : timeSlot.id
-                        } label: {
-                            HStack(spacing: 4) {
-                                if timeSlot.isTaken == true {
-                                    Image(systemName: "person.2.fill")
-                                        .font(.system(size: 10))
-                                }
-                                Text(verbatim: timeSlot.name ?? timeSlot.description ?? "—")
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.8)
+                // Free slots two in a row; a taken slot takes the whole row
+                // so the names of clients already in it fit under the time.
+                VStack(spacing: 8) {
+                    ForEach(timeSlotRows, id: \.first?.id) { row in
+                        HStack(spacing: 8) {
+                            ForEach(row) { timeSlot in
+                                timeSlotChip(timeSlot)
                             }
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(isSelected ? Color.apexOnAccent : Color.primary)
-                            .frame(maxWidth: .infinity, minHeight: 38)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(isSelected ? Color.apexAccent : Color.primary.opacity(0.06))
-                            )
+                            if row.count == 1 && row[0].isTaken != true {
+                                Color.clear.frame(maxWidth: .infinity, minHeight: 1)
+                            }
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityAddTraits(isSelected ? .isSelected : [])
                     }
                 }
                 .padding(.vertical, 4)
             }
         }
+    }
+    
+    /// Slots in rows, keeping their order: taken slots alone, free ones in pairs.
+    private var timeSlotRows: [[TimeSlot]] {
+        var rows: [[TimeSlot]] = []
+        var pending: [TimeSlot] = []
+        
+        for timeSlot in timeSlots {
+            if timeSlot.isTaken == true {
+                if !pending.isEmpty { rows.append(pending); pending = [] }
+                rows.append([timeSlot])
+            } else {
+                pending.append(timeSlot)
+                if pending.count == 2 { rows.append(pending); pending = [] }
+            }
+        }
+        if !pending.isEmpty { rows.append(pending) }
+        return rows
+    }
+    
+    private func timeSlotChip(_ timeSlot: TimeSlot) -> some View {
+        let isSelected = selectedTimeSlot == timeSlot.id
+        let (time, clients) = Self.splitTimeSlotName(timeSlot.name ?? timeSlot.description ?? "—")
+        
+        return Button {
+            selectedTimeSlot = isSelected ? nil : timeSlot.id
+        } label: {
+            VStack(spacing: 3) {
+                Text(verbatim: time)
+                    .font(.system(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                
+                if timeSlot.isTaken == true, let clients {
+                    // Clients already in the appointment, it can be joined.
+                    Label {
+                        Text(verbatim: clients)
+                            .multilineTextAlignment(.center)
+                    } icon: {
+                        Image(systemName: "person.2.fill")
+                    }
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.apexOnAccent.opacity(0.8) : Color.secondary)
+                }
+            }
+            .foregroundStyle(isSelected ? Color.apexOnAccent : Color.primary)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity, minHeight: 38)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(isSelected ? Color.apexAccent : Color.primary.opacity(0.06))
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+    
+    /// "6:15 - 7:15 (Ana Horvat)" -> ("6:15 - 7:15", "Ana Horvat").
+    private static func splitTimeSlotName(_ name: String) -> (time: String, clients: String?) {
+        guard let open = name.firstIndex(of: "("), name.hasSuffix(")") else {
+            return (name, nil)
+        }
+        let time = name[..<open].trimmingCharacters(in: .whitespaces)
+        let clients = name[name.index(after: open)..<name.index(before: name.endIndex)]
+            .trimmingCharacters(in: .whitespaces)
+        return (time.isEmpty ? name : time, clients.isEmpty ? nil : clients)
     }
     
     private var canCreateAppointment: Bool {
