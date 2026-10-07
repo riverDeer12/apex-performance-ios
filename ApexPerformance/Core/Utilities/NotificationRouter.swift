@@ -35,6 +35,10 @@ final class NotificationRouter: ObservableObject {
             pendingTab = .appointments
         case "body_measurement":
             pendingTab = .bodyMeasurements
+        case "client_goal", "monthly_review":
+            pendingTab = .home
+        case "monthly_review_reminder":
+            pendingTab = .clients
         default:
             #if DEBUG
             print("⚠️ Unknown notification type: \(notificationType)")

@@ -31,6 +31,8 @@ struct Training: Identifiable, Decodable, Hashable {
         let order: Int
         let note: String?
         let sets: [ExerciseSet]
+        // Done right after the previous exercise without rest (superset).
+        var isSupersetWithPrevious = false
     }
 
     struct ExerciseSet: Identifiable, Decodable, Hashable {
@@ -38,6 +40,51 @@ struct Training: Identifiable, Decodable, Hashable {
         let order: Int
         let reps: String?
         let weight: Decimal?
+    }
+}
+
+extension Training.Exercise {
+    private enum CodingKeys: String, CodingKey {
+        case id, workoutId, workoutName, order, note, sets, isSupersetWithPrevious
+    }
+
+    // In an extension so the memberwise initializer stays available.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        workoutId = try container.decode(UUID.self, forKey: .workoutId)
+        workoutName = try container.decode(LocalizedText.self, forKey: .workoutName)
+        order = try container.decode(Int.self, forKey: .order)
+        note = try container.decodeIfPresent(String.self, forKey: .note)
+        sets = try container.decode([Training.ExerciseSet].self, forKey: .sets)
+        isSupersetWithPrevious = try container.decodeIfPresent(Bool.self, forKey: .isSupersetWithPrevious) ?? false
+    }
+}
+
+enum SupersetLabels {
+    /// Labels of exercises in order: "1.", "2." for single exercises and
+    /// "3a", "3b" for exercises done together in a superset, like the web.
+    /// `linked` tells for each exercise if it is in a superset with the previous one.
+    static func labels(linked: [Bool]) -> [String] {
+        let isLinked = linked.indices.map { $0 > 0 && linked[$0] }
+
+        var numbers: [Int] = []
+        var number = 0
+        for index in linked.indices {
+            if !isLinked[index] { number += 1 }
+            numbers.append(number)
+        }
+
+        return linked.indices.map { index -> String in
+            let startsSuperset = index + 1 < linked.count && isLinked[index + 1]
+            guard isLinked[index] || startsSuperset else { return "\(numbers[index])." }
+
+            // Letter by position in the superset: a, b, c...
+            var first = index
+            while isLinked[first] { first -= 1 }
+            let letter = Character(UnicodeScalar(UInt8(97 + min(index - first, 25))))
+            return "\(numbers[index])\(letter)"
+        }
     }
 }
 
@@ -123,6 +170,7 @@ struct SaveTrainingRequest: Encodable {
         let workout: UUID
         let note: String?
         let sets: [ExerciseSet]
+        let isSupersetWithPrevious: Bool
     }
 
     struct ExerciseSet: Encodable {

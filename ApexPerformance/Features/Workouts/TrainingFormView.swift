@@ -184,10 +184,32 @@ struct TrainingFormView: View {
 
             TextField("note", text: exercise.note)
         } header: {
-            HStack {
-                Text("exercise_number \(index + 1)")
+            HStack(spacing: 8) {
+                Text(verbatim: exerciseLabels.indices.contains(index) ? exerciseLabels[index] : "\(index + 1).")
+                Text("exercise")
+                if isInSuperset(index) {
+                    Text("superset")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(Color.apexOnAccent)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Color.apexAccent))
+                }
                 Spacer()
                 Menu {
+                    if index > 0 {
+                        // Done right after the previous exercise without rest.
+                        Toggle(isOn: exercise.isSupersetWithPrevious) {
+                            Label("superset_with_previous", systemImage: "link")
+                        }
+                    }
+
+                    Button {
+                        addSupersetExercise(after: index)
+                    } label: {
+                        Label("add_superset_exercise", systemImage: "plus.square.on.square")
+                    }
+
                     Button {
                         moveExercise(at: index, by: -1)
                     } label: {
@@ -203,7 +225,7 @@ struct TrainingFormView: View {
                     .disabled(index == exercises.count - 1)
 
                     Button(role: .destructive) {
-                        exercises.removeAll { $0.id == exercise.wrappedValue.id }
+                        removeExercise(at: index)
                     } label: {
                         Label("remove_exercise", systemImage: "trash")
                     }
@@ -267,6 +289,51 @@ struct TrainingFormView: View {
         guard exercises.indices.contains(index), exercises.indices.contains(target) else { return }
         withAnimation {
             exercises.swapAt(index, target)
+            // The first exercise can't be in a superset with a previous one.
+            exercises[0].isSupersetWithPrevious = false
+        }
+    }
+
+    // MARK: - Supersets
+
+    // "1.", "2a", "2b"... same as the web form.
+    private var exerciseLabels: [String] {
+        SupersetLabels.labels(linked: exercises.map(\.isSupersetWithPrevious))
+    }
+
+    private func isLinked(_ index: Int) -> Bool {
+        index > 0 && exercises.indices.contains(index) && exercises[index].isSupersetWithPrevious
+    }
+
+    private func isInSuperset(_ index: Int) -> Bool {
+        isLinked(index) || isLinked(index + 1)
+    }
+
+    /// Adds an exercise done right after this one without rest. It goes after
+    /// the last exercise of the superset and gets the same number of sets.
+    private func addSupersetExercise(after index: Int) {
+        guard exercises.indices.contains(index) else { return }
+        var last = index
+        while isLinked(last + 1) { last += 1 }
+
+        var draft = ExerciseDraft()
+        draft.isSupersetWithPrevious = true
+        draft.sets = (0..<max(exercises[index].sets.count, 1)).map { _ in SetDraft() }
+
+        withAnimation {
+            exercises.insert(draft, at: last + 1)
+        }
+    }
+
+    private func removeExercise(at index: Int) {
+        guard exercises.indices.contains(index) else { return }
+        // When the first exercise of a superset is removed,
+        // the next one starts the superset instead.
+        if !isLinked(index) && isLinked(index + 1) {
+            exercises[index + 1].isSupersetWithPrevious = false
+        }
+        withAnimation {
+            _ = exercises.remove(at: index)
         }
     }
 
@@ -371,12 +438,14 @@ private struct ExerciseDraft: Identifiable {
     var note = ""
     // New exercise starts with one empty set.
     var sets = [SetDraft()]
+    var isSupersetWithPrevious = false
 
     init() {}
 
     init(_ exercise: Training.Exercise) {
         workoutId = exercise.workoutId
         note = exercise.note ?? ""
+        isSupersetWithPrevious = exercise.isSupersetWithPrevious
         sets = exercise.sets.sorted { $0.order < $1.order }.map(SetDraft.init)
     }
 
@@ -403,7 +472,8 @@ private struct ExerciseDraft: Identifiable {
             workout: workoutId,
             note: note.isEmpty ? nil : note,
             // Sets without repetitions and weight are not saved.
-            sets: sets.compactMap(\.request)
+            sets: sets.compactMap(\.request),
+            isSupersetWithPrevious: isSupersetWithPrevious
         )
     }
 }

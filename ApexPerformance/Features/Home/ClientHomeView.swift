@@ -21,12 +21,26 @@ struct ClientHomeView: View {
     @State private var isLoading = false
     @State private var hasLoaded = false
     @State private var showCreateAppointment = false
+    @State private var goal: ClientGoal?
+    @State private var monthlyReviews: [MonthlyReview] = []
+    @State private var showGoalSheet = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     header
+
+                    if let goal, !goal.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("my_goal_and_plan")
+                                .apexLabel()
+                            ClientGoalContentView(goal: goal)
+                        }
+                        .padding(16)
+                        .apexCardBackground()
+                        .accessibilityIdentifier("goal-card")
+                    }
 
                     nextAppointmentCard
 
@@ -76,6 +90,8 @@ struct ClientHomeView: View {
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("library-tile")
                     }
+
+                    latestReviewCard
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
@@ -97,7 +113,72 @@ struct ClientHomeView: View {
             .navigationDestination(isPresented: $showsProgress) {
                 ClientProgressView()
             }
+            .sheet(isPresented: $showGoalSheet, onDismiss: markGoalSeen) {
+                if let goal {
+                    ClientGoalSheet(goal: goal)
+                }
+            }
         }
+    }
+
+    // MARK: - Monthly review
+
+    @ViewBuilder
+    private var latestReviewCard: some View {
+        if let review = monthlyReviews.first {
+            NavigationLink {
+                MonthlyReviewsView(reviews: monthlyReviews)
+            } label: {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("monthly_review")
+                            .apexLabel()
+                        Spacer()
+                        MonthTitle(date: review.monthDate)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(verbatim: review.content)
+                        .font(.subheadline)
+                        .foregroundStyle(Color.primary)
+                        .lineLimit(4)
+                        .multilineTextAlignment(.leading)
+                    HStack(spacing: 4) {
+                        Text("all_monthly_reviews")
+                        Image(systemName: "arrow.right")
+                    }
+                    .font(.system(size: 12, weight: .bold))
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.apexAccent)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
+                .apexCardBackground()
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("monthly-review-card")
+        }
+    }
+
+    // MARK: - Goal shown after login
+
+    private var seenGoalKey: String {
+        "seenClientGoalUpdatedAt-\(authManager.username)"
+    }
+
+    /// Shows the goal and plan when the coach wrote or changed it
+    /// since the client last saw it.
+    private func showGoalIfChanged() {
+        guard let goal, !goal.isEmpty, let updatedAt = goal.updatedAt else { return }
+        let seen = UserDefaults.standard.double(forKey: seenGoalKey)
+        if updatedAt.timeIntervalSince1970 > seen + 1 {
+            showGoalSheet = true
+        }
+    }
+
+    private func markGoalSeen() {
+        guard let updatedAt = goal?.updatedAt else { return }
+        UserDefaults.standard.set(updatedAt.timeIntervalSince1970, forKey: seenGoalKey)
     }
 
     // MARK: - Sections
@@ -263,6 +344,15 @@ struct ClientHomeView: View {
         if let appointments {
             approvedAppointments = appointments.approvedAppointments
             pendingAppointments = appointments.pendingAppointments
+        }
+
+        // Goal and reviews are extras, home works without them.
+        if let loadedGoal = try? await ClientGoal.loadMine() {
+            goal = loadedGoal
+            showGoalIfChanged()
+        }
+        if let reviews = try? await MonthlyReview.load() {
+            monthlyReviews = reviews
         }
     }
 

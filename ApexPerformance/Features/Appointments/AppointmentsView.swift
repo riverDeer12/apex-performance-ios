@@ -29,13 +29,12 @@ struct AppointmentsView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                     
-                    if isClient {
-                        Button("book_appointment") {
-                            showCreateAppointmentForm = true
-                        }
-                        .buttonStyle(ApexPrimaryButtonStyle())
-                        .padding(.horizontal, 20)
+                    // The only way to add an appointment, there is no + in the corner.
+                    Button(isClient ? LocalizedStringKey("book_appointment") : LocalizedStringKey("new_appointment")) {
+                        showCreateAppointmentForm = true
                     }
+                    .buttonStyle(ApexPrimaryButtonStyle())
+                    .padding(.horizontal, 20)
                     
                     // Pending Appointments Section
                     if !pendingAppointments.isEmpty {
@@ -187,19 +186,7 @@ struct AppointmentsView: View {
                         .accessibilityLabel("generate_recurring_appointments")
                         .buttonStyle(.plain)
                         .disabled(isGeneratingRecurring)
-                        // Same inset from the left edge as + has from the right.
-                        .padding(.horizontal, 8)
                     }
-                    
-                    Button {
-                        showCreateAppointmentForm = true
-                    } label: {
-                        Image(systemName: "plus")
-                            .foregroundStyle(Color.apexMainColor)
-                        
-                    }
-                    .accessibilityLabel("new_appointment")
-                    .buttonStyle(.plain)
                 }
             }
             .navigationDestination(isPresented: $showCreateAppointmentForm) {
