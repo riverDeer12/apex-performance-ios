@@ -71,6 +71,44 @@ extension Training {
     }
 }
 
+extension Training {
+    /// Marks the training as completed or planned (staff only).
+    /// Returns the training with the new state.
+    @MainActor
+    func settingCompletion(_ isCompleted: Bool) async throws -> Training {
+        struct Request: Encodable { let isCompleted: Bool }
+        struct Response: Decodable {
+            let isCompleted: Bool
+            let completedAt: Date?
+        }
+
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("trainings")
+            .appendingPathComponent(id.uuidString)
+            .appendingPathComponent("completion")
+        let response: Response = try await APIClient.shared.request(
+            url,
+            method: .put,
+            body: JSONEncoder().encode(Request(isCompleted: isCompleted))
+        )
+
+        return Training(
+            id: id, name: name, date: date, note: note,
+            isCompleted: response.isCompleted, completedAt: response.completedAt,
+            client: client, exercises: exercises
+        )
+    }
+
+    /// Deletes the training (soft delete on the API, staff only).
+    @MainActor
+    static func delete(id: UUID) async throws {
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("trainings")
+            .appendingPathComponent(id.uuidString)
+        try await APIClient.shared.requestData(url, method: .delete)
+    }
+}
+
 /// Body of POST trainings and PUT trainings/{id}.
 struct SaveTrainingRequest: Encodable {
     let client: UUID

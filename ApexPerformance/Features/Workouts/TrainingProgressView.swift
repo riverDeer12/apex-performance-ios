@@ -426,6 +426,49 @@ struct TrainingProgressView: View {
     }
 }
 
+/// Training progress of one client, opened by staff from client details.
+struct ClientTrainingProgressView: View {
+    let clientName: String
+    // Client's trainings, only completed ones are used.
+    let trainings: [Training]
+
+    @State private var period: ProgressPeriod = .sixMonths
+    @State private var workouts: [Workout] = []
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .bottom) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(verbatim: clientName)
+                            .apexLabel()
+                        Text("training_progress_title")
+                            .apexTitle()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    ProgressPeriodMenu(period: $period)
+                }
+
+                TrainingProgressView(trainings: trainings, workouts: workouts, period: period)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(Color.apexBackground)
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Only used for muscle groups, so the charts work without it.
+            guard workouts.isEmpty else { return }
+            let url = AppEnvironment.apiURL.appendingPathComponent("workouts")
+            if let loaded: [Workout] = try? await APIClient.shared.request(url) {
+                workouts = loaded
+            }
+        }
+    }
+}
+
 #Preview {
     let names = ["Back squat", "Bench press", "Romanian deadlift"]
     let trainings = (0..<10).map { index in
