@@ -163,6 +163,34 @@ struct ClientGoalFormView: View {
     }
 }
 
+/// Client's goal and plan on its own screen, opened from home.
+struct ClientGoalDetailView: View {
+    let goal: ClientGoal
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                ApexScreenHeader(title: "my_goal_and_plan", showsWordmark: false)
+
+                ClientGoalContentView(goal: goal)
+                    .padding(16)
+                    .apexCardBackground()
+
+                if let updatedAt = goal.updatedAt {
+                    Text("updated_on \(DateFormatter.dateWithDots.string(from: updatedAt))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(Color.apexBackground)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 /// Shown to the client after login when the coach changed the goal and plan.
 struct ClientGoalSheet: View {
     let goal: ClientGoal
