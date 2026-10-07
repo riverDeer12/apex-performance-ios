@@ -130,7 +130,7 @@ struct CreateAppointmentView: View {
                     Button {
                         Task { await createAppointment() }
                     } label: {
-                        Text(isSelectedTimeSlotTaken ? LocalizedStringKey("join_appointment") : LocalizedStringKey("confirm_booking"))
+                        Text(confirmButtonTitle)
                     }
                     .buttonStyle(ApexPrimaryButtonStyle())
                     .disabled(!canCreateAppointment)
@@ -167,7 +167,7 @@ struct CreateAppointmentView: View {
                         ProgressView()
                             .scaleEffect(0.9)
                     } else {
-                        Image(systemName: isSelectedTimeSlotTaken ? "person.line.dotted.person" : "checkmark")
+                        Image(systemName: sendsJoinRequest ? "person.line.dotted.person" : "checkmark")
                             .foregroundStyle(Color.apexMainColor)
                         
                     }
@@ -477,14 +477,30 @@ struct CreateAppointmentView: View {
         return timeSlot.isTaken ?? false
     }
     
+    // Only clients ask to join a taken slot. Staff create the appointment
+    // as usual and the API adds the clients to the existing one.
+    private var sendsJoinRequest: Bool {
+        isSelectedTimeSlotTaken && authManager.hasRole(role: "Client")
+    }
+    
+    private var confirmButtonTitle: LocalizedStringKey {
+        if sendsJoinRequest { return "join_appointment" }
+        if isSelectedTimeSlotTaken { return "add_to_appointment" }
+        return "confirm_booking"
+    }
+    
     private func createAppointment() async {
         do {
-            if isSelectedTimeSlotTaken {
+            if sendsJoinRequest {
                 _ = try await joinExistingAppointment()
                 toastManager.show(LocalizedStringKey("successfully_joined_appointment"), type: ToastType.success)
             } else {
+                let addsToExisting = isSelectedTimeSlotTaken
                 _ = try await sendNewAppointmentToApi()
-                toastManager.show(LocalizedStringKey("successfully_created_appointment"), type: ToastType.success)
+                toastManager.show(
+                    addsToExisting ? "clients_added_to_appointment" : "successfully_created_appointment",
+                    type: ToastType.success
+                )
             }
             dismiss()
         } catch {
