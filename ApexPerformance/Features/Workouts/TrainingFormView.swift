@@ -112,6 +112,7 @@ struct TrainingFormView: View {
 
     private func exerciseSection(_ exercise: Binding<ExerciseDraft>) -> some View {
         let index = exercises.firstIndex { $0.id == exercise.wrappedValue.id } ?? 0
+        let previous = previousSets(for: exercise.wrappedValue.workoutId)
 
         return Section {
             NavigationLink {
@@ -131,23 +132,36 @@ struct TrainingFormView: View {
                 }
             }
 
+            if !exercise.wrappedValue.sets.isEmpty {
+                setsHeader(previous: previous)
+            }
+
             ForEach(exercise.sets) { set in
                 let setIndex = exercise.wrappedValue.sets.firstIndex { $0.id == set.wrappedValue.id } ?? 0
                 HStack(spacing: 8) {
-                    Text("set_number \(setIndex + 1)")
+                    Text(verbatim: "\(setIndex + 1)")
                         .foregroundStyle(.secondary)
-                        .frame(minWidth: 70, alignment: .leading)
+                        .frame(width: 22, alignment: .leading)
                     TextField("reps", text: set.reps)
-                        .multilineTextAlignment(.trailing)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
                     Text(verbatim: "×")
                         .foregroundStyle(.secondary)
                     TextField("kg", text: set.weight)
                         .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(maxWidth: 70)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
                         .foregroundStyle(set.wrappedValue.isWeightValid ? Color.primary : Color.red)
-                    Text("kg")
-                        .foregroundStyle(.secondary)
+                    if let previous {
+                        // Same set on the previous training, shown on the side.
+                        Text(verbatim: previous.sets.indices.contains(setIndex)
+                             ? Self.setDescription(previous.sets[setIndex]) : "—")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .frame(width: 92, alignment: .trailing)
+                    }
                 }
             }
             .onDelete { offsets in
@@ -162,8 +176,8 @@ struct TrainingFormView: View {
             }
             .disabled(exercise.wrappedValue.sets.count >= ExerciseDraft.maxSets)
 
-            if let previous = previousSets(for: exercise.wrappedValue.workoutId) {
-                previousSetsView(previous) {
+            if let previous {
+                previousSetsView(previous, currentCount: exercise.wrappedValue.sets.count) {
                     exercise.wrappedValue.sets = previous.sets.map(SetDraft.init)
                 }
             }
@@ -202,30 +216,50 @@ struct TrainingFormView: View {
         }
     }
 
-    private func previousSetsView(_ previous: PreviousSets, onUse: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Label {
-                Text("last_time \(DateFormatter.dateWithDots.string(from: previous.date))")
-            } icon: {
-                Image(systemName: "clock.arrow.circlepath")
+    /// Column titles of the sets, with the previous training's date.
+    private func setsHeader(previous: PreviousSets?) -> some View {
+        HStack(spacing: 8) {
+            Text(verbatim: "#")
+                .frame(width: 22, alignment: .leading)
+            Text("reps")
+                .frame(maxWidth: .infinity)
+            Text(verbatim: "×")
+                .hidden()
+            Text("kg")
+                .frame(maxWidth: .infinity)
+            if let previous {
+                Text("last_time")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .frame(width: 92, alignment: .trailing)
             }
-            .font(.subheadline.weight(.semibold))
+        }
+        .font(.system(size: 11, weight: .semibold))
+        .textCase(.uppercase)
+        .foregroundStyle(.secondary)
+    }
 
-            ForEach(Array(previous.sets.enumerated()), id: \.element.id) { index, set in
-                Text(verbatim: "\(index + 1). \(Self.setDescription(set))")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+    /// Copies the previous training's sets. Sets the current exercise
+    /// doesn't have yet are listed so they aren't missed.
+    private func previousSetsView(_ previous: PreviousSets, currentCount: Int,
+                                  onUse: @escaping () -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if previous.sets.count > currentCount {
+                ForEach(Array(previous.sets.enumerated()).dropFirst(currentCount), id: \.element.id) { index, set in
+                    Text(verbatim: "\(index + 1). \(Self.setDescription(set))")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Button(action: onUse) {
-                Label("use_previous_sets", systemImage: "doc.on.doc")
+                Label("use_previous_sets_from \(DateFormatter.dateWithDots.string(from: previous.date))",
+                      systemImage: "doc.on.doc")
                     .font(.subheadline)
                     .foregroundStyle(Color.apexMainColor)
             }
             .buttonStyle(.borderless)
-            .padding(.top, 2)
         }
-        .padding(.vertical, 4)
     }
 
     private func moveExercise(at index: Int, by offset: Int) {

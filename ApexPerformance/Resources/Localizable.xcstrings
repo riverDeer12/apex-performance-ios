@@ -3050,25 +3050,25 @@
         }
       }
     },
-    "last_time %@" : {
+    "last_time" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Last time (%@)"
+            "value" : "Last time"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prošli put (%@)"
+            "value" : "Prošli put"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'ultima volta (%@)"
+            "value" : "L'ultima volta"
           }
         }
       }
@@ -6792,25 +6792,25 @@
         }
       }
     },
-    "use_previous_sets" : {
+    "use_previous_sets_from %@" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copy sets"
+            "value" : "Copy sets from %@"
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kopiraj serije"
+            "value" : "Kopiraj serije od %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copia serie"
+            "value" : "Copia le serie del %@"
           }
         }
       }
