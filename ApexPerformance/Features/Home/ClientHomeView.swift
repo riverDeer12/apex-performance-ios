@@ -5,8 +5,8 @@
 
 import SwiftUI
 
-/// Client's home: next appointment with booking, trainings done this
-/// month and shortcuts to trainings and progress.
+/// Client's home: greeting, next training with booking, package,
+/// goal and plan, and shortcuts to trainings, progress and workouts.
 struct ClientHomeView: View {
     @Binding var selectedTab: AppTab
     // Set from outside (e.g. a body measurement notification) to open progress.
@@ -16,85 +16,33 @@ struct ClientHomeView: View {
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var client: UserProfile?
+    @State private var profile: Profile?
     @State private var approvedAppointments: [Appointment] = []
     @State private var pendingAppointments: [Appointment] = []
     @State private var isLoading = false
     @State private var hasLoaded = false
     @State private var showCreateAppointment = false
     @State private var goal: ClientGoal?
-    @State private var monthlyReviews: [MonthlyReview] = []
     @State private var showGoalSheet = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    header
-
-                    if let goal, !goal.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("my_goal_and_plan")
-                                .apexLabel()
-                            ClientGoalContentView(goal: goal)
-                        }
-                        .padding(16)
-                        .apexCardBackground()
-                        .accessibilityIdentifier("goal-card")
-                    }
+                VStack(alignment: .leading, spacing: 14) {
+                    greeting
 
                     nextAppointmentCard
 
-                    if canGetAppointments {
-                        Button("book_appointment") {
-                            showCreateAppointment = true
-                        }
-                        .buttonStyle(ApexPrimaryButtonStyle())
-                        .accessibilityIdentifier("book-appointment-button")
+                    packageCard
+
+                    if let goal, !goal.isEmpty {
+                        goalCard(goal)
                     }
 
-                    thisMonth
-
-                    HStack(spacing: 12) {
-                        Button {
-                            selectedTab = .trainings
-                        } label: {
-                            tile(title: "my_trainings", systemImage: "dumbbell")
-                        }
-                        .buttonStyle(.plain)
-
-                        Button {
-                            showsProgress = true
-                        } label: {
-                            tile(title: "progress", systemImage: "chart.line.uptrend.xyaxis")
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("progress-tile")
-                    }
-
-                    // Workout library depends on the plan agreed with the coach.
-                    let access = WorkoutLibraryAccess(plan: client?.plan)
-                    if access != .none {
-                        NavigationLink {
-                            WorkoutsView(
-                                workoutFilter: access.allows,
-                                title: access == .all ? "exercise_library" : "mobility_and_stretching",
-                                subtitle: access == .all ? "exercise_library_subtitle" : "mobility_and_stretching_subtitle",
-                                wrapsInNavigationStack: false
-                            )
-                        } label: {
-                            tile(
-                                title: access == .all ? "exercise_library" : "mobility_and_stretching",
-                                systemImage: access == .all ? "figure.strengthtraining.functional" : "figure.flexibility"
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("library-tile")
-                    }
-
-                    latestReviewCard
+                    shortcuts
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 8)
+                .padding(.top, 4)
                 .padding(.bottom, 24)
             }
             .background(Color.apexBackground)
@@ -107,6 +55,11 @@ struct ClientHomeView: View {
                 await load()
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    ApexTitleBar(subtitle: ClientPlan.title(for: client?.plan))
+                }
+            }
             .navigationDestination(isPresented: $showCreateAppointment) {
                 CreateAppointmentView()
             }
@@ -121,43 +74,238 @@ struct ClientHomeView: View {
         }
     }
 
-    // MARK: - Monthly review
+    // MARK: - Sections
+
+    private var greeting: some View {
+        HStack(spacing: 12) {
+            ProfilePictureView(profile: profile, size: 44)
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                if let firstName = client?.firstName, !firstName.isEmpty {
+                    Text("hello_name \(firstName)")
+                        .font(.system(size: 16, weight: .bold))
+                        .tracking(1)
+                        .textCase(.uppercase)
+                }
+                Text("ready_for_next_training")
+                    .font(.system(size: 11, weight: .medium))
+                    .tracking(0.8)
+                    .textCase(.uppercase)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+    }
+
+    private var nextAppointmentCard: some View {
+        ApexPictureBackground(systemImage: "figure.strengthtraining.traditional")
+            .frame(height: 210)
+            .overlay {
+                LinearGradient(colors: [.clear, .black.opacity(0.8)], startPoint: .center, endPoint: .bottom)
+            }
+            .overlay(alignment: .bottom) {
+                HStack(alignment: .bottom, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        if let appointment = nextAppointment {
+                            Text(appointment.isPending
+                                 ? LocalizedStringKey("next_appointment_pending")
+                                 : LocalizedStringKey("next_appointment"))
+                                .font(.system(size: 11, weight: .semibold))
+                                .tracking(1.2)
+                                .textCase(.uppercase)
+                                .foregroundStyle(.white.opacity(0.8))
+
+                            Text(verbatim: Self.dateAndTime(appointment.startTime))
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundStyle(.white)
+                        } else if isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("no_upcoming_appointments")
+                                .font(.system(size: 14, weight: .bold))
+                                .tracking(1)
+                                .textCase(.uppercase)
+                                .foregroundStyle(.white)
+                        }
+                    }
+
+                    Spacer(minLength: 0)
+
+                    if canGetAppointments {
+                        Button("book_appointment") {
+                            showCreateAppointment = true
+                        }
+                        .buttonStyle(ApexCompactButtonStyle())
+                        .accessibilityIdentifier("book-appointment-button")
+                    }
+                }
+                .padding(14)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var packageCard: some View {
+        let package = PackageSummary(client: client, approvedAppointments: approvedAppointments)
+
+        return NavigationLink {
+            MyPackageView(
+                client: client,
+                approvedAppointments: approvedAppointments,
+                pendingAppointments: pendingAppointments
+            )
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("my_package")
+                        .font(.system(size: 13, weight: .bold))
+                        .tracking(1)
+                        .textCase(.uppercase)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+
+                HStack {
+                    Text("package_done_of_total \(package.done) \(package.total)")
+                    Spacer()
+                    Text("package_remaining \(package.remaining)")
+                }
+                .font(.system(size: 12, weight: .semibold))
+                .tracking(0.6)
+                .textCase(.uppercase)
+                .foregroundStyle(.secondary)
+
+                ApexProgressBar(value: package.progress)
+            }
+            .padding(16)
+            .apexCardBackground()
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("package-card")
+    }
+
+    private func goalCard(_ goal: ClientGoal) -> some View {
+        NavigationLink {
+            ClientGoalDetailView(goal: goal)
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "scope")
+                    .font(.system(size: 26, weight: .regular))
+                    .foregroundStyle(Color.apexAccent)
+                    .frame(width: 34)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("my_goal_and_plan")
+                        .font(.system(size: 13, weight: .bold))
+                        .tracking(1)
+                        .textCase(.uppercase)
+                        .padding(.bottom, 2)
+
+                    Group {
+                        goalLine("goal_line \(goal.goal ?? "")", isEmpty: goal.goal)
+                        goalLine("current_block_line \(goal.currentBlock ?? "")", isEmpty: goal.currentBlock)
+                        goalLine("focus_line \(goal.focus ?? "")", isEmpty: goal.focus)
+                        if let date = goal.nextAssessmentDate {
+                            Text("next_assessment_line \(DateFormatter.dateWithDots.string(from: date))")
+                        } else if let text = goal.nextAssessment, !text.isEmpty {
+                            Text("next_assessment_line \(text)")
+                        }
+                    }
+                    .font(.system(size: 11, weight: .medium))
+                    .tracking(0.4)
+                    .textCase(.uppercase)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(16)
+            .apexCardBackground()
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("goal-card")
+    }
 
     @ViewBuilder
-    private var latestReviewCard: some View {
-        if let review = monthlyReviews.first {
-            NavigationLink {
-                MonthlyReviewsView(reviews: monthlyReviews)
+    private func goalLine(_ text: LocalizedStringKey, isEmpty value: String?) -> some View {
+        if let value, !value.isEmpty {
+            Text(text)
+        }
+    }
+
+    private var shortcuts: some View {
+        let access = WorkoutLibraryAccess(plan: client?.plan)
+
+        return VStack(spacing: 0) {
+            Button {
+                selectedTab = .trainings
             } label: {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("monthly_review")
-                            .apexLabel()
-                        Spacer()
-                        MonthTitle(date: review.monthDate)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    Text(verbatim: review.content)
-                        .font(.subheadline)
-                        .foregroundStyle(Color.primary)
-                        .lineLimit(4)
-                        .multilineTextAlignment(.leading)
-                    HStack(spacing: 4) {
-                        Text("all_monthly_reviews")
-                        Image(systemName: "arrow.right")
-                    }
-                    .font(.system(size: 12, weight: .bold))
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color.apexAccent)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
-                .apexCardBackground()
+                shortcutRow(title: "my_trainings", systemImage: "dumbbell")
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier("monthly-review-card")
+
+            Divider().overlay(Color.apexBorder)
+
+            Button {
+                showsProgress = true
+            } label: {
+                shortcutRow(title: "progress", systemImage: "chart.bar.xaxis")
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("progress-tile")
+
+            // Workout library depends on the plan agreed with the coach.
+            if access != .none {
+                Divider().overlay(Color.apexBorder)
+
+                NavigationLink {
+                    WorkoutsView(
+                        workoutFilter: access.allows,
+                        title: access == .all ? "exercise_library" : "mobility_and_stretching",
+                        subtitle: access == .all ? "exercise_library_subtitle" : "mobility_and_stretching_subtitle",
+                        wrapsInNavigationStack: false
+                    )
+                } label: {
+                    shortcutRow(
+                        title: access == .all ? "exercise_library" : "mobility_and_stretching",
+                        systemImage: access == .all ? "figure.strengthtraining.functional" : "figure.flexibility"
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("library-tile")
+            }
         }
+        .padding(.horizontal, 16)
+        .apexCardBackground()
+    }
+
+    private func shortcutRow(title: LocalizedStringKey, systemImage: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: systemImage)
+                .font(.system(size: 17, weight: .medium))
+                .frame(width: 26)
+            Text(title)
+                .font(.system(size: 12, weight: .bold))
+                .tracking(1)
+                .textCase(.uppercase)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 14)
+        .contentShape(Rectangle())
     }
 
     // MARK: - Goal shown after login
@@ -181,116 +329,6 @@ struct ClientHomeView: View {
         UserDefaults.standard.set(updatedAt.timeIntervalSince1970, forKey: seenGoalKey)
     }
 
-    // MARK: - Sections
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(verbatim: "APEX")
-                .font(.system(size: 13, weight: .heavy))
-                .tracking(3)
-                .foregroundStyle(.secondary)
-
-            if let firstName = client?.firstName, !firstName.isEmpty {
-                Text("hello_name \(firstName)")
-                    .apexLabel()
-            }
-
-            Text(ClientPlan.title(for: client?.plan) ?? "tab_home")
-                .apexTitle()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var nextAppointmentCard: some View {
-        ApexPictureBackground(systemImage: "figure.strengthtraining.traditional")
-            .frame(height: 190)
-            .overlay {
-                LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .top, endPoint: .bottom)
-            }
-            .overlay(alignment: .bottomLeading) {
-                VStack(alignment: .leading, spacing: 4) {
-                    if let appointment = nextAppointment {
-                        Text(appointment.isPending ? LocalizedStringKey("next_appointment_pending") : LocalizedStringKey("next_appointment"))
-                            .font(.system(size: 11, weight: .semibold))
-                            .tracking(1.2)
-                            .textCase(.uppercase)
-                            .foregroundStyle(.white.opacity(0.75))
-
-                        Text(appointment.startTime, format: .dateTime.weekday(.wide).day().month(.wide))
-                            .font(.system(size: 18, weight: .bold))
-                            .tracking(1)
-                            .textCase(.uppercase)
-                            .foregroundStyle(.white)
-
-                        Text(verbatim: appointment.timeSlot.description ?? "")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color.apexAccent)
-                    } else if isLoading {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Text("no_upcoming_appointments")
-                            .font(.system(size: 16, weight: .bold))
-                            .tracking(1)
-                            .textCase(.uppercase)
-                            .foregroundStyle(.white)
-                    }
-                }
-                .padding(16)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .accessibilityElement(children: .combine)
-    }
-
-    private var thisMonth: some View {
-        let (done, total) = thisMonthCounts
-
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("this_month")
-                    .apexLabel()
-                Spacer()
-                if let credits = client?.credits {
-                    Text("credits_left \(credits)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Text("trainings_done_of_total \(done) \(total)")
-                .font(.system(size: 15, weight: .bold))
-                .tracking(1)
-                .textCase(.uppercase)
-
-            ApexProgressBar(value: total > 0 ? Double(done) / Double(total) : 0)
-        }
-        .padding(16)
-        .apexCardBackground()
-    }
-
-    private func tile(title: LocalizedStringKey, systemImage: String) -> some View {
-        ApexPictureBackground(systemImage: systemImage)
-            .frame(height: 120)
-            .overlay {
-                LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
-            }
-            .overlay(alignment: .bottomLeading) {
-                HStack {
-                    Text(title)
-                        .font(.system(size: 12, weight: .bold))
-                        .tracking(1.2)
-                        .textCase(.uppercase)
-                    Spacer()
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .foregroundStyle(.white)
-                .padding(12)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .contentShape(Rectangle())
-    }
-
     // MARK: - Data
 
     private var canGetAppointments: Bool {
@@ -299,7 +337,6 @@ struct ClientHomeView: View {
 
     private struct NextAppointment {
         let startTime: Date
-        let timeSlot: TimeSlot
         let isPending: Bool
     }
 
@@ -309,23 +346,19 @@ struct ClientHomeView: View {
         if let approved = approvedAppointments
             .filter({ $0.startTime > now })
             .min(by: { $0.startTime < $1.startTime }) {
-            return NextAppointment(startTime: approved.startTime, timeSlot: approved.timeSlot, isPending: false)
+            return NextAppointment(startTime: approved.startTime, isPending: false)
         }
         if let pending = pendingAppointments
             .filter({ $0.startTime > now })
             .min(by: { $0.startTime < $1.startTime }) {
-            return NextAppointment(startTime: pending.startTime, timeSlot: pending.timeSlot, isPending: true)
+            return NextAppointment(startTime: pending.startTime, isPending: true)
         }
         return nil
     }
 
-    /// Approved appointments this month that are over, and all of them.
-    private var thisMonthCounts: (done: Int, total: Int) {
-        let now = Date()
-        let thisMonth = approvedAppointments.filter {
-            Calendar.current.isDate($0.startTime, equalTo: now, toGranularity: .month)
-        }
-        return (thisMonth.filter { $0.endTime < now }.count, thisMonth.count)
+    // For example "8.10.2026. 18:00".
+    static func dateAndTime(_ date: Date) -> String {
+        "\(DateFormatter.dateWithDots.string(from: date)) \(date.formatted(date: .omitted, time: .shortened))"
     }
 
     @MainActor
@@ -346,13 +379,14 @@ struct ClientHomeView: View {
             pendingAppointments = appointments.pendingAppointments
         }
 
-        // Goal and reviews are extras, home works without them.
+        // Picture, goal and plan are extras, home works without them.
+        let profileURL = AppEnvironment.apiURL.appendingPathComponent("profile")
+        if let loadedProfile: Profile = try? await APIClient.shared.request(profileURL) {
+            profile = loadedProfile
+        }
         if let loadedGoal = try? await ClientGoal.loadMine() {
             goal = loadedGoal
             showGoalIfChanged()
-        }
-        if let reviews = try? await MonthlyReview.load() {
-            monthlyReviews = reviews
         }
     }
 
@@ -381,6 +415,50 @@ struct ClientHomeView: View {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
             return nil
         }
+    }
+}
+
+/// Centered "APEX" wordmark with a small subtitle, e.g. the client's plan.
+struct ApexTitleBar: View {
+    var subtitle: LocalizedStringKey?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text(verbatim: "APEX")
+                .font(.system(size: 17, weight: .heavy))
+                .tracking(4)
+            if let subtitle {
+                Text(subtitle)
+                    .font(.system(size: 8, weight: .semibold))
+                    .tracking(1.5)
+                    .textCase(.uppercase)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Small accent button used on pictures, e.g. "REZERVIRAJ TERMIN →".
+struct ApexCompactButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 6) {
+            configuration.label
+                .font(.system(size: 11, weight: .bold))
+                .tracking(0.8)
+                .textCase(.uppercase)
+                .lineLimit(1)
+            Image(systemName: "arrow.right")
+                .font(.system(size: 11, weight: .bold))
+        }
+        .foregroundStyle(Color.apexOnAccent)
+        .padding(.horizontal, 12)
+        .frame(minHeight: 34)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.apexAccent)
+        )
+        .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }
 

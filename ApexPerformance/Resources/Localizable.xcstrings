@@ -488,6 +488,29 @@
         }
       }
     },
+    "active_package" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active package"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivan paket"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pacchetto attivo"
+          }
+        }
+      }
+    },
     "active_straight_leg_raise" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -599,29 +622,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiungi all'appuntamento esistente"
-          }
-        }
-      }
-    },
-    "all_monthly_reviews" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All reviews"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Svi reviewi"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutte le revisioni"
           }
         }
       }
@@ -1211,29 +1211,6 @@
         }
       }
     },
-    "body_progress" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Body"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tijelo"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Corpo"
-          }
-        }
-      }
-    },
     "book_appointment" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1454,6 +1431,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Richieste di cancellazione"
+          }
+        }
+      }
+    },
+    "cancelation_terms_by_agreement" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelation terms by agreement"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uvjeti otkazivanja prema dogovoru"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condizioni di cancellazione come concordato"
           }
         }
       }
@@ -1710,6 +1710,29 @@
         }
       }
     },
+    "coach_monthly_review" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coach's monthly review"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mjesečni osvrt trenera"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisione mensile dell'allenatore"
+          }
+        }
+      }
+    },
     "comment" : {
       "localizations" : {
         "en" : {
@@ -1728,6 +1751,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commento"
+          }
+        }
+      }
+    },
+    "compared_to_month %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compared to %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "U odnosu na %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispetto a %@"
           }
         }
       }
@@ -1959,29 +2005,6 @@
         }
       }
     },
-    "credits_left %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Credits: %lld"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sredstva: %lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crediti: %lld"
-          }
-        }
-      }
-    },
     "croatian" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2024,6 +2047,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blocco attuale (questo mese)"
+          }
+        }
+      }
+    },
+    "current_block_line %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current block • %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualni blok • %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocco attuale • %@"
           }
         }
       }
@@ -2389,6 +2435,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dettagli"
+          }
+        }
+      }
+    },
+    "done_this_month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done (month)"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odrađeno (mjesec)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completati (mese)"
           }
         }
       }
@@ -2919,6 +2988,29 @@
         }
       }
     },
+    "focus_line %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus: %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fokus: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus: %@"
+          }
+        }
+      }
+    },
     "focus_placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3120,6 +3212,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obiettivo e piano"
+          }
+        }
+      }
+    },
+    "goal_line %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal: %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cilj: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obiettivo: %@"
           }
         }
       }
@@ -4486,6 +4601,29 @@
         }
       }
     },
+    "my_package" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My package"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moj paket"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il mio pacchetto"
+          }
+        }
+      }
+    },
     "my_profile" : {
       "localizations" : {
         "en" : {
@@ -4897,6 +5035,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Data della valutazione"
+          }
+        }
+      }
+    },
+    "next_assessment_line %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next assessment: %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sljedeća procjena: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prossima valutazione: %@"
           }
         }
       }
@@ -5515,6 +5676,75 @@
         }
       }
     },
+    "package_done_of_total %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld done"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld odrađeno"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld completati"
+          }
+        }
+      }
+    },
+    "package_remaining %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld left"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld preostalo"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rimanenti"
+          }
+        }
+      }
+    },
+    "package_trainings %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld trainings"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld treninga"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld allenamenti"
+          }
+        }
+      }
+    },
     "password" : {
       "localizations" : {
         "en" : {
@@ -5557,6 +5787,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Password modificata con successo"
+          }
+        }
+      }
+    },
+    "pending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na čekanju"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa"
           }
         }
       }
@@ -5857,6 +6110,29 @@
         }
       }
     },
+    "previous_reviews" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous reviews"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prethodni osvrti"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisioni precedenti"
+          }
+        }
+      }
+    },
     "profile" : {
       "localizations" : {
         "en" : {
@@ -6085,6 +6361,29 @@
         }
       }
     },
+    "ready_for_next_training" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for your next training?"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sve spremno za sljedeći trening?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto per il prossimo allenamento?"
+          }
+        }
+      }
+    },
     "recurring_appointments_generated_successfully" : {
       "localizations" : {
         "en" : {
@@ -6235,6 +6534,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuntamento"
+          }
+        }
+      }
+    },
+    "remaining_includes_reserved %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld remaining sessions include %2$lld booked"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld preostalih termina uključuje %2$lld rezervirana"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sessioni rimanenti includono %2$lld prenotate"
           }
         }
       }
@@ -6552,6 +6874,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tipo di richiesta"
+          }
+        }
+      }
+    },
+    "reserved" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Booked"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezervirano"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenotati"
           }
         }
       }
@@ -7122,6 +7467,29 @@
         }
       }
     },
+    "show_all_measurements" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show all measurements"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prikaži sve mjere"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra tutte le misure"
+          }
+        }
+      }
+    },
     "since_first_measurement" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7531,29 +7899,6 @@
         }
       }
     },
-    "this_month" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This month"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ovaj mjesec"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo mese"
-          }
-        }
-      }
-    },
     "thumbnail_url" : {
       "localizations" : {
         "en" : {
@@ -7617,6 +7962,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fascia oraria"
+          }
+        }
+      }
+    },
+    "to_book" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To book"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za rezervaciju"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da prenotare"
           }
         }
       }
@@ -7736,29 +8104,6 @@
         }
       }
     },
-    "training_progress" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Training"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trening"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allenamento"
-          }
-        }
-      }
-    },
     "training_progress_title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7828,29 +8173,6 @@
         }
       }
     },
-    "trainings_done_of_total %lld %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld trainings"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld treninga"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld allenamenti"
-          }
-        }
-      }
-    },
     "trainings_per_week" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7916,6 +8238,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Valore sconosciuto"
+          }
+        }
+      }
+    },
+    "upcoming_appointments" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming appointments"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadolazeći termini"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prossimi appuntamenti"
           }
         }
       }
@@ -8007,6 +8352,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuova versione disponibile"
+          }
+        }
+      }
+    },
+    "updated_on %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated %@"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ažurirano %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiornato il %@"
           }
         }
       }

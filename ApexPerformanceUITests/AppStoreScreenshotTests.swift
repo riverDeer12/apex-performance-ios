@@ -125,19 +125,25 @@ final class AppStoreScreenshotTests: XCTestCase {
             waitForContent()
             takeScreenshot("client", "body-progress")
 
-            let measurementRow = app.buttons["measurement-row"].firstMatch
-            if measurementRow.waitForExistence(timeout: 5) {
-                app.swipeUp()
-                waitForContent(seconds: 1)
-                takeScreenshot("client", "body-circumferences")
-            }
+            app.swipeUp()
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "body-circumferences")
 
-            let sections = app.segmentedControls["progress-section"].buttons
-            if sections.count > 1 {
-                sections.element(boundBy: 1).tap()
-                waitForContent(seconds: 1)
+            let trainingProgress = app.buttons["training-progress-row"].firstMatch
+            if trainingProgress.waitForExistence(timeout: 5) {
+                trainingProgress.tap()
+                waitForContent()
                 takeScreenshot("client", "training-progress")
             }
+        }
+
+        // Package with booked appointments.
+        tabs.element(boundBy: 0).tap()
+        let packageCard = app.buttons["package-card"].firstMatch
+        if packageCard.waitForExistence(timeout: 5) {
+            packageCard.tap()
+            waitForContent()
+            takeScreenshot("client", "package")
         }
 
         // Appointments with booking.

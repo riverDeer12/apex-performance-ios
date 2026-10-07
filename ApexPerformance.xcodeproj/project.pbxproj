@@ -35,6 +35,7 @@
 		61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5262EF1F1F4009E9624 /* AuthManager.swift */; };
 		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
 		B31EA62BC2771A5ED9B2059E /* ClientHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E303462900FBA1BEE47412B /* ClientHomeView.swift */; };
+		8B89FD832163108150ACAEAA /* MyPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13F6A03A85B2EB6691C644B /* MyPackageView.swift */; };
 		61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52C2EF44204009E9624 /* ClientsView.swift */; };
 		61CFB52F2EF44338009E9624 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52E2EF44338009E9624 /* Appointment.swift */; };
 		61CFB5312EF44374009E9624 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5302EF44374009E9624 /* Client.swift */; };
@@ -152,6 +153,7 @@
 		61CFB5262EF1F1F4009E9624 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthManager.swift; path = ApexPerformance/Core/Networking/AuthManager.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7E303462900FBA1BEE47412B /* ClientHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientHomeView.swift; sourceTree = "<group>"; };
+		B13F6A03A85B2EB6691C644B /* MyPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPackageView.swift; sourceTree = "<group>"; };
 		61CFB52C2EF44204009E9624 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
 		61CFB52E2EF44338009E9624 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
 		61CFB5302EF44374009E9624 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
@@ -437,6 +439,7 @@
 			children = (
 				61CFB5292EF43E53009E9624 /* HomeView.swift */,
 				7E303462900FBA1BEE47412B /* ClientHomeView.swift */,
+				B13F6A03A85B2EB6691C644B /* MyPackageView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -706,6 +709,7 @@
 				61CFB5182EF1E7D1009E9624 /* LoginView.swift in Sources */,
 				61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */,
 				B31EA62BC2771A5ED9B2059E /* ClientHomeView.swift in Sources */,
+				8B89FD832163108150ACAEAA /* MyPackageView.swift in Sources */,
 				61CFB5482EFC1770009E9624 /* AppEnvironment.swift in Sources */,
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
 				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
