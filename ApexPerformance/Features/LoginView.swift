@@ -43,6 +43,20 @@ struct LoginView: View {
                                 maxHeight: geo.size.height * 0.22
                             )
                         
+                        if authManager.sessionExpired {
+                            Label("session_expired", systemImage: "clock.badge.exclamationmark")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.orange)
+                                .multilineTextAlignment(.center)
+                                .padding(12)
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.orange.opacity(0.12))
+                                )
+                                .accessibilityIdentifier("session-expired-message")
+                        }
+                        
                         VStack(spacing: 30) {
                             
                             TextField("username", text: $username)

@@ -9,6 +9,11 @@ import Foundation
 
 func mapError(_ error: Error) -> String {
     
+    // The user is taken to login, which explains it.
+    if error is AuthError {
+        return "session_expired"
+    }
+    
     if let urlError = error as? URLError {
         switch urlError.code {
         case .notConnectedToInternet:

@@ -122,6 +122,11 @@ final class APIClient {
             #if DEBUG
             print("❌ Unauthorized (401)")
             #endif
+            // The session expired or the token is no longer valid,
+            // AuthManager logs the user out and login is shown.
+            if token != nil {
+                NotificationCenter.default.post(name: .sessionExpired, object: nil)
+            }
             throw AuthError.unauthorized
         }
 
@@ -153,6 +158,11 @@ enum APIError: Error {
 
 enum AuthError: Error {
     case unauthorized
+}
+
+extension Notification.Name {
+    /// Posted when the API answers 401 to a logged in request.
+    static let sessionExpired = Notification.Name("sessionExpired")
 }
 
 enum HTTPMethod: String {

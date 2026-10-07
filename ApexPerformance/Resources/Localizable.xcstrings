@@ -7305,6 +7305,29 @@
         }
       }
     },
+    "session_expired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your session has expired. Please log in again."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesija je istekla. Prijavi se ponovno."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sessione è scaduta. Accedi di nuovo."
+          }
+        }
+      }
+    },
     "set" : {
       "extractionState" : "manual",
       "localizations" : {
