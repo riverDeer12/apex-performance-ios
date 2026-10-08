@@ -4,7 +4,8 @@
 //
 //  The TestFlight workflow builds with APP_VARIANT=Test, so the test app
 //  has its own bundle id, name and icon and installs next to the App Store
-//  app. Builds from Xcode stay the App Store app.
+//  app; it works with the test backend (Release.xcconfig). Builds from
+//  Xcode stay the App Store app.
 //
 
 APP_VARIANT = Store

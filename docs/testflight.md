@@ -31,7 +31,8 @@ Never commit the `.p8` file.
 ## Test app
 
 The variant comes from `APP_VARIANT` in `ApexPerformance/Config/AppVariant.xcconfig`
-(bundle id suffix, name and icon). Builds from Xcode are the App Store app.
+(bundle id suffix, name and icon). The test app works with the test backend
+(test.apex-performance.fit). Builds from Xcode are the App Store app.
 
 One time setup for the test app:
 
