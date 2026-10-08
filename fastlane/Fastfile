@@ -26,7 +26,10 @@ platform :ios do
     # Next build number after the latest one on TestFlight.
     latest = latest_testflight_build_number(api_key: api_key, initial_build_number: 0)
     build_number = latest.to_i + 1
-    UI.message("Building build number #{build_number}")
+    testflight_version = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
+
+    version = app_version(api_key, testflight_version)
+    UI.message("Building version #{version} (#{build_number})")
 
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
@@ -39,8 +42,8 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      xcargs: "#{auth} CURRENT_PROJECT_VERSION=#{build_number}",
-      export_xcargs: auth
+      # gym passes xcargs to the export too, so the key isn't given twice.
+      xcargs: "#{auth} MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number}"
     )
 
     upload_to_testflight(
@@ -50,5 +53,34 @@ platform :ios do
     )
   ensure
     File.delete(key_path) if key_path && File.exist?(key_path)
+  end
+
+  # Version to upload: APP_VERSION when given (workflow input), otherwise
+  # the higher of the project's and TestFlight's version. A version that
+  # is already live on the App Store can't get new builds, so then the
+  # last number is raised (1.5 -> 1.6).
+  def app_version(api_key, testflight_version)
+    given = ENV["APP_VERSION"].to_s.strip
+    return given unless given.empty?
+
+    versions = File.read("ApexPerformance.xcodeproj/project.pbxproj")
+                   .scan(/MARKETING_VERSION = ([\d.]+);/).flatten
+    versions << testflight_version if testflight_version
+    version = versions.max_by { |v| Gem::Version.new(v) }
+
+    live_version = begin
+      app_store_build_number(api_key: api_key, live: true)
+      lane_context[SharedValues::LATEST_VERSION]
+    rescue StandardError
+      nil
+    end
+
+    if live_version && Gem::Version.new(live_version) >= Gem::Version.new(version)
+      parts = live_version.split(".").map(&:to_i)
+      parts[-1] += 1
+      version = parts.join(".")
+    end
+
+    version
   end
 end

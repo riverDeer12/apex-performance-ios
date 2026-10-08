@@ -4,8 +4,11 @@
 uploads it to TestFlight with fastlane (`fastlane/Fastfile`, lane `beta`).
 
 - Runs on every push to `production` and by hand (Actions → TestFlight → Run workflow).
-- The build number is the latest TestFlight build number + 1. The version
-  (`MARKETING_VERSION`) comes from the project.
+- The build number is the latest TestFlight build number + 1.
+- The version is the higher of the project's `MARKETING_VERSION` and the
+  latest TestFlight version. When that version is already live on the App
+  Store, the last number is raised (1.5 -> 1.6). A version can also be given
+  when running the workflow by hand.
 - Signing is cloud managed by Xcode with an App Store Connect API key, so no
   certificate or provisioning profile is stored anywhere.
 
