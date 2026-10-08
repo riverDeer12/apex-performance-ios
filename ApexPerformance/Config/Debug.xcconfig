@@ -5,4 +5,6 @@
 //  Created by Milan Trbojevic on 23.12.2025..
 //
 
+#include "AppVariant.xcconfig"
+
 API_URL = https:/$()/test.apex-performance.fit/api

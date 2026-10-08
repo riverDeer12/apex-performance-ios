@@ -10,6 +10,11 @@ on:
   # Can also be started by hand: Actions -> TestFlight -> Run workflow.
   workflow_dispatch:
     inputs:
+      app:
+        description: "Test: Test Apex app next to the App Store one. Store: App Store app, for a release."
+        type: choice
+        options: [test, store]
+        default: test
       version:
         description: "App version, e.g. 1.6 (empty: worked out automatically)"
         required: false
@@ -47,6 +52,8 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
           APP_VERSION: ${{ inputs.version }}
+          # Merges to production build the test app.
+          APP_VARIANT: ${{ inputs.app || 'test' }}
 
       - name: Keep the build logs
         if: failure()

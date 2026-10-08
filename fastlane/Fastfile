@@ -1,4 +1,5 @@
 require "base64"
+require "fileutils"
 require "tmpdir"
 
 default_platform(:ios)
@@ -7,7 +8,13 @@ platform :ios do
   desc "Build the app and upload it to TestFlight"
   desc "Signing is cloud managed through the App Store Connect API key,"
   desc "so no certificate or provisioning profile is kept in the repo."
+  desc "APP_VARIANT=test (default) builds the Test Apex app with its own"
+  desc "bundle id, name and icon; APP_VARIANT=store builds the App Store app."
   lane :beta do
+    store_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    test_app = ENV.fetch("APP_VARIANT", "test").strip.downcase != "store"
+    app_id = test_app ? "#{store_id}.test" : store_id
+
     key_id = ENV.fetch("ASC_KEY_ID")
     issuer_id = ENV.fetch("ASC_ISSUER_ID")
     key_content = ENV.fetch("ASC_KEY_CONTENT")
@@ -23,13 +30,20 @@ platform :ios do
     key_path = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
     File.write(key_path, Base64.decode64(key_content))
 
-    # Next build number after the latest one on TestFlight.
-    latest = latest_testflight_build_number(api_key: api_key, initial_build_number: 0)
+    # Next build number after the latest one on this app's TestFlight.
+    latest = latest_testflight_build_number(api_key: api_key, app_identifier: app_id, initial_build_number: 0)
     build_number = latest.to_i + 1
-    testflight_version = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
+    versions = [lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]]
 
-    version = app_version(api_key, testflight_version)
-    UI.message("Building version #{version} (#{build_number})")
+    if test_app
+      use_test_firebase_config
+      # The test app follows the App Store app's versions.
+      latest_testflight_build_number(api_key: api_key, app_identifier: store_id, initial_build_number: 0)
+      versions << lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
+    end
+
+    version = app_version(api_key, store_id, versions.compact)
+    UI.message("Building #{app_id} version #{version} (#{build_number})")
 
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
@@ -43,11 +57,13 @@ platform :ios do
       export_method: "app-store",
       output_directory: "build",
       # gym passes xcargs to the export too, so the key isn't given twice.
-      xcargs: "#{auth} MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number}"
+      xcargs: "#{auth} APP_VARIANT=#{test_app ? 'Test' : 'Store'} " \
+              "MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number}"
     )
 
     upload_to_testflight(
       api_key: api_key,
+      app_identifier: app_id,
       # The build appears in TestFlight once Apple has processed it.
       skip_waiting_for_build_processing: true
     )
@@ -55,22 +71,34 @@ platform :ios do
     File.delete(key_path) if key_path && File.exist?(key_path)
   end
 
+  # Firebase needs the config of the Firebase app registered for the test
+  # bundle id, otherwise push notifications don't reach the test app.
+  # Only the CI checkout is changed.
+  def use_test_firebase_config
+    test_config = "../ApexPerformance/Config/GoogleService-Info-Test.plist"
+    if File.exist?(test_config)
+      FileUtils.cp(test_config, "../ApexPerformance/GoogleService-Info.plist")
+    else
+      UI.important("No GoogleService-Info-Test.plist, push notifications won't work in the test app")
+    end
+  end
+
   # Version to upload: APP_VERSION when given (workflow input), otherwise
-  # the higher of the project's and TestFlight's version. A version that
+  # the highest of the project's and TestFlight's versions. A version that
   # is already live on the App Store can't get new builds, so then the
   # last number is raised (1.5 -> 1.6).
-  def app_version(api_key, testflight_version)
+  def app_version(api_key, store_id, testflight_versions)
     given = ENV["APP_VERSION"].to_s.strip
     return given unless given.empty?
 
     # Lanes run inside the fastlane folder, the project is one level up.
     versions = File.read("../ApexPerformance.xcodeproj/project.pbxproj")
                    .scan(/MARKETING_VERSION = ([\d.]+);/).flatten
-    versions << testflight_version if testflight_version
+    versions.concat(testflight_versions)
     version = versions.max_by { |v| Gem::Version.new(v) }
 
     live_version = begin
-      app_store_build_number(api_key: api_key, live: true)
+      app_store_build_number(api_key: api_key, app_identifier: store_id, live: true)
       lane_context[SharedValues::LATEST_VERSION]
     rescue StandardError
       nil
