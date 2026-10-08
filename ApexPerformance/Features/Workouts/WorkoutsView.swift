@@ -96,7 +96,12 @@ struct WorkoutsView: View {
                         } else {
                             LazyVStack(spacing: 0) {
                                 ForEach(filteredWorkouts) { workout in
-                                    NavigationLink(value: workout) {
+                                    // Destination link, not a value link: the library is also
+                                    // pushed from the client's home, where a value destination
+                                    // registered in the pushed view only opened after going back.
+                                    NavigationLink {
+                                        workoutDetail(workout)
+                                    } label: {
                                         workoutRow(workout)
                                     }
                                     .buttonStyle(.plain)
@@ -135,15 +140,6 @@ struct WorkoutsView: View {
                 guard !hasLoaded else { return }
                 hasLoaded = true
                 await loadWorkouts()
-            }
-            .navigationDestination(for: Workout.self) { workout in
-                WorkoutDetailView(workout: workout, canEdit: canManageWorkouts) { updated in
-                    if let index = workouts.firstIndex(where: { $0.id == updated.id }) {
-                        workouts[index] = updated
-                    }
-                } onDeleted: {
-                    workouts.removeAll { $0.id == workout.id }
-                }
             }
             .confirmationDialog(
                 "delete_workout_question",
@@ -185,6 +181,16 @@ struct WorkoutsView: View {
             .navigationBarTitleDisplayMode(.inline)
     }
 
+    private func workoutDetail(_ workout: Workout) -> some View {
+        WorkoutDetailView(workout: workout, canEdit: canManageWorkouts) { updated in
+            if let index = workouts.firstIndex(where: { $0.id == updated.id }) {
+                workouts[index] = updated
+            }
+        } onDeleted: {
+            workouts.removeAll { $0.id == workout.id }
+        }
+    }
+    
     private var importSection: some View {
         HStack(spacing: 12) {
             Button {
