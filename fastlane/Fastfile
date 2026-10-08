@@ -63,7 +63,8 @@ platform :ios do
     given = ENV["APP_VERSION"].to_s.strip
     return given unless given.empty?
 
-    versions = File.read("ApexPerformance.xcodeproj/project.pbxproj")
+    # Lanes run inside the fastlane folder, the project is one level up.
+    versions = File.read("../ApexPerformance.xcodeproj/project.pbxproj")
                    .scan(/MARKETING_VERSION = ([\d.]+);/).flatten
     versions << testflight_version if testflight_version
     version = versions.max_by { |v| Gem::Version.new(v) }
