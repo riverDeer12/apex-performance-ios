@@ -9,6 +9,11 @@ on:
       - "docs/**"
   # Can also be started by hand: Actions -> TestFlight -> Run workflow.
   workflow_dispatch:
+    inputs:
+      version:
+        description: "App version, e.g. 1.6 (empty: worked out automatically)"
+        required: false
+        default: ""
 
 # One upload at a time, so build numbers don't clash.
 concurrency:
@@ -41,6 +46,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          APP_VERSION: ${{ inputs.version }}
 
       - name: Keep the build logs
         if: failure()
