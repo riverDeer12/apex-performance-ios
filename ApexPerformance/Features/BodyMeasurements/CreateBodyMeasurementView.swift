@@ -38,10 +38,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("height").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $height, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $height.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "height").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "height").start,
+                                    title: "height"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -51,10 +54,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("weight").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $weight, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $weight.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "weight").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "weight").start,
+                                    title: "weight"
+                                )
                                 Text("kg").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -64,10 +70,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("shoulders").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $shoulders, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $shoulders.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "shoulders").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "shoulders").start,
+                                    title: "shoulders"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -77,10 +86,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("chest").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $chest, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $chest.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "chest").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "chest").start,
+                                    title: "chest"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -90,10 +102,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("upper_arm").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $upperArm, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $upperArm.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "upper_arm").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "upper_arm").start,
+                                    title: "upper_arm"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -103,10 +118,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("waist").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $waist, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $waist.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "waist").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "waist").start,
+                                    title: "waist"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -116,10 +134,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("thigh").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $thigh, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $thigh.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "thigh").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "thigh").start,
+                                    title: "thigh"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -129,10 +150,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("calves").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $calves, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $calves.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "calves").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "calves").start,
+                                    title: "calves"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())
@@ -142,10 +166,13 @@ struct CreateBodyMeasurementView: View {
                             HStack {
                                 Text("glutes").foregroundStyle(.secondary)
                                 Spacer()
-                                TextField("", value: $glutes, format: .number)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(minWidth: 60)
+                                NumberWheelField(
+                                    value: $glutes.zeroAsEmpty,
+                                    range: BodyMeasurement.wheel(for: "glutes").range,
+                                    step: 0.1,
+                                    defaultValue: BodyMeasurement.wheel(for: "glutes").start,
+                                    title: "glutes"
+                                )
                                 Text("cm").font(.subheadline).foregroundStyle(.secondary)
                             }
                             .contentShape(Rectangle())

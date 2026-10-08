@@ -179,12 +179,11 @@ struct ClientDetailsView: View {
                 CardView(title: "credits") {
                     VStack(spacing: 0) {
                         editableRow(title: "appointments_left") {
-                            TextField("appointments_left", value: Binding(
-                                get: { form.credits ?? 0 },
-                                set: { form.credits = $0 }
-                            ), format: .number)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
+                            NumberWheelField(
+                                value: $form.credits.asDecimal,
+                                range: 0...200,
+                                title: "appointments_left"
+                            )
                             .font(outOfCredits ? .body.weight(.bold) : .body)
                         }
                         
