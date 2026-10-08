@@ -39,3 +39,12 @@ iOSInjectionProject/
 
 # macOS
 .DS_Store
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+*.p8
+*.mobileprovision
+*.p12
