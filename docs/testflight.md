@@ -4,6 +4,9 @@
 uploads it to TestFlight with fastlane (`fastlane/Fastfile`, lane `beta`).
 
 - Runs on every push to `production` and by hand (Actions → TestFlight → Run workflow).
+- Pushes build the **Test Apex** app (`software.rdd.ApexPerformance.test`,
+  red TEST icon), which installs next to the App Store app. Run the workflow
+  by hand with `app: store` to build the App Store app for a release.
 - The build number is the latest TestFlight build number + 1.
 - The version is the higher of the project's `MARKETING_VERSION` and the
   latest TestFlight version. When that version is already live on the App
@@ -24,6 +27,21 @@ Add them in GitHub → repository → Settings → Secrets and variables → Act
 
 The API key needs the **Admin** role, which cloud managed signing requires.
 Never commit the `.p8` file.
+
+## Test app
+
+The variant comes from `APP_VARIANT` in `ApexPerformance/Config/AppVariant.xcconfig`
+(bundle id suffix, name and icon). The test app works with the test backend
+(test.apex-performance.fit). Builds from Xcode are the App Store app.
+
+One time setup for the test app:
+
+1. Developer portal → Identifiers → add the App ID `software.rdd.ApexPerformance.test`
+   with Push Notifications.
+2. App Store Connect → Apps → New App with that bundle id (name e.g. "Apex Performance Test").
+3. Firebase → add an iOS app with that bundle id, upload the APNs key for it and
+   save its config as `ApexPerformance/Config/GoogleService-Info-Test.plist`.
+   The lane uses it for the test app; without it push notifications don't reach the test app.
 
 ## Running locally
 

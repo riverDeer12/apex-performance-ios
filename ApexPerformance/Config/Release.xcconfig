@@ -5,4 +5,9 @@
 //  Created by Milan Trbojevic on 23.12.2025..
 //
 
-API_URL = https:/$()/apex-performance.fit/api
+#include "AppVariant.xcconfig"
+
+// The test app (TestFlight) works with the test backend.
+API_URL_Store = https:/$()/apex-performance.fit/api
+API_URL_Test = https:/$()/test.apex-performance.fit/api
+API_URL = $(API_URL_$(APP_VARIANT))

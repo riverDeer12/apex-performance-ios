@@ -1,0 +1,20 @@
+//
+//  AppVariant.xcconfig
+//  ApexPerformance
+//
+//  The TestFlight workflow builds with APP_VARIANT=Test, so the test app
+//  has its own bundle id, name and icon and installs next to the App Store
+//  app; it works with the test backend (Release.xcconfig). Builds from
+//  Xcode stay the App Store app.
+//
+
+APP_VARIANT = Store
+
+APP_BUNDLE_ID_SUFFIX_Store =
+APP_BUNDLE_ID_SUFFIX_Test = .test
+
+APP_DISPLAY_NAME_Store = Apex Performance
+APP_DISPLAY_NAME_Test = Test Apex
+
+APP_ICON_NAME_Store = AppIcon
+APP_ICON_NAME_Test = AppIconTest
