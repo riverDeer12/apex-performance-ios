@@ -21,3 +21,21 @@ struct BodyMeasurement: Identifiable, Decodable, Encodable {
     let measuredAt: Date
     let client: Client?
 }
+
+extension BodyMeasurement {
+    /// Wheel range and starting value of a measurement, by its title key.
+    static func wheel(for key: String) -> (range: ClosedRange<Int>, start: Decimal) {
+        switch key {
+        case "height": return (100...230, 175)
+        case "weight": return (30...250, 75)
+        case "shoulders": return (60...180, 110)
+        case "chest": return (50...180, 100)
+        case "upper_arm": return (15...70, 32)
+        case "waist": return (40...180, 85)
+        case "thigh": return (30...100, 55)
+        case "calves": return (20...70, 37)
+        case "glutes": return (50...180, 100)
+        default: return (0...300, 0)
+        }
+    }
+}

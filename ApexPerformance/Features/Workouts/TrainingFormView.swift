@@ -142,16 +142,29 @@ struct TrainingFormView: View {
                     Text(verbatim: "\(setIndex + 1)")
                         .foregroundStyle(.secondary)
                         .frame(width: 22, alignment: .leading)
-                    TextField("reps", text: set.reps)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                    NumberWheelField(
+                        value: set.repsValue,
+                        range: 1...100,
+                        defaultValue: 10,
+                        allowsEmpty: true,
+                        title: "reps",
+                        // Reps written as text earlier (e.g. "8-10") are kept as they are.
+                        displayText: set.wrappedValue.repsValue == nil && !set.wrappedValue.reps.isEmpty
+                            ? set.wrappedValue.reps : nil
+                    )
+                    .frame(maxWidth: .infinity)
                     Text(verbatim: "×")
                         .foregroundStyle(.secondary)
-                    TextField("kg", text: set.weight)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .foregroundStyle(set.wrappedValue.isWeightValid ? Color.primary : Color.red)
+                    NumberWheelField(
+                        value: set.weightValue,
+                        range: 0...300,
+                        step: 0.5,
+                        unit: "kg",
+                        defaultValue: 20,
+                        allowsEmpty: true,
+                        title: "weight"
+                    )
+                    .frame(maxWidth: .infinity)
                     if let previous {
                         // Same set on the previous training, shown on the side.
                         Text(verbatim: previous.sets.indices.contains(setIndex)
@@ -492,6 +505,18 @@ private struct SetDraft: Identifiable {
 
     private var trimmedReps: String {
         reps.trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Reps for the wheel, nil when empty or not a single number.
+    var repsValue: Decimal? {
+        get { Int(trimmedReps).map { Decimal($0) } }
+        set { reps = newValue.map { "\(NSDecimalNumber(decimal: $0).intValue)" } ?? "" }
+    }
+
+    /// Weight for the wheel.
+    var weightValue: Decimal? {
+        get { parsedWeight }
+        set { weight = newValue.map { NSDecimalNumber(decimal: $0).description(withLocale: Locale.current) } ?? "" }
     }
 
     // Accepts both "40,5" and "40.5".

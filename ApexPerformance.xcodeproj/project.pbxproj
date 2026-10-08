@@ -58,6 +58,7 @@
 		61CFB5562F02D1F4009E9624 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5552F02D1F4009E9624 /* Permissions.swift */; };
 		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
 		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
+		DE474882F1ECE25867E2C4E9 /* NumberWheelField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0A2E308A3677342C655BEA /* NumberWheelField.swift */; };
 		8FD5D9BC0BE0BDE3D00D3507 /* ApexStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2042155A96499D73E5E0E4 /* ApexStyle.swift */; };
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
@@ -179,6 +180,7 @@
 		61CFB5552F02D1F4009E9624 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
 		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		BE0A2E308A3677342C655BEA /* NumberWheelField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberWheelField.swift; sourceTree = "<group>"; };
 		8F2042155A96499D73E5E0E4 /* ApexStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexStyle.swift; sourceTree = "<group>"; };
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				13A2D53DE7A834D5DF9ED5D7 /* SplashView.swift */,
 				AD0324B3307091769C04277E /* WeightProgressChartView.swift */,
 				61CFB5592F0A6D0D009E9624 /* CardView.swift */,
+				BE0A2E308A3677342C655BEA /* NumberWheelField.swift */,
 				8F2042155A96499D73E5E0E4 /* ApexStyle.swift */,
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
@@ -730,6 +733,7 @@
 				0D2D386D2A68155933107B52 /* Profile.swift in Sources */,
 				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
 				61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */,
+				DE474882F1ECE25867E2C4E9 /* NumberWheelField.swift in Sources */,
 				8FD5D9BC0BE0BDE3D00D3507 /* ApexStyle.swift in Sources */,
 				61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */,
 				61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */,

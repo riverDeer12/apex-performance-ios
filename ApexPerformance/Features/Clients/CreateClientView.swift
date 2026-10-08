@@ -77,12 +77,11 @@ struct CreateClientView: View {
 
                 CardView(title: "credits") {
                     editableRow(title: "appointments_left") {
-                        TextField("appointments_left", value: Binding(
-                            get: { credits ?? 0 },
-                            set: { credits = $0 }
-                        ), format: .number)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
+                        NumberWheelField(
+                            value: $credits.asDecimal,
+                            range: 0...200,
+                            title: "appointments_left"
+                        )
                     }
                 }
                 .padding(.horizontal, 20)

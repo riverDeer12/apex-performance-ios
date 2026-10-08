@@ -157,13 +157,13 @@ struct BodyMeasurementDetailsView: View {
             
             HStack(spacing: 6) {
                 if isEditable {
-                    TextField("",
-                              value: binding,
-                              format: .number
+                    NumberWheelField(
+                        value: binding.zeroAsEmpty,
+                        range: BodyMeasurement.wheel(for: title).range,
+                        step: 0.1,
+                        defaultValue: BodyMeasurement.wheel(for: title).start,
+                        title: LocalizedStringKey(title)
                     )
-                    .multilineTextAlignment(.trailing)
-                    .keyboardType(.decimalPad)
-                    .frame(minWidth: 60) // keeps alignment consistent
                 } else {
                     Text(binding.wrappedValue, format: .number)
                         .fontWeight(.semibold)
