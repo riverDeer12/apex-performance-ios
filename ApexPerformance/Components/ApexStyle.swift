@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // Shared look of the app: dark or warm light background, flat cards,
 // uppercase spaced headings and a sky blue accent.
@@ -17,11 +18,42 @@ extension Color {
     static let apexBorder = Color.primary.opacity(0.08)
 }
 
+extension Font {
+    /// Michroma, the font of titles and headings. It is wide, so it is
+    /// used a bit smaller than the system font would be.
+    static func apexHeading(size: CGFloat, relativeTo style: Font.TextStyle = .title) -> Font {
+        .custom(ApexFont.heading, size: size, relativeTo: style)
+    }
+}
+
+enum ApexFont {
+    // PostScript name of Resources/Michroma-Regular.ttf (UIAppFonts).
+    static let heading = "Michroma-Regular"
+
+    /// Navigation bar titles in Michroma, set once when the app starts.
+    static func applyToNavigationBars() {
+        let appearance = UINavigationBar.appearance()
+        if let font = UIFont(name: heading, size: 15) {
+            appearance.titleTextAttributes = [.font: UIFontMetrics(forTextStyle: .headline).scaledFont(for: font)]
+        }
+        if let font = UIFont(name: heading, size: 24) {
+            appearance.largeTitleTextAttributes = [.font: UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: font)]
+        }
+    }
+}
+
 extension View {
     /// Big uppercase screen title, e.g. "MOJI TRENINZI".
     func apexTitle() -> some View {
-        font(.system(size: 22, weight: .bold))
-            .tracking(2)
+        font(.apexHeading(size: 19))
+            .tracking(1)
+            .textCase(.uppercase)
+    }
+
+    /// Uppercase heading of a card or section, e.g. "NADOLAZEĆI TERMINI".
+    func apexSectionTitle() -> some View {
+        font(.apexHeading(size: 11, relativeTo: .headline))
+            .tracking(0.5)
             .textCase(.uppercase)
     }
 
@@ -54,7 +86,7 @@ struct ApexScreenHeader: View {
         VStack(alignment: .leading, spacing: 6) {
             if showsWordmark {
                 Text(verbatim: "APEX")
-                    .font(.system(size: 13, weight: .heavy))
+                    .font(.apexHeading(size: 13, relativeTo: .footnote))
                     .tracking(3)
                     .foregroundStyle(.secondary)
             }

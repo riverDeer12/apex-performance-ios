@@ -97,9 +97,7 @@ struct ClientProgressView: View {
                 } label: {
                     HStack {
                         Text("training_progress_title")
-                            .font(.system(size: 13, weight: .bold))
-                            .tracking(1)
-                            .textCase(.uppercase)
+                            .apexSectionTitle()
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
@@ -188,9 +186,7 @@ struct ClientProgressView: View {
     private var reviewCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("coach_monthly_review")
-                .font(.system(size: 13, weight: .bold))
-                .tracking(1)
-                .textCase(.uppercase)
+                .apexSectionTitle()
 
             if let review {
                 MonthTitle(date: review.monthDate)
@@ -255,9 +251,7 @@ struct ClientProgressView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("body_mass")
-                        .font(.system(size: 13, weight: .bold))
-                        .tracking(1)
-                        .textCase(.uppercase)
+                        .apexSectionTitle()
                     if let latest {
                         Text(verbatim: "\(BodyProgressView.format(BodyProgressView.double(latest.weight))) KG")
                             .font(.system(size: 28, weight: .bold))
@@ -320,9 +314,7 @@ struct ClientProgressView: View {
         return VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("body_circumferences")
-                    .font(.system(size: 13, weight: .bold))
-                    .tracking(1)
-                    .textCase(.uppercase)
+                    .apexSectionTitle()
                 Spacer()
                 Text(verbatim: "CM")
                     .font(.system(size: 11, weight: .semibold))

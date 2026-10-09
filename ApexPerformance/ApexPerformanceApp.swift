@@ -15,6 +15,10 @@ import FirebaseCore
     // Light, dark or system, picked in the user's profile.
     @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
     
+    init() {
+        ApexFont.applyToNavigationBars()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -160,9 +160,7 @@ struct ClientHomeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text("my_package")
-                        .font(.system(size: 13, weight: .bold))
-                        .tracking(1)
-                        .textCase(.uppercase)
+                        .apexSectionTitle()
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
@@ -201,9 +199,7 @@ struct ClientHomeView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("my_goal_and_plan")
-                        .font(.system(size: 13, weight: .bold))
-                        .tracking(1)
-                        .textCase(.uppercase)
+                        .apexSectionTitle()
                         .padding(.bottom, 2)
 
                     Group {
@@ -425,7 +421,7 @@ struct ApexTitleBar: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(verbatim: "APEX")
-                .font(.system(size: 17, weight: .heavy))
+                .font(.apexHeading(size: 16, relativeTo: .headline))
                 .tracking(4)
             if let subtitle {
                 Text(subtitle)
