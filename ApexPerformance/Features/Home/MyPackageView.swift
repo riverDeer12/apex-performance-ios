@@ -95,9 +95,7 @@ struct MyPackageView: View {
         return VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("package_trainings \(package.total)")
-                    .font(.system(size: 13, weight: .bold))
-                    .tracking(1)
-                    .textCase(.uppercase)
+                    .apexSectionTitle()
                 Spacer()
                 if package.isActive {
                     Text("active_package")
@@ -164,9 +162,7 @@ struct MyPackageView: View {
     private var upcomingCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("upcoming_appointments")
-                .font(.system(size: 13, weight: .bold))
-                .tracking(1)
-                .textCase(.uppercase)
+                .apexSectionTitle()
                 .padding(.bottom, 6)
 
             ForEach(upcoming) { appointment in
