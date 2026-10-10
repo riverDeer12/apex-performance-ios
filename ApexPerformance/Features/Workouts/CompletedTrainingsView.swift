@@ -335,6 +335,7 @@ struct TrainingDetailView: View {
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var showEditSheet = false
+    @State private var showCopySheet = false
     @State private var showDeleteDialog = false
     @State private var isUpdating = false
     // "Save as template" asks for the template's name.
@@ -423,6 +424,12 @@ struct TrainingDetailView: View {
                         }
 
                         Button {
+                            showCopySheet = true
+                        } label: {
+                            Label("copy_training", systemImage: "doc.on.doc")
+                        }
+
+                        Button {
                             templateName = training.name
                             showSaveAsTemplate = true
                         } label: {
@@ -468,6 +475,12 @@ struct TrainingDetailView: View {
         .sheet(isPresented: $showEditSheet) {
             TrainingFormView(clientId: training.client.id, training: training, history: history) { saved in
                 training = saved
+                onSaved?(saved)
+            }
+        }
+        .sheet(isPresented: $showCopySheet) {
+            // The copy is a new training, so it is only added to the list.
+            TrainingFormView(copying: training, history: history) { saved in
                 onSaved?(saved)
             }
         }
