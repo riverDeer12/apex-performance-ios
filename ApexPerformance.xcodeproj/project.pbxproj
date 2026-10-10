@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6AE9BF7D5EDF84832F5DB01E /* Training.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9528CC0606AD130480F1107B /* Training.swift */; };
+		D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994547E6AED188E1535B5C1D /* TrainingTemplate.swift */; };
 		06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */; };
 		09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */; };
+		C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */; };
 		0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */; };
 		AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */; };
 		96FBF155F3B0CAD41F504DBC /* AppearanceSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE563F367A1BBDC83D7B83C9 /* AppearanceSwitcherView.swift */; };
@@ -129,8 +131,10 @@
 
 /* Begin PBXFileReference section */
 		9528CC0606AD130480F1107B /* Training.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Training.swift; sourceTree = "<group>"; };
+		994547E6AED188E1535B5C1D /* TrainingTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplate.swift; sourceTree = "<group>"; };
 		D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientGoal.swift; sourceTree = "<group>"; };
 		EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTrainingsView.swift; sourceTree = "<group>"; };
+		F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplatesView.swift; sourceTree = "<group>"; };
 		1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingFormView.swift; sourceTree = "<group>"; };
 		7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingProgressView.swift; sourceTree = "<group>"; };
 		AE563F367A1BBDC83D7B83C9 /* AppearanceSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSwitcherView.swift; sourceTree = "<group>"; };
@@ -346,6 +350,7 @@
 				4ADD15209C4EBF0F8E7F7330 /* FunctionalMovementScreen.swift */,
 				AAFEE2C8B62315F575C1AD89 /* Profile.swift */,
 				9528CC0606AD130480F1107B /* Training.swift */,
+				994547E6AED188E1535B5C1D /* TrainingTemplate.swift */,
 				D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */,
 				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
 				61CFB52E2EF44338009E9624 /* Appointment.swift */,
@@ -487,6 +492,7 @@
 			children = (
 				61CFB5522F02C658009E9624 /* WorkoutsView.swift */,
 				EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */,
+				F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */,
 				1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */,
 				7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */,
 				3C49604A1D3B1BC797529EA0 /* WorkoutDetailView.swift */,
@@ -725,8 +731,10 @@
 				61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */,
 				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
 				6AE9BF7D5EDF84832F5DB01E /* Training.swift in Sources */,
+				D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */,
 				06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */,
 				09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */,
+				C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */,
 				0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */,
 				AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */,
 				96FBF155F3B0CAD41F504DBC /* AppearanceSwitcherView.swift in Sources */,
