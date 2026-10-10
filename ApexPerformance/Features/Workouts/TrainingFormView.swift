@@ -7,14 +7,20 @@ import SwiftUI
 
 /// Creates or edits a client's training (staff only). Next to every
 /// exercise it shows the sets the client did in the same exercise on
-/// the previous training, same as the web form.
+/// the previous training, same as the web form. The same form creates
+/// and edits training templates, which have no client, date or state.
 struct TrainingFormView: View {
-    let clientId: UUID
+    let clientId: UUID?
     // Training being edited, nil for a new one.
     let training: Training?
     // Client's other trainings, used for the "last time" sets.
     let history: [Training]
     var onSaved: ((Training) -> Void)? = nil
+
+    // Template form: the template being edited, nil for a new one.
+    private let isTemplate: Bool
+    private let template: TrainingTemplate?
+    private var onTemplateSaved: ((TrainingTemplate) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
@@ -28,11 +34,17 @@ struct TrainingFormView: View {
     @State private var workouts: [Workout] = []
     @State private var isSaving = false
 
+    // Templates a new training can be filled from.
+    @State private var templates: [TrainingTemplate] = []
+    @State private var selectedTemplateId: UUID?
+
     init(clientId: UUID, training: Training? = nil, history: [Training], onSaved: ((Training) -> Void)? = nil) {
         self.clientId = clientId
         self.training = training
         self.history = history
         self.onSaved = onSaved
+        isTemplate = false
+        template = nil
         _name = State(initialValue: training?.name ?? "")
         _date = State(initialValue: training?.date ?? .now)
         _note = State(initialValue: training?.note ?? "")
@@ -42,6 +54,46 @@ struct TrainingFormView: View {
             .map(ExerciseDraft.init))
     }
 
+    /// New training for the same client with the exercises and sets of
+    /// the given one ("Copy training"), planned for today.
+    init(copying source: Training, history: [Training], onSaved: ((Training) -> Void)? = nil) {
+        self.init(clientId: source.client.id, history: history, onSaved: onSaved)
+        _name = State(initialValue: source.name)
+        _note = State(initialValue: source.note ?? "")
+        _exercises = State(initialValue: source.exercises
+            .sorted { $0.order < $1.order }
+            .map(ExerciseDraft.init))
+    }
+
+    /// Form of a new template, or of the given one to edit it.
+    init(template: TrainingTemplate?, onSaved: ((TrainingTemplate) -> Void)? = nil) {
+        clientId = nil
+        training = nil
+        history = []
+        isTemplate = true
+        self.template = template
+        onTemplateSaved = onSaved
+        _name = State(initialValue: template?.name ?? "")
+        _date = State(initialValue: .now)
+        _note = State(initialValue: template?.note ?? "")
+        _isCompleted = State(initialValue: false)
+        _exercises = State(initialValue: (template?.exercises ?? [])
+            .sorted { $0.order < $1.order }
+            .map(ExerciseDraft.init))
+    }
+
+    // Only a new training can be filled from a template.
+    private var canUseTemplates: Bool {
+        !isTemplate && training == nil
+    }
+
+    private var title: LocalizedStringKey {
+        if isTemplate {
+            return template == nil ? "new_template" : "edit_template"
+        }
+        return training == nil ? "new_training" : "edit_training"
+    }
+
     private var isValid: Bool {
         !trimmed(name).isEmpty && exercises.allSatisfy(\.isValid)
     }
@@ -49,11 +101,27 @@ struct TrainingFormView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if canUseTemplates && !templates.isEmpty {
+                    Section {
+                        Picker("from_template", selection: $selectedTemplateId) {
+                            Text("no_template").tag(UUID?.none)
+                            ForEach(templates) { template in
+                                Text(verbatim: template.name).tag(UUID?.some(template.id))
+                            }
+                        }
+                        .tint(Color.apexMainColor)
+                    } footer: {
+                        Text("from_template_hint")
+                    }
+                }
+
                 Section {
                     TextField("name", text: $name)
-                    DatePicker("date", selection: $date, displayedComponents: .date)
-                    Toggle("completed", isOn: $isCompleted)
-                        .tint(Color.apexMainColor)
+                    if !isTemplate {
+                        DatePicker("date", selection: $date, displayedComponents: .date)
+                        Toggle("completed", isOn: $isCompleted)
+                            .tint(Color.apexMainColor)
+                    }
                     TextField("note", text: $note, axis: .vertical)
                         .lineLimit(1...4)
                 }
@@ -75,7 +143,7 @@ struct TrainingFormView: View {
                     }
                 }
             }
-            .navigationTitle(training == nil ? LocalizedStringKey("new_training") : LocalizedStringKey("edit_training"))
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -105,6 +173,24 @@ struct TrainingFormView: View {
             .task {
                 await loadWorkouts()
             }
+            .task {
+                await loadTemplates()
+            }
+            .onChange(of: selectedTemplateId) {
+                applySelectedTemplate()
+            }
+        }
+    }
+
+    /// Fills the name, note and exercises from the chosen template, like the web.
+    private func applySelectedTemplate() {
+        guard let template = templates.first(where: { $0.id == selectedTemplateId }) else { return }
+        name = template.name
+        note = template.note ?? ""
+        withAnimation {
+            exercises = template.exercises
+                .sorted { $0.order < $1.order }
+                .map(ExerciseDraft.init)
         }
     }
 
@@ -365,7 +451,7 @@ struct TrainingFormView: View {
     /// Sets of the same exercise from the client's latest training
     /// before this one, or nil when the client didn't do it yet.
     private func previousSets(for workoutId: UUID?) -> PreviousSets? {
-        guard let workoutId else { return nil }
+        guard let workoutId, let clientId else { return nil }
 
         let earlier = history
             .filter { $0.client.id == clientId && $0.id != training?.id && $0.date <= date }
@@ -413,9 +499,22 @@ struct TrainingFormView: View {
     }
 
     @MainActor
+    private func loadTemplates() async {
+        guard canUseTemplates, templates.isEmpty else { return }
+        // Optional, the form works without templates.
+        templates = (try? await TrainingTemplate.loadAll()) ?? []
+    }
+
+    @MainActor
     private func save() async {
         isSaving = true
         defer { isSaving = false }
+
+        if isTemplate {
+            await saveTemplate()
+            return
+        }
+        guard let clientId else { return }
 
         let request = SaveTrainingRequest(
             client: clientId,
@@ -430,6 +529,24 @@ struct TrainingFormView: View {
             let saved = try await Training.save(request, id: training?.id)
             onSaved?(saved)
             toastManager.show("training_saved_successfully", type: .success)
+            dismiss()
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
+    private func saveTemplate() async {
+        let request = SaveTrainingTemplateRequest(
+            name: trimmed(name),
+            note: trimmed(note).isEmpty ? nil : trimmed(note),
+            exercises: exercises.compactMap(\.request)
+        )
+
+        do {
+            let saved = try await TrainingTemplate.save(request, id: template?.id)
+            onTemplateSaved?(saved)
+            toastManager.show(template == nil ? "template_created" : "template_updated", type: .success)
             dismiss()
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)

@@ -82,6 +82,9 @@ struct WorkoutsView: View {
                     if canManageWorkouts {
                         importSection
                             .padding(.horizontal, 20)
+
+                        trainingsLinks
+                            .padding(.horizontal, 20)
                     }
 
                     searchField
@@ -191,6 +194,43 @@ struct WorkoutsView: View {
         }
     }
     
+    // Trainings of all clients and training templates live next to
+    // the exercises they are made of, like the web's trainings menu.
+    private var trainingsLinks: some View {
+        VStack(spacing: 0) {
+            NavigationLink {
+                StaffTrainingsView()
+            } label: {
+                SettingsRowView(
+                    icon: "list.bullet.clipboard",
+                    iconTint: Color.apexAccent,
+                    title: Text("trainings"),
+                    subtitle: Text("all_trainings_subtitle"),
+                    showChevron: true
+                )
+            }
+            .buttonStyle(.plain)
+
+            Divider().padding(.leading, 46)
+
+            NavigationLink {
+                TrainingTemplatesView()
+            } label: {
+                SettingsRowView(
+                    icon: "doc.on.clipboard",
+                    iconTint: Color.apexAccent,
+                    title: Text("training_templates"),
+                    subtitle: Text("training_templates_subtitle"),
+                    showChevron: true
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 4)
+        .apexCardBackground()
+    }
+
     private var importSection: some View {
         HStack(spacing: 12) {
             Button {

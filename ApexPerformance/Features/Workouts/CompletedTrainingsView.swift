@@ -335,8 +335,12 @@ struct TrainingDetailView: View {
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var showEditSheet = false
+    @State private var showCopySheet = false
     @State private var showDeleteDialog = false
     @State private var isUpdating = false
+    // "Save as template" asks for the template's name.
+    @State private var showSaveAsTemplate = false
+    @State private var templateName = ""
 
     init(training: Training, heroImageURL: URL? = nil, history: [Training] = [],
          onSaved: ((Training) -> Void)? = nil, onDeleted: ((UUID) -> Void)? = nil) {
@@ -388,14 +392,7 @@ struct TrainingDetailView: View {
                     .padding(.horizontal, 20)
                 }
 
-                let exercises = training.exercises.sorted { $0.order < $1.order }
-                let labels = SupersetLabels.labels(linked: exercises.map(\.isSupersetWithPrevious))
-                ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
-                    let isInSuperset = exercise.isSupersetWithPrevious
-                        || (index + 1 < exercises.count && exercises[index + 1].isSupersetWithPrevious)
-                    exerciseCard(exercise, label: labels[index], isInSuperset: isInSuperset)
-                        .padding(.horizontal, 20)
-                }
+                TrainingExerciseCards(exercises: training.exercises)
 
                 if let note = training.note, !note.isEmpty {
                     CardView(title: "notes") {
@@ -426,6 +423,19 @@ struct TrainingDetailView: View {
                             completionLabel(isCompleted: training.isCompleted)
                         }
 
+                        Button {
+                            showCopySheet = true
+                        } label: {
+                            Label("copy_training", systemImage: "doc.on.doc")
+                        }
+
+                        Button {
+                            templateName = training.name
+                            showSaveAsTemplate = true
+                        } label: {
+                            Label("save_as_template", systemImage: "bookmark")
+                        }
+
                         if onDeleted != nil {
                             Button(role: .destructive) {
                                 showDeleteDialog = true
@@ -446,6 +456,16 @@ struct TrainingDetailView: View {
                 }
             }
         }
+        .alert("save_as_template", isPresented: $showSaveAsTemplate) {
+            TextField("name", text: $templateName)
+            Button("save") {
+                Task { await saveAsTemplate() }
+            }
+            .disabled(templateName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            Button("cancel", role: .cancel) {}
+        } message: {
+            Text("save_as_template_hint")
+        }
         .confirmationDialog("delete_training_question", isPresented: $showDeleteDialog, titleVisibility: .visible) {
             Button("delete", role: .destructive) {
                 Task { await delete() }
@@ -455,6 +475,12 @@ struct TrainingDetailView: View {
         .sheet(isPresented: $showEditSheet) {
             TrainingFormView(clientId: training.client.id, training: training, history: history) { saved in
                 training = saved
+                onSaved?(saved)
+            }
+        }
+        .sheet(isPresented: $showCopySheet) {
+            // The copy is a new training, so it is only added to the list.
+            TrainingFormView(copying: training, history: history) { saved in
                 onSaved?(saved)
             }
         }
@@ -479,6 +505,20 @@ struct TrainingDetailView: View {
     }
 
     @MainActor
+    private func saveAsTemplate() async {
+        isUpdating = true
+        defer { isUpdating = false }
+
+        let name = templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+        do {
+            _ = try await TrainingTemplate.save(SaveTrainingTemplateRequest(name: name, training: training))
+            toastManager.show("template_created", type: .success)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
     private func delete() async {
         isUpdating = true
         defer { isUpdating = false }
@@ -490,6 +530,23 @@ struct TrainingDetailView: View {
             dismiss()
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+}
+
+/// Cards of a training's or template's exercises with their sets,
+/// numbered "1.", "2a", "2b"... like the web.
+struct TrainingExerciseCards: View {
+    let exercises: [Training.Exercise]
+
+    var body: some View {
+        let sorted = exercises.sorted { $0.order < $1.order }
+        let labels = SupersetLabels.labels(linked: sorted.map(\.isSupersetWithPrevious))
+        ForEach(Array(sorted.enumerated()), id: \.element.id) { index, exercise in
+            let isInSuperset = exercise.isSupersetWithPrevious
+                || (index + 1 < sorted.count && sorted[index + 1].isSupersetWithPrevious)
+            exerciseCard(exercise, label: labels[index], isInSuperset: isInSuperset)
+                .padding(.horizontal, 20)
         }
     }
 
