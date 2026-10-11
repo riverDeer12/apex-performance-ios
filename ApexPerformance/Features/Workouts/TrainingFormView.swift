@@ -54,6 +54,17 @@ struct TrainingFormView: View {
             .map(ExerciseDraft.init))
     }
 
+    /// New training for the same client with the exercises and sets of
+    /// the given one ("Copy training"), planned for today.
+    init(copying source: Training, history: [Training], onSaved: ((Training) -> Void)? = nil) {
+        self.init(clientId: source.client.id, history: history, onSaved: onSaved)
+        _name = State(initialValue: source.name)
+        _note = State(initialValue: source.note ?? "")
+        _exercises = State(initialValue: source.exercises
+            .sorted { $0.order < $1.order }
+            .map(ExerciseDraft.init))
+    }
+
     /// Form of a new template, or of the given one to edit it.
     init(template: TrainingTemplate?, onSaved: ((TrainingTemplate) -> Void)? = nil) {
         clientId = nil

@@ -502,6 +502,22 @@ struct ClientDetailsView: View {
                         .buttonStyle(.plain)
                         
                         Divider().padding(.leading, 52)
+                        
+                        // Records come from completed trainings.
+                        NavigationLink {
+                            PersonalRecordsView(clientId: client.id, clientName: client.fullName)
+                        } label: {
+                            SettingsRowView(
+                                icon: "trophy",
+                                iconTint: Color.apexAccent,
+                                title: Text("personal_records"),
+                                subtitle: nil,
+                                showChevron: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Divider().padding(.leading, 52)
                     }
                     
                     TrainingRowsView(
