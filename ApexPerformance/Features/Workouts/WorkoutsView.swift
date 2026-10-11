@@ -82,6 +82,9 @@ struct WorkoutsView: View {
                     if canManageWorkouts {
                         importSection
                             .padding(.horizontal, 20)
+
+                        templatesLink
+                            .padding(.horizontal, 20)
                     }
 
                     searchField
@@ -191,6 +194,25 @@ struct WorkoutsView: View {
         }
     }
     
+    // Training templates live next to the exercises they are made of.
+    private var templatesLink: some View {
+        NavigationLink {
+            TrainingTemplatesView()
+        } label: {
+            SettingsRowView(
+                icon: "doc.on.clipboard",
+                iconTint: Color.apexAccent,
+                title: Text("training_templates"),
+                subtitle: Text("training_templates_subtitle"),
+                showChevron: true
+            )
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .apexCardBackground()
+        }
+        .buttonStyle(.plain)
+    }
+
     private var importSection: some View {
         HStack(spacing: 12) {
             Button {
