@@ -21,6 +21,8 @@ enum PushTokenService {
                 let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
                 let osVersion = PushTokenService.osVersion
                 let deviceModel = PushTokenService.deviceModelIdentifier
+                // The backend sends pushes in the app's language.
+                let language = Bundle.main.preferredLocalizations.first
             }
 
             do {

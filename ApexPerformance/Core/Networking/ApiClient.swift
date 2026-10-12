@@ -143,7 +143,7 @@ final class APIClient {
                 #if DEBUG
                 print("❌ Unknown server error - couldn't parse error response")
                 #endif
-                throw ApiError.server(message: "Unknown server error.")
+                throw ApiError.server(message: "error_something_went_wrong")
             }
         }
 

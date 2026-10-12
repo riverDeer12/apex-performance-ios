@@ -7,45 +7,53 @@
 
 import Foundation
 
+/// Message for an error, already in the app's language. Callers either
+/// show it as it is or pass it to LocalizedStringKey, which leaves it as is.
 func mapError(_ error: Error) -> String {
     
     // The user is taken to login, which explains it.
     if error is AuthError {
-        return "session_expired"
+        return localized("session_expired")
     }
     
     if let urlError = error as? URLError {
         switch urlError.code {
         case .notConnectedToInternet:
-            return "No internet connection."
+            return localized("error_no_internet")
         case .timedOut:
-            return "The request timed out. Please try again."
+            return localized("error_timed_out")
         default:
-            return "Network error. Please try again."
+            return localized("error_network")
         }
     }
     
     if let apiError = error as? ApiError {
         switch apiError {
         case .validation(let response):
+            // The API sends error codes ("1000"), which have translations.
             let messages = response.errors?
                 .flatMap { key, values in
-                    values.map { "\(key.capitalized): \($0)" }
+                    values.map { "\(key.capitalized): \(localized($0))" }
                 }
                 .joined(separator: "\n")
             
-            return messages ?? response.message
+            return messages ?? localized(response.message)
             
         case .server(let message):
-            return message
+            return localized(message)
         }
     }
     
     if error is DecodingError {
-        return "Unexpected server response."
+        return localized("error_unexpected_response")
     }
     
-    return "Something went wrong."
+    return localized("error_something_went_wrong")
+}
+
+// Translation of a key or error code, or the text itself when there is none.
+private func localized(_ key: String) -> String {
+    String(localized: String.LocalizationValue(key))
 }
 
 

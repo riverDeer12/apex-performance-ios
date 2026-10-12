@@ -88,6 +88,21 @@ struct UserProfileView: View {
                             
                             Divider().padding(.leading, 52)
                             
+                            // iOS sets the app's language in its settings,
+                            // which opens straight on the app's page.
+                            Button { openLanguageSettings() } label: {
+                                SettingsRowView(
+                                    icon: "globe",
+                                    iconTint: Color.apexMainColor,
+                                    title: Text("language"),
+                                    subtitle: currentLanguage,
+                                    showChevron: true
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            
+                            Divider().padding(.leading, 52)
+                            
                             Button(role: .destructive) { showLogoutDialog = true } label: {
                                 SettingsRowView(
                                     icon: "arrow.left.square",
@@ -280,6 +295,20 @@ struct UserProfileView: View {
         }
     }
     
+    // Language the app runs in, picked by iOS from the app's settings.
+    private var currentLanguage: Text {
+        switch Bundle.main.preferredLocalizations.first {
+        case "hr": Text("croatian")
+        case "it": Text("italian")
+        default: Text("english")
+        }
+    }
+
+    private func openLanguageSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
+
     @MainActor
     private func loadUserProfile() async {
         isLoading = true
