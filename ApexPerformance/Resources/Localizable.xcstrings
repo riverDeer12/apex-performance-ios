@@ -470,7 +470,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Actions"
           }
         },
@@ -482,7 +482,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Azioni"
           }
         }
@@ -969,7 +969,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Approve"
           }
         },
@@ -981,7 +981,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Approva"
           }
         }
@@ -991,7 +991,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Approve request"
           }
         },
@@ -1003,8 +1003,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Richiesta approvata"
+            "state" : "translated",
+            "value" : "Approva richiesta"
           }
         }
       }
@@ -1014,7 +1014,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Approve client’s request."
+            "value" : "Approve the client’s request."
           }
         },
         "hr" : {
@@ -1025,8 +1025,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Richiesta approvata"
+            "state" : "translated",
+            "value" : "Approvazione della richiesta del cliente."
           }
         }
       }
@@ -1035,8 +1035,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Approve client’s request"
+            "state" : "translated",
+            "value" : "Approve the client’s request."
           }
         },
         "hr" : {
@@ -1047,8 +1047,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Richiesta approvata"
+            "state" : "translated",
+            "value" : "Approvazione della richiesta del cliente."
           }
         }
       }
@@ -1288,13 +1288,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Body Measurement created successfully."
+            "value" : "Body measurement created successfully."
           }
         },
         "hr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mjera je uspješno kreirana"
+            "state" : "translated",
+            "value" : "Mjerenje je uspješno kreirano."
           }
         },
         "it" : {
@@ -1555,8 +1555,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Cancelation Request"
+            "state" : "translated",
+            "value" : "Cancelation request"
           }
         },
         "hr" : {
@@ -1567,7 +1567,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Richiesta di cancellazione"
           }
         }
@@ -2923,13 +2923,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Email is copied"
+            "value" : "Email copied."
           }
         },
         "hr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Email je kopiran"
+            "state" : "translated",
+            "value" : "Email je kopiran."
           }
         },
         "it" : {
@@ -3054,6 +3054,121 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Errore"
+          }
+        }
+      }
+    },
+    "error_network" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network error. Please try again."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greška mreže. Pokušajte ponovno."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errore di rete. Riprova."
+          }
+        }
+      }
+    },
+    "error_no_internet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema internetske veze."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna connessione a Internet."
+          }
+        }
+      }
+    },
+    "error_something_went_wrong" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nešto je pošlo po zlu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcosa è andato storto."
+          }
+        }
+      }
+    },
+    "error_timed_out" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The request timed out. Please try again."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahtjev je istekao. Pokušajte ponovno."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La richiesta è scaduta. Riprova."
+          }
+        }
+      }
+    },
+    "error_unexpected_response" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unexpected server response."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neočekivan odgovor poslužitelja."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risposta del server inattesa."
           }
         }
       }
@@ -6599,13 +6714,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Phone number is copied."
+            "value" : "Phone number copied."
           }
         },
         "hr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Broj mobitela je kopiran"
+            "state" : "translated",
+            "value" : "Broj mobitela je kopiran."
           }
         },
         "it" : {
@@ -7076,8 +7191,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Reject"
+            "state" : "translated",
+            "value" : "Reject request"
           }
         },
         "hr" : {
@@ -7088,7 +7203,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Rifiuta richiesta"
           }
         }
@@ -7099,7 +7214,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reject"
+            "value" : "Reject the client’s request."
           }
         },
         "hr" : {
@@ -7110,8 +7225,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Rifiuta richiesta"
+            "state" : "translated",
+            "value" : "Rifiuto della richiesta del cliente."
           }
         }
       }
@@ -7121,7 +7236,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reject client’s request."
+            "value" : "Reject the client’s request."
           }
         },
         "hr" : {
@@ -7132,8 +7247,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Rifiuta richiesta"
+            "state" : "translated",
+            "value" : "Rifiuto della richiesta del cliente."
           }
         }
       }
@@ -7549,8 +7664,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Review and action"
+            "state" : "translated",
+            "value" : "Review and take action"
           }
         },
         "hr" : {
@@ -7561,8 +7676,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Rivedi e agisci"
+            "state" : "translated",
+            "value" : "Rivedi e gestisci la richiesta"
           }
         }
       }
@@ -8300,7 +8415,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Strength and Conditioning"
           }
         },
@@ -8312,7 +8427,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Forza e condizionamento"
           }
         }
@@ -9213,7 +9328,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "List of all registered appointments"
+            "value" : "List of all appointments"
           }
         },
         "hr" : {
@@ -9224,8 +9339,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Elenco degli appuntamenti registrati"
+            "state" : "translated",
+            "value" : "Elenco di tutti gli appuntamenti"
           }
         }
       }
@@ -9539,13 +9654,13 @@
         },
         "hr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Upozorenje"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Avvertimento"
           }
         }
