@@ -55,18 +55,73 @@ struct ProfilePictureView: View {
     private func load() async {
         guard let profile, profile.hasProfilePicture else {
             image = nil
+            ProfilePictureStore.shared.image = nil
             return
         }
 
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent("profile/picture")
-            let data = try await APIClient.shared.requestData(url, headers: ["Accept": "image/*"])
-            image = UIImage(data: data)
+            image = try await ProfilePictureStore.loadPicture()
+            // Keeps the tab bar picture in step after a change.
+            ProfilePictureStore.shared.image = image
         } catch is CancellationError {
             return
         } catch {
             image = nil
         }
+    }
+}
+
+/// Profile picture of the logged user shown small in the tab bar.
+@MainActor
+final class ProfilePictureStore: ObservableObject {
+    static let shared = ProfilePictureStore()
+
+    @Published var image: UIImage? {
+        didSet { tabIcon = image.map { Self.roundIcon(from: $0, size: 28) } }
+    }
+    // Round picture for the tab bar, drawn in its own colors.
+    @Published private(set) var tabIcon: UIImage?
+
+    private init() {}
+
+    /// Loads the logged user's picture, or clears it when there is none.
+    func refresh() async {
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("profile")
+            let profile: Profile = try await APIClient.shared.request(url)
+            if profile.hasProfilePicture {
+                image = try await Self.loadPicture()
+            } else {
+                image = nil
+            }
+        } catch {
+            // The tab shows the person icon, never another user's picture.
+            image = nil
+        }
+    }
+
+    // Picture API needs the auth header, so it goes through APIClient.
+    static func loadPicture() async throws -> UIImage? {
+        let url = AppEnvironment.apiURL.appendingPathComponent("profile/picture")
+        let data = try await APIClient.shared.requestData(url, headers: ["Accept": "image/*"])
+        return UIImage(data: data)
+    }
+
+    private static func roundIcon(from image: UIImage, size: CGFloat) -> UIImage {
+        let bounds = CGRect(x: 0, y: 0, width: size, height: size)
+        let rendered = UIGraphicsImageRenderer(size: bounds.size).image { _ in
+            UIBezierPath(ovalIn: bounds).addClip()
+            // Aspect fill, centered.
+            let scale = max(size / image.size.width, size / image.size.height)
+            let drawSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+            image.draw(in: CGRect(
+                x: (size - drawSize.width) / 2,
+                y: (size - drawSize.height) / 2,
+                width: drawSize.width,
+                height: drawSize.height
+            ))
+        }
+        return rendered.withRenderingMode(.alwaysOriginal)
     }
 }
 

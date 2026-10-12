@@ -11,6 +11,7 @@ struct HomeView: View {
     
     @EnvironmentObject var authManager: AuthManager
     @ObservedObject private var notificationRouter = NotificationRouter.shared
+    @ObservedObject private var profilePicture = ProfilePictureStore.shared
 
     @State private var selectedTab: AppTab = .appointments
     // Opens progress (body measurements) on the client's home.
@@ -23,6 +24,10 @@ struct HomeView: View {
 
     private var canGetAppointments: Bool {
         authManager.hasPermission(permission: Permissions.canGetAppointments)
+    }
+
+    private var canGetAppointmentRequests: Bool {
+        authManager.hasPermission(permission: Permissions.canGetAppointmentRequests)
     }
 
     private var availableTabs: [AppTab] {
@@ -38,11 +43,16 @@ struct HomeView: View {
             }
             tabs.append(.trainings)
         } else {
-            if canGetAppointments { tabs.append(.appointments) }
-            if authManager.hasPermission(permission: Permissions.canGetAppointmentRequests) {
+            // Five tabs fit the tab bar, so requests open from appointments
+            // when there are both, as for clients.
+            if canGetAppointments {
+                tabs.append(.appointments)
+            } else if canGetAppointmentRequests {
                 tabs.append(.appointmentRequests)
             }
-            // Role-based like the web: coaches and administrators manage workouts.
+            // Role-based like the web: coaches and administrators manage
+            // trainings (with templates and records) and workouts.
+            tabs.append(.trainings)
             tabs.append(.workouts)
             tabs.append(.clients)
         }
@@ -77,6 +87,20 @@ struct HomeView: View {
                     .tag(AppTab.appointmentRequests)
             }
 
+            if availableTabs.contains(.trainings) {
+                Group {
+                    if isClient {
+                        CompletedTrainingsView()
+                    } else {
+                        StaffTrainingsView()
+                    }
+                }
+                .tabItem {
+                    Label("tab_trainings", systemImage: isClient ? "dumbbell" : "list.bullet.clipboard")
+                }
+                .tag(AppTab.trainings)
+            }
+
             if availableTabs.contains(.workouts) {
                 WorkoutsView()
                     .tabItem {
@@ -93,19 +117,18 @@ struct HomeView: View {
                     .tag(AppTab.clients)
             }
 
-            if availableTabs.contains(.trainings) {
-                CompletedTrainingsView()
-                    .tabItem {
-                        Label("tab_trainings", systemImage: "dumbbell")
-                    }
-                    .tag(AppTab.trainings)
-            }
-
             UserProfileView()
                 .tabItem {
-                    Label("tab_profile", systemImage: "person")
+                    Label {
+                        Text("tab_profile")
+                    } icon: {
+                        profileTabImage
+                    }
                 }
                 .tag(AppTab.profile)
+        }
+        .task {
+            await profilePicture.refresh()
         }
         .tint(.apexAccent)
         .onAppear {
@@ -119,6 +142,14 @@ struct HomeView: View {
         .onChange(of: notificationRouter.pendingTab) {
             openPendingTab()
         }
+    }
+
+    // Small profile picture when the user has one, otherwise the person icon.
+    private var profileTabImage: Image {
+        if let icon = profilePicture.tabIcon {
+            return Image(uiImage: icon)
+        }
+        return Image(systemName: "person")
     }
 
     private func openPendingTab() {
@@ -135,8 +166,9 @@ struct HomeView: View {
                 tab = .clients
             }
         case .appointmentRequests where !availableTabs.contains(.appointmentRequests):
-            // Clients open their sent requests from appointments.
+            // Requests open from appointments when there is no requests tab.
             tab = .appointments
+            notificationRouter.opensAppointmentRequests = true
         default:
             break
         }

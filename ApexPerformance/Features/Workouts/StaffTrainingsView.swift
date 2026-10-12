@@ -5,11 +5,17 @@
 
 import SwiftUI
 
-/// Trainings of all the coach's clients (administrators see all), with
-/// search and filters, same as the web's trainings page. New trainings
-/// are still made in the client's details.
+/// Trainings tab of coaches and administrators, like the web's trainings
+/// menu: trainings of all their clients (administrators see all) with
+/// search and filters, new trainings, templates and personal records.
+/// Trainings can still be made and opened in the client's details too.
 struct StaffTrainingsView: View {
     @EnvironmentObject private var toastManager: ToastManager
+
+    // New training: the client is picked first, then the form opens.
+    @State private var showClientPicker = false
+    @State private var pickedClient: Client?
+    @State private var clientForNewTraining: Client?
 
     @State private var trainings: [Training] = []
     @State private var searchText = ""
@@ -54,11 +60,27 @@ struct StaffTrainingsView: View {
     }
 
     var body: some View {
+        NavigationStack {
+            content
+        }
+    }
+
+    private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
-                ApexScreenHeader(title: "trainings", subtitle: "all_trainings_subtitle", showsWordmark: false)
+                ApexScreenHeader(title: "trainings", subtitle: "all_trainings_subtitle")
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
+
+                Button("new_training") {
+                    pickedClient = nil
+                    showClientPicker = true
+                }
+                .buttonStyle(ApexPrimaryButtonStyle(systemImage: "plus"))
+                .padding(.horizontal, 20)
+
+                linksCard
+                    .padding(.horizontal, 20)
 
                 Picker("status", selection: $status) {
                     ForEach(StatusFilter.allCases, id: \.self) { filter in
@@ -122,6 +144,59 @@ struct StaffTrainingsView: View {
             await load()
         }
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showClientPicker, onDismiss: {
+            // The form opens once the picker is closed.
+            clientForNewTraining = pickedClient
+        }) {
+            ClientPickerView(title: "new_training") { client in
+                pickedClient = client
+                showClientPicker = false
+            }
+        }
+        .sheet(item: $clientForNewTraining) { client in
+            TrainingFormView(
+                clientId: client.id,
+                history: trainings.filter { $0.client.id == client.id }
+            ) { saved in
+                upsert(saved)
+            }
+        }
+    }
+
+    // Templates and personal records, like the web's trainings menu.
+    private var linksCard: some View {
+        VStack(spacing: 0) {
+            NavigationLink {
+                TrainingTemplatesView()
+            } label: {
+                SettingsRowView(
+                    icon: "doc.on.clipboard",
+                    iconTint: Color.apexAccent,
+                    title: Text("training_templates"),
+                    subtitle: Text("training_templates_subtitle"),
+                    showChevron: true
+                )
+            }
+            .buttonStyle(.plain)
+
+            Divider().padding(.leading, 46)
+
+            NavigationLink {
+                PersonalRecordsClientsView()
+            } label: {
+                SettingsRowView(
+                    icon: "trophy",
+                    iconTint: Color.apexAccent,
+                    title: Text("personal_records"),
+                    subtitle: Text("personal_records_hint"),
+                    showChevron: true
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 4)
+        .apexCardBackground()
     }
 
     private func row(_ training: Training) -> some View {
@@ -194,6 +269,112 @@ struct StaffTrainingsView: View {
 
         do {
             trainings = try await Training.loadAll()
+        } catch let error where error.isCancellation {
+            return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+}
+
+/// Searchable list of the coach's clients; tapping one picks it.
+struct ClientPickerView: View {
+    let title: LocalizedStringKey
+    let onPick: (Client) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ClientsList { client in
+                Button {
+                    onPick(client)
+                } label: {
+                    Text(verbatim: client.fullName)
+                        .foregroundStyle(Color.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
+                    .accessibilityLabel(Text("cancel"))
+                }
+            }
+        }
+    }
+}
+
+/// Clients to open personal records of, like the web's client select.
+struct PersonalRecordsClientsView: View {
+    var body: some View {
+        ClientsList { client in
+            NavigationLink {
+                PersonalRecordsView(clientId: client.id, clientName: client.fullName)
+            } label: {
+                Text(verbatim: client.fullName)
+            }
+        }
+        .navigationTitle("personal_records")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Searchable list of the coach's clients (administrators see all) by name.
+struct ClientsList<Row: View>: View {
+    @ViewBuilder let row: (Client) -> Row
+
+    @EnvironmentObject private var toastManager: ToastManager
+
+    @State private var clients: [Client] = []
+    @State private var searchText = ""
+    @State private var isLoading = false
+
+    private var filteredClients: [Client] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sorted = clients.sorted { $0.fullName.localizedStandardCompare($1.fullName) == .orderedAscending }
+        guard !query.isEmpty else { return sorted }
+        return sorted.filter { $0.fullName.localizedStandardContains(query) }
+    }
+
+    var body: some View {
+        List {
+            if clients.isEmpty, !isLoading {
+                Text("no_clients")
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(filteredClients) { client in
+                row(client)
+            }
+        }
+        .searchable(text: $searchText, prompt: Text("search_clients"))
+        .overlay {
+            if isLoading && clients.isEmpty {
+                ProgressView()
+            }
+        }
+        .task {
+            await load()
+        }
+    }
+
+    @MainActor
+    private func load() async {
+        guard clients.isEmpty else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let url = AppEnvironment.apiURL.appendingPathComponent("clients")
+            clients = try await APIClient.shared.request(url)
         } catch let error where error.isCancellation {
             return
         } catch {
