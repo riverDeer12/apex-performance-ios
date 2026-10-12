@@ -18,6 +18,7 @@ struct AppointmentsView: View {
     
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
+    @ObservedObject private var notificationRouter = NotificationRouter.shared
     
     var body: some View {
         NavigationStack {
@@ -158,12 +159,15 @@ struct AppointmentsView: View {
             .task {
                 await loadData(showInitialSpinner: true)
             }
+            .onAppear { openRequestsFromNotification() }
+            .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     
-                    if isClient {
-                        // Requests the client sent, with their status.
+                    if showsRequestsButton {
+                        // Clients: requests they sent, with their status.
+                        // Staff: requests waiting for approval.
                         Button {
                             showSentRequests = true
                         } label: {
@@ -201,6 +205,16 @@ struct AppointmentsView: View {
 
     private var isClient: Bool {
         authManager.hasRole(role: "Client")
+    }
+
+    private var showsRequestsButton: Bool {
+        isClient || authManager.hasPermission(permission: Permissions.canGetAppointmentRequests)
+    }
+
+    private func openRequestsFromNotification() {
+        guard notificationRouter.opensAppointmentRequests else { return }
+        notificationRouter.opensAppointmentRequests = false
+        showSentRequests = true
     }
     
     private var canManageRequests: Bool {

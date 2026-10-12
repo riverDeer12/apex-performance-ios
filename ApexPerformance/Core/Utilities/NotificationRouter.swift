@@ -24,6 +24,8 @@ final class NotificationRouter: ObservableObject {
     static let shared = NotificationRouter()
 
     @Published var pendingTab: AppTab?
+    // Requests open from the appointments tab when there is no requests tab.
+    @Published var opensAppointmentRequests = false
 
     private init() {}
 

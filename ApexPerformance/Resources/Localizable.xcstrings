@@ -718,6 +718,29 @@
         }
       }
     },
+    "already_in_appointment" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are already in it"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Već ste u terminu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sei già iscritto"
+          }
+        }
+      }
+    },
     "appearance" : {
       "extractionState" : "manual",
       "localizations" : {

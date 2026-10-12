@@ -28,6 +28,8 @@ struct CreateAppointmentView: View {
     @State var clients: [Client] = []
     @State var coaches: [Coach] = []
     @State var appointmentTypes: [CatalogData] = []
+    // Appointments the logged client is already in; those slots can't be booked again.
+    @State private var myAppointmentIds: Set<UUID> = []
     
     // Loading flags
     @State private var isSaving: Bool = false
@@ -198,6 +200,9 @@ struct CreateAppointmentView: View {
                 group.addTask {
                     await setCurrentClient()
                 }
+                group.addTask {
+                    await loadMyAppointments()
+                }
             } else {
                 group.addTask { await loadClients() }
             }
@@ -280,6 +285,21 @@ struct CreateAppointmentView: View {
         }
     }
     
+    @MainActor
+    private func loadMyAppointments() async {
+        guard authManager.hasPermission(permission: Permissions.canGetAppointments) else { return }
+        // Optional: without it the API still refuses a second join request.
+        let url = AppEnvironment.apiURL.appendingPathComponent("appointments")
+        guard let response: AppointmentsStatus = try? await APIClient.shared.request(url) else { return }
+        let appointments = response.approvedAppointments + response.pendingAppointments + response.inProgressAppointments
+        myAppointmentIds = Set(appointments.map(\.id))
+    }
+
+    private func isMine(_ timeSlot: TimeSlot) -> Bool {
+        guard let appointmentId = timeSlot.appointmentId else { return false }
+        return myAppointmentIds.contains(appointmentId)
+    }
+
     private func loadCoaches() async {
         isLoadingCoaches = true
         defer { isLoadingCoaches = false }
@@ -416,6 +436,7 @@ struct CreateAppointmentView: View {
     
     private func timeSlotChip(_ timeSlot: TimeSlot) -> some View {
         let isSelected = selectedTimeSlot == timeSlot.id
+        let isOwnAppointment = isMine(timeSlot)
         let (time, clients) = Self.splitTimeSlotName(timeSlot.name ?? timeSlot.description ?? "—")
         
         return Button {
@@ -425,6 +446,11 @@ struct CreateAppointmentView: View {
                 Text(verbatim: time)
                     .font(.system(size: 14, weight: .semibold))
                     .lineLimit(1)
+                if isOwnAppointment {
+                    Label("already_in_appointment", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Color.apexAccent)
+                }
                 
                 if timeSlot.isTaken == true, let clients {
                     // Clients already in the appointment, it can be joined.
@@ -448,6 +474,9 @@ struct CreateAppointmentView: View {
             )
         }
         .buttonStyle(.plain)
+        // The client is already in this appointment.
+        .disabled(isOwnAppointment)
+        .opacity(isOwnAppointment ? 0.6 : 1)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
     
@@ -464,6 +493,7 @@ struct CreateAppointmentView: View {
     
     private var canCreateAppointment: Bool {
         selectedTimeSlot != nil &&
+        !(timeSlots.first { $0.id == selectedTimeSlot }.map(isMine) ?? false) &&
         !selectedClients.isEmpty &&
         !selectedCoaches.isEmpty &&
         !isSaving
