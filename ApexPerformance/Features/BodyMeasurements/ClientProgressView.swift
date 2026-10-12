@@ -109,6 +109,30 @@ struct ClientProgressView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("training-progress-row")
+
+                // The client's own records from completed trainings.
+                NavigationLink {
+                    PersonalRecordsView()
+                } label: {
+                    HStack {
+                        Label {
+                            Text("personal_records")
+                                .apexSectionTitle()
+                        } icon: {
+                            Image(systemName: "trophy")
+                                .foregroundStyle(Color.apexAccent)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding(16)
+                    .apexCardBackground()
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("personal-records-row")
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)

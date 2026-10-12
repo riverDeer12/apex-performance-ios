@@ -25,14 +25,17 @@ struct PersonalRecord: Identifiable, Decodable, Hashable {
 }
 
 extension PersonalRecord {
-    /// Record history of the client, newest first (staff only).
+    /// Record history of a client, newest first. Staff pass the client,
+    /// clients get their own records (nil).
     @MainActor
-    static func load(clientId: UUID) async throws -> [PersonalRecord] {
+    static func load(clientId: UUID?) async throws -> [PersonalRecord] {
         var components = URLComponents(
             url: AppEnvironment.apiURL.appendingPathComponent("personal-records"),
             resolvingAgainstBaseURL: false
         )
-        components?.queryItems = [URLQueryItem(name: "clientId", value: clientId.uuidString)]
+        if let clientId {
+            components?.queryItems = [URLQueryItem(name: "clientId", value: clientId.uuidString)]
+        }
         guard let url = components?.url else { return [] }
 
         let records: [PersonalRecord] = try await APIClient.shared.request(url)

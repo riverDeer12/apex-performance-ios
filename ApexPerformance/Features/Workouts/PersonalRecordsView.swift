@@ -5,11 +5,12 @@
 
 import SwiftUI
 
-/// Client's personal records per exercise (staff only), calculated by
-/// the API from completed trainings, same as the web page.
+/// Client's personal records per exercise, calculated by the API from
+/// completed trainings, same as the web page. Staff open a client's
+/// records, clients their own (no client id) from progress.
 struct PersonalRecordsView: View {
-    let clientId: UUID
-    let clientName: String
+    var clientId: UUID? = nil
+    var clientName: String? = nil
 
     @EnvironmentObject private var toastManager: ToastManager
 
@@ -75,7 +76,7 @@ struct PersonalRecordsView: View {
             hasLoaded = true
             await load()
         }
-        .navigationTitle(Text(verbatim: clientName))
+        .navigationTitle(clientName.map { Text(verbatim: $0) } ?? Text("personal_records"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
