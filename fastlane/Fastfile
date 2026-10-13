@@ -57,8 +57,13 @@ platform :ios do
       export_method: "app-store",
       output_directory: "build",
       # gym passes xcargs to the export too, so the key isn't given twice.
+      # The archive isn't signed: signing it made Xcode create a new
+      # development certificate on every runner until the account hit the
+      # limit. The export signs the app with the cloud managed distribution
+      # certificate instead.
       xcargs: "#{auth} APP_VARIANT=#{test_app ? 'Test' : 'Store'} " \
-              "MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number}"
+              "MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} " \
+              "CODE_SIGNING_ALLOWED=NO"
     )
 
     upload_to_testflight(
