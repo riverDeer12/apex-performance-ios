@@ -55,6 +55,8 @@ platform :ios do
       scheme: "ApexPerformance",
       configuration: "Release",
       export_method: "app-store",
+      # The unsigned archive has no team, the export needs it.
+      export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
       output_directory: "build",
       # gym passes xcargs to the export too, so the key isn't given twice.
       # The archive isn't signed: signing it made Xcode create a new
