@@ -10,9 +10,14 @@ import SwiftUI
 struct ClientDetailsView: View {
     
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
     @Environment(\.dismiss) private var dismiss
     
     let client: Client
+    
+    // Chat with the client, opened by its coach.
+    @State private var chatConversationId: UUID?
+    @State private var isOpeningChat = false
     
     @State private var form: Client
     @State private var isSaving = false
@@ -268,6 +273,11 @@ struct ClientDetailsView: View {
                 functionalMovementScreensCard
                     .padding(.horizontal, 20)
                 
+                if authManager.hasRole(role: "Coach") {
+                    chatCard
+                        .padding(.horizontal, 20)
+                }
+                
                 goalCard
                     .padding(.horizontal, 20)
                 
@@ -321,6 +331,9 @@ struct ClientDetailsView: View {
         .task {
             await loadGoalAndReviews()
         }
+        .navigationDestination(item: $chatConversationId) { id in
+            ChatConversationView(conversationId: id)
+        }
         .sheet(isPresented: $showGoalSheet) {
             ClientGoalFormView(clientId: client.id, goal: goal) { saved in
                 goal = saved
@@ -342,6 +355,46 @@ struct ClientDetailsView: View {
                     Task { await loadFunctionalMovementScreens() }
                 }
             }
+        }
+    }
+    
+    // Opens the chat with the client; a new one is turned on, an existing
+    // one opens as it is (the coach may have turned it off on purpose).
+    private var chatCard: some View {
+        Button {
+            Task { await openChat() }
+        } label: {
+            SettingsRowView(
+                icon: "bubble.left.and.bubble.right",
+                iconTint: Color.apexAccent,
+                title: Text("chat_message_client"),
+                subtitle: nil,
+                showChevron: true
+            )
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .apexCardBackground()
+        }
+        .buttonStyle(.plain)
+        .disabled(isOpeningChat)
+    }
+    
+    @MainActor
+    private func openChat() async {
+        if let existing = ChatStore.shared.conversations.first(where: { $0.client.id == client.id }) {
+            chatConversationId = existing.id
+            return
+        }
+        
+        isOpeningChat = true
+        defer { isOpeningChat = false }
+        
+        do {
+            let conversation = try await ChatAPI.setConversation(clientId: client.id, isEnabled: true)
+            ChatStore.shared.upsert(conversation)
+            chatConversationId = conversation.id
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
     

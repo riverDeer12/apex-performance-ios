@@ -69,5 +69,11 @@ final class JWTDecoder {
         guard let payload = try? decodePayload(from: token) else { return "" }
         return payload.name;
     }
+
+    /// User id ("sub" claim), e.g. to tell own chat messages.
+    static func getUserId(token: String) -> UUID? {
+        guard let payload = try? decodePayload(from: token) else { return nil }
+        return UUID(uuidString: payload.sub)
+    }
 }
 

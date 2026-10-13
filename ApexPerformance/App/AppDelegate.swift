@@ -69,6 +69,15 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // A message of the chat that is open on screen isn't shown again.
+        let userInfo = notification.request.content.userInfo
+        if userInfo["type"] as? String == "chat_message",
+           let id = (userInfo["conversationId"] as? String).flatMap(UUID.init(uuidString:)),
+           MainActor.assumeIsolated({ ChatStore.shared.openConversationId == id }) {
+            completionHandler([])
+            return
+        }
+
         // Show notification even when app is in foreground
         completionHandler([[.banner, .sound, .badge]])
     }
@@ -77,9 +86,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        if let type = response.notification.request.content.userInfo["type"] as? String {
+        let userInfo = response.notification.request.content.userInfo
+        if let type = userInfo["type"] as? String {
+            let conversationId = userInfo["conversationId"] as? String
             Task { @MainActor in
-                NotificationRouter.shared.handle(notificationType: type)
+                NotificationRouter.shared.handle(notificationType: type, conversationId: conversationId)
             }
         }
 

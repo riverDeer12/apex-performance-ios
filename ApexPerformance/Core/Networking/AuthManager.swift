@@ -69,6 +69,11 @@ final class AuthManager: ObservableObject {
         return JWTDecoder.getUserRole(token: token)
     }
     
+    var userId: UUID? {
+        guard let token = KeychainService.shared.getToken() else { return nil }
+        return JWTDecoder.getUserId(token: token)
+    }
+    
     var username: String {
         guard let token = KeychainService.shared.getToken() else { return "" }
         return JWTDecoder.getUsername(token: token)

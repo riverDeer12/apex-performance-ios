@@ -13,6 +13,7 @@ enum AppTab: Hashable {
     case clients
     case bodyMeasurements
     case trainings
+    case chat
     case profile
 }
 
@@ -26,11 +27,16 @@ final class NotificationRouter: ObservableObject {
     @Published var pendingTab: AppTab?
     // Requests open from the appointments tab when there is no requests tab.
     @Published var opensAppointmentRequests = false
+    // Chat conversation a tapped message push opens.
+    @Published var pendingConversationId: UUID?
 
     private init() {}
 
-    func handle(notificationType: String) {
+    func handle(notificationType: String, conversationId: String? = nil) {
         switch notificationType {
+        case "chat_message":
+            pendingConversationId = conversationId.flatMap(UUID.init(uuidString:))
+            pendingTab = .chat
         case "appointment_request":
             pendingTab = .appointmentRequests
         case "appointment_updated":
