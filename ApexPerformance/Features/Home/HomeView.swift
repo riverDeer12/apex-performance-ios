@@ -12,6 +12,7 @@ struct HomeView: View {
     @EnvironmentObject var authManager: AuthManager
     @ObservedObject private var notificationRouter = NotificationRouter.shared
     @ObservedObject private var profilePicture = ProfilePictureStore.shared
+    @ObservedObject private var chatStore = ChatStore.shared
 
     @State private var selectedTab: AppTab = .appointments
     // Opens progress (body measurements) on the client's home.
@@ -20,6 +21,15 @@ struct HomeView: View {
 
     private var isClient: Bool {
         authManager.hasRole(role: "Client")
+    }
+
+    private var isCoach: Bool {
+        authManager.hasRole(role: "Coach")
+    }
+
+    // Chat is between coaches and their clients.
+    private var canChat: Bool {
+        isClient || isCoach
     }
 
     private var canGetAppointments: Bool {
@@ -33,7 +43,7 @@ struct HomeView: View {
     private var availableTabs: [AppTab] {
         var tabs: [AppTab] = []
         if isClient {
-            // Clients: home, appointments, trainings and profile. Sent requests
+            // Clients: home, appointments, trainings, chat and profile. Sent requests
             // open from appointments, body measurements from home (progress).
             tabs.append(.home)
             if canGetAppointments {
@@ -42,6 +52,7 @@ struct HomeView: View {
                 tabs.append(.appointmentRequests)
             }
             tabs.append(.trainings)
+            tabs.append(.chat)
         } else {
             // Five tabs fit the tab bar, so requests open from appointments
             // when there are both, as for clients.
@@ -51,9 +62,15 @@ struct HomeView: View {
                 tabs.append(.appointmentRequests)
             }
             // Role-based like the web: coaches and administrators manage
-            // trainings (with templates and records) and workouts.
+            // trainings (with templates and records) and workouts. Coaches
+            // have chat instead of the workouts tab, they open workouts
+            // from trainings.
             tabs.append(.trainings)
-            tabs.append(.workouts)
+            if isCoach {
+                tabs.append(.chat)
+            } else {
+                tabs.append(.workouts)
+            }
             tabs.append(.clients)
         }
         tabs.append(.profile)
@@ -117,6 +134,15 @@ struct HomeView: View {
                     .tag(AppTab.clients)
             }
 
+            if availableTabs.contains(.chat) {
+                ChatListView()
+                    .tabItem {
+                        Label("tab_chat", systemImage: "bubble.left.and.bubble.right")
+                    }
+                    .badge(chatStore.unreadCount)
+                    .tag(AppTab.chat)
+            }
+
             UserProfileView()
                 .tabItem {
                     Label {
@@ -129,6 +155,13 @@ struct HomeView: View {
         }
         .task {
             await profilePicture.refresh()
+        }
+        .task {
+            // The hub keeps the unread badge fresh while logged in.
+            if canChat { chatStore.start() }
+        }
+        .onDisappear {
+            chatStore.stop()
         }
         .tint(.apexAccent)
         .onAppear {

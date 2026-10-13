@@ -17,7 +17,8 @@ final class APIClient {
         KeychainService.shared.getToken()
     }
     
-    private static let decoder: JSONDecoder = {
+    // Shared with the chat hub, which decodes the same JSON.
+    static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         
         // Handles: 2025-12-18T10:00:00+01:00 and also with milliseconds

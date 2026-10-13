@@ -9,11 +9,14 @@
 /* Begin PBXBuildFile section */
 		6AE9BF7D5EDF84832F5DB01E /* Training.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9528CC0606AD130480F1107B /* Training.swift */; };
 		D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994547E6AED188E1535B5C1D /* TrainingTemplate.swift */; };
+		25D01749BFFA5CFD3FA16FD3 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927C0A06565346930978D4CF /* Chat.swift */; };
 		62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */; };
 		06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */; };
 		09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */; };
 		C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */; };
 		DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05F45FB6972493676063892 /* StaffTrainingsView.swift */; };
+		1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */; };
+		5E72DD9867C7707ED1A72637 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29B3DADA5980E29D308D813 /* ChatListView.swift */; };
 		32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */; };
 		0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */; };
 		AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */; };
@@ -99,6 +102,7 @@
 		7C751E9FD5C3EF02DCC6C9D8 /* BodyProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4D7D1B899F544123D70A /* BodyProgressView.swift */; };
 		CEBE6B4B80F5CFF892F195F8 /* ClientProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0521C00E796AB3FF207B3DF /* ClientProgressView.swift */; };
 		850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96920DE3EEA0A6620BD41065 /* PushTokenService.swift */; };
+		E57F79574FE192C846058759 /* ChatHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */; };
 		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
 		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
@@ -135,11 +139,14 @@
 /* Begin PBXFileReference section */
 		9528CC0606AD130480F1107B /* Training.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Training.swift; sourceTree = "<group>"; };
 		994547E6AED188E1535B5C1D /* TrainingTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplate.swift; sourceTree = "<group>"; };
+		927C0A06565346930978D4CF /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecord.swift; sourceTree = "<group>"; };
 		D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientGoal.swift; sourceTree = "<group>"; };
 		EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTrainingsView.swift; sourceTree = "<group>"; };
 		F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplatesView.swift; sourceTree = "<group>"; };
 		F05F45FB6972493676063892 /* StaffTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffTrainingsView.swift; sourceTree = "<group>"; };
+		364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationView.swift; sourceTree = "<group>"; };
+		E29B3DADA5980E29D308D813 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordsView.swift; sourceTree = "<group>"; };
 		1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingFormView.swift; sourceTree = "<group>"; };
 		7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingProgressView.swift; sourceTree = "<group>"; };
@@ -230,6 +237,7 @@
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoderTests.swift; sourceTree = "<group>"; };
 		96920DE3EEA0A6620BD41065 /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
+		FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHub.swift; sourceTree = "<group>"; };
 		A884F28D08EB4F168066D594 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		AA8B4D7D1B899F544123D70A /* BodyProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyProgressView.swift; sourceTree = "<group>"; };
 		E0521C00E796AB3FF207B3DF /* ClientProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientProgressView.swift; sourceTree = "<group>"; };
@@ -283,6 +291,7 @@
 				61CFB52B2EF441F2009E9624 /* Clients */,
 				61CFB5282EF43E45009E9624 /* Home */,
 				61CFB50E2EF1E667009E9624 /* UserProfile */,
+				781B7A9C79CE9872BD7993EE /* Chat */,
 				61CFB54F2F02C599009E9624 /* Workouts */,
 			);
 			path = Features;
@@ -357,6 +366,7 @@
 				AAFEE2C8B62315F575C1AD89 /* Profile.swift */,
 				9528CC0606AD130480F1107B /* Training.swift */,
 				994547E6AED188E1535B5C1D /* TrainingTemplate.swift */,
+				927C0A06565346930978D4CF /* Chat.swift */,
 				5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */,
 				D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */,
 				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
@@ -421,6 +431,7 @@
 				61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */,
 				61CFB5242EF1F1A3009E9624 /* ApiClient.swift */,
 				96920DE3EEA0A6620BD41065 /* PushTokenService.swift */,
+				FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -492,6 +503,15 @@
 				C0BF34F02F900E5C002BFF76 /* AppDelegate.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		781B7A9C79CE9872BD7993EE /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */,
+				E29B3DADA5980E29D308D813 /* ChatListView.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		61CFB54F2F02C599009E9624 /* Workouts */ = {
@@ -741,11 +761,14 @@
 				61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */,
 				6AE9BF7D5EDF84832F5DB01E /* Training.swift in Sources */,
 				D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */,
+				25D01749BFFA5CFD3FA16FD3 /* Chat.swift in Sources */,
 				62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */,
 				06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */,
 				09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */,
 				C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */,
 				DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */,
+				1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */,
+				5E72DD9867C7707ED1A72637 /* ChatListView.swift in Sources */,
 				32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */,
 				0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */,
 				AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */,
@@ -819,6 +842,7 @@
 				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
 				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
 				850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */,
+				E57F79574FE192C846058759 /* ChatHub.swift in Sources */,
 				8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */,
 				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
 				C0283CF02F8C1B5A00582836 /* AppointmentRequestsView.swift in Sources */,

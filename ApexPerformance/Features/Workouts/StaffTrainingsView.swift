@@ -11,6 +11,7 @@ import SwiftUI
 /// Trainings can still be made and opened in the client's details too.
 struct StaffTrainingsView: View {
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
 
     // New training: the client is picked first, then the form opens.
     @State private var showClientPicker = false
@@ -166,6 +167,24 @@ struct StaffTrainingsView: View {
     // Templates and personal records, like the web's trainings menu.
     private var linksCard: some View {
         VStack(spacing: 0) {
+            // Coaches have chat in the tab bar instead of workouts.
+            if authManager.hasRole(role: "Coach") {
+                NavigationLink {
+                    WorkoutsView(wrapsInNavigationStack: false)
+                } label: {
+                    SettingsRowView(
+                        icon: "dumbbell",
+                        iconTint: Color.apexAccent,
+                        title: Text("workouts"),
+                        subtitle: Text("workouts_subtitle"),
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+
+                Divider().padding(.leading, 46)
+            }
+
             NavigationLink {
                 TrainingTemplatesView()
             } label: {
