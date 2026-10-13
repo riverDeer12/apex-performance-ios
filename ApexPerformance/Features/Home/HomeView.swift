@@ -18,6 +18,7 @@ struct HomeView: View {
     // Opens progress (body measurements) on the client's home.
     @State private var showsProgress = false
     @State private var hasSelectedFirstTab = false
+    @State private var showsChat = false
 
     private var isClient: Bool {
         authManager.hasRole(role: "Client")
@@ -43,7 +44,7 @@ struct HomeView: View {
     private var availableTabs: [AppTab] {
         var tabs: [AppTab] = []
         if isClient {
-            // Clients: home, appointments, trainings, chat and profile. Sent requests
+            // Clients: home, appointments, trainings and profile. Sent requests
             // open from appointments, body measurements from home (progress).
             tabs.append(.home)
             if canGetAppointments {
@@ -52,7 +53,6 @@ struct HomeView: View {
                 tabs.append(.appointmentRequests)
             }
             tabs.append(.trainings)
-            tabs.append(.chat)
         } else {
             // Five tabs fit the tab bar, so requests open from appointments
             // when there are both, as for clients.
@@ -62,15 +62,9 @@ struct HomeView: View {
                 tabs.append(.appointmentRequests)
             }
             // Role-based like the web: coaches and administrators manage
-            // trainings (with templates and records) and workouts. Coaches
-            // have chat instead of the workouts tab, they open workouts
-            // from trainings.
+            // trainings (with templates and records) and workouts.
             tabs.append(.trainings)
-            if isCoach {
-                tabs.append(.chat)
-            } else {
-                tabs.append(.workouts)
-            }
+            tabs.append(.workouts)
             tabs.append(.clients)
         }
         tabs.append(.profile)
@@ -134,15 +128,6 @@ struct HomeView: View {
                     .tag(AppTab.clients)
             }
 
-            if availableTabs.contains(.chat) {
-                ChatListView()
-                    .tabItem {
-                        Label("tab_chat", systemImage: "bubble.left.and.bubble.right")
-                    }
-                    .badge(chatStore.unreadCount)
-                    .tag(AppTab.chat)
-            }
-
             UserProfileView()
                 .tabItem {
                     Label {
@@ -155,6 +140,20 @@ struct HomeView: View {
         }
         .task {
             await profilePicture.refresh()
+        }
+        // Chat opens from a floating button on every tab.
+        .overlay(alignment: .bottomTrailing) {
+            if canChat {
+                ChatFloatingButton(unreadCount: chatStore.unreadCount) {
+                    showsChat = true
+                }
+                .padding(.trailing, 16)
+                // Above the tab bar.
+                .padding(.bottom, 62)
+            }
+        }
+        .sheet(isPresented: $showsChat) {
+            ChatListView(showsCloseButton: true)
         }
         .task {
             // The hub keeps the unread badge fresh while logged in.
@@ -189,6 +188,10 @@ struct HomeView: View {
         guard var tab = notificationRouter.pendingTab else { return }
         notificationRouter.pendingTab = nil
         switch tab {
+        case .chat:
+            // Chat isn't a tab, it opens over the current one.
+            if canChat { showsChat = true }
+            return
         case .bodyMeasurements:
             // Clients see measurements in progress on home,
             // coaches through their clients list.
