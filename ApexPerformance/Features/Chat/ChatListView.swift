@@ -5,18 +5,22 @@
 
 import SwiftUI
 
-/// Chat tab: conversations between a coach and their clients, newest
-/// activity first. Coaches start a chat with a client, clients see the
-/// chats their coach turned on.
+/// Chat, opened from the floating button: conversations between a coach
+/// and their clients, newest activity first. Either side can start a chat;
+/// only the coach can turn it off, then it stays read only for both.
 struct ChatListView: View {
+    // Shown as a sheet over the tabs.
+    var showsCloseButton = false
+
     @EnvironmentObject private var authManager: AuthManager
     @EnvironmentObject private var toastManager: ToastManager
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var store = ChatStore.shared
     @ObservedObject private var notificationRouter = NotificationRouter.shared
 
     @State private var path: [UUID] = []
-    @State private var showClientPicker = false
-    @State private var pickedClient: Client?
+    @State private var showContactPicker = false
+    @State private var pickedContact: ChatContact?
     @State private var isStarting = false
 
     private var isCoach: Bool {
@@ -31,15 +35,13 @@ struct ChatListView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
 
-                    if isCoach {
-                        Button("chat_new") {
-                            pickedClient = nil
-                            showClientPicker = true
-                        }
-                        .buttonStyle(ApexPrimaryButtonStyle(systemImage: "plus"))
-                        .disabled(isStarting)
-                        .padding(.horizontal, 20)
+                    Button("chat_new") {
+                        pickedContact = nil
+                        showContactPicker = true
                     }
+                    .buttonStyle(ApexPrimaryButtonStyle(systemImage: "plus"))
+                    .disabled(isStarting)
+                    .padding(.horizontal, 20)
 
                     CardView {
                         if store.conversations.isEmpty {
@@ -80,14 +82,27 @@ struct ChatListView: View {
             .navigationDestination(for: UUID.self) { id in
                 ChatConversationView(conversationId: id)
             }
-            .sheet(isPresented: $showClientPicker, onDismiss: {
-                if let client = pickedClient {
-                    Task { await startChat(with: client) }
+            .toolbar {
+                if showsCloseButton {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel(Text("close"))
+                    }
+                }
+            }
+            .sheet(isPresented: $showContactPicker, onDismiss: {
+                if let contact = pickedContact {
+                    Task { await startChat(with: contact) }
                 }
             }) {
-                ClientPickerView(title: "chat_choose_client") { client in
-                    pickedClient = client
-                    showClientPicker = false
+                ChatContactPickerView(title: isCoach ? "chat_choose_client" : "chat_choose_coach") { contact in
+                    pickedContact = contact
+                    showContactPicker = false
                 }
             }
             .onAppear { openPendingConversation() }
@@ -158,13 +173,25 @@ struct ChatListView: View {
         path = [id]
     }
 
+    /// Opens the chat with the contact, starting it when there is none yet.
+    /// An existing chat opens as it is, also when the coach turned it off.
     @MainActor
-    private func startChat(with client: Client) async {
+    private func startChat(with contact: ChatContact) async {
+        if let id = contact.conversationId {
+            path = [id]
+            return
+        }
+
         isStarting = true
         defer { isStarting = false }
 
         do {
-            let conversation = try await ChatAPI.setConversation(clientId: client.id, isEnabled: true)
+            let conversation: ChatConversation
+            if isCoach {
+                conversation = try await ChatAPI.setConversation(clientId: contact.id, isEnabled: true)
+            } else {
+                conversation = try await ChatAPI.start(coachId: contact.id)
+            }
             store.upsert(conversation)
             path = [conversation.id]
         } catch {
@@ -189,5 +216,121 @@ struct ChatAvatar: View {
             .frame(width: size, height: size)
             .background(Circle().fill(Color.apexAccent))
             .accessibilityHidden(true)
+    }
+}
+
+/// People the user can chat with (clients for a coach, coaches for a
+/// client); tapping one picks them.
+struct ChatContactPickerView: View {
+    let title: LocalizedStringKey
+    let onPick: (ChatContact) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toastManager: ToastManager
+
+    @State private var contacts: [ChatContact] = []
+    @State private var searchText = ""
+    @State private var isLoading = false
+
+    private var filteredContacts: [ChatContact] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return contacts }
+        return contacts.filter { $0.fullName.localizedStandardContains(query) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if contacts.isEmpty, !isLoading {
+                    Text("chat_no_contacts")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(filteredContacts) { contact in
+                    Button {
+                        onPick(contact)
+                    } label: {
+                        HStack(spacing: 12) {
+                            ChatAvatar(name: contact.fullName, size: 34)
+                            Text(verbatim: contact.fullName)
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                            if contact.conversationId != nil {
+                                Image(systemName: contact.isEnabled ? "bubble.left.and.bubble.right" : "pause.circle")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                }
+            }
+            .searchable(text: $searchText, prompt: Text("search"))
+            .overlay {
+                if isLoading && contacts.isEmpty {
+                    ProgressView()
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(Color.apexMainColor)
+                    }
+                    .accessibilityLabel(Text("cancel"))
+                }
+            }
+            .task {
+                await load()
+            }
+        }
+    }
+
+    @MainActor
+    private func load() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            contacts = try await ChatAPI.contacts()
+        } catch let error where error.isCancellation {
+            return
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+}
+
+/// Round chat button floating over the tabs, with the unread count.
+struct ChatFloatingButton: View {
+    let unreadCount: Int
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "bubble.left.and.bubble.right.fill")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(Color.apexOnAccent)
+                .frame(width: 56, height: 56)
+                .background(Circle().fill(Color.apexAccent))
+                .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
+                .overlay(alignment: .topTrailing) {
+                    if unreadCount > 0 {
+                        Text(verbatim: unreadCount > 99 ? "99+" : "\(unreadCount)")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(Color.red))
+                            .offset(x: 4, y: -4)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("tab_chat"))
+        .accessibilityValue(unreadCount > 0 ? Text(verbatim: "\(unreadCount)") : Text(verbatim: ""))
     }
 }

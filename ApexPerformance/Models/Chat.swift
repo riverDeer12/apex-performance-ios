@@ -40,6 +40,19 @@ struct ChatConversation: Identifiable, Decodable, Hashable {
     }
 }
 
+/// Someone the logged user can chat with: a client for a coach,
+/// a coach for a client.
+struct ChatContact: Identifiable, Decodable, Hashable {
+    // Client id for a coach, coach id for a client.
+    let id: UUID
+    let userId: UUID
+    let fullName: String
+    // Nil when no chat was started yet.
+    let conversationId: UUID?
+    // False when the coach turned the chat off (read only).
+    let isEnabled: Bool
+}
+
 /// "MessagesRead" hub event.
 struct ChatMessagesRead: Decodable {
     let conversationId: UUID
@@ -60,6 +73,24 @@ enum ChatAPI {
     @MainActor
     static func conversations() async throws -> [ChatConversation] {
         try await APIClient.shared.request(baseURL.appendingPathComponent("conversations"))
+    }
+
+    /// People the logged user can start a chat with, by name.
+    @MainActor
+    static func contacts() async throws -> [ChatContact] {
+        try await APIClient.shared.request(baseURL.appendingPathComponent("contacts"))
+    }
+
+    /// Client only: opens the chat with one of their coaches, creating it when needed.
+    /// A chat the coach turned off comes back read only.
+    @MainActor
+    static func start(coachId: UUID) async throws -> ChatConversation {
+        struct Request: Encodable { let coachId: UUID }
+        return try await APIClient.shared.request(
+            baseURL.appendingPathComponent("conversations").appendingPathComponent("start"),
+            method: .post,
+            body: JSONEncoder().encode(Request(coachId: coachId))
+        )
     }
 
     /// Coach only: creates the conversation with the client if needed and turns it on or off.

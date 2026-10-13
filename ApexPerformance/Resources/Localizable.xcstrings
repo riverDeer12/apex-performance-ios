@@ -1734,6 +1734,29 @@
         }
       }
     },
+    "chat_choose_coach" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a coach"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odaberi trenera"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli un coach"
+          }
+        }
+      }
+    },
     "chat_disabled" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1809,19 +1832,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No chats yet. Your coach can start one with you."
+            "value" : "No chats yet. Start one with your coach."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Još nema razgovora. Trener može započeti razgovor s tobom."
+            "value" : "Još nema razgovora. Započni razgovor sa svojim trenerom."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nessuna chat. Il tuo coach può iniziarne una con te."
+            "value" : "Ancora nessuna chat. Iniziane una con il tuo coach."
           }
         }
       }
@@ -1983,6 +2006,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuova chat"
+          }
+        }
+      }
+    },
+    "chat_no_contacts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one to chat with yet."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Još nema nikoga s kim možeš razgovarati."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessuno con cui chattare."
           }
         }
       }
@@ -8252,6 +8298,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il modello riceve gli esercizi e le serie di questo allenamento."
+          }
+        }
+      }
+    },
+    "search" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca"
           }
         }
       }

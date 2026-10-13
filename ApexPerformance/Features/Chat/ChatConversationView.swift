@@ -311,6 +311,8 @@ struct ChatConversationView: View {
             store.didSend(message)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+            // The coach may have just turned the chat off: show it read only.
+            await store.refresh()
         }
     }
 
