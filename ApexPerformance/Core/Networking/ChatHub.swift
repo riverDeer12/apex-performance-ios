@@ -144,7 +144,8 @@ final class ChatHub {
     private static func hubURL(token: String) -> URL? {
         let url = AppEnvironment.apiURL.appendingPathComponent("hubs").appendingPathComponent("chat")
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        components?.scheme = components?.scheme == "http" ? "ws" : "wss"
+        let isPlainHTTP = components?.scheme == "http"
+        components?.scheme = isPlainHTTP ? "ws" : "wss"
         components?.queryItems = [URLQueryItem(name: "access_token", value: token)]
         return components?.url
     }
