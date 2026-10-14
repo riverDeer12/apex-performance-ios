@@ -22,6 +22,8 @@ struct ChatConversationView: View {
     @State private var hasOlder = false
     @State private var isSending = false
     @State private var isUpdating = false
+    @State private var showReport = false
+    @State private var reportReason = ""
     // Message to keep in view: the newest after loading or sending,
     // the previously first one after loading older messages.
     @State private var scrollTarget: UUID?
@@ -109,14 +111,22 @@ struct ChatConversationView: View {
         .navigationTitle(Text(verbatim: conversation?.otherParticipant(for: store.userId).fullName ?? ""))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if isCoach, let conversation {
+            if let conversation {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Toggle(isOn: Binding(
-                            get: { conversation.isEnabled },
-                            set: { isOn in Task { await setEnabled(isOn) } }
-                        )) {
-                            Label("chat_enabled", systemImage: "bubble.left.and.bubble.right")
+                        if isCoach {
+                            Toggle(isOn: Binding(
+                                get: { conversation.isEnabled },
+                                set: { isOn in Task { await setEnabled(isOn) } }
+                            )) {
+                                Label("chat_enabled", systemImage: "bubble.left.and.bubble.right")
+                            }
+                        }
+                        Button(role: .destructive) {
+                            reportReason = ""
+                            showReport = true
+                        } label: {
+                            Label("chat_report", systemImage: "exclamationmark.bubble")
                         }
                     } label: {
                         if isUpdating {
@@ -126,9 +136,18 @@ struct ChatConversationView: View {
                                 .foregroundStyle(Color.apexMainColor)
                         }
                     }
-                    .accessibilityLabel(Text("chat_enabled"))
+                    .accessibilityLabel(Text("chat_options"))
                 }
             }
+        }
+        .alert("chat_report", isPresented: $showReport) {
+            TextField("chat_report_reason", text: $reportReason)
+            Button("chat_report_send", role: .destructive) {
+                Task { await report() }
+            }
+            Button("cancel", role: .cancel) {}
+        } message: {
+            Text("chat_report_info")
         }
         .task {
             await loadNewest()
@@ -327,6 +346,17 @@ struct ChatConversationView: View {
             messages[index].readAt = now
         }
         try? await ChatAPI.markRead(conversationId: conversationId)
+    }
+
+    @MainActor
+    private func report() async {
+        let reason = reportReason.trimmingCharacters(in: .whitespacesAndNewlines)
+        do {
+            try await ChatAPI.report(conversationId: conversationId, reason: reason.isEmpty ? nil : reason)
+            toastManager.show("chat_report_sent", type: .success)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
     }
 
     @MainActor
