@@ -34,7 +34,7 @@ import FirebaseCore
                 .animation(.easeInOut, value: toastManager.toast != nil)
                 .overlay {
                     if showSplash {
-                        SplashView(appearance: appearance.colorScheme) { showSplash = false }
+                        SplashView { showSplash = false }
                     }
                 }
                 .onAppear { applyAppearance() }

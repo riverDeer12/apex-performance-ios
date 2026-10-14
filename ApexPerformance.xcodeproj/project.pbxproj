@@ -84,6 +84,7 @@
 		61E63F792F11A658004D74F3 /* ButtonContentStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */; };
 		61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */; };
 		61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 61E63F812F151533004D74F3 /* Localizable.xcstrings */; };
+		90DA4A69E223DB62840E31D1 /* splash.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C86FDD3B9AC5CF3411592778 /* splash.mp4 */; };
 		30EE69A462B39DA0DFDC6BFA /* Michroma-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF12D354C54D7DE70D882F68 /* Michroma-Regular.ttf */; };
 		61E63F882F19647A004D74F3 /* CreateAppointmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F872F196479004D74F3 /* CreateAppointmentView.swift */; };
 		61E63F8A2F196E49004D74F3 /* AppointmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F892F196E49004D74F3 /* AppointmentType.swift */; };
@@ -228,6 +229,7 @@
 		61E9741B2EF0AB9100D225C5 /* ApexPerformanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceApp.swift; sourceTree = "<group>"; };
 		61E9741D2EF0AB9100D225C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		61E9741F2EF0AB9200D225C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C86FDD3B9AC5CF3411592778 /* splash.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = splash.mp4; sourceTree = "<group>"; };
 		AF12D354C54D7DE70D882F68 /* Michroma-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Michroma-Regular.ttf"; sourceTree = "<group>"; };
 		61E974222EF0AB9200D225C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		61E974282EF0AB9300D225C5 /* ApexPerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApexPerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -355,6 +357,7 @@
 				61E9741F2EF0AB9200D225C5 /* Assets.xcassets */,
 				61E63F812F151533004D74F3 /* Localizable.xcstrings */,
 				AF12D354C54D7DE70D882F68 /* Michroma-Regular.ttf */,
+				C86FDD3B9AC5CF3411592778 /* splash.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -725,6 +728,7 @@
 				61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */,
 				61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */,
 				30EE69A462B39DA0DFDC6BFA /* Michroma-Regular.ttf in Resources */,
+				90DA4A69E223DB62840E31D1 /* splash.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
