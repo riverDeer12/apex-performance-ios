@@ -144,6 +144,18 @@ enum ChatAPI {
         )
     }
 
+    /// Reports the conversation to the administrator, who gets the reason
+    /// and the last messages by email.
+    @MainActor
+    static func report(conversationId: UUID, reason: String?) async throws {
+        struct Request: Encodable { let reason: String? }
+        try await APIClient.shared.requestData(
+            conversationURL(conversationId).appendingPathComponent("report"),
+            method: .post,
+            body: JSONEncoder().encode(Request(reason: reason))
+        )
+    }
+
     @MainActor
     static func unreadCount() async throws -> Int {
         struct Response: Decodable { let count: Int }
