@@ -29,11 +29,16 @@ final class NotificationRouter: ObservableObject {
     @Published var opensAppointmentRequests = false
     // Chat conversation a tapped message push opens.
     @Published var pendingConversationId: UUID?
+    // Training a tapped training push opens.
+    @Published var pendingTrainingId: UUID?
 
     private init() {}
 
-    func handle(notificationType: String, conversationId: String? = nil) {
+    func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil) {
         switch notificationType {
+        case "training":
+            pendingTrainingId = trainingId.flatMap(UUID.init(uuidString:))
+            pendingTab = .trainings
         case "chat_message":
             pendingConversationId = conversationId.flatMap(UUID.init(uuidString:))
             pendingTab = .chat

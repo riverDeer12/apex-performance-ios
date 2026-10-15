@@ -343,6 +343,7 @@ struct AssignTrainingTemplateView: View {
     @State private var clients: [Client] = []
     @State private var selectedClients: Set<UUID> = []
     @State private var date = Date.now
+    @State private var notifyClient = true
     @State private var searchText = ""
     @State private var isLoading = false
     @State private var isAssigning = false
@@ -359,6 +360,7 @@ struct AssignTrainingTemplateView: View {
             Form {
                 Section {
                     DatePicker("date", selection: $date, displayedComponents: .date)
+                    NotifyClientToggle(isOn: $notifyClient)
                 } footer: {
                     Text("assign_template_hint")
                 }
@@ -463,7 +465,7 @@ struct AssignTrainingTemplateView: View {
         defer { isAssigning = false }
 
         do {
-            let count = try await template.assign(to: Array(selectedClients), date: date)
+            let count = try await template.assign(to: Array(selectedClients), date: date, notifyClient: notifyClient)
             toastManager.show("trainings_created \(count)", type: .success)
             dismiss()
         } catch {

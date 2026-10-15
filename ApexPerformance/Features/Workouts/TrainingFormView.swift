@@ -30,6 +30,8 @@ struct TrainingFormView: View {
     @State private var note: String
     @State private var isCompleted: Bool
     @State private var exercises: [ExerciseDraft]
+    // The client gets a push about a new training, about an edit only when asked.
+    @State private var notifyClient: Bool
 
     @State private var workouts: [Workout] = []
     @State private var isSaving = false
@@ -49,6 +51,7 @@ struct TrainingFormView: View {
         _date = State(initialValue: training?.date ?? .now)
         _note = State(initialValue: training?.note ?? "")
         _isCompleted = State(initialValue: training?.isCompleted ?? false)
+        _notifyClient = State(initialValue: training == nil)
         _exercises = State(initialValue: (training?.exercises ?? [])
             .sorted { $0.order < $1.order }
             .map(ExerciseDraft.init))
@@ -77,6 +80,7 @@ struct TrainingFormView: View {
         _date = State(initialValue: .now)
         _note = State(initialValue: template?.note ?? "")
         _isCompleted = State(initialValue: false)
+        _notifyClient = State(initialValue: false)
         _exercises = State(initialValue: (template?.exercises ?? [])
             .sorted { $0.order < $1.order }
             .map(ExerciseDraft.init))
@@ -121,6 +125,7 @@ struct TrainingFormView: View {
                         DatePicker("date", selection: $date, displayedComponents: .date)
                         Toggle("completed", isOn: $isCompleted)
                             .tint(Color.apexMainColor)
+                        NotifyClientToggle(isOn: $notifyClient)
                     }
                     TextField("note", text: $note, axis: .vertical)
                         .lineLimit(1...4)
@@ -522,7 +527,8 @@ struct TrainingFormView: View {
             date: ISO8601DateFormatter().string(from: date),
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
-            exercises: exercises.compactMap(\.request)
+            exercises: exercises.compactMap(\.request),
+            notifyClient: notifyClient
         )
 
         do {
