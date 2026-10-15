@@ -46,7 +46,9 @@ jobs:
           bundler-cache: true
 
       - name: Build and upload to TestFlight
-        run: bundle exec fastlane beta
+        run: |
+          set -o pipefail
+          bundle exec fastlane beta 2>&1 | tee fastlane.log
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -54,6 +56,13 @@ jobs:
           APP_VERSION: ${{ inputs.version }}
           # Merges to production build the test app.
           APP_VARIANT: ${{ inputs.app || 'test' }}
+
+      # The errors as annotations, readable without downloading the logs.
+      - name: Show the errors
+        if: failure()
+        run: |
+          grep -E "error|Error|ERROR|\[!\]|failed|Failed" fastlane.log | grep -v "^::" | tail -15 | sed 's/^/::error::/' || true
+          tail -5 fastlane.log | sed 's/^/::warning::/' || true
 
       - name: Keep the build logs
         if: failure()
