@@ -8,10 +8,15 @@ import FirebaseMessaging
 
 enum PushTokenService {
 
+    // Last token sent to the backend. A new one replaces it there, so the
+    // device doesn't get every push twice.
+    private static let lastTokenKey = "lastRegisteredFcmToken"
+
     // The backend links the FCM token to the user from the bearer token,
     // so registration is skipped until the user is logged in.
     static func register(_ fcmToken: String) {
         guard let authToken = KeychainService.shared.getToken() else { return }
+        let previousToken = UserDefaults.standard.string(forKey: lastTokenKey)
 
         Task {
             struct FCMTokenRequest: Encodable {
@@ -23,6 +28,7 @@ enum PushTokenService {
                 let deviceModel = PushTokenService.deviceModelIdentifier
                 // The backend sends pushes in the app's language.
                 let language = Bundle.main.preferredLocalizations.first
+                let previousToken: String?
             }
 
             do {
@@ -31,7 +37,10 @@ enum PushTokenService {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.setValue("application/json", forHTTPHeaderField: "Accept")
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-                request.httpBody = try JSONEncoder().encode(FCMTokenRequest(token: fcmToken))
+                request.httpBody = try JSONEncoder().encode(FCMTokenRequest(
+                    token: fcmToken,
+                    previousToken: previousToken == fcmToken ? nil : previousToken
+                ))
 
                 let (_, response) = try await URLSession.shared.data(for: request)
 
@@ -39,6 +48,7 @@ enum PushTokenService {
                       200..<300 ~= http.statusCode else {
                     throw URLError(.badServerResponse)
                 }
+                UserDefaults.standard.set(fcmToken, forKey: lastTokenKey)
             } catch {
                 #if DEBUG
                 print("❌ Failed to send FCM token to server: \(error)")
