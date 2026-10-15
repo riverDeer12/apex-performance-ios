@@ -59,13 +59,16 @@ platform :ios do
       export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
       output_directory: "build",
       # gym passes xcargs to the export too, so the key isn't given twice.
-      # The archive isn't signed: signing it made Xcode create a new
-      # development certificate on every runner until the account hit the
-      # limit. The export signs the app with the cloud managed distribution
-      # certificate instead.
+      # The archive is signed ad hoc, without a certificate: signing it with
+      # a development certificate made Xcode create a new one on every
+      # runner until the account hit the limit, and an unsigned archive
+      # loses the entitlements (no aps-environment, so no push
+      # notifications). The export signs the app with the cloud managed
+      # distribution certificate and keeps the entitlements.
       xcargs: "#{auth} APP_VARIANT=#{test_app ? 'Test' : 'Store'} " \
               "MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} " \
-              "CODE_SIGNING_ALLOWED=NO"
+              "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES " \
+              "PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE="
     )
 
     check_push_entitlement(lane_context[SharedValues::IPA_OUTPUT_PATH])
@@ -83,7 +86,6 @@ platform :ios do
   # Without the aps-environment entitlement iOS gives the app no push
   # token, so no push notification would reach it. Stops the upload then.
   def check_push_entitlement(ipa_path)
-    puts "::notice title=IPA::#{ipa_path.inspect}"
     Dir.mktmpdir do |dir|
       sh("unzip", "-q", ipa_path, "-d", dir, log: false)
       app = Dir.glob(File.join(dir, "Payload", "*.app")).first
