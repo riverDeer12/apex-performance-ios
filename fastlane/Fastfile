@@ -68,6 +68,8 @@ platform :ios do
               "CODE_SIGNING_ALLOWED=NO"
     )
 
+    check_push_entitlement(lane_context[SharedValues::IPA_OUTPUT_PATH])
+
     upload_to_testflight(
       api_key: api_key,
       app_identifier: app_id,
@@ -76,6 +78,18 @@ platform :ios do
     )
   ensure
     File.delete(key_path) if key_path && File.exist?(key_path)
+  end
+
+  # Without the aps-environment entitlement iOS gives the app no push
+  # token, so no push notification would reach it. Stops the upload then.
+  def check_push_entitlement(ipa_path)
+    Dir.mktmpdir do |dir|
+      sh("unzip", "-q", ipa_path, "-d", dir, log: false)
+      app = Dir.glob(File.join(dir, "Payload", "*.app")).first
+      entitlements = sh("codesign", "-d", "--entitlements", ":-", app, log: false)
+      UI.message("Entitlements of the exported app:\n#{entitlements}")
+      UI.user_error!("The exported app has no aps-environment entitlement") unless entitlements.include?("aps-environment")
+    end
   end
 
   # Firebase needs the config of the Firebase app registered for the test
