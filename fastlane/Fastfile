@@ -83,12 +83,15 @@ platform :ios do
   # Without the aps-environment entitlement iOS gives the app no push
   # token, so no push notification would reach it. Stops the upload then.
   def check_push_entitlement(ipa_path)
+    puts "::notice title=IPA::#{ipa_path.inspect}"
     Dir.mktmpdir do |dir|
       sh("unzip", "-q", ipa_path, "-d", dir, log: false)
       app = Dir.glob(File.join(dir, "Payload", "*.app")).first
       entitlements = sh("codesign", "-d", "--entitlements", ":-", app, log: false)
-      UI.message("Entitlements of the exported app:\n#{entitlements}")
-      UI.user_error!("The exported app has no aps-environment entitlement") unless entitlements.include?("aps-environment")
+      # Shown as an annotation of the GitHub run.
+      level = entitlements.include?("aps-environment") ? "notice" : "error"
+      puts "::#{level} title=Entitlements::#{entitlements.gsub("\n", "%0A")}"
+      UI.user_error!("The exported app has no aps-environment entitlement") if level == "error"
     end
   end
 
