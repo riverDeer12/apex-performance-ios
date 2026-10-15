@@ -50,11 +50,12 @@ extension TrainingTemplate {
     /// Creates a planned training from the template for each client.
     /// Returns how many trainings were created.
     @MainActor
-    func assign(to clients: [UUID], date: Date) async throws -> Int {
+    func assign(to clients: [UUID], date: Date, notifyClient: Bool = true) async throws -> Int {
         struct Request: Encodable {
             let clients: [UUID]
             // ISO 8601, as the API expects a DateTimeOffset.
             let date: String
+            let notifyClient: Bool
         }
         struct Response: Decodable {
             let trainingIds: [UUID]
@@ -66,7 +67,8 @@ extension TrainingTemplate {
         let response: Response = try await APIClient.shared.request(
             url,
             method: .post,
-            body: JSONEncoder().encode(Request(clients: clients, date: ISO8601DateFormatter().string(from: date)))
+            body: JSONEncoder().encode(Request(clients: clients, date: ISO8601DateFormatter().string(from: date),
+                                             notifyClient: notifyClient))
         )
         return response.trainingIds.count
     }

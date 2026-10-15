@@ -14,8 +14,12 @@ struct CompletedTrainingsView: View {
     @State private var searchText = ""
     @State private var isLoading = false
     @State private var hasLoaded = false
+    // Training a tapped push opens.
+    @State private var openedTraining: Training?
+    @State private var showsOpenedTraining = false
 
     @EnvironmentObject private var toastManager: ToastManager
+    @ObservedObject private var notificationRouter = NotificationRouter.shared
 
     private var filteredTrainings: [Training] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -62,11 +66,39 @@ struct CompletedTrainingsView: View {
                 await Task { await load() }.value
             }
             .task {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                await load()
+                if !hasLoaded {
+                    hasLoaded = true
+                    await load()
+                }
+                await openPendingTraining()
+            }
+            .onChange(of: notificationRouter.pendingTrainingId) {
+                Task { await openPendingTraining() }
+            }
+            .navigationDestination(isPresented: $showsOpenedTraining) {
+                if let openedTraining {
+                    TrainingDetailView(training: openedTraining, heroImageURL: imageURL(for: openedTraining))
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    /// Opens the training of a tapped push. Clients only see trainings
+    /// their coach marked as completed, a planned one shows a message.
+    @MainActor
+    private func openPendingTraining() async {
+        guard let id = notificationRouter.pendingTrainingId else { return }
+        notificationRouter.pendingTrainingId = nil
+
+        if !trainings.contains(where: { $0.id == id }) {
+            await load()
+        }
+        if let training = trainings.first(where: { $0.id == id }) {
+            openedTraining = training
+            showsOpenedTraining = true
+        } else {
+            toastManager.show("training_not_completed_yet", type: .info)
         }
     }
 

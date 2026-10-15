@@ -62,13 +62,31 @@ extension ClientGoal {
         return try await APIClient.shared.request(url)
     }
 
-    /// Saves the goal and plan of a client (staff).
+    /// Saves the goal and plan of a client (staff); the client gets a push
+    /// notification unless notifyClient is false.
     @MainActor
-    func save(clientId: UUID) async throws -> ClientGoal {
+    func save(clientId: UUID, notifyClient: Bool = true) async throws -> ClientGoal {
+        struct Request: Encodable {
+            let goal: ClientGoal
+            let notifyClient: Bool
+
+            func encode(to encoder: Encoder) throws {
+                try goal.encode(to: encoder)
+                var container = encoder.container(keyedBy: NotifyKey.self)
+                try container.encode(notifyClient, forKey: .notifyClient)
+            }
+
+            private enum NotifyKey: String, CodingKey { case notifyClient }
+        }
+
         let url = AppEnvironment.apiURL
             .appendingPathComponent("client-goals")
             .appendingPathComponent(clientId.uuidString)
-        return try await APIClient.shared.request(url, method: .put, body: JSONEncoder().encode(self))
+        return try await APIClient.shared.request(
+            url,
+            method: .put,
+            body: JSONEncoder().encode(Request(goal: self, notifyClient: notifyClient))
+        )
     }
 }
 
@@ -104,16 +122,19 @@ extension MonthlyReview {
 
     /// Writes or updates the review of a client's month (staff).
     @MainActor
-    static func save(clientId: UUID, year: Int, month: Int, content: String) async throws -> MonthlyReview {
+    static func save(clientId: UUID, year: Int, month: Int, content: String,
+                     notifyClient: Bool) async throws -> MonthlyReview {
         struct Request: Encodable {
             let client: UUID
             let year: Int
             let month: Int
             let content: String
+            let notifyClient: Bool
         }
 
         let url = AppEnvironment.apiURL.appendingPathComponent("monthly-reviews")
-        let request = Request(client: clientId, year: year, month: month, content: content)
+        let request = Request(client: clientId, year: year, month: month, content: content,
+                              notifyClient: notifyClient)
         return try await APIClient.shared.request(url, method: .put, body: JSONEncoder().encode(request))
     }
 

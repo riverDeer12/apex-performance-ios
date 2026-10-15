@@ -6965,6 +6965,29 @@
         }
       }
     },
+    "notify_client" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify the client"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obavijesti klijenta"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvisa il cliente"
+          }
+        }
+      }
+    },
     "notify_coach_about_cancelation" : {
       "localizations" : {
         "en" : {
@@ -9802,6 +9825,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allenamento segnato come pianificato."
+          }
+        }
+      }
+    },
+    "training_not_completed_yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The training will be visible once your coach marks it as completed."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trening će biti vidljiv kad ga trener označi kao završen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'allenamento sarà visibile quando il tuo coach lo segnerà come completato."
           }
         }
       }

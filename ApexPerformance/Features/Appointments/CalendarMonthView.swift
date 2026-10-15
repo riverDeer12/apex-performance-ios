@@ -145,7 +145,9 @@ struct CalendarMonthView: View {
                 VStack(spacing: 4) {
                     Text(verbatim: "\(calendar.component(.day, from: day))")
                         .font(.subheadline.weight(isToday ? .bold : .regular))
-                        .foregroundStyle(isSelected ? .white : (isToday ? Color.apexMainColor : .primary))
+                        // The main color is white in dark mode, so the selected day's
+                        // number takes the background color (white in light mode).
+                        .foregroundStyle(isSelected ? Color(.systemBackground) : (isToday ? Color.apexMainColor : .primary))
                         .frame(width: 32, height: 32)
                         .background(
                             Circle().fill(isSelected ? Color.apexMainColor : Color.clear)

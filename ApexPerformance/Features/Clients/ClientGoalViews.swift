@@ -64,6 +64,7 @@ struct ClientGoalFormView: View {
     @State private var nextAssessment: String
     @State private var hasNextAssessmentDate: Bool
     @State private var nextAssessmentDate: Date
+    @State private var notifyClient = true
     @State private var isSaving = false
 
     init(clientId: UUID, goal: ClientGoal, onSaved: ((ClientGoal) -> Void)? = nil) {
@@ -104,6 +105,9 @@ struct ClientGoalFormView: View {
                     }
                     TextField("next_assessment_placeholder", text: $nextAssessment, axis: .vertical)
                         .lineLimit(1...4)
+                }
+                Section {
+                    NotifyClientToggle(isOn: $notifyClient)
                 }
             }
             .navigationTitle("goal_and_plan")
@@ -148,7 +152,7 @@ struct ClientGoalFormView: View {
         )
 
         do {
-            let saved = try await request.save(clientId: clientId)
+            let saved = try await request.save(clientId: clientId, notifyClient: notifyClient)
             onSaved?(saved)
             toastManager.show("goal_saved_successfully", type: .success)
             dismiss()
@@ -285,6 +289,8 @@ struct MonthlyReviewFormView: View {
     @State private var year: Int
     @State private var month: Int
     @State private var content: String
+    // The client gets a push about a new review, about a correction only when asked.
+    @State private var notifyClient: Bool
     @State private var isSaving = false
     @State private var showDeleteDialog = false
 
@@ -297,6 +303,9 @@ struct MonthlyReviewFormView: View {
         _year = State(initialValue: review?.year ?? now.year ?? 2026)
         _month = State(initialValue: review?.month ?? now.month ?? 1)
         _content = State(initialValue: review?.content ?? "")
+        let year = review?.year ?? now.year ?? 2026
+        let month = review?.month ?? now.month ?? 1
+        _notifyClient = State(initialValue: !reviews.contains { $0.year == year && $0.month == month })
     }
 
     private var existingReview: MonthlyReview? {
@@ -334,6 +343,10 @@ struct MonthlyReviewFormView: View {
                         .lineLimit(8...20)
                 } footer: {
                     Text(verbatim: "\(content.count) / 4000")
+                }
+
+                Section {
+                    NotifyClientToggle(isOn: $notifyClient)
                 }
 
                 if let existingReview {
@@ -391,6 +404,7 @@ struct MonthlyReviewFormView: View {
     // Switching the month shows that month's review, if written.
     private func loadExisting() {
         content = existingReview?.content ?? ""
+        notifyClient = existingReview == nil
     }
 
     @MainActor
@@ -399,7 +413,8 @@ struct MonthlyReviewFormView: View {
         defer { isSaving = false }
 
         do {
-            _ = try await MonthlyReview.save(clientId: clientId, year: year, month: month, content: trimmedContent)
+            _ = try await MonthlyReview.save(clientId: clientId, year: year, month: month, content: trimmedContent,
+                                               notifyClient: notifyClient)
             onChanged?()
             toastManager.show("monthly_review_saved_successfully", type: .success)
             dismiss()

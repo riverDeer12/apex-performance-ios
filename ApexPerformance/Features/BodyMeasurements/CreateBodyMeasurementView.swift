@@ -20,6 +20,7 @@ struct CreateBodyMeasurementView: View {
     @State private var thigh: Decimal = 0
     @State private var calves: Decimal = 0
     @State private var glutes: Decimal = 0
+    @State private var notifyClient = true
     @State private var isSaving = false
     @State private var errorMessage: String?
     
@@ -178,6 +179,10 @@ struct CreateBodyMeasurementView: View {
                             .contentShape(Rectangle())
                             .padding(.vertical, 16)
                             .padding(.horizontal, 8)
+                            Divider()
+                            NotifyClientToggle(isOn: $notifyClient)
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 8)
                         }
                         
                         if let errorMessage {
@@ -259,6 +264,7 @@ struct CreateBodyMeasurementView: View {
         struct CreateBodyMeasurementRequest: Encodable {
             let client: UUID
             let height, weight, shoulders, chest, upperArm, waist, thigh, calves, glutes: Decimal
+            let notifyClient: Bool
         }
         
         let url = AppEnvironment.apiURL.appendingPathComponent("body-measurements")
@@ -266,7 +272,8 @@ struct CreateBodyMeasurementView: View {
         let request = CreateBodyMeasurementRequest(
             client: client.id,
             height: height, weight: weight, shoulders: shoulders, chest: chest,
-            upperArm: upperArm, waist: waist, thigh: thigh, calves: calves, glutes: glutes
+            upperArm: upperArm, waist: waist, thigh: thigh, calves: calves, glutes: glutes,
+            notifyClient: notifyClient
         )
         
         let encoder = JSONEncoder()
