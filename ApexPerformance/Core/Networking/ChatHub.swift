@@ -207,6 +207,12 @@ final class ChatStore: ObservableObject {
 
     /// Puts a conversation from the API (e.g. after turning it on) into the list.
     func upsert(_ conversation: ChatConversation) {
+        var conversation = conversation
+        // Responses of changes come without the last message and unread count.
+        if conversation.lastMessage == nil, let existing = conversations.first(where: { $0.id == conversation.id }) {
+            conversation.lastMessage = existing.lastMessage
+            conversation.unreadCount = existing.unreadCount
+        }
         conversations.removeAll { $0.id == conversation.id }
         conversations.append(conversation)
         sortConversations()
