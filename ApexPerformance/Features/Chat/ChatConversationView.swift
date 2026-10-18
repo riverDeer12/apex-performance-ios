@@ -23,6 +23,7 @@ struct ChatConversationView: View {
     @State private var isSending = false
     @State private var isUpdating = false
     @State private var showReport = false
+    @State private var showBlockDialog = false
     @State private var reportReason = ""
     // Message to keep in view: the newest after loading or sending,
     // the previously first one after loading older messages.
@@ -114,12 +115,28 @@ struct ChatConversationView: View {
             if let conversation {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        if isCoach {
+                        // A chat the client blocked can't be turned on by the coach.
+                        if isCoach && !conversation.isBlocked {
                             Toggle(isOn: Binding(
                                 get: { conversation.isEnabled },
                                 set: { isOn in Task { await setEnabled(isOn) } }
                             )) {
                                 Label("chat_enabled", systemImage: "bubble.left.and.bubble.right")
+                            }
+                        }
+                        if !isCoach {
+                            if conversation.isBlocked {
+                                Button {
+                                    Task { await setBlocked(false) }
+                                } label: {
+                                    Label("chat_unblock", systemImage: "hand.raised.slash")
+                                }
+                            } else {
+                                Button(role: .destructive) {
+                                    showBlockDialog = true
+                                } label: {
+                                    Label("chat_block", systemImage: "hand.raised")
+                                }
                             }
                         }
                         Button(role: .destructive) {
@@ -148,6 +165,14 @@ struct ChatConversationView: View {
             Button("cancel", role: .cancel) {}
         } message: {
             Text("chat_report_info")
+        }
+        .confirmationDialog("chat_block_question", isPresented: $showBlockDialog, titleVisibility: .visible) {
+            Button("chat_block", role: .destructive) {
+                Task { await setBlocked(true) }
+            }
+            Button("cancel", role: .cancel) {}
+        } message: {
+            Text("chat_block_info")
         }
         .task {
             await loadNewest()
@@ -194,7 +219,15 @@ struct ChatConversationView: View {
 
     @ViewBuilder
     private var inputBar: some View {
-        if conversation?.isEnabled == false {
+        if let conversation, conversation.isBlocked {
+            Label(isCoach ? LocalizedStringKey("chat_blocked_by_client") : LocalizedStringKey("chat_blocked_by_you"),
+                  systemImage: "hand.raised")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+                .padding(14)
+                .background(Color.apexCard)
+        } else if conversation?.isEnabled == false {
             Label("chat_disabled_info", systemImage: "pause.circle")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -354,6 +387,20 @@ struct ChatConversationView: View {
         do {
             try await ChatAPI.report(conversationId: conversationId, reason: reason.isEmpty ? nil : reason)
             toastManager.show("chat_report_sent", type: .success)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    @MainActor
+    private func setBlocked(_ isBlocked: Bool) async {
+        isUpdating = true
+        defer { isUpdating = false }
+
+        do {
+            let updated = try await ChatAPI.block(conversationId: conversationId, isBlocked: isBlocked)
+            store.upsert(updated)
+            toastManager.show(isBlocked ? "chat_blocked_detail" : "chat_unblocked_detail", type: .success)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }

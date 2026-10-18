@@ -1711,6 +1711,144 @@
         }
       }
     },
+    "chat_block" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block chat"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blokiraj razgovor"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocca chat"
+          }
+        }
+      }
+    },
+    "chat_block_info" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neither you nor your coach will be able to write until you unblock it. The messages are kept."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ni ti ni trener nećete moći pisati dok ga ne odblokiraš. Poruke ostaju sačuvane."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Né tu né il tuo coach potrete scrivere finché non la sblocchi. I messaggi restano salvati."
+          }
+        }
+      }
+    },
+    "chat_block_question" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block this chat?"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blokirati ovaj razgovor?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloccare questa chat?"
+          }
+        }
+      }
+    },
+    "chat_blocked_by_client" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The client blocked this chat."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klijent je blokirao ovaj razgovor."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il cliente ha bloccato questa chat."
+          }
+        }
+      }
+    },
+    "chat_blocked_by_you" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You blocked this chat. Unblock it from the menu to write again."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ovaj razgovor je blokiran. Odblokiraj ga u izborniku za nastavak dopisivanja."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai bloccato questa chat. Sbloccala dal menu per scrivere di nuovo."
+          }
+        }
+      }
+    },
+    "chat_blocked_detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat blocked."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Razgovor je blokiran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat bloccata."
+          }
+        }
+      }
+    },
     "chat_choose_client" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2328,6 +2466,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Messaggi"
+          }
+        }
+      }
+    },
+    "chat_unblock" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unblock chat"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odblokiraj razgovor"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sblocca chat"
+          }
+        }
+      }
+    },
+    "chat_unblocked_detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat unblocked."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Razgovor je odblokiran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat sbloccata."
           }
         }
       }

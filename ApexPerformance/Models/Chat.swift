@@ -28,11 +28,19 @@ struct ChatConversation: Identifiable, Decodable, Hashable {
     let id: UUID
     let coach: ChatParticipant
     let client: ChatParticipant
+    // Whether anyone can write: the coach enabled it and the client didn't block it.
     var isEnabled: Bool
+    // Nil from an API version without blocking.
+    var isBlockedByClient: Bool?
     var lastMessageAt: Date?
     var lastMessage: ChatMessage?
     // Messages of the other participant the logged user hasn't read.
     var unreadCount: Int
+
+    /// The client blocked the chat: read only for both, the coach can't turn it on.
+    var isBlocked: Bool {
+        isBlockedByClient == true
+    }
 
     /// The other side: the client for a coach, the coach for a client.
     func otherParticipant(for userId: UUID?) -> ChatParticipant {
@@ -49,7 +57,7 @@ struct ChatContact: Identifiable, Decodable, Hashable {
     let fullName: String
     // Nil when no chat was started yet.
     let conversationId: UUID?
-    // False when the coach turned the chat off (read only).
+    // False when the coach turned the chat off or the client blocked it (read only).
     let isEnabled: Bool
 }
 
@@ -90,6 +98,18 @@ enum ChatAPI {
             baseURL.appendingPathComponent("conversations").appendingPathComponent("start"),
             method: .post,
             body: JSONEncoder().encode(Request(coachId: coachId))
+        )
+    }
+
+    /// Client only: blocks or unblocks the chat with their coach. A blocked
+    /// chat is read only for both and the coach can't turn it back on.
+    @MainActor
+    static func block(conversationId: UUID, isBlocked: Bool) async throws -> ChatConversation {
+        struct Request: Encodable { let isBlocked: Bool }
+        return try await APIClient.shared.request(
+            conversationURL(conversationId).appendingPathComponent("block"),
+            method: .post,
+            body: JSONEncoder().encode(Request(isBlocked: isBlocked))
         )
     }
 
