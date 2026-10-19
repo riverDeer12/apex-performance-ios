@@ -61,8 +61,8 @@ struct WorkoutEditView: View {
             && trimmedNameHr.count <= Self.maxNameLength
             && nameEn.trimmingCharacters(in: .whitespacesAndNewlines).count <= Self.maxNameLength
             && !descriptionHr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            // The API accepts a new workout without a video, it can be added later.
-            && (isVideoUrlValid || (isNew && videoUrl.trimmingCharacters(in: .whitespaces).isEmpty))
+            // The video and thumbnail are optional, like on the API; a link must be valid.
+            && (isVideoUrlValid || videoUrl.trimmingCharacters(in: .whitespaces).isEmpty)
     }
 
     var body: some View {
