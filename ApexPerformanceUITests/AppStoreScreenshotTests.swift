@@ -119,6 +119,12 @@ final class AppStoreScreenshotTests: XCTestCase {
         try waitForTabs()
         XCTAssertTrue(tab("Home").exists, "Not a client account (no Home tab)")
 
+        // A changed goal and plan is shown over home once.
+        waitForContent()
+        if app.buttons.matching(NSPredicate(format: "label ==[c] %@", "Got it")).firstMatch.exists {
+            dismissSheet()
+        }
+
         // Home with the next appointment.
         tab("Home").tap()
         waitForContent()
@@ -172,8 +178,7 @@ final class AppStoreScreenshotTests: XCTestCase {
             requestsButton.tap()
             waitForContent()
             takeScreenshot("client", "requests")
-            app.swipeDown(velocity: .fast)
-            waitForContent(seconds: 1)
+            dismissSheet()
         }
 
         // Completed trainings and the details of the latest one.
@@ -271,6 +276,11 @@ final class AppStoreScreenshotTests: XCTestCase {
             if element.exists && element.isHittable { break }
             app.swipeUp()
         }
+        // The whole card on screen, not just its top above the tab bar.
+        let screenHeight = app.windows.firstMatch.frame.height
+        if element.exists && element.frame.maxY > screenHeight - 120 {
+            app.swipeUp(velocity: .slow)
+        }
         waitForContent(seconds: 1)
     }
 
@@ -280,8 +290,23 @@ final class AppStoreScreenshotTests: XCTestCase {
         waitForContent(seconds: 1)
     }
 
+    /// Closes the sheet on top: with its button when it has one, otherwise
+    /// by tapping beside it (iPad) or dragging its grabber down (iPhone).
     private func dismissSheet() {
-        app.swipeDown(velocity: .fast)
+        for title in ["Got it", "Close", "Done"] {
+            let button = app.buttons.matching(NSPredicate(format: "label ==[c] %@", title)).firstMatch
+            if button.exists && button.isHittable {
+                button.tap()
+                waitForContent(seconds: 1)
+                return
+            }
+        }
+        if app.windows.firstMatch.frame.width > 700 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.5)).tap()
+        } else {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.065))
+                .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+        }
         waitForContent(seconds: 1)
     }
 
