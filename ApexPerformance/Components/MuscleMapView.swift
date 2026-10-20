@@ -24,52 +24,50 @@ enum MuscleRole {
 }
 
 /// Front and back of a body with the muscles a workout works highlighted:
-/// primary ones in the app's main color, secondary ones lighter.
+/// primary ones in the app's main color, secondary ones lighter. The body
+/// is a picture; the muscles are colored over it keeping its shading.
 struct MuscleMapView: View {
     let primary: [String]
     var secondary: [String] = []
 
-    private static let silhouette = BodyMapPaths.silhouette.map(SVGPath.parse)
-    private static let details = BodyMapPaths.details.map(SVGPath.parse)
-    private static let shapes = BodyMapPaths.muscles.map { (code: $0.code, paths: $0.paths.map(SVGPath.parse)) }
+    private static let shapes = BodyMapPaths.muscles.map {
+        (code: $0.code, path: $0.paths.map(SVGPath.parse).reduce(into: Path()) { $0.addPath($1) })
+    }
 
-    static let secondaryOpacity = 0.4
+    static let secondaryOpacity = 0.45
 
     var body: some View {
         Canvas { context, size in
             let scale = min(size.width / BodyMapPaths.size.width, size.height / BodyMapPaths.size.height)
-            let offsetX = (size.width - BodyMapPaths.size.width * scale) / 2
-            context.translateBy(x: offsetX, y: 0)
-            context.scaleBy(x: scale, y: scale)
+            let width = BodyMapPaths.size.width * scale
+            let height = BodyMapPaths.size.height * scale
+            context.translateBy(x: (size.width - width) / 2, y: 0)
 
-            let outline = Self.silhouette.reduce(into: Path()) { $0.addPath($1) }
-            let line = StrokeStyle(lineWidth: 0.3, lineJoin: .round)
+            let picture = context.resolve(Image("body-map").resizable())
+            let frame = CGRect(x: 0, y: 0, width: width, height: height)
+            context.draw(picture, in: frame)
 
-            context.fill(outline, with: .color(Color.primary.opacity(0.08)))
-
-            // Muscles reach over the body's edge, the outline cuts them.
-            var muscles = context
-            muscles.clip(to: outline)
-            for path in Self.details {
-                muscles.fill(path, with: .color(Color.primary.opacity(0.13)))
-                muscles.stroke(path, with: .color(Color.primary.opacity(0.25)), style: line)
-            }
             for shape in Self.shapes {
-                let fill: Color = if primary.contains(shape.code) {
-                    Color.apexMainColor
+                let opacity: Double
+                if primary.contains(shape.code) {
+                    opacity = 1
                 } else if secondary.contains(shape.code) {
-                    Color.apexMainColor.opacity(Self.secondaryOpacity)
+                    opacity = Self.secondaryOpacity
                 } else {
-                    Color.primary.opacity(0.17)
+                    continue
                 }
-                for path in shape.paths {
-                    muscles.fill(path, with: .color(fill))
-                    muscles.stroke(path, with: .color(Color.primary.opacity(0.3)), style: line)
+                let path = shape.path.applying(CGAffineTransform(scaleX: scale, y: scale))
+                // Secondary muscles are the same layer, more transparent.
+                var muscle = context
+                muscle.opacity = opacity
+                muscle.drawLayer { layer in
+                    layer.clip(to: path)
+                    layer.fill(path, with: .color(Color.apexMainColor))
+                    // The picture's shading over the color.
+                    layer.blendMode = .overlay
+                    layer.draw(picture, in: frame)
                 }
             }
-
-            context.stroke(outline, with: .color(Color.primary.opacity(0.55)),
-                           style: StrokeStyle(lineWidth: 0.5, lineJoin: .round))
         }
         .aspectRatio(BodyMapPaths.size.width / BodyMapPaths.size.height, contentMode: .fit)
         .accessibilityElement()
