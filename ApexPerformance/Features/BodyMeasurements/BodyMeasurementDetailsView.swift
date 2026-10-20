@@ -10,6 +10,7 @@ struct BodyMeasurementDetailsView: View {
 
     @State private var form: BodyMeasurement
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var isDeleting = false
     @State private var showDeleteDialog = false
 
@@ -20,6 +21,26 @@ struct BodyMeasurementDetailsView: View {
         self._form = State(initialValue: bodyMeasurement)
     }
     
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        isEditable && [
+            form.height != bodyMeasurement.height, form.weight != bodyMeasurement.weight,
+            form.shoulders != bodyMeasurement.shoulders, form.chest != bodyMeasurement.chest,
+            form.upperArm != bodyMeasurement.upperArm, form.waist != bodyMeasurement.waist,
+            form.thigh != bodyMeasurement.thigh, form.calves != bodyMeasurement.calves,
+            form.glutes != bodyMeasurement.glutes
+        ].contains(true)
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -80,6 +101,9 @@ struct BodyMeasurementDetailsView: View {
             .padding(.bottom, 24)
         }
         .background(Color.apexBackground)
+        .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+            dismiss()
+        }
         .navigationTitle("measurements")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -94,7 +118,7 @@ struct BodyMeasurementDetailsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    dismiss()
+                    requestClose()
                 } label: {
                     Image(systemName: "chevron.backward")
                         .foregroundStyle(Color.apexMainColor)

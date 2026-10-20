@@ -6,10 +6,25 @@ struct ChangeUsernameView: View {
 
     @State private var newUsername: String = ""
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var errorMessage: String?
     
     var onSuccess: (() -> Void)? = nil
     
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        !newUsername.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -21,6 +36,9 @@ struct ChangeUsernameView: View {
                     Text(errorMessage)
                         .foregroundColor(.red)
                 }
+            }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
             }
             .navigationTitle("change_username")
             .navigationBarTitleDisplayMode(.inline)
@@ -42,7 +60,7 @@ struct ChangeUsernameView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button{
-                        dismiss()
+                        requestClose()
                     } label : {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)

@@ -347,12 +347,27 @@ struct AssignTrainingTemplateView: View {
     @State private var searchText = ""
     @State private var isLoading = false
     @State private var isAssigning = false
+    @State private var isConfirmingDiscard = false
 
     private var filteredClients: [Client] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         let sorted = clients.sorted { $0.fullName.localizedStandardCompare($1.fullName) == .orderedAscending }
         guard !query.isEmpty else { return sorted }
         return sorted.filter { $0.fullName.localizedStandardContains(query) }
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        !selectedClients.isEmpty
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -402,12 +417,15 @@ struct AssignTrainingTemplateView: View {
                     ProgressView()
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
             .navigationTitle("assign_to_clients")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label: {
                         Image(systemName: "xmark")
                             .foregroundStyle(Color.apexMainColor)

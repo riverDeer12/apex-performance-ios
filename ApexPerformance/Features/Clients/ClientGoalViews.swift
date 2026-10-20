@@ -66,10 +66,15 @@ struct ClientGoalFormView: View {
     @State private var nextAssessmentDate: Date
     @State private var notifyClient = true
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
+
+    // Saved goal, to tell unsaved changes.
+    private let savedGoal: ClientGoal
 
     init(clientId: UUID, goal: ClientGoal, onSaved: ((ClientGoal) -> Void)? = nil) {
         self.clientId = clientId
         self.onSaved = onSaved
+        savedGoal = goal
         _goal = State(initialValue: goal.goal ?? "")
         _currentBlock = State(initialValue: goal.currentBlock ?? "")
         _focus = State(initialValue: goal.focus ?? "")
@@ -80,6 +85,25 @@ struct ClientGoalFormView: View {
 
     private var isValid: Bool {
         goal.count <= 1000 && currentBlock.count <= 1000 && focus.count <= 1000 && nextAssessment.count <= 500
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        goal != (savedGoal.goal ?? "") || currentBlock != (savedGoal.currentBlock ?? "")
+            || focus != (savedGoal.focus ?? "") || nextAssessment != (savedGoal.nextAssessment ?? "")
+            || hasNextAssessmentDate != (savedGoal.nextAssessmentDate != nil)
+            || (hasNextAssessmentDate && savedGoal.nextAssessmentDate.map {
+                !Calendar.current.isDate($0, inSameDayAs: nextAssessmentDate)
+            } ?? false)
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -110,6 +134,9 @@ struct ClientGoalFormView: View {
                     NotifyClientToggle(isOn: $notifyClient)
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
             .navigationTitle("goal_and_plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -128,7 +155,7 @@ struct ClientGoalFormView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)
@@ -292,6 +319,7 @@ struct MonthlyReviewFormView: View {
     // The client gets a push about a new review, about a correction only when asked.
     @State private var notifyClient: Bool
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var showDeleteDialog = false
 
     init(clientId: UUID, reviews: [MonthlyReview], review: MonthlyReview? = nil, onChanged: (() -> Void)? = nil) {
@@ -319,6 +347,20 @@ struct MonthlyReviewFormView: View {
     private var years: [Int] {
         let current = Calendar.current.component(.year, from: .now)
         return Array(Set([current - 1, current, current + 1, year])).sorted()
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        trimmedContent != (existingReview?.content ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -360,6 +402,9 @@ struct MonthlyReviewFormView: View {
                     }
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
             .navigationTitle("monthly_review")
             .navigationBarTitleDisplayMode(.inline)
             .onChange(of: month) { _, _ in loadExisting() }
@@ -380,7 +425,7 @@ struct MonthlyReviewFormView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)

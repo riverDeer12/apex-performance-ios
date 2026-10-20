@@ -22,6 +22,7 @@ struct EditProfileView: View {
 
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var isUpdatingPicture = false
     @State private var showRemovePictureDialog = false
 
@@ -44,6 +45,21 @@ struct EditProfileView: View {
         if profile.hasPersonalData && (trimmed(firstName).isEmpty || trimmed(lastName).isEmpty) { return false }
         if profile.hasPhone && trimmed(phone).isEmpty { return false }
         return true
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        firstName != (profile.firstName ?? "") || lastName != (profile.lastName ?? "")
+            || phone != (profile.phone ?? "") || email != profile.email
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -97,6 +113,9 @@ struct EditProfileView: View {
                         .autocorrectionDisabled()
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
             .navigationTitle("edit_profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -117,7 +136,7 @@ struct EditProfileView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)

@@ -22,6 +22,7 @@ struct CreateBodyMeasurementView: View {
     @State private var glutes: Decimal = 0
     @State private var notifyClient = true
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var errorMessage: String?
     
     init(client: Client, onSuccess: (() -> Void)? = nil, isPresented: Binding<Bool?> = .constant(nil)) {
@@ -30,6 +31,20 @@ struct CreateBodyMeasurementView: View {
         self._isPresented = isPresented
     }
     
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        [height, weight, shoulders, chest, upperArm, waist, thigh, calves, glutes].contains { $0 != 0 }
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
         ZStack {
             NavigationStack {
@@ -199,12 +214,15 @@ struct CreateBodyMeasurementView: View {
                     )
                     .padding([.horizontal, .top])
                 }
+                .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                    dismiss()
+                }
                 .navigationTitle("new_body_measurement")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button {
-                            dismiss()
+                            requestClose()
                         } label: {
                             Image(systemName: "chevron.backward")
                                 .foregroundStyle(Color.apexMainColor)

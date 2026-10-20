@@ -72,6 +72,7 @@
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
 		61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F612F0A7633004D74F3 /* BadgeView.swift */; };
+		1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */; };
 		B2F6999B202B98DB1C67B3EF /* NotifyClientToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */; };
 		61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F662F0A7D52004D74F3 /* UserProfile.swift */; };
 		61E63F692F0C357B004D74F3 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F682F0C357B004D74F3 /* ToastView.swift */; };
@@ -207,6 +208,7 @@
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
 		61E63F612F0A7633004D74F3 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsavedChangesGuard.swift; sourceTree = "<group>"; };
 		A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyClientToggle.swift; sourceTree = "<group>"; };
 		61E63F662F0A7D52004D74F3 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
@@ -423,6 +425,7 @@
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
 				61E63F612F0A7633004D74F3 /* BadgeView.swift */,
+				5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */,
 				A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */,
 				61E63F682F0C357B004D74F3 /* ToastView.swift */,
 				61E63F742F119D2C004D74F3 /* TextAreaView.swift */,
@@ -803,6 +806,7 @@
 				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
+				1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */,
 				B2F6999B202B98DB1C67B3EF /* NotifyClientToggle.swift in Sources */,
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,
 				ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */,
