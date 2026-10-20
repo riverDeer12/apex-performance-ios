@@ -30,6 +30,10 @@ struct ContentView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 authManager.checkSession()
+                // Notifications may have come while the app was in the background.
+                if authManager.isAuthenticated {
+                    Task { await NotificationInbox.shared.refreshCount() }
+                }
             }
         }
         .alert(
