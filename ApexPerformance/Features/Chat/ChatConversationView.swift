@@ -3,6 +3,7 @@
 //  ApexPerformance
 //
 
+import PhotosUI
 import SwiftUI
 
 /// Messages of one conversation with the field to write. New messages
@@ -25,6 +26,10 @@ struct ChatConversationView: View {
     @State private var showReport = false
     @State private var showBlockDialog = false
     @State private var reportReason = ""
+    // Picture picked to send (photos and GIFs), and the workout picker.
+    @State private var pickedPhoto: PhotosPickerItem?
+    @State private var showsPhotoPicker = false
+    @State private var showsWorkoutPicker = false
     // Message to keep in view: the newest after loading or sending,
     // the previously first one after loading older messages.
     @State private var scrollTarget: UUID?
@@ -186,22 +191,31 @@ struct ChatConversationView: View {
     private func bubble(_ message: ChatMessage) -> some View {
         let isOwn = message.senderUserId == store.userId
         return VStack(alignment: isOwn ? .trailing : .leading, spacing: 2) {
-            Group {
-                if let content = message.content {
-                    Text(verbatim: content)
-                } else {
-                    Text("chat_unreadable").italic()
-                }
+            if message.isImage, let attachment = message.attachment {
+                ChatImageBubble(attachment: attachment, conversationId: conversationId)
+            } else if message.isWorkout {
+                ChatWorkoutCard(workout: message.workout)
             }
-            .font(.subheadline)
-            .foregroundStyle(isOwn ? Color.apexOnAccent : Color.primary)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(isOwn ? Color.apexAccent : Color.apexCard)
-            )
-            .textSelection(.enabled)
+
+            // Text, or the caption of a picture or workout.
+            if !(message.isImage || message.isWorkout) || message.text != nil {
+                Group {
+                    if let content = message.content {
+                        Text(verbatim: content)
+                    } else {
+                        Text("chat_unreadable").italic()
+                    }
+                }
+                .font(.subheadline)
+                .foregroundStyle(isOwn ? Color.apexOnAccent : Color.primary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(isOwn ? Color.apexAccent : Color.apexCard)
+                )
+                .textSelection(.enabled)
+            }
 
             HStack(spacing: 4) {
                 Text(verbatim: message.createdAt.formatted(date: .omitted, time: .shortened))
@@ -236,6 +250,8 @@ struct ChatConversationView: View {
                 .background(Color.apexCard)
         } else {
             HStack(alignment: .bottom, spacing: 8) {
+                attachMenu
+
                 TextField("chat_placeholder", text: $draft, axis: .vertical)
                     .lineLimit(1...5)
                     .padding(.horizontal, 12)
@@ -264,7 +280,44 @@ struct ChatConversationView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(Color.apexBackground)
+            .photosPicker(isPresented: $showsPhotoPicker, selection: $pickedPhoto, matching: .images)
+            .onChange(of: pickedPhoto) {
+                guard let item = pickedPhoto else { return }
+                pickedPhoto = nil
+                Task { await sendPicture(item) }
+            }
+            .sheet(isPresented: $showsWorkoutPicker) {
+                ChatWorkoutPickerView { workout in
+                    Task { await shareWorkout(workout) }
+                }
+            }
         }
+    }
+
+    // Picture (photo or GIF) for everyone, a workout for coaches.
+    private var attachMenu: some View {
+        Menu {
+            Button {
+                showsPhotoPicker = true
+            } label: {
+                Label("chat_photo_or_gif", systemImage: "photo")
+            }
+            if isCoach {
+                Button {
+                    showsWorkoutPicker = true
+                } label: {
+                    Label("chat_share_workout", systemImage: "dumbbell")
+                }
+            }
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(Color.apexMainColor)
+                .frame(width: 38, height: 38)
+                .background(Circle().fill(Color.apexCard))
+        }
+        .disabled(isSending)
+        .accessibilityLabel(Text("chat_attach"))
     }
 
     // MARK: - Live events
@@ -364,6 +417,41 @@ struct ChatConversationView: View {
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
             // The coach may have just turned the chat off: show it read only.
+            await store.refresh()
+        }
+    }
+
+    @MainActor
+    private func sendPicture(_ item: PhotosPickerItem) async {
+        isSending = true
+        defer { isSending = false }
+
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self) else { return }
+            guard let upload = ChatImageUpload.prepare(data) else {
+                toastManager.show("chat_picture_not_supported", type: .error)
+                return
+            }
+            let message = try await ChatAPI.sendImage(upload, conversationId: conversationId)
+            append(message)
+            store.didSend(message)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+            await store.refresh()
+        }
+    }
+
+    @MainActor
+    private func shareWorkout(_ workout: Workout) async {
+        isSending = true
+        defer { isSending = false }
+
+        do {
+            let message = try await ChatAPI.send("", conversationId: conversationId, workoutId: workout.id)
+            append(message)
+            store.didSend(message)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
             await store.refresh()
         }
     }

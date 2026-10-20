@@ -22,6 +22,30 @@ struct ChatMessage: Identifiable, Decodable, Hashable {
     let createdAt: Date
     // When the other participant read it.
     var readAt: Date?
+    // "text", "image" or "workout"; nil from an API without pictures.
+    var type: String? = nil
+    var attachment: ChatAttachment? = nil
+    // Workout a coach shared; nil when it was deleted.
+    var workout: Workout? = nil
+
+    var isImage: Bool { type == "image" && attachment != nil }
+    var isWorkout: Bool { type == "workout" }
+
+    /// Caption or text, nil when empty.
+    var text: String? {
+        guard let content, !content.isEmpty else { return nil }
+        return content
+    }
+}
+
+/// Picture of an image message, loaded from the API with the login token.
+struct ChatAttachment: Decodable, Hashable {
+    let id: UUID
+    let contentType: String
+    let width: Int?
+    let height: Int?
+
+    var isGIF: Bool { contentType == "image/gif" }
 }
 
 struct ChatConversation: Identifiable, Decodable, Hashable {
@@ -146,12 +170,48 @@ enum ChatAPI {
     }
 
     @MainActor
-    static func send(_ content: String, conversationId: UUID) async throws -> ChatMessage {
-        struct Request: Encodable { let content: String }
+    static func send(_ content: String, conversationId: UUID, workoutId: UUID? = nil) async throws -> ChatMessage {
+        struct Request: Encodable {
+            let content: String
+            let workoutId: UUID?
+        }
         return try await APIClient.shared.request(
             conversationURL(conversationId).appendingPathComponent("messages"),
             method: .post,
-            body: JSONEncoder().encode(Request(content: content))
+            body: JSONEncoder().encode(Request(content: content, workoutId: workoutId))
+        )
+    }
+
+    /// Sends one picture (JPEG or GIF) as a message.
+    @MainActor
+    static func sendImage(_ image: ChatImageUpload, conversationId: UUID) async throws -> ChatMessage {
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var body = Data()
+        func field(_ name: String, _ value: String) {
+            body.append(Data("--\(boundary)\r\nContent-Disposition: form-data; name=\"\(name)\"\r\n\r\n\(value)\r\n".utf8))
+        }
+        field("width", String(image.width))
+        field("height", String(image.height))
+        body.append(Data("--\(boundary)\r\n".utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"file\"; filename=\"\(image.fileName)\"\r\n".utf8))
+        body.append(Data("Content-Type: \(image.contentType)\r\n\r\n".utf8))
+        body.append(image.data)
+        body.append(Data("\r\n--\(boundary)--\r\n".utf8))
+
+        let data = try await APIClient.shared.requestData(
+            conversationURL(conversationId).appendingPathComponent("images"),
+            method: .post,
+            body: body,
+            headers: ["Content-Type": "multipart/form-data; boundary=\(boundary)"]
+        )
+        return try APIClient.decoder.decode(ChatMessage.self, from: data)
+    }
+
+    /// Bytes of an image message's picture.
+    @MainActor
+    static func attachment(_ id: UUID, conversationId: UUID) async throws -> Data {
+        try await APIClient.shared.requestData(
+            conversationURL(conversationId).appendingPathComponent("attachments").appendingPathComponent(id.uuidString)
         )
     }
 
