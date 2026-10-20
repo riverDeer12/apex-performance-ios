@@ -598,22 +598,42 @@ struct TrainingExerciseCards: View {
                         .padding(.bottom, 6)
                 }
 
-                Text(verbatim: "\(label) \(exercise.workoutName.localized)")
-                    .font(.system(size: 15, weight: .bold))
-                    .tracking(1)
-                    .textCase(.uppercase)
-                    .padding(.bottom, 10)
+                // Opens the workout with its description, video and muscles.
+                NavigationLink {
+                    TrainingWorkoutView(workoutId: exercise.workoutId, name: exercise.workoutName)
+                } label: {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(verbatim: "\(label) \(exercise.workoutName.localized)")
+                            .font(.system(size: 15, weight: .bold))
+                            .tracking(1)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.primary)
+                            .multilineTextAlignment(.leading)
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .padding(.bottom, 10)
 
                 let sets = exercise.sets.sorted { $0.order < $1.order }
+                let numbers = sets.setNumbers
                 if !sets.isEmpty {
                     setRow(Text("set"), Text("reps"), Text("kg"), isHeader: true)
                 }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
+                    let number = numbers[index]
                     Divider().overlay(Color.apexBorder)
                     setRow(
-                        Text(verbatim: "\(index + 1)"),
+                        number.map { Text(verbatim: "\($0)") }
+                            // Drop set of the set above, done right after it.
+                            ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set"))"),
                         Text(verbatim: set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
-                        Text(verbatim: set.weight.map(Self.formatWeight) ?? "—")
+                        Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
+                        isDropSet: number == nil
                     )
                 }
 
@@ -629,9 +649,14 @@ struct TrainingExerciseCards: View {
     }
 
     /// Row of the sets table: set number, repetitions and weight.
-    private func setRow(_ set: Text, _ reps: Text, _ weight: Text, isHeader: Bool = false) -> some View {
+    private func setRow(_ set: Text, _ reps: Text, _ weight: Text, isHeader: Bool = false,
+                        isDropSet: Bool = false) -> some View {
         HStack {
-            set.frame(width: 56, alignment: .leading)
+            (isDropSet ? set.font(.caption.weight(.semibold)).foregroundStyle(Color.apexMainColor) : set)
+                .lineLimit(1)
+                .fixedSize()
+                .padding(.leading, isDropSet ? 8 : 0)
+                .frame(width: 64, alignment: .leading)
             reps.frame(maxWidth: .infinity, alignment: .leading)
             weight.frame(width: 64, alignment: .trailing)
         }
@@ -649,6 +674,41 @@ struct TrainingExerciseCards: View {
 
 private extension String {
     var nilIfEmpty: String? { isEmpty ? nil : self }
+}
+
+/// Workout of an exercise in a training, loaded by its id.
+struct TrainingWorkoutView: View {
+    let workoutId: UUID
+    let name: LocalizedText
+
+    @State private var workout: Workout?
+    @State private var isFailed = false
+
+    var body: some View {
+        Group {
+            if let workout {
+                WorkoutDetailView(workout: workout, canEdit: false, onSaved: { _ in })
+            } else if isFailed {
+                ContentUnavailableView("workout_not_available", systemImage: "dumbbell")
+                    .navigationTitle(Text(verbatim: name.localized))
+                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.apexBackground)
+                    .navigationTitle(Text(verbatim: name.localized))
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+        .task {
+            guard workout == nil else { return }
+            do {
+                workout = try await Workout.load(id: workoutId)
+            } catch {
+                isFailed = true
+            }
+        }
+    }
 }
 
 #Preview {

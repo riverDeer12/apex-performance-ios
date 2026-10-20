@@ -22,7 +22,7 @@ struct WorkoutEditView: View {
     @State private var videoUrl: String
     @State private var thumbnailUrl: String
     @State private var selectedWorkoutTypeIds: Set<UUID>
-    @State private var muscles: Set<String>
+    @State private var muscles: [String: MuscleRole]
 
     @State private var workoutTypes: [WorkoutType] = []
     @State private var isSaving = false
@@ -46,7 +46,7 @@ struct WorkoutEditView: View {
         _videoUrl = State(initialValue: workout?.videoUrl ?? "")
         _thumbnailUrl = State(initialValue: workout?.thumbnailUrl ?? "")
         _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
-        _muscles = State(initialValue: Set(workout?.muscles ?? []))
+        _muscles = State(initialValue: Self.roles(of: workout))
     }
 
     private var isNew: Bool {
@@ -75,7 +75,19 @@ struct WorkoutEditView: View {
             || descriptionEn != (workout?.description.value(for: "EN") ?? "")
             || videoUrl != (workout?.videoUrl ?? "") || thumbnailUrl != (workout?.thumbnailUrl ?? "")
             || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
-            || muscles != Set(workout?.muscles ?? [])
+            || muscles != Self.roles(of: workout)
+    }
+
+    private static func roles(of workout: Workout?) -> [String: MuscleRole] {
+        var roles: [String: MuscleRole] = [:]
+        for muscle in workout?.secondaryMuscles ?? [] { roles[muscle] = .secondary }
+        for muscle in workout?.muscles ?? [] { roles[muscle] = .primary }
+        return roles
+    }
+
+    // In the API's order, which the body map also uses.
+    private func selectedMuscles(_ role: MuscleRole) -> [String] {
+        WorkoutMuscle.all.filter { muscles[$0] == role }
     }
 
     // Closes the form, asking first when there are unsaved changes.
@@ -127,28 +139,20 @@ struct WorkoutEditView: View {
             }
 
             Section {
-                MuscleMapView(muscles: Array(muscles))
-                    .frame(height: 200)
+                MuscleMapView(primary: selectedMuscles(.primary), secondary: selectedMuscles(.secondary))
+                    .frame(height: 220)
                     .frame(maxWidth: .infinity)
                     .listRowBackground(Color.clear)
                 ForEach(WorkoutMuscle.all, id: \.self) { muscle in
-                    Button {
-                        if muscles.contains(muscle) {
-                            muscles.remove(muscle)
-                        } else {
-                            muscles.insert(muscle)
-                        }
+                    Picker(selection: $muscles[muscle]) {
+                        Text("muscle_not_worked").tag(MuscleRole?.none)
+                        Text("primary_muscle").tag(MuscleRole?.some(.primary))
+                        Text("secondary_muscle").tag(MuscleRole?.some(.secondary))
                     } label: {
-                        HStack {
-                            Text(WorkoutMuscle.name(muscle))
-                                .foregroundStyle(Color.primary)
-                            Spacer()
-                            if muscles.contains(muscle) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(Color.apexMainColor)
-                            }
-                        }
+                        Text(WorkoutMuscle.name(muscle))
                     }
+                    .pickerStyle(.menu)
+                    .tint(muscles[muscle] == nil ? Color.secondary : Color.apexMainColor)
                 }
             } header: {
                 Text("worked_muscles")
@@ -260,8 +264,8 @@ struct WorkoutEditView: View {
             thumbnailUrl: thumbnailUrl.trimmingCharacters(in: .whitespaces),
             videoUrl: videoUrl.trimmingCharacters(in: .whitespaces),
             workoutTypes: Array(selectedWorkoutTypeIds),
-            // In the API's order, which the body map also uses.
-            muscles: isNew && muscles.isEmpty ? nil : WorkoutMuscle.all.filter(muscles.contains)
+            muscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.primary),
+            secondaryMuscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.secondary)
         )
 
         do {
