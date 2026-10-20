@@ -161,6 +161,7 @@ struct HomeView: View {
         }
         .onDisappear {
             chatStore.stop()
+            NotificationInbox.shared.reset()
         }
         .tint(.apexAccent)
         .onAppear {

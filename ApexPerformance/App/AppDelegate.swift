@@ -78,6 +78,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             return
         }
 
+        // The bell shows the new notification too.
+        Task { @MainActor in await NotificationInbox.shared.refreshCount() }
+
         // Show notification even when app is in foreground
         completionHandler([[.banner, .sound, .badge]])
     }

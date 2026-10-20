@@ -59,6 +59,9 @@ struct ClientHomeView: View {
                 ToolbarItem(placement: .principal) {
                     ApexTitleBar(subtitle: ClientPlan.title(for: client?.plan))
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NotificationBellButton()
+                }
             }
             .navigationDestination(isPresented: $showCreateAppointment) {
                 CreateAppointmentView()

@@ -163,6 +163,12 @@ struct AppointmentsView: View {
             .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                // Clients have the bell on home.
+                ToolbarItem(placement: .topBarLeading) {
+                    if !isClient {
+                        NotificationBellButton()
+                    }
+                }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     
                     if showsRequestsButton {
