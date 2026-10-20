@@ -52,27 +52,24 @@ final class AppStoreScreenshotTests: XCTestCase {
         app.launch()
         try logIn(role: "COACH")
 
-        let tabs = try tabButtons()
-        let tabCount = tabs.count
-
-        // Coach tabs: appointments, appointment requests (with permission),
-        // workouts, clients, profile. Tabs have no titles, so they are
-        // found by position from the end.
-        XCTAssertGreaterThanOrEqual(tabCount, 4, "Expected coach tabs")
+        try waitForTabs()
+        XCTAssertTrue(tab("Clients").exists, "Not a coach account (no Clients tab)")
 
         // Appointments calendar with requests above it.
-        tabs.element(boundBy: 0).tap()
-        waitForContent()
-        takeScreenshot("coach", "appointments")
+        if tab("Appointments").exists {
+            tab("Appointments").tap()
+            waitForContent()
+            takeScreenshot("coach", "appointments")
+        }
 
-        if tabCount >= 5 {
-            tabs.element(boundBy: 1).tap()
+        if tab("Requests").exists {
+            tab("Requests").tap()
             waitForContent()
             takeScreenshot("coach", "appointment-requests")
         }
 
         // Workouts library.
-        tabs.element(boundBy: tabCount - 3).tap()
+        tab("Workouts").tap()
         waitForContent()
         takeScreenshot("coach", "workouts")
 
@@ -90,7 +87,7 @@ final class AppStoreScreenshotTests: XCTestCase {
         openChat(role: "coach")
 
         // Clients list.
-        tabs.element(boundBy: tabCount - 2).tap()
+        tab("Clients").tap()
         let clientRow = app.buttons["client-row"].firstMatch
         XCTAssertTrue(clientRow.waitForExistence(timeout: 15), "Coach has no clients to show")
         waitForContent()
@@ -110,7 +107,7 @@ final class AppStoreScreenshotTests: XCTestCase {
         takeScreenshot("coach", "client-measurements-fms")
 
         // Profile.
-        tabs.element(boundBy: tabCount - 1).tap()
+        tab("Profile").tap()
         waitForContent()
         takeScreenshot("coach", "profile")
     }
@@ -119,15 +116,11 @@ final class AppStoreScreenshotTests: XCTestCase {
         app.launch()
         try logIn(role: "CLIENT")
 
-        let tabs = try tabButtons()
-        let tabCount = tabs.count
-
-        // Client tabs: home, appointments (or requests without the
-        // permission), trainings, profile.
-        XCTAssertGreaterThanOrEqual(tabCount, 4, "Expected client tabs")
+        try waitForTabs()
+        XCTAssertTrue(tab("Home").exists, "Not a client account (no Home tab)")
 
         // Home with the next appointment.
-        tabs.element(boundBy: 0).tap()
+        tab("Home").tap()
         waitForContent()
         takeScreenshot("client", "home")
 
@@ -160,7 +153,7 @@ final class AppStoreScreenshotTests: XCTestCase {
         }
 
         // Package with booked appointments.
-        tabs.element(boundBy: 0).tap()
+        tab("Home").tap()
         let packageCard = app.buttons["package-card"].firstMatch
         if packageCard.waitForExistence(timeout: 5) {
             packageCard.tap()
@@ -168,8 +161,8 @@ final class AppStoreScreenshotTests: XCTestCase {
             takeScreenshot("client", "package")
         }
 
-        // Appointments with booking.
-        tabs.element(boundBy: 1).tap()
+        // Appointments with booking (requests without the permission).
+        (tab("Appointments").exists ? tab("Appointments") : tab("Requests")).tap()
         waitForContent()
         takeScreenshot("client", "appointments")
 
@@ -184,7 +177,7 @@ final class AppStoreScreenshotTests: XCTestCase {
         }
 
         // Completed trainings and the details of the latest one.
-        tabs.element(boundBy: tabCount - 2).tap()
+        tab("Trainings").tap()
         waitForContent()
         takeScreenshot("client", "trainings")
 
@@ -211,7 +204,7 @@ final class AppStoreScreenshotTests: XCTestCase {
         openChat(role: "client")
 
         // Profile with credits.
-        tabs.element(boundBy: tabCount - 1).tap()
+        tab("Profile").tap()
         waitForContent()
         takeScreenshot("client", "profile")
     }
@@ -292,10 +285,16 @@ final class AppStoreScreenshotTests: XCTestCase {
         waitForContent(seconds: 1)
     }
 
-    private func tabButtons() throws -> XCUIElementQuery {
-        let tabBar = app.tabBars.firstMatch
-        XCTAssertTrue(tabBar.waitForExistence(timeout: 15), "Tab bar not shown, is the login correct?")
-        return tabBar.buttons
+    /// Tab by its English title. iPhones show the tabs at the bottom,
+    /// iPads at the top where they aren't a tab bar for the tests.
+    private func tab(_ title: String) -> XCUIElement {
+        let inTabBar = app.tabBars.buttons[title]
+        if inTabBar.exists { return inTabBar }
+        return app.buttons.matching(NSPredicate(format: "label == %@", title)).firstMatch
+    }
+
+    private func waitForTabs() throws {
+        XCTAssertTrue(tab("Profile").waitForExistence(timeout: 20), "Tabs not shown, is the login correct?")
     }
 
     /// Gives the API time to answer and images time to load.
