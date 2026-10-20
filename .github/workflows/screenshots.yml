@@ -43,6 +43,8 @@ jobs:
 
           mkdir -p screenshots
           status=0
+          # Signed to run locally ("-"), not unsigned: the app keeps the
+          # login token in the keychain, which needs a signed app.
           for udid in "$iphone" "$ipad"; do
             [ "$udid" = "null" ] && continue
             name=$(xcrun simctl list devices -j | jq -r --arg u "$udid" '.devices[][] | select(.udid == $u) | .name')
@@ -57,7 +59,8 @@ jobs:
               -destination "platform=iOS Simulator,id=$udid" \
               -only-testing:ApexPerformanceUITests/AppStoreScreenshotTests \
               -parallel-testing-enabled NO \
-              CODE_SIGNING_ALLOWED=NO > "test-$udid.log" 2>&1
+              CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
+              PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE= > "test-$udid.log" 2>&1
             result=$?
             grep -E "Test Case|error:|XCTSkip|skipped" "test-$udid.log" || true
             set -e
