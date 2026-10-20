@@ -62,7 +62,8 @@ struct MuscleMapView: View {
                 muscle.opacity = opacity
                 muscle.drawLayer { layer in
                     layer.clip(to: path)
-                    layer.fill(path, with: .color(Color.apexMainColor))
+                    // The main color is white in dark mode, the muscles stay blue.
+                    layer.fill(path, with: .color(Color.apexMainBlue))
                     // The picture's shading over the color.
                     layer.blendMode = .overlay
                     layer.draw(picture, in: frame)
@@ -83,11 +84,11 @@ struct MuscleLegendView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if !primary.isEmpty {
-                row(title: "primary_muscles", muscles: primary, color: Color.apexMainColor)
+                row(title: "primary_muscles", muscles: primary, color: Color.apexMainBlue)
             }
             if !secondary.isEmpty {
                 row(title: "secondary_muscles", muscles: secondary,
-                    color: Color.apexMainColor.opacity(MuscleMapView.secondaryOpacity))
+                    color: Color.apexMainBlue.opacity(MuscleMapView.secondaryOpacity))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
