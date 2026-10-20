@@ -34,6 +34,10 @@ enum AppUpdateChecker {
     /// Newer App Store version than the installed one, or nil when the
     /// app is up to date or the store can't be reached.
     static func availableUpdate() async -> AvailableUpdate? {
+        // UI tests (App Store screenshots) run a Debug build with an
+        // older version; the update alert would cover the screens.
+        if ProcessInfo.processInfo.arguments.contains("-uiTestResetLogin") { return nil }
+
         guard let bundleId = Bundle.main.bundleIdentifier,
               let installedVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         else { return nil }

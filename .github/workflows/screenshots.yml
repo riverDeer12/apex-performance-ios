@@ -56,18 +56,23 @@ jobs:
               -scheme ApexPerformance \
               -destination "platform=iOS Simulator,id=$udid" \
               -only-testing:ApexPerformanceUITests/AppStoreScreenshotTests \
+              -parallel-testing-enabled NO \
               CODE_SIGNING_ALLOWED=NO 2>&1 | tee "test-$udid.log" | grep -E "Test Case|error:|XCTSkip|skipped" || true
             result=${PIPESTATUS[0]}
             set -e
             if [ "$result" != "0" ]; then
               status=1
-              grep -E "error:|failed|XCTAssert" "test-$udid.log" | tail -10 | sed "s/^/::error::$name: /" || true
+              # One annotation per device, GitHub keeps only ten per step.
+              lines=$(grep -E ": error: |XCTSkip|Skipped|skipped" "test-$udid.log" | sed 's/^.*: error: //' | sort -u | head -15)
+              echo "::error::$name failed:%0A$(echo "$lines" | awk 'BEGIN { ORS = "%0A" } 1')"
             fi
             # The test writes to ~/Desktop/ApexScreenshots/<device> on the Mac.
-            if [ -d "$HOME/Desktop/ApexScreenshots/$name" ]; then
+            for dir in "$HOME/Desktop/ApexScreenshots"/*; do
+              [ -d "$dir" ] || continue
               mkdir -p "screenshots/$name"
-              cp "$HOME/Desktop/ApexScreenshots/$name"/*.png "screenshots/$name/" || true
-            fi
+              cp "$dir"/*.png "screenshots/$name/" 2>/dev/null || true
+              rm -rf "$dir"
+            done
           done
           ls -R screenshots
           echo "status=$status" >> "$GITHUB_ENV"

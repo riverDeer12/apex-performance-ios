@@ -227,6 +227,7 @@ final class AppStoreScreenshotTests: XCTestCase {
             throw XCTSkip("Set APEX_SCREENSHOT_\(role)_USERNAME and APEX_SCREENSHOT_\(role)_PASSWORD in the scheme's Test environment variables.")
         }
 
+        allowSystemAlerts()
         let usernameField = app.textFields["login-username"]
         XCTAssertTrue(usernameField.waitForExistence(timeout: 10), "Login screen not shown")
         usernameField.tap()
@@ -237,6 +238,16 @@ final class AppStoreScreenshotTests: XCTestCase {
         passwordField.typeText(password)
 
         app.buttons["login-button"].tap()
+        allowSystemAlerts()
+    }
+
+    /// Answers the notification permission alert, which covers the app.
+    private func allowSystemAlerts() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        for label in ["Allow", "OK"] {
+            let button = springboard.buttons[label]
+            if button.waitForExistence(timeout: 3) { button.tap() }
+        }
     }
 
     /// Opens the first conversation from the chat button and closes the chat after.
