@@ -76,6 +76,19 @@ final class AppStoreScreenshotTests: XCTestCase {
         waitForContent()
         takeScreenshot("coach", "workouts")
 
+        // A workout with the muscles it works.
+        let workoutRow = app.buttons["workout-row"].firstMatch
+        if workoutRow.waitForExistence(timeout: 5) {
+            workoutRow.tap()
+            waitForContent()
+            scrollTo(app.otherElements["muscle-map-card"].firstMatch)
+            takeScreenshot("coach", "workout-muscles")
+            goBack()
+        }
+
+        // Chat with a client: pictures and shared workouts.
+        openChat(role: "coach")
+
         // Clients list.
         tabs.element(boundBy: tabCount - 2).tap()
         let clientRow = app.buttons["client-row"].firstMatch
@@ -117,6 +130,15 @@ final class AppStoreScreenshotTests: XCTestCase {
         tabs.element(boundBy: 0).tap()
         waitForContent()
         takeScreenshot("client", "home")
+
+        // Notifications behind the bell.
+        let bell = app.buttons["notifications-bell"].firstMatch
+        if bell.waitForExistence(timeout: 5) {
+            bell.tap()
+            waitForContent()
+            takeScreenshot("client", "notifications")
+            dismissSheet()
+        }
 
         // Progress: body mass and circumferences, then training charts.
         let progressTile = app.buttons["progress-tile"].firstMatch
@@ -171,7 +193,22 @@ final class AppStoreScreenshotTests: XCTestCase {
             trainingRow.tap()
             waitForContent()
             takeScreenshot("client", "training-details")
+
+            // An exercise of the training opens its workout and muscles.
+            let exercise = app.buttons["exercise-link"].firstMatch
+            if exercise.waitForExistence(timeout: 5) {
+                exercise.tap()
+                waitForContent()
+                takeScreenshot("client", "workout")
+                scrollTo(app.otherElements["muscle-map-card"].firstMatch)
+                takeScreenshot("client", "workout-muscles")
+                goBack()
+            }
+            goBack()
         }
+
+        // Chat with the coach: pictures and shared workouts.
+        openChat(role: "client")
 
         // Profile with credits.
         tabs.element(boundBy: tabCount - 1).tap()
@@ -200,6 +237,48 @@ final class AppStoreScreenshotTests: XCTestCase {
         passwordField.typeText(password)
 
         app.buttons["login-button"].tap()
+    }
+
+    /// Opens the first conversation from the chat button and closes the chat after.
+    private func openChat(role: String) {
+        let chatButton = app.buttons["chat-button"].firstMatch
+        guard chatButton.waitForExistence(timeout: 5) else { return }
+        chatButton.tap()
+        let row = app.buttons["chat-row"].firstMatch
+        if row.waitForExistence(timeout: 10) {
+            row.tap()
+            // Pictures load after the messages.
+            waitForContent(seconds: 5)
+            takeScreenshot(role, "chat")
+            goBack()
+        }
+        let close = app.buttons["chat-close"].firstMatch
+        if close.waitForExistence(timeout: 3) {
+            close.tap()
+        } else {
+            dismissSheet()
+        }
+        waitForContent(seconds: 1)
+    }
+
+    /// Scrolls up until the element is on screen, a few times at most.
+    private func scrollTo(_ element: XCUIElement) {
+        for _ in 0..<5 {
+            if element.exists && element.isHittable { break }
+            app.swipeUp()
+        }
+        waitForContent(seconds: 1)
+    }
+
+    private func goBack() {
+        let back = app.navigationBars.buttons.element(boundBy: 0)
+        if back.exists { back.tap() }
+        waitForContent(seconds: 1)
+    }
+
+    private func dismissSheet() {
+        app.swipeDown(velocity: .fast)
+        waitForContent(seconds: 1)
     }
 
     private func tabButtons() throws -> XCUIElementQuery {

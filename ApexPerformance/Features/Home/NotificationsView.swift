@@ -113,6 +113,7 @@ struct NotificationBellButton: View {
                     }
                 }
         }
+        .accessibilityIdentifier("notifications-bell")
         .accessibilityLabel(Text("notifications"))
         .accessibilityValue(Text(verbatim: "\(inbox.unreadCount)"))
         .task {

@@ -1,0 +1,90 @@
+name: App Store screenshots
+
+# Runs AppStoreScreenshotTests on an iPhone (6.9") and an iPad (13")
+# simulator and pushes the PNGs to the store-screenshots branch.
+# Debug builds use the test API; the test accounts come from secrets:
+# SCREENSHOT_COACH_USERNAME, SCREENSHOT_COACH_PASSWORD,
+# SCREENSHOT_CLIENT_USERNAME, SCREENSHOT_CLIENT_PASSWORD.
+on:
+  workflow_dispatch:
+  # Also runs from its branch, before the workflow is on production.
+  push:
+    branches: [feature/store-screenshots]
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    runs-on: macos-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Take screenshots
+        env:
+          TEST_RUNNER_APEX_SCREENSHOT_COACH_USERNAME: ${{ secrets.SCREENSHOT_COACH_USERNAME }}
+          TEST_RUNNER_APEX_SCREENSHOT_COACH_PASSWORD: ${{ secrets.SCREENSHOT_COACH_PASSWORD }}
+          TEST_RUNNER_APEX_SCREENSHOT_CLIENT_USERNAME: ${{ secrets.SCREENSHOT_CLIENT_USERNAME }}
+          TEST_RUNNER_APEX_SCREENSHOT_CLIENT_PASSWORD: ${{ secrets.SCREENSHOT_CLIENT_PASSWORD }}
+        run: |
+          # Newest iPhone Pro Max (6.9") and iPad Pro 13-inch available.
+          devices=$(xcrun simctl list devices available -j)
+          iphone=$(echo "$devices" | jq -r '[.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.name | test("iPhone [0-9]+ Pro Max"))] | sort_by(.name) | last | .udid')
+          ipad=$(echo "$devices" | jq -r '[.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.name | test("iPad Pro 13"))] | sort_by(.name) | last | .udid')
+          echo "::notice::iPhone $iphone, iPad $ipad"
+
+          mkdir -p screenshots
+          status=0
+          for udid in "$iphone" "$ipad"; do
+            [ "$udid" = "null" ] && continue
+            name=$(xcrun simctl list devices -j | jq -r --arg u "$udid" '.devices[][] | select(.udid == $u) | .name')
+            xcrun simctl boot "$udid" || true
+            # Clean status bar: 9:41, full battery and signal.
+            xcrun simctl status_bar "$udid" override --time "9:41" --batteryState charged --batteryLevel 100 \
+              --cellularMode active --cellularBars 4 --wifiBars 3 || true
+            set +e
+            xcodebuild test \
+              -project ApexPerformance.xcodeproj \
+              -scheme ApexPerformance \
+              -destination "platform=iOS Simulator,id=$udid" \
+              -only-testing:ApexPerformanceUITests/AppStoreScreenshotTests \
+              CODE_SIGNING_ALLOWED=NO 2>&1 | tee "test-$udid.log" | grep -E "Test Case|error:|XCTSkip|skipped" || true
+            result=${PIPESTATUS[0]}
+            set -e
+            if [ "$result" != "0" ]; then
+              status=1
+              grep -E "error:|failed|XCTAssert" "test-$udid.log" | tail -10 | sed "s/^/::error::$name: /" || true
+            fi
+            # The test writes to ~/Desktop/ApexScreenshots/<device> on the Mac.
+            if [ -d "$HOME/Desktop/ApexScreenshots/$name" ]; then
+              mkdir -p "screenshots/$name"
+              cp "$HOME/Desktop/ApexScreenshots/$name"/*.png "screenshots/$name/" || true
+            fi
+          done
+          ls -R screenshots
+          echo "status=$status" >> "$GITHUB_ENV"
+
+      - name: Push the screenshots
+        run: |
+          if [ -z "$(ls -A screenshots 2>/dev/null)" ]; then
+            echo "::error::No screenshots were taken."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan store-screenshots
+          git rm -rq --cached .
+          git add screenshots
+          git commit -qm "App Store screenshots of ${GITHUB_SHA::7}"
+          git push -f origin store-screenshots
+          if [ "$status" != "0" ]; then
+            echo "::warning::Some screenshot tests failed, see the errors above."
+          fi

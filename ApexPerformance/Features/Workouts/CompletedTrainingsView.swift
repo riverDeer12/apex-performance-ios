@@ -617,6 +617,7 @@ struct TrainingExerciseCards: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("exercise-link")
                 .padding(.bottom, 10)
 
                 let sets = exercise.sets.sorted { $0.order < $1.order }
