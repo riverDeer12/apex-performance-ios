@@ -2,9 +2,8 @@ name: App Store screenshots
 
 # Runs AppStoreScreenshotTests on an iPhone (6.9") and an iPad (13")
 # simulator and pushes the PNGs to the store-screenshots branch.
-# Debug builds use the test API; the test accounts come from secrets:
-# SCREENSHOT_COACH_USERNAME, SCREENSHOT_COACH_PASSWORD,
-# SCREENSHOT_CLIENT_USERNAME, SCREENSHOT_CLIENT_PASSWORD.
+# The app runs with invented demo data (DemoAPI), so no server or
+# accounts are needed and no real people are shown.
 on:
   workflow_dispatch:
   # Also runs from its branch, before the workflow is on production.
@@ -28,12 +27,28 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      # Every demo response must decode into the app's models,
+      # otherwise screens would show errors instead of data.
+      - name: Check the demo data
+        run: |
+          udid=$(xcrun simctl list devices available -j | jq -r '[.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.name | test("iPhone [0-9]+ Pro Max"))] | sort_by(.name) | last | .udid')
+          set +e
+          xcodebuild test \
+            -project ApexPerformance.xcodeproj \
+            -scheme ApexPerformance \
+            -destination "platform=iOS Simulator,id=$udid" \
+            -only-testing:ApexPerformanceTests/DemoAPITests \
+            -parallel-testing-enabled NO \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
+            PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE= > demo-test.log 2>&1
+          result=$?
+          if [ "$result" != "0" ]; then
+            lines=$(grep -E ": error: |error:" demo-test.log | sed 's/^.*error: //' | sort -u | head -20)
+            echo "::error::Demo data check failed:%0A$(echo "$lines" | awk 'BEGIN { ORS = "%0A" } 1')"
+            exit 1
+          fi
+
       - name: Take screenshots
-        env:
-          TEST_RUNNER_APEX_SCREENSHOT_COACH_USERNAME: ${{ secrets.SCREENSHOT_COACH_USERNAME }}
-          TEST_RUNNER_APEX_SCREENSHOT_COACH_PASSWORD: ${{ secrets.SCREENSHOT_COACH_PASSWORD }}
-          TEST_RUNNER_APEX_SCREENSHOT_CLIENT_USERNAME: ${{ secrets.SCREENSHOT_CLIENT_USERNAME }}
-          TEST_RUNNER_APEX_SCREENSHOT_CLIENT_PASSWORD: ${{ secrets.SCREENSHOT_CLIENT_PASSWORD }}
         run: |
           # Newest iPhone Pro Max (6.9") and iPad Pro 13-inch available.
           devices=$(xcrun simctl list devices available -j)

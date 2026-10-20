@@ -8,12 +8,14 @@ import XCTest
 /// Takes App Store screenshots of the main coach and client screens.
 /// Screenshots are always taken in English.
 ///
-/// Needs a coach and a client account on the server the build uses
-/// (Debug uses the test API). Credentials are read from the scheme's
-/// Test environment variables so they are never committed:
+/// By default the app runs with invented demo data (DemoAPI, Debug builds
+/// only), so no real people are shown. With APEX_SCREENSHOT_USE_SERVER=1
+/// it uses a coach and a client account on the server the build uses
+/// (Debug uses the test API), read from the scheme's Test environment
+/// variables so they are never committed:
 ///   APEX_SCREENSHOT_COACH_USERNAME, APEX_SCREENSHOT_COACH_PASSWORD
 ///   APEX_SCREENSHOT_CLIENT_USERNAME, APEX_SCREENSHOT_CLIENT_PASSWORD
-/// A test whose credentials are missing is skipped.
+/// A test whose credentials are missing is then skipped.
 ///
 /// PNGs are saved to ~/Desktop/ApexScreenshots/<device>/ on the Mac
 /// and are also attached to the test report.
@@ -35,6 +37,9 @@ final class AppStoreScreenshotTests: XCTestCase {
             // Start logged out, every test logs in with its own account.
             "-uiTestResetLogin"
         ]
+        if usesDemoData {
+            app.launchArguments.append("-demoData")
+        }
 
         // Simulator processes can write to the Mac's file system.
         let environment = ProcessInfo.processInfo.environment
@@ -217,12 +222,26 @@ final class AppStoreScreenshotTests: XCTestCase {
     // MARK: - Helpers
 
     /// role is COACH or CLIENT, matching the environment variable names.
+    private var usesDemoData: Bool {
+        ProcessInfo.processInfo.environment["APEX_SCREENSHOT_USE_SERVER"] != "1"
+    }
+
     private func logIn(role: String) throws {
-        let environment = ProcessInfo.processInfo.environment
-        guard let username = environment["APEX_SCREENSHOT_\(role)_USERNAME"],
-              let password = environment["APEX_SCREENSHOT_\(role)_PASSWORD"],
-              !username.isEmpty, !password.isEmpty else {
-            throw XCTSkip("Set APEX_SCREENSHOT_\(role)_USERNAME and APEX_SCREENSHOT_\(role)_PASSWORD in the scheme's Test environment variables.")
+        let username: String
+        let password: String
+        if usesDemoData {
+            // DemoAPI picks the coach or the client by the username.
+            username = "demo.\(role.lowercased())"
+            password = "demo"
+        } else {
+            let environment = ProcessInfo.processInfo.environment
+            guard let serverUsername = environment["APEX_SCREENSHOT_\(role)_USERNAME"],
+                  let serverPassword = environment["APEX_SCREENSHOT_\(role)_PASSWORD"],
+                  !serverUsername.isEmpty, !serverPassword.isEmpty else {
+                throw XCTSkip("Set APEX_SCREENSHOT_\(role)_USERNAME and APEX_SCREENSHOT_\(role)_PASSWORD in the scheme's Test environment variables.")
+            }
+            username = serverUsername
+            password = serverPassword
         }
 
         allowSystemAlerts()
