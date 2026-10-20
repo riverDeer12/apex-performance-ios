@@ -35,6 +35,7 @@ struct TrainingFormView: View {
 
     @State private var workouts: [Workout] = []
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
 
     // Templates a new training can be filled from.
     @State private var templates: [TrainingTemplate] = []
@@ -102,6 +103,32 @@ struct TrainingFormView: View {
         !trimmed(name).isEmpty && exercises.allSatisfy(\.isValid)
     }
 
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        initialFingerprint.map { $0 != fingerprint } ?? false
+    }
+
+    // Everything the form saves, taken when it opens to tell later changes.
+    @State private var initialFingerprint: String?
+
+    private var fingerprint: String {
+        let exercisesText = exercises.map { exercise in
+            let sets = exercise.sets.map { "\($0.reps)x\($0.weight)" }.joined(separator: ",")
+            return "\(exercise.workoutId?.uuidString ?? "")|\(exercise.note)|\(exercise.isSupersetWithPrevious)|\(sets)"
+        }.joined(separator: ";")
+        let day = Calendar.current.startOfDay(for: date).timeIntervalSince1970
+        return [name, note, "\(isCompleted)", "\(day)", exercisesText].joined(separator: "\n")
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -148,6 +175,12 @@ struct TrainingFormView: View {
                     }
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
+            .onAppear {
+                if initialFingerprint == nil { initialFingerprint = fingerprint }
+            }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -168,7 +201,7 @@ struct TrainingFormView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)

@@ -25,6 +25,7 @@ struct WorkoutEditView: View {
 
     @State private var workoutTypes: [WorkoutType] = []
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
 
     // Same limit and link formats the web form and API accept.
     private static let maxNameLength = 60
@@ -63,6 +64,24 @@ struct WorkoutEditView: View {
             && !descriptionHr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             // The video and thumbnail are optional, like on the API; a link must be valid.
             && (isVideoUrlValid || videoUrl.trimmingCharacters(in: .whitespaces).isEmpty)
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        nameHr != (workout?.name.value(for: "HR") ?? "") || nameEn != (workout?.name.value(for: "EN") ?? "")
+            || descriptionHr != (workout?.description.value(for: "HR") ?? "")
+            || descriptionEn != (workout?.description.value(for: "EN") ?? "")
+            || videoUrl != (workout?.videoUrl ?? "") || thumbnailUrl != (workout?.thumbnailUrl ?? "")
+            || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -129,6 +148,9 @@ struct WorkoutEditView: View {
                     }
                 }
             }
+        }
+        .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard, replacesBackButton: true) {
+            dismiss()
         }
         .navigationTitle(isNew ? LocalizedStringKey("new_workout") : LocalizedStringKey("edit_workout"))
         .navigationBarTitleDisplayMode(.inline)

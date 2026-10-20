@@ -25,6 +25,7 @@ struct FunctionalMovementScreenView: View {
     @State private var xTest: String
     @State private var descriptionText: String
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
 
     init(clientId: UUID, screen: FunctionalMovementScreen? = nil, onSaved: (() -> Void)? = nil) {
         self.clientId = clientId
@@ -54,6 +55,25 @@ struct FunctionalMovementScreenView: View {
             .allSatisfy { !trimmed($0).isEmpty }
             && trimmed(xTest).count <= Self.xTestMaxLength
             && trimmed(descriptionText).count <= Self.descriptionMaxLength
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        [
+            (deepSquat, screen?.deepSquat), (hurdleStep, screen?.hurdleStep), (inLineLunge, screen?.inLineLunge),
+            (activeStraightLegRaise, screen?.activeStraightLegRaise),
+            (trunkStabilityPushUp, screen?.trunkStabilityPushUp), (rotaryStability, screen?.rotaryStability),
+            (shoulderMobility, screen?.shoulderMobility), (xTest, screen?.xTest), (descriptionText, screen?.description)
+        ].contains { $0.0 != ($0.1 ?? "") }
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -90,13 +110,16 @@ struct FunctionalMovementScreenView: View {
                     .lineLimit(3...10)
             }
         }
+        .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+            dismiss()
+        }
         .navigationTitle(LocalizedStringKey(isNew ? "new_fms" : "fms"))
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    dismiss()
+                    requestClose()
                 } label: {
                     Image(systemName: "chevron.backward")
                         .foregroundStyle(Color.apexMainColor)

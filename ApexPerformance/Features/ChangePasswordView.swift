@@ -14,6 +14,7 @@ struct ChangePasswordView: View {
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     @State private var errorMessage: String?
     
     @State private var showNewPassword = false
@@ -21,6 +22,20 @@ struct ChangePasswordView: View {
     
     var onSuccess: (() -> Void)? = nil
     
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        !newPassword.isEmpty || !confirmPassword.isEmpty
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -81,6 +96,9 @@ struct ChangePasswordView: View {
                         .foregroundColor(.red)
                 }
             }
+            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                dismiss()
+            }
             .navigationTitle("change_password")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -101,7 +119,7 @@ struct ChangePasswordView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        requestClose()
                     } label :{
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)

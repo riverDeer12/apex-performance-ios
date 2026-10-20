@@ -25,6 +25,7 @@ struct CreateClientView: View {
     @State private var credits: Int? = nil
     @State private var plan: ClientPlan = .privateCoaching
     @State private var isSaving = false
+    @State private var isConfirmingDiscard = false
     
     @State private var isLoadingCoaches = false
     @State private var coaches: [Coach] = []
@@ -34,6 +35,21 @@ struct CreateClientView: View {
     // the client's coach, so a coach doesn't pick coaches.
     private var canSelectCoaches: Bool {
         !authManager.hasRole(role: "Coach")
+    }
+
+    // Asked before closing when the form has unsaved changes.
+    private var hasChanges: Bool {
+        [firstName, lastName, email, phone].contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            || credits != nil || !selectedCoaches.isEmpty
+    }
+
+    // Closes the form, asking first when there are unsaved changes.
+    private func requestClose() {
+        if hasChanges {
+            isConfirmingDiscard = true
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -129,6 +145,9 @@ struct CreateClientView: View {
             }
         }
         .background(Color.apexBackground)
+        .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard, replacesBackButton: true) {
+            dismiss()
+        }
         .navigationTitle("new_client")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
