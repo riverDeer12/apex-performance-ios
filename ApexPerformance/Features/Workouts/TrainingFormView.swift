@@ -113,7 +113,7 @@ struct TrainingFormView: View {
 
     private var fingerprint: String {
         let exercisesText = exercises.map { exercise in
-            let sets = exercise.sets.map { "\($0.reps)x\($0.weight)" }.joined(separator: ",")
+            let sets = exercise.sets.map { "\($0.reps)x\($0.weight)\($0.isDropSet ? "d" : "")" }.joined(separator: ",")
             return "\(exercise.workoutId?.uuidString ?? "")|\(exercise.note)|\(exercise.isSupersetWithPrevious)|\(sets)"
         }.joined(separator: ";")
         let day = Calendar.current.startOfDay(for: date).timeIntervalSince1970
@@ -260,12 +260,22 @@ struct TrainingFormView: View {
                 setsHeader(previous: previous)
             }
 
+            let setNumbers = exercise.wrappedValue.setNumbers
             ForEach(exercise.sets) { set in
                 let setIndex = exercise.wrappedValue.sets.firstIndex { $0.id == set.wrappedValue.id } ?? 0
                 HStack(spacing: 8) {
-                    Text(verbatim: "\(setIndex + 1)")
-                        .foregroundStyle(.secondary)
-                        .frame(width: 22, alignment: .leading)
+                    if let number = setNumbers.indices.contains(setIndex) ? setNumbers[setIndex] : nil {
+                        Text(verbatim: "\(number)")
+                            .foregroundStyle(.secondary)
+                            .frame(width: 22, alignment: .leading)
+                    } else {
+                        // Drop set of the set above.
+                        Image(systemName: "arrow.turn.down.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(Color.apexMainColor)
+                            .frame(width: 22, alignment: .trailing)
+                            .accessibilityLabel(Text("drop_set"))
+                    }
                     NumberWheelField(
                         value: set.repsValue,
                         range: 1...100,
@@ -300,9 +310,17 @@ struct TrainingFormView: View {
                             .frame(width: 92, alignment: .trailing)
                     }
                 }
+                .swipeActions(edge: .leading) {
+                    Button {
+                        exercise.wrappedValue.addDropSet(after: setIndex)
+                    } label: {
+                        Label("add_drop_set", systemImage: "arrow.turn.down.right")
+                    }
+                    .tint(Color.apexMainColor)
+                }
             }
             .onDelete { offsets in
-                exercise.wrappedValue.sets.remove(atOffsets: offsets)
+                exercise.wrappedValue.removeSets(atOffsets: offsets)
             }
 
             Button {
@@ -312,6 +330,16 @@ struct TrainingFormView: View {
                     .foregroundStyle(Color.apexMainColor)
             }
             .disabled(exercise.wrappedValue.sets.count >= ExerciseDraft.maxSets)
+
+            // Same exercise right after the last set, with less weight.
+            Button {
+                exercise.wrappedValue.addDropSet(after: exercise.wrappedValue.sets.count - 1)
+            } label: {
+                Label("add_drop_set", systemImage: "arrow.turn.down.right")
+                    .foregroundStyle(Color.apexMainColor)
+            }
+            .disabled(exercise.wrappedValue.sets.isEmpty
+                      || exercise.wrappedValue.sets.count >= ExerciseDraft.maxSets)
 
             if let previous {
                 previousSetsView(previous, currentCount: exercise.wrappedValue.sets.count) {
@@ -622,16 +650,52 @@ private struct ExerciseDraft: Identifiable {
         workoutId != nil && note.count <= 500 && sets.count <= Self.maxSets && sets.allSatisfy(\.isValid)
     }
 
-    /// Adds a set copying the last one, as sets usually repeat
-    /// or change only a little.
+    /// Adds a set copying the last one that isn't a drop set, as sets
+    /// usually repeat or change only a little.
     mutating func addSet() {
         guard sets.count < Self.maxSets else { return }
         var set = SetDraft()
-        if let last = sets.last {
+        if let last = sets.last(where: { !$0.isDropSet }) ?? sets.last {
             set.reps = last.reps
             set.weight = last.weight
         }
         sets.append(set)
+    }
+
+    /// Adds a drop set after the set at the index and its drop sets:
+    /// the same reps with about a fifth less weight.
+    mutating func addDropSet(after index: Int) {
+        guard sets.indices.contains(index), sets.count < Self.maxSets else { return }
+        var end = index + 1
+        while end < sets.count && sets[end].isDropSet { end += 1 }
+        let previous = sets[end - 1]
+        var drop = SetDraft()
+        drop.isDropSet = true
+        drop.reps = previous.reps
+        drop.weightValue = previous.weightValue.map { weight in
+            // Rounded to half a kilogram, like the weight wheel.
+            var lighter = weight * Decimal(0.8) * 2
+            var rounded = Decimal()
+            NSDecimalRound(&rounded, &lighter, 0, .plain)
+            return rounded / 2
+        }
+        sets.insert(drop, at: end)
+    }
+
+    /// Removes sets; the first one left can't be a drop set.
+    mutating func removeSets(atOffsets offsets: IndexSet) {
+        sets.remove(atOffsets: offsets)
+        if !sets.isEmpty { sets[0].isDropSet = false }
+    }
+
+    /// Numbers of sets, nil for drop sets (like Training.ExerciseSet).
+    var setNumbers: [Int?] {
+        var number = 0
+        return sets.map { set in
+            if set.isDropSet && number > 0 { return nil }
+            number += 1
+            return number
+        }
     }
 
     var request: SaveTrainingRequest.Exercise? {
@@ -651,10 +715,13 @@ private struct SetDraft: Identifiable {
     let id = UUID()
     var reps = ""
     var weight = ""
+    // Done right after the previous set with less weight.
+    var isDropSet = false
 
     init() {}
 
     init(_ set: Training.ExerciseSet) {
+        isDropSet = set.isDropSet
         reps = set.reps ?? ""
         weight = set.weight.map { NSDecimalNumber(decimal: $0).description(withLocale: Locale.current) } ?? ""
     }
@@ -694,7 +761,8 @@ private struct SetDraft: Identifiable {
     var request: SaveTrainingRequest.ExerciseSet? {
         let reps = trimmedReps
         guard !reps.isEmpty || parsedWeight != nil else { return nil }
-        return SaveTrainingRequest.ExerciseSet(reps: reps.isEmpty ? nil : reps, weight: parsedWeight)
+        return SaveTrainingRequest.ExerciseSet(reps: reps.isEmpty ? nil : reps, weight: parsedWeight,
+                                               isDropSet: isDropSet)
     }
 }
 

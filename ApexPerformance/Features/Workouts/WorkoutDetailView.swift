@@ -72,16 +72,14 @@ struct WorkoutDetailView: View {
                 }
                 .padding(.horizontal, 20)
 
-                if let muscles = workout.muscles, !muscles.isEmpty {
+                let primary = workout.muscles ?? []
+                let secondary = workout.secondaryMuscles ?? []
+                if !primary.isEmpty || !secondary.isEmpty {
                     CardView(title: "worked_muscles") {
                         VStack(spacing: 12) {
-                            MuscleMapView(muscles: muscles)
-                                .frame(maxHeight: 280)
-                            Text(muscles.map { String(localized: String.LocalizationValue("muscle_" + $0)) }
-                                .joined(separator: " · "))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
+                            MuscleMapView(primary: primary, secondary: secondary)
+                                .frame(maxHeight: 300)
+                            MuscleLegendView(primary: primary, secondary: secondary)
                         }
                         .frame(maxWidth: .infinity)
                     }

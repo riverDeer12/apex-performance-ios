@@ -12,8 +12,10 @@ struct Workout: Identifiable, Decodable, Hashable {
     let thumbnailUrl: String?
     let videoUrl: String?
     let workoutTypes: [WorkoutType]
-    // Codes of the muscles it works (WorkoutMuscle); nil from an API without them.
+    // Codes of the muscles it works (WorkoutMuscle): primary ones doing most
+    // of the work and secondary ones helping. Nil from an API without them.
     let muscles: [String]?
+    var secondaryMuscles: [String]? = nil
 
     // Every translation is searched, so the query language does not matter.
     func matches(_ query: String) -> Bool {
@@ -47,6 +49,7 @@ struct UpdateWorkoutRequest: Encodable {
     let workoutTypes: [UUID]
     // Nil for a new workout lets the API guess them from the name.
     let muscles: [String]?
+    let secondaryMuscles: [String]?
 }
 
 /// Mirrors the API's LocalizedProperty, translations keyed by language code (HR, EN, IT).
@@ -102,6 +105,16 @@ struct LocalizedText: Codable, Hashable {
 }
 
 extension Workout {
+    /// One workout, e.g. of an exercise in a training. Clients also
+    /// get the workouts of their trainings outside their plan.
+    @MainActor
+    static func load(id: UUID) async throws -> Workout {
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("workouts")
+            .appendingPathComponent(id.uuidString)
+        return try await APIClient.shared.request(url)
+    }
+
     /// Deletes the workout (soft delete on the API, staff only).
     @MainActor
     static func delete(id: UUID) async throws {

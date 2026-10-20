@@ -141,7 +141,7 @@ struct TrainingProgressView: View {
                     training: training,
                     volume: volume,
                     reps: reps.reduce(0, +),
-                    sets: sets.count,
+                    sets: sets.filter { !$0.isDropSet }.count,
                     repSets: reps.count
                 )
             }
@@ -314,7 +314,7 @@ struct TrainingProgressView: View {
         for exercise in sessions.flatMap(\.training.exercises) where !exercise.sets.isEmpty {
             let types = workoutsById[exercise.workoutId]?.workoutTypes.map(\.name.localized) ?? []
             for type in types.isEmpty ? [other] : types {
-                sets[type, default: 0] += exercise.sets.count
+                sets[type, default: 0] += exercise.sets.sorted { $0.order < $1.order }.mainSetCount
             }
         }
 

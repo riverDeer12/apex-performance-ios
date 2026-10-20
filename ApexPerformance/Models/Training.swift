@@ -40,6 +40,42 @@ struct Training: Identifiable, Decodable, Hashable {
         let order: Int
         let reps: String?
         let weight: Decimal?
+        // Done right after the previous set with less weight (drop set).
+        var isDropSet = false
+    }
+}
+
+extension Training.ExerciseSet {
+    private enum CodingKeys: String, CodingKey {
+        case id, order, reps, weight, isDropSet
+    }
+
+    // In an extension so the memberwise initializer stays available.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        order = try container.decode(Int.self, forKey: .order)
+        reps = try container.decodeIfPresent(String.self, forKey: .reps)
+        weight = try container.decodeIfPresent(Decimal.self, forKey: .weight)
+        isDropSet = try container.decodeIfPresent(Bool.self, forKey: .isDropSet) ?? false
+    }
+}
+
+extension Array where Element == Training.ExerciseSet {
+    /// Numbers of sets in order: 1, 2... for sets and nil for their drop
+    /// sets, which belong to the set before them.
+    var setNumbers: [Int?] {
+        var number = 0
+        return map { set in
+            if set.isDropSet && number > 0 { return nil }
+            number += 1
+            return number
+        }
+    }
+
+    /// Sets without their drop sets.
+    var mainSetCount: Int {
+        setNumbers.compactMap { $0 }.count
     }
 }
 
@@ -179,5 +215,6 @@ struct SaveTrainingRequest: Encodable {
     struct ExerciseSet: Encodable {
         let reps: String?
         let weight: Decimal?
+        var isDropSet = false
     }
 }
