@@ -156,7 +156,14 @@ struct ChatListView: View {
 
     private func lastMessageText(_ conversation: ChatConversation) -> Text {
         guard let message = conversation.lastMessage else { return Text("chat_no_messages") }
-        let content = message.content.map { Text(verbatim: $0) } ?? Text("chat_unreadable")
+        let content: Text
+        if message.isImage {
+            content = Text(message.attachment?.isGIF == true ? "chat_gif" : "chat_photo")
+        } else if message.isWorkout {
+            content = Text("chat_shared_workout") + Text(verbatim: message.workout.map { ": \($0.name.localized)" } ?? "")
+        } else {
+            content = message.content.map { Text(verbatim: $0) } ?? Text("chat_unreadable")
+        }
         return message.senderUserId == store.userId ? Text("chat_you") + Text(verbatim: ": ") + content : content
     }
 

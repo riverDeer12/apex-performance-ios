@@ -17,6 +17,7 @@
 		DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05F45FB6972493676063892 /* StaffTrainingsView.swift */; };
 		1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */; };
 		5E72DD9867C7707ED1A72637 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29B3DADA5980E29D308D813 /* ChatListView.swift */; };
+		3EA8EC0361EAB592E2F4E27C /* ChatMediaViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992211AACBC284E7D7AAA49B /* ChatMediaViews.swift */; };
 		32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */; };
 		0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */; };
 		AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */; };
@@ -72,6 +73,8 @@
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
 		61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F612F0A7633004D74F3 /* BadgeView.swift */; };
+		5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */; };
+		CB075B04A94A6AE1831A2184 /* BodyMapPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */; };
 		1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */; };
 		B2F6999B202B98DB1C67B3EF /* NotifyClientToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */; };
 		61E63F672F0A7D52004D74F3 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F662F0A7D52004D74F3 /* UserProfile.swift */; };
@@ -150,6 +153,7 @@
 		F05F45FB6972493676063892 /* StaffTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffTrainingsView.swift; sourceTree = "<group>"; };
 		364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationView.swift; sourceTree = "<group>"; };
 		E29B3DADA5980E29D308D813 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
+		992211AACBC284E7D7AAA49B /* ChatMediaViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMediaViews.swift; sourceTree = "<group>"; };
 		3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordsView.swift; sourceTree = "<group>"; };
 		1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingFormView.swift; sourceTree = "<group>"; };
 		7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingProgressView.swift; sourceTree = "<group>"; };
@@ -208,6 +212,8 @@
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
 		61E63F612F0A7633004D74F3 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuscleMapView.swift; sourceTree = "<group>"; };
+		EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMapPaths.swift; sourceTree = "<group>"; };
 		5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsavedChangesGuard.swift; sourceTree = "<group>"; };
 		A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyClientToggle.swift; sourceTree = "<group>"; };
 		61E63F662F0A7D52004D74F3 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
@@ -425,6 +431,8 @@
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
 				61E63F612F0A7633004D74F3 /* BadgeView.swift */,
+				1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */,
+				EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */,
 				5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */,
 				A857857605758FE3AABCD0E3 /* NotifyClientToggle.swift */,
 				61E63F682F0C357B004D74F3 /* ToastView.swift */,
@@ -519,6 +527,7 @@
 			children = (
 				364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */,
 				E29B3DADA5980E29D308D813 /* ChatListView.swift */,
+				992211AACBC284E7D7AAA49B /* ChatMediaViews.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -779,6 +788,7 @@
 				DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */,
 				1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */,
 				5E72DD9867C7707ED1A72637 /* ChatListView.swift in Sources */,
+				3EA8EC0361EAB592E2F4E27C /* ChatMediaViews.swift in Sources */,
 				32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */,
 				0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */,
 				AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */,
@@ -806,6 +816,8 @@
 				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
+				5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */,
+				CB075B04A94A6AE1831A2184 /* BodyMapPaths.swift in Sources */,
 				1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */,
 				B2F6999B202B98DB1C67B3EF /* NotifyClientToggle.swift in Sources */,
 				61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */,

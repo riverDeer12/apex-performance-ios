@@ -22,6 +22,7 @@ struct WorkoutEditView: View {
     @State private var videoUrl: String
     @State private var thumbnailUrl: String
     @State private var selectedWorkoutTypeIds: Set<UUID>
+    @State private var muscles: Set<String>
 
     @State private var workoutTypes: [WorkoutType] = []
     @State private var isSaving = false
@@ -45,6 +46,7 @@ struct WorkoutEditView: View {
         _videoUrl = State(initialValue: workout?.videoUrl ?? "")
         _thumbnailUrl = State(initialValue: workout?.thumbnailUrl ?? "")
         _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
+        _muscles = State(initialValue: Set(workout?.muscles ?? []))
     }
 
     private var isNew: Bool {
@@ -73,6 +75,7 @@ struct WorkoutEditView: View {
             || descriptionEn != (workout?.description.value(for: "EN") ?? "")
             || videoUrl != (workout?.videoUrl ?? "") || thumbnailUrl != (workout?.thumbnailUrl ?? "")
             || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
+            || muscles != Set(workout?.muscles ?? [])
     }
 
     // Closes the form, asking first when there are unsaved changes.
@@ -121,6 +124,38 @@ struct WorkoutEditView: View {
                 Text("thumbnail_url")
             } footer: {
                 Text("thumbnail_url_hint")
+            }
+
+            Section {
+                MuscleMapView(muscles: Array(muscles))
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .listRowBackground(Color.clear)
+                ForEach(WorkoutMuscle.all, id: \.self) { muscle in
+                    Button {
+                        if muscles.contains(muscle) {
+                            muscles.remove(muscle)
+                        } else {
+                            muscles.insert(muscle)
+                        }
+                    } label: {
+                        HStack {
+                            Text(WorkoutMuscle.name(muscle))
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                            if muscles.contains(muscle) {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.apexMainColor)
+                            }
+                        }
+                    }
+                }
+            } header: {
+                Text("worked_muscles")
+            } footer: {
+                if isNew {
+                    Text("muscles_guess_hint")
+                }
             }
 
             Section("workout_types") {
@@ -224,7 +259,9 @@ struct WorkoutEditView: View {
             // An empty thumbnail is generated from the YouTube video on the API.
             thumbnailUrl: thumbnailUrl.trimmingCharacters(in: .whitespaces),
             videoUrl: videoUrl.trimmingCharacters(in: .whitespaces),
-            workoutTypes: Array(selectedWorkoutTypeIds)
+            workoutTypes: Array(selectedWorkoutTypeIds),
+            // In the API's order, which the body map also uses.
+            muscles: isNew && muscles.isEmpty ? nil : WorkoutMuscle.all.filter(muscles.contains)
         )
 
         do {

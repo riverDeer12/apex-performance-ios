@@ -71,6 +71,22 @@ struct WorkoutDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, 20)
+
+                if let muscles = workout.muscles, !muscles.isEmpty {
+                    CardView(title: "worked_muscles") {
+                        VStack(spacing: 12) {
+                            MuscleMapView(muscles: muscles)
+                                .frame(maxHeight: 280)
+                            Text(muscles.map { String(localized: String.LocalizationValue("muscle_" + $0)) }
+                                .joined(separator: " · "))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.horizontal, 20)
+                }
             }
             .padding(.bottom, 24)
         }

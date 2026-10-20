@@ -12,6 +12,8 @@ struct Workout: Identifiable, Decodable, Hashable {
     let thumbnailUrl: String?
     let videoUrl: String?
     let workoutTypes: [WorkoutType]
+    // Codes of the muscles it works (WorkoutMuscle); nil from an API without them.
+    let muscles: [String]?
 
     // Every translation is searched, so the query language does not matter.
     func matches(_ query: String) -> Bool {
@@ -43,6 +45,8 @@ struct UpdateWorkoutRequest: Encodable {
     let thumbnailUrl: String
     let videoUrl: String
     let workoutTypes: [UUID]
+    // Nil for a new workout lets the API guess them from the name.
+    let muscles: [String]?
 }
 
 /// Mirrors the API's LocalizedProperty, translations keyed by language code (HR, EN, IT).
