@@ -631,7 +631,7 @@ struct TrainingExerciseCards: View {
                     setRow(
                         number.map { Text(verbatim: "\($0)") }
                             // Drop set of the set above, done right after it.
-                            ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set"))"),
+                            ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
                         Text(verbatim: set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
                         Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
                         isDropSet: number == nil
