@@ -114,7 +114,8 @@ jobs:
           fi
 
       # The set for App Store Connect, in the order it is shown there:
-      # new features first. Downloadable as a ZIP from the run's page.
+      # new features first, for iPhone 6.9" and 6.5" and iPad 13" and
+      # 12.9". Downloadable as a ZIP from the run's page.
       - name: Make the App Store set
         run: |
           order="client-*-training-details client-*-workout-muscles client-*-chat client-*-home
@@ -132,7 +133,22 @@ jobs:
               n=$((n + 1))
             done
           done
-          ls -R AppStore
+          # Older display sizes App Store Connect may ask for: scaled to
+          # the size and cropped in the middle (a few pixels at most).
+          resize() {
+            mkdir -p "$2"
+            for file in "$1"/*.png; do
+              out="$2/$(basename "$file")"
+              if [ "$5" = width ]; then sips --resampleWidth "$3" "$file" --out "$out" > /dev/null
+              else sips --resampleHeight "$4" "$file" --out "$out" > /dev/null; fi
+              sips --cropToHeightWidth "$4" "$3" "$out" > /dev/null
+            done
+          }
+          [ -d "AppStore/iPhone 6.9" ] && resize "AppStore/iPhone 6.9" "AppStore/iPhone 6.5" 1284 2778 width
+          [ -d "AppStore/iPad 13" ] && resize "AppStore/iPad 13" "AppStore/iPad 12.9" 2048 2732 height
+          for dir in AppStore/*; do
+            echo "$dir: $(sips -g pixelWidth -g pixelHeight "$(ls "$dir"/*.png | head -1)" | awk '/pixel/ { printf "%s ", $2 }')"
+          done
 
       - name: Keep the App Store set
         uses: actions/upload-artifact@v4

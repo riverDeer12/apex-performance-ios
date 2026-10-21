@@ -4,8 +4,8 @@
 
 A release is the TestFlight workflow run on `production` with `app: store`.
 It also runs the "App Store screenshots" workflow, which uploads the
-`AppStore-screenshots` artifact (iPhone 6.9" and iPad 13", ten each, in the
-order they go to App Store Connect) and pushes all PNGs to the
+`AppStore-screenshots` artifact (iPhone 6.9" and 6.5", iPad 13" and 12.9",
+ten each, in the order they go to App Store Connect) and pushes all PNGs to the
 `store-screenshots` branch.
 
 For every new App Store version:
