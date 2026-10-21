@@ -71,3 +71,12 @@ jobs:
           name: build-logs
           path: ~/Library/Logs/gym
           if-no-files-found: ignore
+
+  # Every App Store build also gets new screenshots for App Store Connect.
+  screenshots:
+    needs: testflight
+    if: inputs.app == 'store'
+    uses: ./.github/workflows/screenshots.yml
+    permissions:
+      contents: write
+
