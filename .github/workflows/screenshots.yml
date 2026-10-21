@@ -4,11 +4,9 @@ name: App Store screenshots
 # simulator and pushes the PNGs to the store-screenshots branch.
 # The app runs with invented demo data (DemoAPI), so no server or
 # accounts are needed and no real people are shown.
+# Started by hand: Actions -> App Store screenshots -> Run workflow.
 on:
   workflow_dispatch:
-  # Also runs from its branch, before the workflow is on production.
-  push:
-    branches: [feature/store-screenshots]
 
 permissions:
   contents: write
