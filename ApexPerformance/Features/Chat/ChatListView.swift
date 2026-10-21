@@ -62,6 +62,7 @@ struct ChatListView: View {
                                         row(conversation)
                                     }
                                     .buttonStyle(.plain)
+                                    .accessibilityIdentifier("chat-row")
 
                                     if conversation.id != store.conversations.last?.id {
                                         Divider().padding(.leading, 60)
@@ -91,6 +92,7 @@ struct ChatListView: View {
                             Image(systemName: "xmark")
                                 .foregroundStyle(Color.apexMainColor)
                         }
+                        .accessibilityIdentifier("chat-close")
                         .accessibilityLabel(Text("close"))
                     }
                 }
@@ -337,6 +339,7 @@ struct ChatFloatingButton: View {
                 }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("chat-button")
         .accessibilityLabel(Text("tab_chat"))
         .accessibilityValue(unreadCount > 0 ? Text(verbatim: "\(unreadCount)") : Text(verbatim: ""))
     }

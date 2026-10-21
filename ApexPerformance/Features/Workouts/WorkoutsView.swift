@@ -105,6 +105,7 @@ struct WorkoutsView: View {
                                         workoutRow(workout)
                                     }
                                     .buttonStyle(.plain)
+                                    .accessibilityIdentifier("workout-row")
                                     .contextMenu {
                                         if canManageWorkouts {
                                             Button("delete_workout", systemImage: "trash", role: .destructive) {

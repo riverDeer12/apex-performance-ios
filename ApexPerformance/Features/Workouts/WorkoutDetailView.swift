@@ -83,6 +83,7 @@ struct WorkoutDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
+                    .accessibilityIdentifier("muscle-map-card")
                     .padding(.horizontal, 20)
                 }
             }

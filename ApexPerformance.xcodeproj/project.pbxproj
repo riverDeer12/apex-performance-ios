@@ -41,6 +41,7 @@
 		61CFB5202EF1EA26009E9624 /* NetworkErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */; };
 		61CFB5222EF1F0C8009E9624 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5212EF1F0C8009E9624 /* KeychainService.swift */; };
 		61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5242EF1F1A3009E9624 /* ApiClient.swift */; };
+		05B37A9D6B4A9C998609996A /* DemoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AAA035D7ECA495D55BA074 /* DemoAPI.swift */; };
 		61CFB5272EF1F1F4009E9624 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5262EF1F1F4009E9624 /* AuthManager.swift */; };
 		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
 		B31EA62BC2771A5ED9B2059E /* ClientHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E303462900FBA1BEE47412B /* ClientHomeView.swift */; };
@@ -113,6 +114,7 @@
 		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
 		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
+		02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
@@ -178,6 +180,7 @@
 		61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorHandler.swift; sourceTree = "<group>"; };
 		61CFB5212EF1F0C8009E9624 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		61CFB5242EF1F1A3009E9624 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
+		D5AAA035D7ECA495D55BA074 /* DemoAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPI.swift; sourceTree = "<group>"; };
 		61CFB5262EF1F1F4009E9624 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthManager.swift; path = ApexPerformance/Core/Networking/AuthManager.swift; sourceTree = SOURCE_ROOT; };
 		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7E303462900FBA1BEE47412B /* ClientHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientHomeView.swift; sourceTree = "<group>"; };
@@ -267,6 +270,7 @@
 		C0BF34F02F900E5C002BFF76 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0BF34F22F900F3B002BFF76 /* ApexPerformance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApexPerformance.entitlements; sourceTree = "<group>"; };
 		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
+		2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -449,6 +453,7 @@
 			children = (
 				61CFB51F2EF1EA26009E9624 /* NetworkErrorHandler.swift */,
 				61CFB5242EF1F1A3009E9624 /* ApiClient.swift */,
+				D5AAA035D7ECA495D55BA074 /* DemoAPI.swift */,
 				96920DE3EEA0A6620BD41065 /* PushTokenService.swift */,
 				FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */,
 			);
@@ -618,6 +623,7 @@
 				61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */,
 				6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */,
 				F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */,
+				2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */,
 			);
 			path = ApexPerformanceTests;
 			sourceTree = "<group>";
@@ -869,6 +875,7 @@
 				C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */,
 				61CFB51C2EF1E91C009E9624 /* LoginRequest.swift in Sources */,
 				61CFB5252EF1F1A3009E9624 /* ApiClient.swift in Sources */,
+				05B37A9D6B4A9C998609996A /* DemoAPI.swift in Sources */,
 				850FBB7AA5699DA97AEF9668 /* PushTokenService.swift in Sources */,
 				E57F79574FE192C846058759 /* ChatHub.swift in Sources */,
 				8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */,
@@ -885,6 +892,7 @@
 				61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */,
 				0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */,
 				B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */,
+				02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

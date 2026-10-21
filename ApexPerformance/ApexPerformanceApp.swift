@@ -17,6 +17,10 @@ import FirebaseCore
     
     init() {
         ApexFont.applyToNavigationBars()
+        #if DEBUG
+        // App Store screenshots: invented data instead of the test server's.
+        if DemoAPI.isEnabled { DemoAPI.start() }
+        #endif
     }
     
     var body: some Scene {

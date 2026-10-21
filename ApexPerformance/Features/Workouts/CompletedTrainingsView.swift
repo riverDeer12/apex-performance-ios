@@ -617,6 +617,7 @@ struct TrainingExerciseCards: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("exercise-link")
                 .padding(.bottom, 10)
 
                 let sets = exercise.sets.sorted { $0.order < $1.order }
@@ -630,7 +631,7 @@ struct TrainingExerciseCards: View {
                     setRow(
                         number.map { Text(verbatim: "\($0)") }
                             // Drop set of the set above, done right after it.
-                            ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set"))"),
+                            ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
                         Text(verbatim: set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
                         Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
                         isDropSet: number == nil
