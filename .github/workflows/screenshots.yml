@@ -4,9 +4,11 @@ name: App Store screenshots
 # simulator and pushes the PNGs to the store-screenshots branch.
 # The app runs with invented demo data (DemoAPI), so no server or
 # accounts are needed and no real people are shown.
-# Started by hand: Actions -> App Store screenshots -> Run workflow.
+# Started by hand (Actions -> App Store screenshots -> Run workflow) and
+# by every App Store build (TestFlight workflow with app: store).
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
@@ -110,3 +112,30 @@ jobs:
           if [ "$status" != "0" ]; then
             echo "::warning::Some screenshot tests failed, see the errors above."
           fi
+
+      # The set for App Store Connect, in the order it is shown there:
+      # new features first. Downloadable as a ZIP from the run's page.
+      - name: Make the App Store set
+        run: |
+          order="client-*-training-details client-*-workout-muscles client-*-chat client-*-home
+            client-*-notifications client-*-body-progress client-*-training-progress
+            coach-*-appointments coach-*-client-details coach-*-clients"
+          for device in screenshots/*; do
+            name=$(basename "$device")
+            case "$name" in iPad*) target="AppStore/iPad 13" ;; *) target="AppStore/iPhone 6.9" ;; esac
+            mkdir -p "$target"
+            n=1
+            for pattern in $order; do
+              file=$(ls "$device"/$pattern.png 2>/dev/null | head -1)
+              [ -n "$file" ] || continue
+              cp "$file" "$target/$(printf %02d $n)-$(basename "$file" | sed -E 's/^(client|coach)-[0-9]+-/\1-/')"
+              n=$((n + 1))
+            done
+          done
+          ls -R AppStore
+
+      - name: Keep the App Store set
+        uses: actions/upload-artifact@v4
+        with:
+          name: AppStore-screenshots
+          path: AppStore
