@@ -113,7 +113,9 @@ struct TrainingFormView: View {
 
     private var fingerprint: String {
         let exercisesText = exercises.map { exercise in
-            let sets = exercise.sets.map { "\($0.reps)x\($0.weight)\($0.isDropSet ? "d" : "")" }.joined(separator: ",")
+            let sets = exercise.sets.map {
+                "\($0.reps)x\($0.weight)\($0.isDropSet ? "d" : "")\($0.durationSeconds.map { "t\($0)" } ?? "")"
+            }.joined(separator: ",")
             return "\(exercise.workoutId?.uuidString ?? "")|\(exercise.note)|\(exercise.isSupersetWithPrevious)|\(sets)"
         }.joined(separator: ";")
         let day = Calendar.current.startOfDay(for: date).timeIntervalSince1970
@@ -237,6 +239,8 @@ struct TrainingFormView: View {
     private func exerciseSection(_ exercise: Binding<ExerciseDraft>) -> some View {
         let index = exercises.firstIndex { $0.id == exercise.wrappedValue.id } ?? 0
         let previous = previousSets(for: exercise.wrappedValue.workoutId)
+        // Done for a time (e.g. plank): a duration instead of repetitions.
+        let isTimed = workout(exercise.wrappedValue.workoutId)?.isTimed == true
 
         return Section {
             NavigationLink {
@@ -257,7 +261,7 @@ struct TrainingFormView: View {
             }
 
             if !exercise.wrappedValue.sets.isEmpty {
-                setsHeader(previous: previous)
+                setsHeader(previous: previous, isTimed: isTimed)
             }
 
             let setNumbers = exercise.wrappedValue.setNumbers
@@ -276,17 +280,22 @@ struct TrainingFormView: View {
                             .frame(width: 22, alignment: .trailing)
                             .accessibilityLabel(Text("drop_set"))
                     }
-                    NumberWheelField(
-                        value: set.repsValue,
-                        range: 1...100,
-                        defaultValue: 10,
-                        allowsEmpty: true,
-                        title: "reps",
-                        // Reps written as text earlier (e.g. "8-10") are kept as they are.
-                        displayText: set.wrappedValue.repsValue == nil && !set.wrappedValue.reps.isEmpty
-                            ? set.wrappedValue.reps : nil
-                    )
-                    .frame(maxWidth: .infinity)
+                    if isTimed {
+                        DurationWheelField(seconds: set.durationSeconds, title: "time")
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        NumberWheelField(
+                            value: set.repsValue,
+                            range: 1...100,
+                            defaultValue: 10,
+                            allowsEmpty: true,
+                            title: "reps",
+                            // Reps written as text earlier (e.g. "8-10") are kept as they are.
+                            displayText: set.wrappedValue.repsValue == nil && !set.wrappedValue.reps.isEmpty
+                                ? set.wrappedValue.reps : nil
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
                     Text(verbatim: "×")
                         .foregroundStyle(.secondary)
                     NumberWheelField(
@@ -404,11 +413,11 @@ struct TrainingFormView: View {
     }
 
     /// Column titles of the sets, with the previous training's date.
-    private func setsHeader(previous: PreviousSets?) -> some View {
+    private func setsHeader(previous: PreviousSets?, isTimed: Bool) -> some View {
         HStack(spacing: 8) {
             Text(verbatim: "#")
                 .frame(width: 22, alignment: .leading)
-            Text("reps")
+            Text(isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps"))
                 .frame(maxWidth: .infinity)
             Text(verbatim: "×")
                 .hidden()
@@ -531,11 +540,14 @@ struct TrainingFormView: View {
         return nil
     }
 
-    // For example "10 × 40 kg", "10" or "40 kg".
+    // For example "10 × 40 kg", "10", "40 kg" or "1:30 · 10 kg" for a timed set.
     static func setDescription(_ set: Training.ExerciseSet) -> String {
         let reps = set.reps?.trimmingCharacters(in: .whitespaces)
         let weight = set.weight.map {
             NSDecimalNumber(decimal: $0).doubleValue.formatted(.number.precision(.fractionLength(0...2))) + " kg"
+        }
+        if let duration = set.durationSeconds {
+            return [SetDuration.text(duration), weight].compactMap { $0 }.joined(separator: " · ")
         }
         switch (reps?.isEmpty == false ? reps : nil, weight) {
         case let (reps?, weight?): return "\(reps) × \(weight)"
@@ -658,6 +670,7 @@ private struct ExerciseDraft: Identifiable {
         if let last = sets.last(where: { !$0.isDropSet }) ?? sets.last {
             set.reps = last.reps
             set.weight = last.weight
+            set.durationSeconds = last.durationSeconds
         }
         sets.append(set)
     }
@@ -672,6 +685,7 @@ private struct ExerciseDraft: Identifiable {
         var drop = SetDraft()
         drop.isDropSet = true
         drop.reps = previous.reps
+        drop.durationSeconds = previous.durationSeconds
         drop.weightValue = previous.weightValue.map { weight in
             // Rounded to half a kilogram, like the weight wheel.
             var lighter = weight * Decimal(0.8) * 2
@@ -704,7 +718,7 @@ private struct ExerciseDraft: Identifiable {
         return SaveTrainingRequest.Exercise(
             workout: workoutId,
             note: note.isEmpty ? nil : note,
-            // Sets without repetitions and weight are not saved.
+            // Sets without repetitions, weight and duration are not saved.
             sets: sets.compactMap(\.request),
             isSupersetWithPrevious: isSupersetWithPrevious
         )
@@ -717,11 +731,14 @@ private struct SetDraft: Identifiable {
     var weight = ""
     // Done right after the previous set with less weight.
     var isDropSet = false
+    // How long the set lasted, for timed workouts (e.g. plank).
+    var durationSeconds: Int?
 
     init() {}
 
     init(_ set: Training.ExerciseSet) {
         isDropSet = set.isDropSet
+        durationSeconds = set.durationSeconds
         reps = set.reps ?? ""
         weight = set.weight.map { NSDecimalNumber(decimal: $0).description(withLocale: Locale.current) } ?? ""
     }
@@ -760,9 +777,9 @@ private struct SetDraft: Identifiable {
 
     var request: SaveTrainingRequest.ExerciseSet? {
         let reps = trimmedReps
-        guard !reps.isEmpty || parsedWeight != nil else { return nil }
+        guard !reps.isEmpty || parsedWeight != nil || durationSeconds != nil else { return nil }
         return SaveTrainingRequest.ExerciseSet(reps: reps.isEmpty ? nil : reps, weight: parsedWeight,
-                                               isDropSet: isDropSet)
+                                               isDropSet: isDropSet, durationSeconds: durationSeconds)
     }
 }
 

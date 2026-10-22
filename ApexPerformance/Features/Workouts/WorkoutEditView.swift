@@ -23,6 +23,8 @@ struct WorkoutEditView: View {
     @State private var thumbnailUrl: String
     @State private var selectedWorkoutTypeIds: Set<UUID>
     @State private var muscles: [String: MuscleRole]
+    // Sets record a duration instead of repetitions (e.g. plank).
+    @State private var isTimed: Bool
 
     @State private var workoutTypes: [WorkoutType] = []
     @State private var isSaving = false
@@ -47,6 +49,7 @@ struct WorkoutEditView: View {
         _thumbnailUrl = State(initialValue: workout?.thumbnailUrl ?? "")
         _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
         _muscles = State(initialValue: Self.roles(of: workout))
+        _isTimed = State(initialValue: workout?.isTimed ?? false)
     }
 
     private var isNew: Bool {
@@ -76,6 +79,7 @@ struct WorkoutEditView: View {
             || videoUrl != (workout?.videoUrl ?? "") || thumbnailUrl != (workout?.thumbnailUrl ?? "")
             || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
             || muscles != Self.roles(of: workout)
+            || isTimed != (workout?.isTimed ?? false)
     }
 
     private static func roles(of workout: Workout?) -> [String: MuscleRole] {
@@ -160,6 +164,13 @@ struct WorkoutEditView: View {
                 if isNew {
                     Text("muscles_guess_hint")
                 }
+            }
+
+            Section {
+                Toggle("timed_workout", isOn: $isTimed)
+                    .tint(Color.apexMainColor)
+            } footer: {
+                Text("timed_workout_hint")
             }
 
             Section("workout_types") {
@@ -265,7 +276,8 @@ struct WorkoutEditView: View {
             videoUrl: videoUrl.trimmingCharacters(in: .whitespaces),
             workoutTypes: Array(selectedWorkoutTypeIds),
             muscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.primary),
-            secondaryMuscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.secondary)
+            secondaryMuscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.secondary),
+            isTimed: isTimed
         )
 
         do {

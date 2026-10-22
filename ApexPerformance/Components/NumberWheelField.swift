@@ -173,6 +173,111 @@ private struct NumberWheelSheet: View {
     }
 }
 
+/// Field showing a duration as "1:30" that opens minutes and seconds
+/// wheels, e.g. how long a plank lasted.
+struct DurationWheelField: View {
+    @Binding var seconds: Int?
+    // Value the wheels start at when there is no value yet.
+    var defaultSeconds = 60
+    var title: LocalizedStringKey? = nil
+
+    @State private var isPresented = false
+
+    var body: some View {
+        Button {
+            isPresented = true
+        } label: {
+            Text(verbatim: seconds.map(SetDuration.text) ?? "—")
+                .monospacedDigit()
+                .foregroundStyle(seconds == nil ? Color.secondary : Color.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .frame(minWidth: 44)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(Color.primary.opacity(0.06))
+                )
+        }
+        .buttonStyle(.borderless)
+        .sheet(isPresented: $isPresented) {
+            DurationWheelSheet(seconds: $seconds, defaultSeconds: defaultSeconds, title: title)
+                .presentationDetents([.height(320)])
+                .presentationDragIndicator(.visible)
+        }
+    }
+}
+
+/// Bottom sheet with minutes (0–59) and seconds (in steps of 5) wheels.
+private struct DurationWheelSheet: View {
+    @Binding var seconds: Int?
+    let title: LocalizedStringKey?
+
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var minutes: Int
+    @State private var secondsPart: Int
+
+    init(seconds: Binding<Int?>, defaultSeconds: Int, title: LocalizedStringKey?) {
+        _seconds = seconds
+        self.title = title
+        let start = min(max(seconds.wrappedValue ?? defaultSeconds, 0), 59 * 60 + 55)
+        _minutes = State(initialValue: start / 60)
+        // Rounded down to the wheel's steps of 5 seconds.
+        _secondsPart = State(initialValue: start % 60 / 5 * 5)
+    }
+
+    var body: some View {
+        NavigationStack {
+            HStack(spacing: 0) {
+                Picker(selection: $minutes) {
+                    ForEach(0..<60, id: \.self) { Text(verbatim: "\($0)").tag($0) }
+                } label: {
+                    EmptyView()
+                }
+                .pickerStyle(.wheel)
+                Text(verbatim: "min")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+
+                Picker(selection: $secondsPart) {
+                    ForEach(Array(stride(from: 0, to: 60, by: 5)), id: \.self) {
+                        Text(verbatim: String(format: "%02d", $0)).tag($0)
+                    }
+                } label: {
+                    EmptyView()
+                }
+                .pickerStyle(.wheel)
+                Text(verbatim: "s")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .padding(.trailing, 20)
+            }
+            .padding(.horizontal, 12)
+            .navigationTitle(title ?? "")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("done") {
+                        let total = minutes * 60 + secondsPart
+                        // The API takes 1 second at least.
+                        seconds = total > 0 ? total : nil
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("clear", role: .destructive) {
+                        seconds = nil
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
 extension Binding where Value == Decimal {
     /// Optional view of a number where 0 means "not entered yet".
     var zeroAsEmpty: Binding<Decimal?> {

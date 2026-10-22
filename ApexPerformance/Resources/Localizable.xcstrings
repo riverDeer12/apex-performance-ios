@@ -5758,6 +5758,29 @@
         }
       }
     },
+    "longest_duration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest time"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najduže trajanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durata massima"
+          }
+        }
+      }
+    },
     "manage_appointment_details" : {
       "localizations" : {
         "en" : {
@@ -10818,6 +10841,29 @@
         }
       }
     },
+    "time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrijeme"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo"
+          }
+        }
+      }
+    },
     "time_slot" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10837,6 +10883,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fascia oraria"
+          }
+        }
+      }
+    },
+    "timed_workout" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timed exercise"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vježba na vrijeme"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercizio a tempo"
+          }
+        }
+      }
+    },
+    "timed_workout_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets record a duration (e.g. plank) instead of repetitions."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setovi bilježe trajanje (npr. plank) umjesto ponavljanja."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le serie registrano la durata (es. plank) invece delle ripetizioni."
           }
         }
       }

@@ -42,12 +42,14 @@ struct Training: Identifiable, Decodable, Hashable {
         let weight: Decimal?
         // Done right after the previous set with less weight (drop set).
         var isDropSet = false
+        // How long the set lasted, for workouts done for a time (e.g. plank).
+        var durationSeconds: Int? = nil
     }
 }
 
 extension Training.ExerciseSet {
     private enum CodingKeys: String, CodingKey {
-        case id, order, reps, weight, isDropSet
+        case id, order, reps, weight, isDropSet, durationSeconds
     }
 
     // In an extension so the memberwise initializer stays available.
@@ -58,6 +60,19 @@ extension Training.ExerciseSet {
         reps = try container.decodeIfPresent(String.self, forKey: .reps)
         weight = try container.decodeIfPresent(Decimal.self, forKey: .weight)
         isDropSet = try container.decodeIfPresent(Bool.self, forKey: .isDropSet) ?? false
+        durationSeconds = try container.decodeIfPresent(Int.self, forKey: .durationSeconds)
+    }
+}
+
+/// Duration of a set as minutes and seconds, e.g. "1:30" or "1:02:30".
+enum SetDuration {
+    static func text(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = seconds % 3600 / 60
+        let rest = seconds % 60
+        return hours > 0
+            ? String(format: "%d:%02d:%02d", hours, minutes, rest)
+            : String(format: "%d:%02d", minutes, rest)
     }
 }
 
@@ -216,5 +231,6 @@ struct SaveTrainingRequest: Encodable {
         let reps: String?
         let weight: Decimal?
         var isDropSet = false
+        var durationSeconds: Int? = nil
     }
 }

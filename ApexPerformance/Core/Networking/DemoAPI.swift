@@ -717,6 +717,21 @@ fileprivate struct Fixtures {
                 "achievedAt": iso(anaTrainingDate(row.1).addingTimeInterval(75 * 60))
             ])
         }
+        // Longest plank, in seconds.
+        for (offset, row) in [(3, 50.0), (5, 60.0)].enumerated() {
+            records.append([
+                "id": DemoAPI.id(.record, rows.count + offset + 1).uuidString,
+                "clientId": DemoAPI.anaClientId.uuidString,
+                "workoutId": DemoAPI.id(.workout, DemoAPI.WorkoutNumber.plank).uuidString,
+                "workoutName": workoutName(DemoAPI.WorkoutNumber.plank),
+                "trainingId": DemoAPI.id(.training, row.0).uuidString,
+                "type": "LongestDuration",
+                "value": row.1,
+                "weight": 0,
+                "reps": NSNull(),
+                "achievedAt": iso(anaTrainingDate(row.0).addingTimeInterval(75 * 60))
+            ])
+        }
         return records
     }
 
@@ -746,7 +761,9 @@ fileprivate struct Fixtures {
             "videoUrl": "",
             "workoutTypes": info.types.map { workoutType($0) },
             "muscles": info.muscles,
-            "secondaryMuscles": info.secondaryMuscles
+            "secondaryMuscles": info.secondaryMuscles,
+            // Plank sets record a duration.
+            "isTimed": info.number == DemoAPI.WorkoutNumber.plank
         ]
     }
 
@@ -779,12 +796,15 @@ fileprivate struct Fixtures {
         for (index, exercise) in exercises.enumerated() {
             var sets: [JSON] = []
             for (setIndex, set) in exercise.sets.enumerated() {
+                // "45 s" is a duration (plank), not repetitions.
+                let duration = set.reps.hasSuffix(" s") ? Int(set.reps.dropLast(2)) : nil
                 sets.append([
                     "id": DemoAPI.id(.exerciseSet, number * 10_000 + index * 100 + setIndex).uuidString,
                     "order": setIndex + 1,
-                    "reps": set.reps,
+                    "reps": duration == nil ? set.reps : NSNull(),
                     "weight": null(set.weight),
-                    "isDropSet": set.isDropSet
+                    "isDropSet": set.isDropSet,
+                    "durationSeconds": null(duration)
                 ])
             }
             result.append([
@@ -1412,7 +1432,8 @@ fileprivate struct Fixtures {
                     "order": setIndex + 1,
                     "reps": null(set["reps"] as? String),
                     "weight": null(set["weight"] as? NSNumber),
-                    "isDropSet": set["isDropSet"] as? Bool ?? false
+                    "isDropSet": set["isDropSet"] as? Bool ?? false,
+                    "durationSeconds": null(set["durationSeconds"] as? NSNumber)
                 ])
             }
             exercises.append([
@@ -1468,7 +1489,8 @@ fileprivate struct Fixtures {
             "videoUrl": input["videoUrl"] as? String ?? "",
             "workoutTypes": types.map { workoutType($0.number) },
             "muscles": input["muscles"] as? [String] ?? [String](),
-            "secondaryMuscles": input["secondaryMuscles"] as? [String] ?? [String]()
+            "secondaryMuscles": input["secondaryMuscles"] as? [String] ?? [String](),
+            "isTimed": input["isTimed"] as? Bool ?? false
         ]
     }
 
@@ -1791,7 +1813,7 @@ extension DemoAPI {
             description: LocalizedText(translations: ["EN": "Press.", "HR": "Potisak."]),
             thumbnailUrl: "", videoUrl: "",
             workoutTypes: [id(.workoutType, 1)],
-            muscles: ["chest"], secondaryMuscles: ["triceps"]
+            muscles: ["chest"], secondaryMuscles: ["triceps"], isTimed: false
         ))
         let goalBody = try? JSONEncoder().encode(ClientGoal(goal: "Bench press 80 kg", nextAssessmentDate: Date()))
         let profileBody = try? JSONEncoder().encode(UpdateProfileRequest(
