@@ -82,7 +82,13 @@ struct UserProfileView: View {
                             }
                             .buttonStyle(.plain)
                             
+                            if isClient {
+                                // Accepted cooperation rules, shown once they are.
+                                CooperationRulesRow()
+                            }
+
                             Divider().padding(.leading, 52)
+                            
                             
                             AppearanceSwitcherView()
                             
