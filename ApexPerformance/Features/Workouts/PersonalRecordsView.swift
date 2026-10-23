@@ -105,9 +105,14 @@ struct PersonalRecordsView: View {
             }
 
             HStack(spacing: 0) {
-                stat(label: "max_weight", record: exercise.maxWeight)
-                Divider().overlay(Color.apexBorder)
-                stat(label: "estimated_one_rep_max", record: exercise.oneRepMax)
+                if let longestDuration = exercise.longestDuration {
+                    // A workout done for a time has no weight records.
+                    stat(label: "longest_duration", record: longestDuration)
+                } else {
+                    stat(label: "max_weight", record: exercise.maxWeight)
+                    Divider().overlay(Color.apexBorder)
+                    stat(label: "estimated_one_rep_max", record: exercise.oneRepMax)
+                }
             }
             .frame(height: 64)
             .overlay(
@@ -125,7 +130,7 @@ struct PersonalRecordsView: View {
 
     private func stat(label: LocalizedStringKey, record: PersonalRecord?) -> some View {
         VStack(spacing: 4) {
-            Text(verbatim: record.map { PersonalRecordFormat.kilograms($0.value) } ?? "—")
+            Text(verbatim: record.map(PersonalRecordFormat.value) ?? "—")
                 .font(.system(size: 20, weight: .bold))
                 .monospacedDigit()
             Text(label)
@@ -137,6 +142,10 @@ struct PersonalRecordsView: View {
                 .minimumScaleFactor(0.8)
             if let record, record.isMaxWeight, let reps = record.reps {
                 Text(verbatim: "× \(PersonalRecordFormat.number(reps))")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            } else if let record, record.isLongestDuration, record.weight > 0 {
+                Text(verbatim: "· \(PersonalRecordFormat.kilograms(record.weight))")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -182,11 +191,13 @@ struct PersonalRecordHistoryView: View {
             Section {
                 ForEach(exercise.history) { record in
                     HStack(spacing: 12) {
-                        Image(systemName: record.isMaxWeight ? "scalemass" : "function")
+                        Image(systemName: record.isLongestDuration ? "stopwatch"
+                              : record.isMaxWeight ? "scalemass" : "function")
                             .foregroundStyle(Color.apexAccent)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(record.isMaxWeight ? "max_weight" : "estimated_one_rep_max")
+                            Text(record.isLongestDuration ? "longest_duration"
+                                 : record.isMaxWeight ? "max_weight" : "estimated_one_rep_max")
                                 .font(.subheadline.weight(.semibold))
                             Text(verbatim: DateFormatter.dateWithDots.string(from: record.achievedAt))
                                 .font(.caption)
@@ -194,11 +205,13 @@ struct PersonalRecordHistoryView: View {
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 2) {
-                            Text(verbatim: PersonalRecordFormat.kilograms(record.value))
+                            Text(verbatim: PersonalRecordFormat.value(record))
                                 .font(.subheadline.weight(.bold))
                                 .monospacedDigit()
                             // The set the record comes from.
-                            Text(verbatim: PersonalRecordFormat.set(weight: record.weight, reps: record.reps))
+                            Text(verbatim: record.isLongestDuration
+                                 ? (record.weight > 0 ? PersonalRecordFormat.kilograms(record.weight) : "—")
+                                 : PersonalRecordFormat.set(weight: record.weight, reps: record.reps))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -221,6 +234,13 @@ enum PersonalRecordFormat {
 
     static func kilograms(_ value: Decimal) -> String {
         "\(number(value)) kg"
+    }
+
+    // Kilograms, or minutes and seconds for the longest duration.
+    static func value(_ record: PersonalRecord) -> String {
+        record.isLongestDuration
+            ? SetDuration.text(NSDecimalNumber(decimal: record.value).intValue)
+            : kilograms(record.value)
     }
 
     // "10 × 40 kg" or "40 kg".

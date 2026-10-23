@@ -16,6 +16,8 @@ struct Workout: Identifiable, Decodable, Hashable {
     // of the work and secondary ones helping. Nil from an API without them.
     let muscles: [String]?
     var secondaryMuscles: [String]? = nil
+    // Done for a time (e.g. plank): sets record a duration instead of repetitions.
+    var isTimed: Bool? = nil
 
     // Every translation is searched, so the query language does not matter.
     func matches(_ query: String) -> Bool {
@@ -50,6 +52,7 @@ struct UpdateWorkoutRequest: Encodable {
     // Nil for a new workout lets the API guess them from the name.
     let muscles: [String]?
     let secondaryMuscles: [String]?
+    let isTimed: Bool
 }
 
 /// Mirrors the API's LocalizedProperty, translations keyed by language code (HR, EN, IT).

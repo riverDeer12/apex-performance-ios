@@ -14,7 +14,8 @@ struct PersonalRecord: Identifiable, Decodable, Hashable {
     // Persisted JSON with the workout name translations.
     let workoutName: LocalizedText
     let trainingId: UUID
-    // "MaxWeight" or "EstimatedOneRepMax".
+    // "MaxWeight", "EstimatedOneRepMax" or "LongestDuration" (value in
+    // seconds, for workouts done for a time).
     let type: String
     let value: Decimal
     let weight: Decimal
@@ -22,6 +23,8 @@ struct PersonalRecord: Identifiable, Decodable, Hashable {
     let achievedAt: Date
 
     var isMaxWeight: Bool { type == "MaxWeight" }
+    var isOneRepMax: Bool { type == "EstimatedOneRepMax" }
+    var isLongestDuration: Bool { type == "LongestDuration" }
 }
 
 extension PersonalRecord {
@@ -52,6 +55,8 @@ struct ExerciseRecords: Identifiable {
     let name: String
     let maxWeight: PersonalRecord?
     let oneRepMax: PersonalRecord?
+    // Longest set of a workout done for a time (e.g. plank).
+    let longestDuration: PersonalRecord?
     // Newest first.
     let history: [PersonalRecord]
 
@@ -73,7 +78,8 @@ struct ExerciseRecords: Identifiable {
                     name: history[0].workoutName.localized,
                     // History is newest first, so the first record of a type is the current one.
                     maxWeight: history.first(where: \.isMaxWeight),
-                    oneRepMax: history.first { !$0.isMaxWeight },
+                    oneRepMax: history.first(where: \.isOneRepMax),
+                    longestDuration: history.first(where: \.isLongestDuration),
                     history: history
                 )
             }
