@@ -19,11 +19,12 @@ extension DateFormatter {
         return f
     }()    
     
-    static let dayName: DateFormatter = {
+    // In the app's language, which can change while it runs.
+    static var dayName: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
+        formatter.locale = AppLanguage.locale
         formatter.dateFormat = "EEEE"
         return formatter
-    }()
+    }
 }
 

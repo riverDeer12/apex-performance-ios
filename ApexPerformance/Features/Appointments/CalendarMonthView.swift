@@ -24,7 +24,7 @@ struct CalendarMonthView: View {
 
     private var monthTitle: String {
         let formatter = DateFormatter()
-        formatter.locale = .current
+        formatter.locale = AppLanguage.locale
         formatter.dateFormat = "LLLL yyyy"
         return formatter.string(from: displayedMonth).capitalized
     }

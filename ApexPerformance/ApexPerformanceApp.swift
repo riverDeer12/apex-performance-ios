@@ -14,8 +14,12 @@ import FirebaseCore
     
     // Light, dark or system, picked in the user's profile.
     @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
+
+    // Picked in the app at any time; the screens are rebuilt in it.
+    @AppStorage(AppLanguage.storageKey) private var language = AppLanguage.system.rawValue
     
     init() {
+        AppLanguage.apply()
         ApexFont.applyToNavigationBars()
         #if DEBUG
         // App Store screenshots: invented data instead of the test server's.
@@ -26,6 +30,8 @@ import FirebaseCore
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.locale, AppLanguage.locale)
+                .id(language)
                 .environmentObject(authManager)
                 .environmentObject(toastManager)
                 .overlay(alignment: .bottom) {

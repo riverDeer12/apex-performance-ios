@@ -96,7 +96,7 @@ struct LocalizedText: Codable, Hashable {
 
     // Uses the same localization iOS picked for the app's own strings.
     var localized: String {
-        value(for: Bundle.main.preferredLocalizations.first ?? "hr")
+        value(for: AppLanguage.current)
             ?? value(for: "HR")
             ?? translations.values.first { !$0.isEmpty }
             ?? ""

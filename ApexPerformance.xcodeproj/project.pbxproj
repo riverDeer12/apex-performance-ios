@@ -84,6 +84,7 @@
 		61E63F692F0C357B004D74F3 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F682F0C357B004D74F3 /* ToastView.swift */; };
 		61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6A2F0C368C004D74F3 /* ToastType.swift */; };
 		61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6C2F0EA243004D74F3 /* ToastManager.swift */; };
+		113114A4BA4F6C11A5D53657 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */; };
 		61E63F6F2F0EC655004D74F3 /* ApiErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */; };
 		61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F702F0EC673004D74F3 /* ApiError.swift */; };
 		61E63F732F115CFE004D74F3 /* StatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F722F115CFE004D74F3 /* StatusResponse.swift */; };
@@ -227,6 +228,7 @@
 		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		61E63F6A2F0C368C004D74F3 /* ToastType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastType.swift; sourceTree = "<group>"; };
 		61E63F6C2F0EA243004D74F3 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
+		F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorResponse.swift; sourceTree = "<group>"; };
 		61E63F702F0EC673004D74F3 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		61E63F722F115CFE004D74F3 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
@@ -486,6 +488,7 @@
 			children = (
 				216BB30FEB24A3355AA0D78A /* AppUpdateChecker.swift */,
 				61E63F6C2F0EA243004D74F3 /* ToastManager.swift */,
+				F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */,
 				61E63F912F1C3491004D74F3 /* DateManager.swift */,
 				A884F28D08EB4F168066D594 /* NotificationRouter.swift */,
 			);
@@ -829,6 +832,7 @@
 				C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */,
 				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
+				113114A4BA4F6C11A5D53657 /* AppLanguage.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
 				5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */,
 				CB075B04A94A6AE1831A2184 /* BodyMapPaths.swift in Sources */,

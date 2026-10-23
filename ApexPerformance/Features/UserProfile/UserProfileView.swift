@@ -94,9 +94,8 @@ struct UserProfileView: View {
                             
                             Divider().padding(.leading, 52)
                             
-                            // iOS sets the app's language in its settings,
-                            // which opens straight on the app's page.
-                            Button { openLanguageSettings() } label: {
+                            // Changes the app's language right away.
+                            LanguageMenu {
                                 SettingsRowView(
                                     icon: "globe",
                                     iconTint: Color.apexMainColor,
@@ -301,18 +300,10 @@ struct UserProfileView: View {
         }
     }
     
-    // Language the app runs in, picked by iOS from the app's settings.
+    // Picked language, or the device's when none is picked.
     private var currentLanguage: Text {
-        switch Bundle.main.preferredLocalizations.first {
-        case "hr": Text("croatian")
-        case "it": Text("italian")
-        default: Text("english")
-        }
-    }
-
-    private func openLanguageSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        UIApplication.shared.open(url)
+        let selected = AppLanguage.selected
+        return selected == .system ? Text("device_language") : Text(verbatim: selected.nativeName)
     }
 
     @MainActor
