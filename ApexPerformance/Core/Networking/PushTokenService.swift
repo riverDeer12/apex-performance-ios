@@ -27,7 +27,7 @@ enum PushTokenService {
                 let osVersion = PushTokenService.osVersion
                 let deviceModel = PushTokenService.deviceModelIdentifier
                 // The backend sends pushes in the app's language.
-                let language = Bundle.main.preferredLocalizations.first
+                let language = AppLanguage.current
                 let previousToken: String?
             }
 

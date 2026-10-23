@@ -3773,6 +3773,29 @@
         }
       }
     },
+    "device_language" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device language"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jezik uređaja"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lingua del dispositivo"
+          }
+        }
+      }
+    },
     "discard_changes" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -170,6 +170,24 @@ struct LoginView: View {
                 .frame(minHeight: geo.size.height)
             }
         }
+        // The language can be changed before logging in too.
+        .overlay(alignment: .topTrailing) {
+            LanguageMenu {
+                Label {
+                    Text(verbatim: AppLanguage.current.uppercased())
+                } icon: {
+                    Image(systemName: "globe")
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.apexMainColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Capsule().fill(Color.apexMainColor.opacity(0.1)))
+            }
+            .accessibilityLabel(Text("language"))
+            .padding(.trailing, 16)
+            .padding(.top, 8)
+        }
         .sheet(isPresented: $showForgotPassword) {
             ForgotPasswordView()
         }
