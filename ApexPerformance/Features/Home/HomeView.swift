@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @EnvironmentObject var authManager: AuthManager
+    @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var notificationRouter = NotificationRouter.shared
     @ObservedObject private var profilePicture = ProfilePictureStore.shared
     @ObservedObject private var chatStore = ChatStore.shared
@@ -19,6 +20,8 @@ struct HomeView: View {
     @State private var showsProgress = false
     @State private var hasSelectedFirstTab = false
     @State private var showsChat = false
+    // Cooperation rules the client has to accept before using the app.
+    @State private var rulesToAccept: CooperationRules?
 
     private var isClient: Bool {
         authManager.hasRole(role: "Client")
@@ -155,6 +158,28 @@ struct HomeView: View {
         .sheet(isPresented: $showsChat) {
             ChatListView(showsCloseButton: true)
         }
+        // A popup over everything, also over the chat button and the tabs:
+        // accepting or logging out are the only ways out.
+        .overlay {
+            if let rules = rulesToAccept {
+                CooperationRulesView(rules: rules) { _ in
+                    withAnimation { rulesToAccept = nil }
+                } onLogout: {
+                    rulesToAccept = nil
+                    PushTokenService.unregister()
+                    authManager.logout()
+                }
+            }
+        }
+        .task {
+            await checkRules()
+        }
+        // A new version of the rules can come while the app is in the background.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await checkRules() }
+            }
+        }
         .task {
             // The hub keeps the unread badge fresh while logged in.
             if canChat { chatStore.start() }
@@ -183,6 +208,15 @@ struct HomeView: View {
             return Image(uiImage: icon)
         }
         return Image(systemName: "person")
+    }
+
+    /// Asks a client on private coaching to accept the cooperation rules.
+    @MainActor
+    private func checkRules() async {
+        guard isClient, rulesToAccept == nil,
+              let rules = try? await CooperationRules.load(), rules.needsAcceptance else { return }
+        showsChat = false
+        withAnimation { rulesToAccept = rules }
     }
 
     private func openPendingTab() {

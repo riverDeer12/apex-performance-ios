@@ -46,6 +46,7 @@
 		61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5292EF43E53009E9624 /* HomeView.swift */; };
 		B31EA62BC2771A5ED9B2059E /* ClientHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E303462900FBA1BEE47412B /* ClientHomeView.swift */; };
 		F10901F0D0955CF55BDDC1C0 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72031445ABD18B1A03059112 /* NotificationsView.swift */; };
+		F63DD84C295115A3422A7AF2 /* CooperationRulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9B0F6278FFA366FAD40E52 /* CooperationRulesView.swift */; };
 		8B89FD832163108150ACAEAA /* MyPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13F6A03A85B2EB6691C644B /* MyPackageView.swift */; };
 		61CFB52D2EF44204009E9624 /* ClientsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52C2EF44204009E9624 /* ClientsView.swift */; };
 		61CFB52F2EF44338009E9624 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB52E2EF44338009E9624 /* Appointment.swift */; };
@@ -185,6 +186,7 @@
 		61CFB5292EF43E53009E9624 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7E303462900FBA1BEE47412B /* ClientHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientHomeView.swift; sourceTree = "<group>"; };
 		72031445ABD18B1A03059112 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
+		9A9B0F6278FFA366FAD40E52 /* CooperationRulesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooperationRulesView.swift; sourceTree = "<group>"; };
 		B13F6A03A85B2EB6691C644B /* MyPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPackageView.swift; sourceTree = "<group>"; };
 		61CFB52C2EF44204009E9624 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
 		61CFB52E2EF44338009E9624 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
@@ -496,6 +498,7 @@
 				61CFB5292EF43E53009E9624 /* HomeView.swift */,
 				7E303462900FBA1BEE47412B /* ClientHomeView.swift */,
 				72031445ABD18B1A03059112 /* NotificationsView.swift */,
+				9A9B0F6278FFA366FAD40E52 /* CooperationRulesView.swift */,
 				B13F6A03A85B2EB6691C644B /* MyPackageView.swift */,
 			);
 			path = Home;
@@ -783,6 +786,7 @@
 				61CFB52A2EF43E53009E9624 /* HomeView.swift in Sources */,
 				B31EA62BC2771A5ED9B2059E /* ClientHomeView.swift in Sources */,
 				F10901F0D0955CF55BDDC1C0 /* NotificationsView.swift in Sources */,
+				F63DD84C295115A3422A7AF2 /* CooperationRulesView.swift in Sources */,
 				8B89FD832163108150ACAEAA /* MyPackageView.swift in Sources */,
 				61CFB5482EFC1770009E9624 /* AppEnvironment.swift in Sources */,
 				61E63F8E2F1AC915004D74F3 /* GetTimeSlotsRequest.swift in Sources */,
