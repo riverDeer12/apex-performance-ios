@@ -4828,6 +4828,50 @@
         }
       }
     },
+    "full_body_muscles_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When you pick a full body type (e.g. Full body), the muscles are marked from the exercise's name."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kad odabereš tip za cijelo tijelo (npr. Full body), mišići se označe prema nazivu vježbe."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando scegli un tipo total body (es. Full body), i muscoli vengono segnati in base al nome dell'esercizio."
+          }
+        }
+      }
+    },
+    "full_body_muscles_marked" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muscles of the full body exercise are marked."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Označeni su mišići vježbe za cijelo tijelo."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I muscoli dell'esercizio total body sono stati segnati."
+          }
+        }
+      }
+    },
     "generate_recurring_appointments" : {
       "localizations" : {
         "en" : {

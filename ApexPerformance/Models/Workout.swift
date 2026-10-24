@@ -55,6 +55,19 @@ struct UpdateWorkoutRequest: Encodable {
     let isTimed: Bool
 }
 
+/// POST workouts/guess-muscles: muscles guessed from the name, with the
+/// whole body ones when a type is for the full body.
+struct GuessMusclesRequest: Encodable {
+    let name: LocalizedText
+    let workoutTypes: [UUID]
+}
+
+struct GuessMusclesResponse: Decodable {
+    let isFullBody: Bool
+    let muscles: [String]
+    let secondaryMuscles: [String]
+}
+
 /// Mirrors the API's LocalizedProperty, translations keyed by language code (HR, EN, IT).
 struct LocalizedText: Codable, Hashable {
     var translations: [String: String]
