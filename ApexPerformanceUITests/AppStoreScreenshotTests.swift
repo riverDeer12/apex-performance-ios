@@ -119,6 +119,19 @@ final class AppStoreScreenshotTests: XCTestCase {
 
     func testClientScreenshots() throws {
         app.launch()
+
+        // The app's language, changed at any time, here before logging in.
+        allowSystemAlerts()
+        let languageButton = app.buttons["login-language"].firstMatch
+        if languageButton.waitForExistence(timeout: 10) {
+            languageButton.tap()
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "language")
+            // Closes the menu without picking a language.
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)).tap()
+            waitForContent(seconds: 1)
+        }
+
         try logIn(role: "CLIENT")
 
         try waitForTabs()
@@ -228,15 +241,6 @@ final class AppStoreScreenshotTests: XCTestCase {
         tab("Profile").tap()
         waitForContent()
         takeScreenshot("client", "profile")
-
-        // The app's language, changed at any time.
-        let languageRow = app.buttons["language-row"].firstMatch
-        if languageRow.waitForExistence(timeout: 5) {
-            scrollTo(languageRow)
-            languageRow.tap()
-            waitForContent(seconds: 1)
-            takeScreenshot("client", "language")
-        }
     }
 
     // MARK: - Helpers

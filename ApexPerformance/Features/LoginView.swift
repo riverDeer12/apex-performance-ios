@@ -185,6 +185,7 @@ struct LoginView: View {
                 .background(Capsule().fill(Color.apexMainColor.opacity(0.1)))
             }
             .accessibilityLabel(Text("language"))
+            .accessibilityIdentifier("login-language")
             .padding(.trailing, 16)
             .padding(.top, 8)
         }
