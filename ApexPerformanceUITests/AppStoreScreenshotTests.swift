@@ -119,6 +119,19 @@ final class AppStoreScreenshotTests: XCTestCase {
 
     func testClientScreenshots() throws {
         app.launch()
+
+        // The app's language, changed at any time, here before logging in.
+        allowSystemAlerts()
+        let languageButton = app.buttons["login-language"].firstMatch
+        if languageButton.waitForExistence(timeout: 10) {
+            languageButton.tap()
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "language")
+            // Closes the menu without picking a language.
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)).tap()
+            waitForContent(seconds: 1)
+        }
+
         try logIn(role: "CLIENT")
 
         try waitForTabs()
@@ -128,6 +141,17 @@ final class AppStoreScreenshotTests: XCTestCase {
         waitForContent()
         if app.buttons.matching(NSPredicate(format: "label ==[c] %@", "Got it")).firstMatch.exists {
             dismissSheet()
+        }
+
+        // Cooperation rules, accepted on entering the app.
+        let acceptRules = app.buttons["rules-accept"].firstMatch
+        if acceptRules.waitForExistence(timeout: 10) {
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "cooperation-rules")
+            app.buttons["rules-checkbox"].firstMatch.tap()
+            acceptRules.tap()
+            waitForContent()
+            XCTAssertFalse(acceptRules.exists, "Cooperation rules not accepted")
         }
 
         // Home with the next appointment.
@@ -256,6 +280,24 @@ final class AppStoreScreenshotTests: XCTestCase {
 
         app.buttons["login-button"].tap()
         allowSystemAlerts()
+        dismissSavePassword()
+    }
+
+    /// iPhones offer to save the password a few seconds after login, over the app.
+    private func dismissSavePassword() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let deadline = Date().addingTimeInterval(8)
+        while Date() < deadline {
+            for source in [springboard, app!] {
+                let notNow = source.buttons["Not Now"]
+                if notNow.exists {
+                    notNow.tap()
+                    waitForContent(seconds: 1)
+                    return
+                }
+            }
+            Thread.sleep(forTimeInterval: 0.5)
+        }
     }
 
     /// Answers the notification permission alert, which covers the app.

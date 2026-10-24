@@ -117,9 +117,9 @@ jobs:
       # new features first. Downloadable as a ZIP from the run's page.
       - name: Make the App Store set
         run: |
-          order="client-*-training-details client-*-workout-muscles client-*-chat client-*-home
-            client-*-notifications client-*-body-progress client-*-training-progress
-            coach-*-appointments coach-*-client-details coach-*-clients"
+          order="client-*-cooperation-rules client-*-training-details client-*-language
+            client-*-workout-muscles client-*-chat client-*-home client-*-notifications
+            client-*-body-progress coach-*-appointments coach-*-clients"
           for device in screenshots/*; do
             name=$(basename "$device")
             case "$name" in iPad*) target="AppStore/iPad 13" ;; *) target="AppStore/iPhone 6.9" ;; esac

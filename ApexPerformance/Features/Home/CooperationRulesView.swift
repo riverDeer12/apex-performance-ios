@@ -139,6 +139,7 @@ struct CooperationRulesView: View {
             }
 
             checkbox(isOn: $hasReadRules, title: Text("rules_checkbox \(current.version)"))
+                .accessibilityIdentifier("rules-checkbox")
 
             VStack(alignment: .leading, spacing: 12) {
                 checkbox(isOn: $isGuardian.animation(), title: Text("rules_guardian"))
@@ -170,6 +171,7 @@ struct CooperationRulesView: View {
                 }
             }
             .buttonStyle(ApexPrimaryButtonStyle(systemImage: "checkmark"))
+            .accessibilityIdentifier("rules-accept")
             .disabled(!canAccept)
             .opacity(canAccept ? 1 : 0.5)
 

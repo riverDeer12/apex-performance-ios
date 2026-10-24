@@ -19,6 +19,10 @@ enum DemoAPI {
         ProcessInfo.processInfo.arguments.contains("-demoData")
     }
 
+    /// When Ana accepted the cooperation rules in this launch: she accepts
+    /// them after every login, so the screenshots show the popup.
+    nonisolated(unsafe) static var rulesAcceptedAt: Date?
+
     /// Answers requests to the API host from now on (URLSession.shared).
     static func start() {
         URLProtocol.registerClass(DemoURLProtocol.self)
@@ -543,6 +547,19 @@ fileprivate struct Fixtures {
     }
 
     // MARK: People
+
+    var rules: JSON {
+        let acceptedAt = isCoach ? nil : DemoAPI.rulesAcceptedAt
+        return [
+            "document": "CooperationRules",
+            "version": "1.0",
+            "documentUrl": "https://example.com/cooperation-rules.pdf",
+            "isRequired": !isCoach,
+            "isAccepted": acceptedAt != nil,
+            "acceptedVersion": null(acceptedAt.map { _ in "1.0" }),
+            "acceptedAt": null(acceptedAt.map(iso))
+        ]
+    }
 
     var profile: JSON {
         let person = isCoach ? DemoAPI.coach : DemoAPI.clients[C.ana]
@@ -1531,6 +1548,15 @@ fileprivate struct Fixtures {
             return .json(["token": DemoAPI.token(for: username.contains("coach") ? .coach : .client)])
         }
 
+        // Cooperation rules: the coach has none to accept, Ana accepts them once.
+        if route("GET", "rules") != nil {
+            return .json(rules)
+        }
+        if route("POST", "rules/accept") != nil {
+            DemoAPI.rulesAcceptedAt = now
+            return .json(rules)
+        }
+
         // People
         if route("GET", "profile") != nil {
             return .json(profile)
@@ -1860,9 +1886,13 @@ extension DemoAPI {
                   body: jsonBody(["content": "See you tomorrow!"])),
             check(ChatMessage.self, "chat/conversations/\(conversation)/images", method: "POST", as: .client),
             check(Profile.self, "profile", method: "PUT", as: .client, body: profileBody),
+            check(CooperationRules.self, "rules", as: .client),
+            check(CooperationRules.self, "rules/accept", method: "POST", as: .client,
+                  body: jsonBody(["version": "1.0", "independentTravelApproved": false])),
 
             // Coach
             check(Profile.self, "profile", as: .coach),
+            check(CooperationRules.self, "rules", as: .coach),
             check(Coach.self, "coaches/current-coach", as: .coach),
             check([Coach].self, "coaches/all", as: .coach),
             check([Client].self, "clients", as: .coach),
