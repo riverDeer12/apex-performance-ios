@@ -105,6 +105,7 @@ struct UserProfileView: View {
                                 )
                             }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier("language-row")
                             
                             Divider().padding(.leading, 52)
                             

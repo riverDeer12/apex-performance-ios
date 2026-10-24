@@ -130,6 +130,16 @@ final class AppStoreScreenshotTests: XCTestCase {
             dismissSheet()
         }
 
+        // Cooperation rules, accepted on entering the app.
+        let acceptRules = app.buttons["rules-accept"].firstMatch
+        if acceptRules.waitForExistence(timeout: 10) {
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "cooperation-rules")
+            app.buttons["rules-checkbox"].firstMatch.tap()
+            acceptRules.tap()
+            waitForContent()
+        }
+
         // Home with the next appointment.
         tab("Home").tap()
         waitForContent()
@@ -217,6 +227,15 @@ final class AppStoreScreenshotTests: XCTestCase {
         tab("Profile").tap()
         waitForContent()
         takeScreenshot("client", "profile")
+
+        // The app's language, changed at any time.
+        let languageRow = app.buttons["language-row"].firstMatch
+        if languageRow.waitForExistence(timeout: 5) {
+            scrollTo(languageRow)
+            languageRow.tap()
+            waitForContent(seconds: 1)
+            takeScreenshot("client", "language")
+        }
     }
 
     // MARK: - Helpers
