@@ -138,6 +138,7 @@ final class AppStoreScreenshotTests: XCTestCase {
             app.buttons["rules-checkbox"].firstMatch.tap()
             acceptRules.tap()
             waitForContent()
+            XCTAssertFalse(acceptRules.exists, "Cooperation rules not accepted")
         }
 
         // Home with the next appointment.
@@ -275,6 +276,24 @@ final class AppStoreScreenshotTests: XCTestCase {
 
         app.buttons["login-button"].tap()
         allowSystemAlerts()
+        dismissSavePassword()
+    }
+
+    /// iPhones offer to save the password a few seconds after login, over the app.
+    private func dismissSavePassword() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let deadline = Date().addingTimeInterval(8)
+        while Date() < deadline {
+            for source in [springboard, app!] {
+                let notNow = source.buttons["Not Now"]
+                if notNow.exists {
+                    notNow.tap()
+                    waitForContent(seconds: 1)
+                    return
+                }
+            }
+            Thread.sleep(forTimeInterval: 0.5)
+        }
     }
 
     /// Answers the notification permission alert, which covers the app.
