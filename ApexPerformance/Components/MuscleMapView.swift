@@ -11,7 +11,8 @@ enum WorkoutMuscle {
     static let all = BodyMapPaths.muscles.map(\.code)
 
     static func name(_ code: String) -> LocalizedStringKey {
-        LocalizedStringKey("muscle_\(code)")
+        // Not "muscle_\(code)": interpolation would look up "muscle_%@".
+        LocalizedStringKey("muscle_" + code)
     }
 }
 

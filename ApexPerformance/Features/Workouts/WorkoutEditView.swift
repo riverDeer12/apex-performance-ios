@@ -161,8 +161,11 @@ struct WorkoutEditView: View {
             } header: {
                 Text("worked_muscles")
             } footer: {
-                if isNew {
-                    Text("muscles_guess_hint")
+                VStack(alignment: .leading, spacing: 4) {
+                    if isNew {
+                        Text("muscles_guess_hint")
+                    }
+                    Text("full_body_muscles_hint")
                 }
             }
 
@@ -229,6 +232,35 @@ struct WorkoutEditView: View {
             selectedWorkoutTypeIds.remove(id)
         } else {
             selectedWorkoutTypeIds.insert(id)
+            Task { await markFullBodyMuscles() }
+        }
+    }
+
+    /// A full body type was picked: marks the muscles the exercise works,
+    /// guessed by the API from the name. Muscles already marked stay.
+    @MainActor
+    private func markFullBodyMuscles() async {
+        let empty = LocalizedText(translations: [:])
+        let request = GuessMusclesRequest(
+            name: localizedText(from: workout?.name ?? empty, hr: nameHr, en: nameEn),
+            workoutTypes: Array(selectedWorkoutTypeIds)
+        )
+        guard let guessed: GuessMusclesResponse = try? await APIClient.shared.request(
+            AppEnvironment.apiURL.appendingPathComponent("workouts/guess-muscles"),
+            method: .post,
+            body: JSONEncoder().encode(request)
+        ), guessed.isFullBody else { return }
+
+        let groups: [([String], MuscleRole)] = [(guessed.muscles, .primary), (guessed.secondaryMuscles, .secondary)]
+        var marked = 0
+        for (codes, role) in groups {
+            for muscle in codes where muscles[muscle] == nil && WorkoutMuscle.all.contains(muscle) {
+                muscles[muscle] = role
+                marked += 1
+            }
+        }
+        if marked > 0 {
+            toastManager.show("full_body_muscles_marked", type: .success)
         }
     }
 
