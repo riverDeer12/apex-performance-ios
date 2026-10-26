@@ -141,7 +141,8 @@ enum DemoAPI {
         static let bench = 1, inclinePress = 2, squat = 3, romanianDeadlift = 4, deadlift = 5,
                    pullUp = 6, row = 7, overheadPress = 8, lateralRaise = 9, hipThrust = 10,
                    lunge = 11, curl = 12, pushdown = 13, plank = 14, hipFlexorStretch = 15,
-                   thoracicRotation = 16
+                   thoracicRotation = 16, catCow = 17, hipSwitch = 18, worldsGreatestStretch = 19,
+                   hamstringStretch = 20, ankleMobility = 21
     }
 
     // Strength, upper body, lower body, core, mobility (the plan's library).
@@ -253,7 +254,37 @@ enum DemoAPI {
             name: ("Thoracic Rotation", "Rotacija prsne kralježnice"),
             description: ("Lying on your side with your knees bent, open your top arm and chest towards the floor behind you and return slowly. 8–10 reps per side.",
                           "Ležeći na boku savijenih koljena otvori gornju ruku i prsa prema podu iza sebe pa se polako vrati. 8–10 ponavljanja po strani."),
-            types: [5], muscles: ["upper_back"], secondaryMuscles: ["chest", "obliques"])
+            types: [5], muscles: ["upper_back"], secondaryMuscles: ["chest", "obliques"]),
+        WorkoutInfo(
+            number: WorkoutNumber.catCow,
+            name: ("Cat-Cow", "Mačka-krava"),
+            description: ("On all fours, slowly round your back towards the ceiling, then let your belly sink and lift your chest. 10 slow reps.",
+                          "U četveronožnom položaju polako zaobli leđa prema stropu, zatim spusti trbuh i podigni prsa. 10 sporih ponavljanja."),
+            types: [5], muscles: ["lower_back"], secondaryMuscles: ["upper_back", "abs"]),
+        WorkoutInfo(
+            number: WorkoutNumber.hipSwitch,
+            name: ("90/90 Hip Switch", "90/90 rotacija kukova"),
+            description: ("Sitting with both knees bent at 90°, rotate your knees from one side to the other while keeping your chest tall. 8 reps per side.",
+                          "U sjedu s oba koljena savijena pod 90° prebacuj koljena s jedne strane na drugu uz uspravna prsa. 8 ponavljanja po strani."),
+            types: [5], muscles: ["glutes"], secondaryMuscles: ["adductors"]),
+        WorkoutInfo(
+            number: WorkoutNumber.worldsGreatestStretch,
+            name: ("World's Greatest Stretch", "Najbolje istezanje na svijetu"),
+            description: ("From a lunge, place the hand on the floor beside the front foot, rotate the other arm to the ceiling, then straighten the front leg. 5 reps per side.",
+                          "Iz iskoraka spusti ruku na pod uz prednje stopalo, drugu ruku zarotiraj prema stropu pa ispruži prednju nogu. 5 ponavljanja po strani."),
+            types: [5], muscles: ["hamstrings", "glutes"], secondaryMuscles: ["upper_back", "quads"]),
+        WorkoutInfo(
+            number: WorkoutNumber.hamstringStretch,
+            name: ("Hamstring Stretch", "Istezanje stražnje lože"),
+            description: ("Lying on your back, lift one straight leg with a band around the foot until you feel a stretch behind the knee. Hold 30–45 s per side.",
+                          "Ležeći na leđima podigni ispruženu nogu s gumom oko stopala dok ne osjetiš istezanje iza koljena. Zadrži 30–45 s po strani."),
+            types: [5], muscles: ["hamstrings"], secondaryMuscles: ["calves"]),
+        WorkoutInfo(
+            number: WorkoutNumber.ankleMobility,
+            name: ("Ankle Mobility", "Mobilnost gležnja"),
+            description: ("In a half-kneeling position near a wall, push the front knee towards the wall over the toes, heel down. 10 reps per side.",
+                          "U polukleku uz zid guraj prednje koljeno prema zidu preko prstiju, peta ostaje na podu. 10 ponavljanja po strani."),
+            types: [5], muscles: ["calves"], secondaryMuscles: [])
     ]
 
     // MARK: - Body
