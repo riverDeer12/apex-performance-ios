@@ -12,6 +12,8 @@ struct WorkoutsView: View {
 
     @State private var workouts: [Workout] = []
     @State private var searchText = ""
+    // Nil shows all workouts.
+    @State private var category: WorkoutCategory?
     @State private var isLoading = false
     @State private var hasLoaded = false
     @State private var showFileImporter = false
@@ -45,9 +47,19 @@ struct WorkoutsView: View {
         !authManager.hasRole(role: "Client")
     }
 
+    // Workouts the user may see, before the category and search.
+    private var visibleWorkouts: [Workout] {
+        workouts.filter { workoutFilter?($0) ?? true }
+    }
+
+    // Clients who see only mobility workouts don't need the filter.
+    private var showsCategoryFilter: Bool {
+        Set(visibleWorkouts.map(\.workoutCategory)).count > 1
+    }
+
     private var filteredWorkouts: [Workout] {
-        workouts
-            .filter { workoutFilter?($0) ?? true }
+        visibleWorkouts
+            .filter { category == nil || $0.workoutCategory == category }
             .filter { $0.matches(searchText) }
             .sorted { $0.name.localized.localizedStandardCompare($1.name.localized) == .orderedAscending }
     }
@@ -87,9 +99,14 @@ struct WorkoutsView: View {
                     searchField
                         .padding(.horizontal, 20)
 
+                    if showsCategoryFilter {
+                        categoryFilter
+                            .padding(.horizontal, 20)
+                    }
+
                     CardView {
                         if filteredWorkouts.isEmpty, !isLoading {
-                            (searchText.isEmpty ? Text("no_workouts") : Text("no_workouts_found"))
+                            (searchText.isEmpty && category == nil ? Text("no_workouts") : Text("no_workouts_found"))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 8)
@@ -228,6 +245,39 @@ struct WorkoutsView: View {
                 .foregroundStyle(Color.apexMainColor)
                 .background(Color.apexMainColor.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
+        }
+    }
+
+    /// Two buttons, one per category: a tapped one shows only its workouts,
+    /// tapped again all of them.
+    private var categoryFilter: some View {
+        HStack(spacing: 8) {
+            ForEach(WorkoutCategory.allCases) { option in
+                let isSelected = category == option
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        category = isSelected ? nil : option
+                    }
+                } label: {
+                    Label(option.title, systemImage: option.systemImage)
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .minimumScaleFactor(0.85)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .padding(.horizontal, 8)
+                        // The main color is white in dark mode, so the selected
+                        // button's text takes the background color.
+                        .foregroundStyle(isSelected ? Color(.systemBackground) : Color.apexMainColor)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(isSelected ? Color.apexMainColor : Color.apexMainColor.opacity(0.1))
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+                .accessibilityIdentifier("category-\(option.rawValue)")
             }
         }
     }

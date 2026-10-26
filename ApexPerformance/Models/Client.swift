@@ -90,11 +90,13 @@ extension Workout {
 
     /// True when one of the workout's types is mobility or stretching.
     var isMobilityOrStretching: Bool {
-        workoutTypes.contains { type in
-            type.name.allValues.contains { name in
-                let name = name.lowercased()
-                return Self.mobilityAndStretchingKeywords.contains { name.contains($0) }
-            }
+        workoutTypes.contains(where: Self.isMobilityOrStretching)
+    }
+
+    static func isMobilityOrStretching(_ type: WorkoutType) -> Bool {
+        type.name.allValues.contains { name in
+            let name = name.lowercased()
+            return mobilityAndStretchingKeywords.contains { name.contains($0) }
         }
     }
 }

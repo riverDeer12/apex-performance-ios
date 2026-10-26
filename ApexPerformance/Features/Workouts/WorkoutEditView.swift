@@ -25,6 +25,9 @@ struct WorkoutEditView: View {
     @State private var muscles: [String: MuscleRole]
     // Sets record a duration instead of repetitions (e.g. plank).
     @State private var isTimed: Bool
+    @State private var category: WorkoutCategory
+    // Picked by the coach, then picking a type no longer changes it.
+    @State private var isCategoryPicked: Bool
 
     @State private var workoutTypes: [WorkoutType] = []
     @State private var isSaving = false
@@ -50,6 +53,8 @@ struct WorkoutEditView: View {
         _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
         _muscles = State(initialValue: Self.roles(of: workout))
         _isTimed = State(initialValue: workout?.isTimed ?? false)
+        _category = State(initialValue: workout?.workoutCategory ?? .strengthConditioning)
+        _isCategoryPicked = State(initialValue: workout != nil)
     }
 
     private var isNew: Bool {
@@ -80,6 +85,7 @@ struct WorkoutEditView: View {
             || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
             || muscles != Self.roles(of: workout)
             || isTimed != (workout?.isTimed ?? false)
+            || category != (workout?.workoutCategory ?? .strengthConditioning)
     }
 
     private static func roles(of workout: Workout?) -> [String: MuscleRole] {
@@ -176,6 +182,21 @@ struct WorkoutEditView: View {
                 Text("timed_workout_hint")
             }
 
+            Section {
+                Picker("category", selection: Binding(
+                    get: { category },
+                    set: { category = $0; isCategoryPicked = true }
+                )) {
+                    ForEach(WorkoutCategory.allCases) { option in
+                        Text(option.title).tag(option)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } header: {
+                Text("category")
+            }
+
             Section("workout_types") {
                 if workoutTypes.isEmpty {
                     ProgressView()
@@ -233,6 +254,11 @@ struct WorkoutEditView: View {
         } else {
             selectedWorkoutTypeIds.insert(id)
             Task { await markFullBodyMuscles() }
+            // A new workout with a mobility or stretching type is in that category.
+            if !isCategoryPicked, let type = workoutTypes.first(where: { $0.id == id }),
+               Workout.isMobilityOrStretching(type) {
+                category = .mobilityFlexibility
+            }
         }
     }
 
@@ -309,7 +335,8 @@ struct WorkoutEditView: View {
             workoutTypes: Array(selectedWorkoutTypeIds),
             muscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.primary),
             secondaryMuscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.secondary),
-            isTimed: isTimed
+            isTimed: isTimed,
+            category: category.rawValue
         )
 
         do {
