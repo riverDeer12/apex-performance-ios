@@ -153,6 +153,9 @@ enum DemoAPI {
         (5, "Mobility & stretching", "Mobilnost i istezanje")
     ]
 
+    // The mobility type: its workouts are in the mobility and flexibility category.
+    static let mobilityTypeNumber = 5
+
     // Muscle codes as in BodyMapPaths.
     static let workouts: [WorkoutInfo] = [
         WorkoutInfo(
@@ -780,7 +783,8 @@ fileprivate struct Fixtures {
             "muscles": info.muscles,
             "secondaryMuscles": info.secondaryMuscles,
             // Plank sets record a duration.
-            "isTimed": info.number == DemoAPI.WorkoutNumber.plank
+            "isTimed": info.number == DemoAPI.WorkoutNumber.plank,
+            "category": info.types.contains(DemoAPI.mobilityTypeNumber) ? "MobilityFlexibility" : "StrengthConditioning"
         ]
     }
 
@@ -1507,7 +1511,8 @@ fileprivate struct Fixtures {
             "workoutTypes": types.map { workoutType($0.number) },
             "muscles": input["muscles"] as? [String] ?? [String](),
             "secondaryMuscles": input["secondaryMuscles"] as? [String] ?? [String](),
-            "isTimed": input["isTimed"] as? Bool ?? false
+            "isTimed": input["isTimed"] as? Bool ?? false,
+            "category": input["category"] as? String ?? "StrengthConditioning"
         ]
     }
 
@@ -1839,7 +1844,8 @@ extension DemoAPI {
             description: LocalizedText(translations: ["EN": "Press.", "HR": "Potisak."]),
             thumbnailUrl: "", videoUrl: "",
             workoutTypes: [id(.workoutType, 1)],
-            muscles: ["chest"], secondaryMuscles: ["triceps"], isTimed: false
+            muscles: ["chest"], secondaryMuscles: ["triceps"], isTimed: false,
+            category: WorkoutCategory.strengthConditioning.rawValue
         ))
         let goalBody = try? JSONEncoder().encode(ClientGoal(goal: "Bench press 80 kg", nextAssessmentDate: Date()))
         let profileBody = try? JSONEncoder().encode(UpdateProfileRequest(

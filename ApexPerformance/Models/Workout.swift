@@ -3,7 +3,7 @@
 //  ApexPerformance
 //
 
-import Foundation
+import SwiftUI
 
 struct Workout: Identifiable, Decodable, Hashable {
     let id: UUID
@@ -18,6 +18,14 @@ struct Workout: Identifiable, Decodable, Hashable {
     var secondaryMuscles: [String]? = nil
     // Done for a time (e.g. plank): sets record a duration instead of repetitions.
     var isTimed: Bool? = nil
+    // WorkoutCategory raw value; nil from an API without categories.
+    var category: String? = nil
+
+    /// Category for filtering; before the API had them, taken from the types.
+    var workoutCategory: WorkoutCategory {
+        category.flatMap(WorkoutCategory.init(rawValue:))
+            ?? (isMobilityOrStretching ? .mobilityFlexibility : .strengthConditioning)
+    }
 
     // Every translation is searched, so the query language does not matter.
     func matches(_ query: String) -> Bool {
@@ -29,6 +37,28 @@ struct Workout: Identifiable, Decodable, Hashable {
             + workoutTypes.flatMap { $0.name.allValues }
 
         return searchableValues.contains { $0.localizedStandardContains(query) }
+    }
+}
+
+/// Workouts are mobility and flexibility, or strength and conditioning.
+enum WorkoutCategory: String, CaseIterable, Identifiable {
+    case mobilityFlexibility = "MobilityFlexibility"
+    case strengthConditioning = "StrengthConditioning"
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .mobilityFlexibility: "category_mobility_flexibility"
+        case .strengthConditioning: "category_strength_conditioning"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .mobilityFlexibility: "figure.flexibility"
+        case .strengthConditioning: "figure.strengthtraining.traditional"
+        }
     }
 }
 
@@ -53,6 +83,7 @@ struct UpdateWorkoutRequest: Encodable {
     let muscles: [String]?
     let secondaryMuscles: [String]?
     let isTimed: Bool
+    let category: String
 }
 
 /// POST workouts/guess-muscles: muscles guessed from the name, with the
