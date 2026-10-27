@@ -284,7 +284,8 @@ struct TrainingFormView: View {
                             .accessibilityLabel(Text("drop_set"))
                     }
                     if isTimed {
-                        DurationWheelField(seconds: set.durationSeconds, title: "time")
+                        // Walks and rides over a distance can last longer than an hour.
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: paceType != nil)
                             .frame(maxWidth: .infinity)
                     } else {
                         NumberWheelField(
