@@ -20,6 +20,10 @@ struct Workout: Identifiable, Decodable, Hashable {
     var isTimed: Bool? = nil
     // WorkoutCategory raw value; nil from an API without categories.
     var category: String? = nil
+    // PaceType raw value for workouts done over a distance (rowing, walking,
+    // cycling): sets record the distance too and show the pace this way.
+    // Nil for other workouts and from an API without it.
+    var paceType: String? = nil
 
     /// Category for filtering; before the API had them, taken from the types.
     var workoutCategory: WorkoutCategory {
@@ -37,6 +41,24 @@ struct Workout: Identifiable, Decodable, Hashable {
             + workoutTypes.flatMap { $0.name.allValues }
 
         return searchableValues.contains { $0.localizedStandardContains(query) }
+    }
+}
+
+/// How the pace of a workout done over a distance is shown, like the web:
+/// min/km (walking, running), min/500 m (row-erg, ski-erg) or km/h (bike, air-bike).
+enum PaceType: String, CaseIterable, Identifiable {
+    case perKm = "PerKm"
+    case per500m = "Per500m"
+    case kmh = "Kmh"
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .perKm: "pace_per_km"
+        case .per500m: "pace_per_500m"
+        case .kmh: "pace_kmh"
+        }
     }
 }
 
@@ -84,6 +106,8 @@ struct UpdateWorkoutRequest: Encodable {
     let secondaryMuscles: [String]?
     let isTimed: Bool
     let category: String
+    // "" records no distance, nil (left out) keeps the current value.
+    var paceType: String? = nil
 }
 
 /// POST workouts/guess-muscles: muscles guessed from the name, with the

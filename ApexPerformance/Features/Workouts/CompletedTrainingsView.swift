@@ -624,8 +624,12 @@ struct TrainingExerciseCards: View {
                 let numbers = sets.setNumbers
                 // Sets of a timed workout (e.g. plank) have a duration instead of reps.
                 let isTimed = sets.contains { $0.durationSeconds != nil }
+                // Sets over a distance (e.g. rowing) show the distance, duration and pace.
+                let hasDistance = sets.contains { ($0.distanceMeters ?? 0) > 0 }
                 if !sets.isEmpty {
-                    setRow(Text("set"), Text(isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps")),
+                    setRow(Text("set"),
+                           Text(hasDistance ? LocalizedStringKey("distance")
+                                : isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps")),
                            Text("kg"), isHeader: true)
                 }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
@@ -635,7 +639,8 @@ struct TrainingExerciseCards: View {
                         number.map { Text(verbatim: "\($0)") }
                             // Drop set of the set above, done right after it.
                             ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
-                        Text(verbatim: set.durationSeconds.map(SetDuration.text)
+                        Text(verbatim: set.distanceText(paceType: exercise.paceType)
+                            ?? set.durationSeconds.map(SetDuration.text)
                             ?? set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
                         Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
                         isDropSet: number == nil

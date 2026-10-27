@@ -100,7 +100,8 @@ extension SaveTrainingTemplateRequest {
                         .sorted { $0.order < $1.order }
                         .map {
                             SaveTrainingRequest.ExerciseSet(reps: $0.reps, weight: $0.weight, isDropSet: $0.isDropSet,
-                                                            durationSeconds: $0.durationSeconds)
+                                                            durationSeconds: $0.durationSeconds,
+                                                            distanceMeters: $0.distanceMeters)
                         },
                     isSupersetWithPrevious: exercise.isSupersetWithPrevious
                 )
