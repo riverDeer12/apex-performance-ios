@@ -4,7 +4,6 @@ struct ClientsView: View {
     @State var clients: [Client] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
-    @State private var hasLoaded = false
     
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
@@ -99,8 +98,9 @@ struct ClientsView: View {
                     ProgressView()
                 }
             }
+            // Every time the screen is shown; own task, so leaving it doesn't cancel the request.
             .task {
-                await loadData()
+                await Task { await loadData() }.value
             }
             .refreshable {
                 // Own task so the request isn't cancelled when the

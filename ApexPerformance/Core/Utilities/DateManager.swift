@@ -29,11 +29,13 @@ struct DateManager{
         return calendar.date(from: dateComponents) ?? base
     }
     
+    /// A day as the API takes it, e.g. "2026-10-26": the day on the phone's
+    /// calendar. Not UTC, where local midnight is still the day before.
     static let apiDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = .autoupdatingCurrent
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()

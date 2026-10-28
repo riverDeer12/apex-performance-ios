@@ -741,6 +741,28 @@
         }
       }
     },
+    "all_workouts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All workouts"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sve vježbe"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutti gli esercizi"
+          }
+        }
+      }
+    },
     "already_in_appointment" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11041,6 +11063,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utente aggiornato con successo."
+          }
+        }
+      }
+    },
+    "suggested_for_training" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggested for this training"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predloženo za ovaj trening"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggeriti per questo allenamento"
           }
         }
       }

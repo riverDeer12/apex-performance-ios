@@ -13,7 +13,6 @@ struct CompletedTrainingsView: View {
     @State private var workouts: [UUID: Workout] = [:]
     @State private var searchText = ""
     @State private var isLoading = false
-    @State private var hasLoaded = false
     // Training a tapped push opens.
     @State private var openedTraining: Training?
     @State private var showsOpenedTraining = false
@@ -65,11 +64,10 @@ struct CompletedTrainingsView: View {
             .refreshable {
                 await Task { await load() }.value
             }
+            // Fresh data every time the screen is shown, not only after pulling
+            // to refresh. Own task, so leaving the screen doesn't cancel it.
             .task {
-                if !hasLoaded {
-                    hasLoaded = true
-                    await load()
-                }
+                await Task { await load() }.value
                 await openPendingTraining()
             }
             .onChange(of: notificationRouter.pendingTrainingId) {

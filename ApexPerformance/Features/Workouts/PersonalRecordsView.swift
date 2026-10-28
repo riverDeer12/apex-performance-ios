@@ -17,7 +17,6 @@ struct PersonalRecordsView: View {
     @State private var exercises: [ExerciseRecords] = []
     @State private var searchText = ""
     @State private var isLoading = false
-    @State private var hasLoaded = false
 
     private var filteredExercises: [ExerciseRecords] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -71,10 +70,10 @@ struct PersonalRecordsView: View {
         .refreshable {
             await Task { await load() }.value
         }
+        // Fresh data every time the screen is shown, not only after pulling
+        // to refresh. Own task, so leaving the screen doesn't cancel it.
         .task {
-            guard !hasLoaded else { return }
-            hasLoaded = true
-            await load()
+            await Task { await load() }.value
         }
         .navigationTitle(clientName.map { Text(verbatim: $0) } ?? Text("personal_records"))
         .navigationBarTitleDisplayMode(.inline)

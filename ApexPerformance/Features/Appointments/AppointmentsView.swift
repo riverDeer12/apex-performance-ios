@@ -5,7 +5,6 @@ struct AppointmentsView: View {
     @State var pendingAppointments: [Appointment] = []
     @State private var isInitialLoading = false
     @State private var errorMessage: String?
-    @State private var hasLoaded = false
     @State private var processingAppointmentId: UUID?
     // Pending cancelation and join requests, shown to staff above the calendar.
     @State private var appointmentRequests: [AppointmentRequest] = []
@@ -156,8 +155,9 @@ struct AppointmentsView: View {
             .refreshable {
                 await loadData(showInitialSpinner: false)
             }
+            // Every time the screen is shown; own task, so leaving it doesn't cancel the request.
             .task {
-                await loadData(showInitialSpinner: true)
+                await Task { await loadData(showInitialSpinner: true) }.value
             }
             .onAppear { openRequestsFromNotification() }
             .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
