@@ -247,7 +247,7 @@ struct TrainingFormView: View {
 
         return Section {
             NavigationLink {
-                WorkoutPickerView(workouts: workouts, selection: exercise.workoutId)
+                WorkoutPickerView(workouts: workouts, trainingName: name, selection: exercise.workoutId)
             } label: {
                 HStack {
                     Text("exercise")
@@ -866,30 +866,43 @@ private struct SetDraft: Identifiable {
 
 // MARK: - Workout picker
 
-/// Searchable list of all workouts to choose a training exercise.
+/// Searchable list of all workouts to choose a training exercise, with
+/// the ones that fit the training's name on top (GET workouts/suggested).
 private struct WorkoutPickerView: View {
     let workouts: [Workout]
+    let trainingName: String
     @Binding var selection: UUID?
 
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
+    @State private var suggestedIds: [UUID] = []
+
+    // Suggestions while not searching, in the API's order (best first).
+    private var suggested: [Workout] {
+        guard searchText.isEmpty else { return [] }
+        let byId = Dictionary(workouts.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return suggestedIds.compactMap { byId[$0] }
+    }
 
     var body: some View {
-        List(workouts.filter { $0.matches(searchText) }) { workout in
-            Button {
-                selection = workout.id
-                dismiss()
-            } label: {
-                HStack {
-                    Text(verbatim: workout.name.localized)
-                        .foregroundStyle(Color.primary)
-                    Spacer()
-                    if workout.id == selection {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.apexMainColor)
-                    }
+        List {
+            if !suggested.isEmpty {
+                Section {
+                    ForEach(suggested) { row($0) }
+                } header: {
+                    Label("suggested_for_training", systemImage: "sparkles")
                 }
             }
+            Section {
+                ForEach(workouts.filter { $0.matches(searchText) }) { row($0) }
+            } header: {
+                if !suggested.isEmpty {
+                    Text("all_workouts")
+                }
+            }
+        }
+        .task {
+            await loadSuggestions()
         }
         .overlay {
             if workouts.isEmpty {
@@ -899,6 +912,36 @@ private struct WorkoutPickerView: View {
         .searchable(text: $searchText, prompt: Text("search_workouts"))
         .navigationTitle("select_exercise")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func row(_ workout: Workout) -> some View {
+        Button {
+            selection = workout.id
+            dismiss()
+        } label: {
+            HStack {
+                Text(verbatim: workout.name.localized)
+                    .foregroundStyle(Color.primary)
+                Spacer()
+                if workout.id == selection {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
+        }
+    }
+
+    // Without suggestions (no name, or an API without them) the list is as before.
+    @MainActor
+    private func loadSuggestions() async {
+        let name = trainingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty,
+              var components = URLComponents(url: AppEnvironment.apiURL.appendingPathComponent("workouts/suggested"),
+                                             resolvingAgainstBaseURL: false) else { return }
+        components.queryItems = [URLQueryItem(name: "name", value: name)]
+        guard let url = components.url else { return }
+        let ids: [UUID]? = try? await APIClient.shared.request(url)
+        suggestedIds = ids ?? []
     }
 }
 

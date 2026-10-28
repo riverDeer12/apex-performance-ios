@@ -11,7 +11,8 @@ struct UserProfileView: View {
     @State private var accountProfile: Profile?
     @State private var isLoading = false
     @State private var errorMessage: String?
-    @State private var hasLoaded = false
+    // The preview shows its profile without loading.
+    private let isPreview: Bool
     
     @EnvironmentObject private var authManager: AuthManager
     @EnvironmentObject private var toastManager: ToastManager
@@ -24,7 +25,7 @@ struct UserProfileView: View {
     // Preview data is shown as is, without loading from the API.
     init(previewProfile: Profile? = nil) {
         _accountProfile = State(initialValue: previewProfile)
-        _hasLoaded = State(initialValue: previewProfile != nil)
+        isPreview = previewProfile != nil
     }
     
     var body: some View {
@@ -134,12 +135,11 @@ struct UserProfileView: View {
                     ProgressView()
                 }
             }
+            // Fresh data every time the screen is shown, not only after pulling
+            // to refresh. Own task, so leaving the screen doesn't cancel it.
             .task {
-                guard !hasLoaded else { return }
-                
-                hasLoaded = true
-            
-                await loadUserProfile()
+                guard !isPreview else { return }
+                await Task { await loadUserProfile() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {

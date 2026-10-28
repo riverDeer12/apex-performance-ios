@@ -74,7 +74,6 @@ struct ClientProgressView: View {
     @State private var reviews: [MonthlyReview] = []
     @State private var trainings: [Training] = []
     @State private var isLoading = false
-    @State private var hasLoaded = false
 
     var body: some View {
         ScrollView {
@@ -142,10 +141,10 @@ struct ClientProgressView: View {
         .refreshable {
             await Task { await load() }.value
         }
+        // Fresh data every time the screen is shown, not only after pulling
+        // to refresh. Own task, so leaving the screen doesn't cancel it.
         .task {
-            guard !hasLoaded else { return }
-            hasLoaded = true
-            await load()
+            await Task { await load() }.value
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
