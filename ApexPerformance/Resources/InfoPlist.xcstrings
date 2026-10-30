@@ -24,6 +24,30 @@
           }
         }
       }
+    },
+    "NSHealthUpdateUsageDescription" : {
+      "comment" : "Required with HealthKit, the app doesn't write",
+      "extractionState" : "manual",
+      "localizations" : {
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex ne zapisuje podatke u Apple Health, samo čita tvoj puls za vrijeme treninga s trenerom."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex doesn't write to Apple Health, it only reads your heart rate during trainings with your coach."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex non scrive dati in Apple Salute, legge solo la tua frequenza cardiaca durante gli allenamenti con il coach."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
