@@ -12,11 +12,12 @@ struct Training: Identifiable, Decodable, Hashable {
     let name: String
     let date: Date
     let note: String?
-    let isCompleted: Bool
-    let completedAt: Date?
+    var isCompleted: Bool
+    var completedAt: Date?
     let client: Person
     let exercises: [Exercise]
     // When the training really started and ended, marked by the coach.
+    // Started and not completed is in progress, clients see it then.
     var startedAt: Date? = nil
     var endedAt: Date? = nil
     // Client's heart rate in between, from Apple Health on the client's iPhone.
@@ -27,6 +28,11 @@ struct Training: Identifiable, Decodable, Hashable {
         let min: Int
         let max: Int
         let average: Int
+    }
+
+    /// Started by the coach, not completed yet.
+    var isInProgress: Bool {
+        !isCompleted && startedAt != nil
     }
 
     struct Person: Decodable, Hashable {
@@ -227,6 +233,12 @@ extension Training {
     @MainActor
     static func loadCompleted() async throws -> [Training] {
         try await loadAll().filter(\.isCompleted)
+    }
+
+    /// Client's trainings: in progress (started by the coach) and completed.
+    @MainActor
+    static func loadStartedOrCompleted() async throws -> [Training] {
+        try await loadAll().filter { $0.isCompleted || $0.isInProgress }
     }
 
     /// Creates a training, or updates it when an id is given (staff only).

@@ -172,6 +172,9 @@ struct TrainingTimesCard: View {
         let startedAt: Date?
         let endedAt: Date?
         let heartRate: Training.HeartRate?
+        // Ending a training also completes it.
+        let isCompleted: Bool
+        let completedAt: Date?
     }
 
     @MainActor
@@ -190,6 +193,8 @@ struct TrainingTimesCard: View {
             training.startedAt = response.startedAt
             training.endedAt = response.endedAt
             training.heartRate = response.heartRate
+            training.isCompleted = response.isCompleted
+            training.completedAt = response.completedAt
             onChanged?(training)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
@@ -213,5 +218,16 @@ struct TrainingTimesCard: View {
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
+    }
+}
+
+extension Training {
+    /// Icon of the status in lists: planned, in progress or completed.
+    var statusIcon: String {
+        isCompleted ? "checkmark.circle" : (isInProgress ? "timer" : "calendar")
+    }
+
+    var statusTint: Color {
+        isCompleted ? .green : (isInProgress ? .blue : .orange)
     }
 }
