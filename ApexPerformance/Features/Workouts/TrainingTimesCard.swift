@@ -163,38 +163,13 @@ struct TrainingTimesCard: View {
 
     // MARK: - Actions
 
-    private struct TimesRequest: Encodable {
-        let startedAt: String?
-        let endedAt: String?
-    }
-
-    private struct TimesResponse: Decodable {
-        let startedAt: Date?
-        let endedAt: Date?
-        let heartRate: Training.HeartRate?
-        // Ending a training also completes it.
-        let isCompleted: Bool
-        let completedAt: Date?
-    }
-
     @MainActor
     private func save(startedAt: Date?, endedAt: Date?) async {
         isSaving = true
         defer { isSaving = false }
 
-        let formatter = ISO8601DateFormatter()
-        let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
-                                   endedAt: endedAt.map(formatter.string(from:)))
         do {
-            let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(training.id.uuidString)/times")
-            let response: TimesResponse = try await APIClient.shared.request(
-                url, method: .put, body: JSONEncoder().encode(request)
-            )
-            training.startedAt = response.startedAt
-            training.endedAt = response.endedAt
-            training.heartRate = response.heartRate
-            training.isCompleted = response.isCompleted
-            training.completedAt = response.completedAt
+            training = try await training.settingTimes(startedAt: startedAt, endedAt: endedAt)
             onChanged?(training)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
@@ -222,6 +197,39 @@ struct TrainingTimesCard: View {
 }
 
 extension Training {
+    private struct TimesRequest: Encodable {
+        let startedAt: String?
+        let endedAt: String?
+    }
+
+    private struct TimesResponse: Decodable {
+        let startedAt: Date?
+        let endedAt: Date?
+        let heartRate: Training.HeartRate?
+        // Ending a training also completes it.
+        let isCompleted: Bool
+        let completedAt: Date?
+    }
+
+    /// Marks when the training started and ended (PUT trainings/{id}/times, staff only).
+    @MainActor
+    func settingTimes(startedAt: Date?, endedAt: Date?) async throws -> Training {
+        let formatter = ISO8601DateFormatter()
+        let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
+                                   endedAt: endedAt.map(formatter.string(from:)))
+        let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/times")
+        let response: TimesResponse = try await APIClient.shared.request(
+            url, method: .put, body: JSONEncoder().encode(request)
+        )
+        var updated = self
+        updated.startedAt = response.startedAt
+        updated.endedAt = response.endedAt
+        updated.heartRate = response.heartRate
+        updated.isCompleted = response.isCompleted
+        updated.completedAt = response.completedAt
+        return updated
+    }
+
     /// Icon of the status in lists: planned, in progress or completed.
     var statusIcon: String {
         isCompleted ? "checkmark.circle" : (isInProgress ? "timer" : "calendar")
