@@ -176,6 +176,22 @@ struct TrainingFormView: View {
                         Text("no_exercises_yet")
                     }
                 }
+
+                if canStart {
+                    Section {
+                        Button {
+                            Task { await save(starting: true) }
+                        } label: {
+                            Text("save_and_start_training")
+                        }
+                        .buttonStyle(ApexPrimaryButtonStyle(systemImage: "play.fill"))
+                        .disabled(isSaving || !isValid)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                    } footer: {
+                        Text("save_and_start_training_hint")
+                    }
+                }
             }
             .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
                 dismiss()
@@ -636,8 +652,14 @@ struct TrainingFormView: View {
         templates = (try? await TrainingTemplate.loadAll()) ?? []
     }
 
+    // A training not started or completed yet can be started right away.
+    private var canStart: Bool {
+        !isTemplate && !isCompleted && training?.startedAt == nil
+    }
+
+    /// Saves the training; starting also marks it as started now (in progress).
     @MainActor
-    private func save() async {
+    private func save(starting: Bool = false) async {
         isSaving = true
         defer { isSaving = false }
 
@@ -650,7 +672,8 @@ struct TrainingFormView: View {
         let request = SaveTrainingRequest(
             client: clientId,
             name: trimmed(name),
-            date: ISO8601DateFormatter().string(from: date),
+            // A started training happens today.
+            date: ISO8601DateFormatter().string(from: starting ? .now : date),
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
             exercises: exercises.compactMap(\.request),
@@ -658,9 +681,12 @@ struct TrainingFormView: View {
         )
 
         do {
-            let saved = try await Training.save(request, id: training?.id)
+            var saved = try await Training.save(request, id: training?.id)
+            if starting {
+                saved = try await saved.settingTimes(startedAt: .now, endedAt: nil)
+            }
             onSaved?(saved)
-            toastManager.show("training_saved_successfully", type: .success)
+            toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
             dismiss()
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
