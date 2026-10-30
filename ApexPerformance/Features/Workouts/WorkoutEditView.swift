@@ -180,7 +180,15 @@ struct WorkoutEditView: View {
             }
 
             Section {
-                Toggle("timed_workout", isOn: $isTimed)
+                Toggle("timed_workout", isOn: Binding(
+                    get: { isTimed },
+                    set: { newValue in
+                        isTimed = newValue
+                        // A pace needs a duration: without one the workout has no pace type,
+                        // otherwise the API keeps it timed and switching off had no effect.
+                        if !newValue { paceType = "" }
+                    }
+                ))
                     .tint(Color.apexMainColor)
             } footer: {
                 Text("timed_workout_hint")
