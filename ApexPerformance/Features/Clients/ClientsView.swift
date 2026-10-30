@@ -67,7 +67,7 @@ struct ClientsView: View {
                             
                             let list = filteredClients
                             
-                            ForEach(list) { client in
+                            ShowMoreForEach(items: list) { client in
                                 NavigationLink {
                                     ClientDetailsView(client: client)
                                 } label: {

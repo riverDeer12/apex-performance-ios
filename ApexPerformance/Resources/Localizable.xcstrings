@@ -11195,6 +11195,28 @@
         }
       }
     },
+    "show_more %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show more (%lld)"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prikaži više (%lld)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra altri (%lld)"
+          }
+        }
+      }
+    },
     "since_first_measurement" : {
       "extractionState" : "manual",
       "localizations" : {

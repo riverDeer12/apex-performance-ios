@@ -115,7 +115,7 @@ struct CreateAppointmentView: View {
                             ProgressView("loading_clients")
                         }
                         
-                        ForEach(clients) { client in
+                        ShowMoreForEach(items: clients) { client in
                             Toggle(client.fullName, isOn: Binding(
                                 get: { selectedClients.contains(client.id) },
                                 set: { isOn in

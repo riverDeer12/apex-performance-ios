@@ -111,7 +111,7 @@ struct WorkoutsView: View {
                                 .padding(.vertical, 8)
                         } else {
                             LazyVStack(spacing: 0) {
-                                ForEach(filteredWorkouts) { workout in
+                                ShowMoreForEach(items: filteredWorkouts) { workout in
                                     // Destination link, not a value link: the library is also
                                     // pushed from the client's home, where a value destination
                                     // registered in the pushed view only opened after going back.

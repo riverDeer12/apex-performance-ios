@@ -140,7 +140,7 @@ struct NotificationsView: View {
                     Text("no_notifications")
                         .foregroundStyle(.secondary)
                 }
-                ForEach(inbox.notifications) { notification in
+                ShowMoreForEach(items: inbox.notifications) { notification in
                     Button {
                         Task { await open(notification) }
                     } label: {

@@ -117,7 +117,7 @@ struct CompletedTrainingsView: View {
                     .apexLabel()
 
                 LazyVStack(spacing: 12) {
-                    ForEach(trainings) { training in
+                    ShowMoreForEach(items: trainings) { training in
                         NavigationLink {
                             TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
                         } label: {
@@ -272,7 +272,7 @@ struct TrainingRowsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(trainings) { training in
+            ShowMoreForEach(items: trainings) { training in
                 NavigationLink {
                     TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
                 } label: {

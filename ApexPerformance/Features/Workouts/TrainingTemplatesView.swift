@@ -52,7 +52,7 @@ struct TrainingTemplatesView: View {
                             .padding(.vertical, 8)
                     } else {
                         LazyVStack(spacing: 0) {
-                            ForEach(filteredTemplates) { template in
+                            ShowMoreForEach(items: filteredTemplates) { template in
                                 NavigationLink {
                                     TrainingTemplateDetailView(template: template) { updated in
                                         replace(updated)
@@ -384,7 +384,7 @@ struct AssignTrainingTemplateView: View {
                         Text("no_clients")
                             .foregroundStyle(.secondary)
                     }
-                    ForEach(filteredClients) { client in
+                    ShowMoreForEach(items: filteredClients) { client in
                         Button {
                             toggle(client.id)
                         } label: {
