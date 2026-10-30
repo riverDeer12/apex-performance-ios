@@ -16,6 +16,18 @@ struct Training: Identifiable, Decodable, Hashable {
     let completedAt: Date?
     let client: Person
     let exercises: [Exercise]
+    // When the training really started and ended, marked by the coach.
+    var startedAt: Date? = nil
+    var endedAt: Date? = nil
+    // Client's heart rate in between, from Apple Health on the client's iPhone.
+    var heartRate: HeartRate? = nil
+
+    /// Beats per minute.
+    struct HeartRate: Codable, Hashable {
+        let min: Int
+        let max: Int
+        let average: Int
+    }
 
     struct Person: Decodable, Hashable {
         let id: UUID

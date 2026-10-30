@@ -13,6 +13,7 @@
 		62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */; };
 		06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */; };
 		09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */; };
+		71243576B9D04AF92523043B /* TrainingTimesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085DA481528853551D937980 /* TrainingTimesCard.swift */; };
 		C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */; };
 		DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05F45FB6972493676063892 /* StaffTrainingsView.swift */; };
 		1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */; };
@@ -84,6 +85,7 @@
 		61E63F692F0C357B004D74F3 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F682F0C357B004D74F3 /* ToastView.swift */; };
 		61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6A2F0C368C004D74F3 /* ToastType.swift */; };
 		61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6C2F0EA243004D74F3 /* ToastManager.swift */; };
+		A0A84524662DC84F06B590E3 /* AppleHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB99A4556FEBF4867D727F0 /* AppleHealth.swift */; };
 		113114A4BA4F6C11A5D53657 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */; };
 		61E63F6F2F0EC655004D74F3 /* ApiErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */; };
 		61E63F712F0EC673004D74F3 /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F702F0EC673004D74F3 /* ApiError.swift */; };
@@ -93,6 +95,7 @@
 		61E63F792F11A658004D74F3 /* ButtonContentStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */; };
 		61E63F7B2F11B394004D74F3 /* CancelationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */; };
 		61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 61E63F812F151533004D74F3 /* Localizable.xcstrings */; };
+		1EE3EBA71602440446BC4377 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 79B6302538E1C80AD9CBED3A /* InfoPlist.xcstrings */; };
 		90DA4A69E223DB62840E31D1 /* splash.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C86FDD3B9AC5CF3411592778 /* splash.mp4 */; };
 		30EE69A462B39DA0DFDC6BFA /* Michroma-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF12D354C54D7DE70D882F68 /* Michroma-Regular.ttf */; };
 		61E63F882F19647A004D74F3 /* CreateAppointmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F872F196479004D74F3 /* CreateAppointmentView.swift */; };
@@ -154,6 +157,7 @@
 		5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecord.swift; sourceTree = "<group>"; };
 		D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientGoal.swift; sourceTree = "<group>"; };
 		EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTrainingsView.swift; sourceTree = "<group>"; };
+		085DA481528853551D937980 /* TrainingTimesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingTimesCard.swift"; sourceTree = "<group>"; };
 		F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplatesView.swift; sourceTree = "<group>"; };
 		F05F45FB6972493676063892 /* StaffTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffTrainingsView.swift; sourceTree = "<group>"; };
 		364A00C0E5D066A8FDFEAF73 /* ChatConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationView.swift; sourceTree = "<group>"; };
@@ -228,6 +232,7 @@
 		61E63F682F0C357B004D74F3 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		61E63F6A2F0C368C004D74F3 /* ToastType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastType.swift; sourceTree = "<group>"; };
 		61E63F6C2F0EA243004D74F3 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
+		4AB99A4556FEBF4867D727F0 /* AppleHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppleHealth.swift"; sourceTree = "<group>"; };
 		F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		61E63F6E2F0EC655004D74F3 /* ApiErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorResponse.swift; sourceTree = "<group>"; };
 		61E63F702F0EC673004D74F3 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
@@ -237,6 +242,7 @@
 		61E63F782F11A658004D74F3 /* ButtonContentStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonContentStyle.swift; sourceTree = "<group>"; };
 		61E63F7A2F11B394004D74F3 /* CancelationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelationRequest.swift; sourceTree = "<group>"; };
 		61E63F812F151533004D74F3 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		79B6302538E1C80AD9CBED3A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "InfoPlist.xcstrings"; sourceTree = "<group>"; };
 		61E63F872F196479004D74F3 /* CreateAppointmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAppointmentView.swift; sourceTree = "<group>"; };
 		61E63F892F196E49004D74F3 /* AppointmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentType.swift; sourceTree = "<group>"; };
 		61E63F8B2F1970C2004D74F3 /* CreateAppointmentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAppointmentRequest.swift; sourceTree = "<group>"; };
@@ -376,6 +382,7 @@
 			children = (
 				61E9741F2EF0AB9200D225C5 /* Assets.xcassets */,
 				61E63F812F151533004D74F3 /* Localizable.xcstrings */,
+				79B6302538E1C80AD9CBED3A /* InfoPlist.xcstrings */,
 				AF12D354C54D7DE70D882F68 /* Michroma-Regular.ttf */,
 				C86FDD3B9AC5CF3411592778 /* splash.mp4 */,
 			);
@@ -488,6 +495,7 @@
 			children = (
 				216BB30FEB24A3355AA0D78A /* AppUpdateChecker.swift */,
 				61E63F6C2F0EA243004D74F3 /* ToastManager.swift */,
+				4AB99A4556FEBF4867D727F0 /* AppleHealth.swift */,
 				F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */,
 				61E63F912F1C3491004D74F3 /* DateManager.swift */,
 				A884F28D08EB4F168066D594 /* NotificationRouter.swift */,
@@ -551,6 +559,7 @@
 			children = (
 				61CFB5522F02C658009E9624 /* WorkoutsView.swift */,
 				EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */,
+				085DA481528853551D937980 /* TrainingTimesCard.swift */,
 				F0BE6B7E22A2FF3C4E2A88A6 /* TrainingTemplatesView.swift */,
 				F05F45FB6972493676063892 /* StaffTrainingsView.swift */,
 				3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */,
@@ -757,6 +766,7 @@
 				C0BF34EF2F900CC0002BFF76 /* GoogleService-Info.plist in Resources */,
 				61E974202EF0AB9200D225C5 /* Assets.xcassets in Resources */,
 				61E63F822F151533004D74F3 /* Localizable.xcstrings in Resources */,
+				1EE3EBA71602440446BC4377 /* InfoPlist.xcstrings in Resources */,
 				30EE69A462B39DA0DFDC6BFA /* Michroma-Regular.ttf in Resources */,
 				90DA4A69E223DB62840E31D1 /* splash.mp4 in Resources */,
 			);
@@ -801,6 +811,7 @@
 				62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */,
 				06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */,
 				09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */,
+				71243576B9D04AF92523043B /* TrainingTimesCard.swift in Sources */,
 				C178EB9177D3A64D8C3F701C /* TrainingTemplatesView.swift in Sources */,
 				DFC84CF31E300C0E51B6CEE0 /* StaffTrainingsView.swift in Sources */,
 				1E484D6B5ABD7C29F51F954B /* ChatConversationView.swift in Sources */,
@@ -832,6 +843,7 @@
 				C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */,
 				61CFB5312EF44374009E9624 /* Client.swift in Sources */,
 				61E63F6D2F0EA243004D74F3 /* ToastManager.swift in Sources */,
+				A0A84524662DC84F06B590E3 /* AppleHealth.swift in Sources */,
 				113114A4BA4F6C11A5D53657 /* AppLanguage.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
 				5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */,

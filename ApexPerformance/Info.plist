@@ -4,6 +4,8 @@
 <dict>
 	<key>API_URL</key>
 	<string>${API_URL}</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Apex čita tvoj puls za vrijeme treninga s trenerom. Treneru se šalju samo najniži, najviši i prosječni puls.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UILaunchScreen</key>

@@ -167,6 +167,8 @@ struct CompletedTrainingsView: View {
 
         do {
             trainings = try await Training.loadCompleted()
+            // Heart rate of trainings the coach marked, once the client connected Apple Health.
+            trainings = await AppleHealth.sendMissing(in: trainings)
         } catch let error where error.isCancellation {
             return
         } catch {
@@ -363,6 +365,7 @@ struct TrainingDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var showEditSheet = false
     @State private var showCopySheet = false
@@ -412,6 +415,11 @@ struct TrainingDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
+
+                // Start and end marked by the coach, heart rate from the client's Apple Health.
+                TrainingTimesCard(training: $training, isStaff: !authManager.hasRole(role: "Client")) { changed in
+                    onSaved?(changed)
+                }
 
                 if training.exercises.isEmpty {
                     CardView {
@@ -734,4 +742,5 @@ struct TrainingWorkoutView: View {
             ]))
     }
     .environmentObject(ToastManager())
+    .environmentObject(AuthManager())
 }
