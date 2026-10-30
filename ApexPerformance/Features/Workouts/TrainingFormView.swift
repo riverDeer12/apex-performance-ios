@@ -920,7 +920,7 @@ private struct WorkoutPickerView: View {
                 }
             }
             Section {
-                ForEach(workouts.filter { $0.matches(searchText) }) { row($0) }
+                ShowMoreForEach(items: workouts.filter { $0.matches(searchText) }) { row($0) }
             } header: {
                 if !suggested.isEmpty {
                     Text("all_workouts")

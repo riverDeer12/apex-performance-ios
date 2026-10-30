@@ -280,7 +280,7 @@ struct MonthlyReviewsView: View {
                     }
                 }
 
-                ForEach(reviews) { review in
+                ShowMoreForEach(items: reviews) { review in
                     VStack(alignment: .leading, spacing: 8) {
                         MonthTitle(date: review.monthDate)
                             .font(.system(size: 13, weight: .bold))

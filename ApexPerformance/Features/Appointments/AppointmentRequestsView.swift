@@ -40,7 +40,7 @@ struct AppointmentRequestsView: View {
                                     .padding(.vertical, 8)
                             } else {
                                 VStack(spacing: 0) {
-                                    ForEach(requests) { request in
+                                    ShowMoreForEach(items: requests) { request in
                                         NavigationLink {
                                             AppointmentRequestDetailsView(request: request)
                                         } label: {
@@ -96,7 +96,7 @@ struct AppointmentRequestsView: View {
                     .padding(.vertical, 8)
             } else {
                 VStack(spacing: 0) {
-                    ForEach(sentRequests) { request in
+                    ShowMoreForEach(items: sentRequests) { request in
                         sentRequestRow(request)
                         
                         if request.id != sentRequests.last?.id {

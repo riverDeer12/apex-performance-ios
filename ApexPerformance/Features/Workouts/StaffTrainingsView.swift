@@ -103,7 +103,7 @@ struct StaffTrainingsView: View {
                             .padding(.vertical, 8)
                     } else {
                         LazyVStack(spacing: 0) {
-                            ForEach(filteredTrainings) { training in
+                            ShowMoreForEach(items: filteredTrainings) { training in
                                 NavigationLink {
                                     TrainingDetailView(
                                         training: training,
@@ -350,7 +350,7 @@ struct ClientsList<Row: View>: View {
                 Text("no_clients")
                     .foregroundStyle(.secondary)
             }
-            ForEach(filteredClients) { client in
+            ShowMoreForEach(items: filteredClients) { client in
                 row(client)
             }
         }

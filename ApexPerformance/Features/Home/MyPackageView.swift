@@ -165,7 +165,7 @@ struct MyPackageView: View {
                 .apexSectionTitle()
                 .padding(.bottom, 6)
 
-            ForEach(upcoming) { appointment in
+            ShowMoreForEach(items: upcoming) { appointment in
                 Divider().overlay(Color.apexBorder)
                 NavigationLink {
                     AppointmentDetailsView(appointment: appointment)

@@ -240,7 +240,7 @@ struct ClientDetailsView: View {
                             VStack(spacing: 0) {
                                 let measurements = (form.bodyMeasurements ?? [])
                                     .sorted { $0.measuredAt > $1.measuredAt }
-                                ForEach(measurements) { bodyMeasurement in
+                                ShowMoreForEach(items: measurements) { bodyMeasurement in
                                     NavigationLink {
                                         BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement) { id in
                                             form.bodyMeasurements?.removeAll { $0.id == id }
@@ -470,7 +470,7 @@ struct ClientDetailsView: View {
                         .padding(.vertical, 6)
                 } else {
                     VStack(spacing: 0) {
-                        ForEach(monthlyReviews) { review in
+                        ShowMoreForEach(items: monthlyReviews) { review in
                             Button {
                                 editedReview = review
                                 showReviewSheet = true
@@ -619,7 +619,7 @@ struct ClientDetailsView: View {
                         .padding(.vertical, 6)
                 } else {
                     VStack(spacing: 0) {
-                        ForEach(functionalMovementScreens) { screen in
+                        ShowMoreForEach(items: functionalMovementScreens) { screen in
                             NavigationLink {
                                 FunctionalMovementScreenView(clientId: client.id, screen: screen) {
                                     Task { await loadFunctionalMovementScreens() }

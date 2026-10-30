@@ -45,7 +45,7 @@ struct AppointmentsView: View {
                             
                             CardView {
                                 VStack(spacing: 0) {
-                                    ForEach(pendingAppointments) { appointment in
+                                    ShowMoreForEach(items: pendingAppointments) { appointment in
                                         pendingAppointmentRow(appointment)
                                         
                                         if appointment.id != pendingAppointments.last?.id {
@@ -94,7 +94,7 @@ struct AppointmentsView: View {
                                     .padding(.vertical, 8)
                             } else {
                                 VStack(spacing: 0) {
-                                    ForEach(appointmentsForSelectedDate) { appointment in
+                                    ShowMoreForEach(items: appointmentsForSelectedDate) { appointment in
                                         NavigationLink {
                                             AppointmentDetailsView(appointment: appointment)
                                         } label: {
@@ -245,7 +245,7 @@ struct AppointmentsView: View {
                 
                 CardView {
                     VStack(spacing: 0) {
-                        ForEach(requests) { request in
+                        ShowMoreForEach(items: requests) { request in
                             appointmentRequestRow(request)
                             
                             if request.id != requests.last?.id {

@@ -47,7 +47,7 @@ struct PersonalRecordsView: View {
                 }
 
                 LazyVStack(spacing: 12) {
-                    ForEach(filteredExercises) { exercise in
+                    ShowMoreForEach(items: filteredExercises) { exercise in
                         NavigationLink {
                             PersonalRecordHistoryView(exercise: exercise)
                         } label: {
@@ -196,7 +196,7 @@ struct PersonalRecordHistoryView: View {
     var body: some View {
         List {
             Section {
-                ForEach(exercise.history) { record in
+                ShowMoreForEach(items: exercise.history) { record in
                     HStack(spacing: 12) {
                         Image(systemName: PersonalRecordFormat.systemImage(record))
                             .foregroundStyle(Color.apexAccent)
