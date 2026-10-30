@@ -49,7 +49,8 @@ struct CompletedTrainingsView: View {
                         }
                         .padding(.horizontal, 20)
                     } else {
-                        // Planned trainings are for the coach, the API only returns completed ones.
+                        // Planned trainings are for the coach; started ones are in progress.
+                        trainingsSection(title: "trainings_in_progress", trainings: inProgressTrainings)
                         trainingsSection(title: "completed_trainings", trainings: completedTrainings)
                     }
                 }
@@ -102,6 +103,10 @@ struct CompletedTrainingsView: View {
 
     private var completedTrainings: [Training] {
         filteredTrainings.filter(\.isCompleted)
+    }
+
+    private var inProgressTrainings: [Training] {
+        filteredTrainings.filter(\.isInProgress)
     }
 
     @ViewBuilder
@@ -166,7 +171,9 @@ struct CompletedTrainingsView: View {
         defer { isLoading = false }
 
         do {
-            trainings = try await Training.loadCompleted()
+            trainings = try await Training.loadStartedOrCompleted()
+            // Heart rate of trainings the coach marked, once the client connected Apple Health.
+            trainings = await AppleHealth.sendMissing(in: trainings)
         } catch let error where error.isCancellation {
             return
         } catch {
@@ -207,14 +214,15 @@ struct TrainingCardView: View {
                         .tracking(1)
 
                     if !training.isCompleted {
-                        Text("planned")
+                        let tint: Color = training.isInProgress ? .blue : .orange
+                        Text(training.isInProgress ? "in_progress" : "planned")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(0.8)
                             .textCase(.uppercase)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(tint)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Capsule().fill(Color.orange.opacity(0.15)))
+                            .background(Capsule().fill(tint.opacity(0.15)))
                     }
                 }
 
@@ -269,8 +277,8 @@ struct TrainingRowsView: View {
                     TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
                 } label: {
                     SettingsRowView(
-                        icon: training.isCompleted ? "checkmark.circle" : "calendar",
-                        iconTint: training.isCompleted ? .green : .orange,
+                        icon: training.statusIcon,
+                        iconTint: training.statusTint,
                         title: Text(verbatim: training.name),
                         subtitle: Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
                             + Text(verbatim: " · ")
@@ -363,6 +371,7 @@ struct TrainingDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var showEditSheet = false
     @State private var showCopySheet = false
@@ -404,6 +413,10 @@ struct TrainingDetailView: View {
                         }
                         .font(.subheadline)
                         .foregroundStyle(.green)
+                    } else if training.isInProgress {
+                        Label("in_progress", systemImage: "timer")
+                            .font(.subheadline)
+                            .foregroundStyle(.blue)
                     } else {
                         Label("planned", systemImage: "calendar")
                             .font(.subheadline)
@@ -412,6 +425,11 @@ struct TrainingDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
+
+                // Start and end marked by the coach, heart rate from the client's Apple Health.
+                TrainingTimesCard(training: $training, isStaff: !authManager.hasRole(role: "Client")) { changed in
+                    onSaved?(changed)
+                }
 
                 if training.exercises.isEmpty {
                     CardView {
@@ -734,4 +752,5 @@ struct TrainingWorkoutView: View {
             ]))
     }
     .environmentObject(ToastManager())
+    .environmentObject(AuthManager())
 }

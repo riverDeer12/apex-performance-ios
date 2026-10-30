@@ -878,6 +878,28 @@
         }
       }
     },
+    "apple_health_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your heart rate is measured by an Apple Watch or a chest strap connected to Apple Health. Only the lowest, highest and average heart rate during the training are sent to your coach."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puls mjeri Apple Watch ili prsni pojas povezan s Apple Healthom. Treneru se šalju samo najniži, najviši i prosječni puls za vrijeme treninga."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La frequenza cardiaca è misurata da un Apple Watch o da una fascia toracica collegata ad Apple Salute. Al coach vengono inviate solo la frequenza minima, massima e media durante l'allenamento."
+          }
+        }
+      }
+    },
     "appointment" : {
       "localizations" : {
         "en" : {
@@ -1436,6 +1458,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prenota appuntamento"
+          }
+        }
+      }
+    },
+    "bpm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bpm"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "otk/min"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bpm"
           }
         }
       }
@@ -2926,6 +2970,28 @@
         }
       }
     },
+    "clear_training_times" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear training times"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poništi vrijeme treninga"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancella gli orari"
+          }
+        }
+      }
+    },
     "client" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4113,6 +4179,28 @@
         }
       }
     },
+    "duration_minutes %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        }
+      }
+    },
     "edit" : {
       "localizations" : {
         "en" : {
@@ -4289,6 +4377,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'e-mail è stata copiata."
+          }
+        }
+      }
+    },
+    "end_training" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End training"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Završi trening"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina allenamento"
           }
         }
       }
@@ -5234,6 +5344,116 @@
         }
       }
     },
+    "heart_rate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart rate"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puls"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequenza cardiaca"
+          }
+        }
+      }
+    },
+    "heart_rate_average" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prosjek"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Media"
+          }
+        }
+      }
+    },
+    "heart_rate_from_client_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The heart rate comes from the client's iPhone (Apple Health) when the client opens their trainings."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puls dolazi s klijentovog iPhonea (Apple Health) kad klijent otvori svoje treninge."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La frequenza cardiaca arriva dall'iPhone del cliente (Apple Salute) quando il cliente apre i suoi allenamenti."
+          }
+        }
+      }
+    },
+    "heart_rate_max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highest"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najviši"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Massima"
+          }
+        }
+      }
+    },
+    "heart_rate_min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lowest"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najniži"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minima"
+          }
+        }
+      }
+    },
     "height" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5368,6 +5588,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Affondo in linea"
+          }
+        }
+      }
+    },
+    "in_progress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In progress"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "U tijeku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In corso"
           }
         }
       }
@@ -7814,6 +8056,28 @@
         }
       }
     },
+    "no_heart_rate_measurements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health has no heart rate measurements during this training."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health nema mjerenja pulsa za vrijeme ovog treninga."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Salute non ha misurazioni della frequenza cardiaca durante questo allenamento."
+          }
+        }
+      }
+    },
     "no_measurements" : {
       "localizations" : {
         "en" : {
@@ -9295,6 +9559,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riepilogo progressi"
+          }
+        }
+      }
+    },
+    "read_heart_rate_apple_health" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read heart rate from Apple Health"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Učitaj puls iz Apple Healtha"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leggi la frequenza da Apple Salute"
           }
         }
       }
@@ -10888,6 +11174,28 @@
         }
       }
     },
+    "start_training" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start training"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Započni trening"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia allenamento"
+          }
+        }
+      }
+    },
     "status" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11662,6 +11970,72 @@
         }
       }
     },
+    "training_duration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trajanje"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durata"
+          }
+        }
+      }
+    },
+    "training_ended" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kraj"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fine"
+          }
+        }
+      }
+    },
+    "training_in_progress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training in progress"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trening je u tijeku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allenamento in corso"
+          }
+        }
+      }
+    },
     "training_marked_completed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11777,6 +12151,28 @@
         }
       }
     },
+    "training_started" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Početak"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizio"
+          }
+        }
+      }
+    },
     "training_templates" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11823,6 +12219,50 @@
         }
       }
     },
+    "training_time" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training time"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrijeme treninga"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orario dell'allenamento"
+          }
+        }
+      }
+    },
+    "training_time_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark when the training starts and ends. The client's iPhone then adds the lowest, highest and average heart rate from Apple Health."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Označi početak i kraj treninga. Klijentov iPhone tada iz Apple Healtha dodaje najniži, najviši i prosječni puls."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segna l'inizio e la fine dell'allenamento. L'iPhone del cliente aggiunge poi la frequenza cardiaca minima, massima e media da Apple Salute."
+          }
+        }
+      }
+    },
     "trainings" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11865,6 +12305,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allenamenti creati: %lld"
+          }
+        }
+      }
+    },
+    "trainings_in_progress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trainings in progress"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treninzi u tijeku"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allenamenti in corso"
           }
         }
       }

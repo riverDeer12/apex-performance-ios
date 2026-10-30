@@ -45,6 +45,10 @@ platform :ios do
     version = app_version(api_key, store_id, versions.compact)
     UI.message("Building #{app_id} version #{version} (#{build_number})")
 
+    # Apple Health: the cloud managed profiles include HealthKit only when
+    # the App ID has the capability.
+    enable_capability(app_id, "HEALTHKIT")
+
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
            "-authenticationKeyID #{key_id} " \
@@ -81,6 +85,17 @@ platform :ios do
     )
   ensure
     File.delete(key_path) if key_path && File.exist?(key_path)
+  end
+
+  # Turns on a capability (e.g. HEALTHKIT) of the bundle id on the
+  # Developer portal through the App Store Connect API, once.
+  def enable_capability(app_id, type)
+    bundle_id = Spaceship::ConnectAPI::BundleId.find(app_id)
+    UI.user_error!("No bundle id #{app_id} on the Developer portal") unless bundle_id
+    return if bundle_id.get_capabilities.any? { |capability| capability.capability_type == type }
+
+    bundle_id.create_capability(type)
+    UI.message("Turned on #{type} for #{app_id}")
   end
 
   # Without the aps-environment entitlement iOS gives the app no push

@@ -200,8 +200,8 @@ struct StaffTrainingsView: View {
 
     private func row(_ training: Training) -> some View {
         SettingsRowView(
-            icon: training.isCompleted ? "checkmark.circle" : "calendar",
-            iconTint: training.isCompleted ? .green : .orange,
+            icon: training.statusIcon,
+            iconTint: training.statusTint,
             title: Text(verbatim: training.name),
             subtitle: Text(verbatim: "\(Self.name(training.client)) · \(DateFormatter.dateWithDots.string(from: training.date))"),
             showChevron: true
