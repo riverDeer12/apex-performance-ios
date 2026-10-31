@@ -78,6 +78,17 @@ final class AppStoreScreenshotTests: XCTestCase {
         waitForContent()
         takeScreenshot("coach", "workouts")
 
+        // Workouts of one category, picked with the buttons above the list.
+        let mobility = app.buttons["category-MobilityFlexibility"].firstMatch
+        if mobility.waitForExistence(timeout: 5) {
+            mobility.tap()
+            waitForContent(seconds: 1)
+            takeScreenshot("coach", "workout-categories")
+            // Back to all workouts.
+            mobility.tap()
+            waitForContent(seconds: 1)
+        }
+
         // A workout with the muscles it works.
         let workoutRow = app.buttons["workout-row"].firstMatch
         if workoutRow.waitForExistence(timeout: 5) {
