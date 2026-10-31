@@ -12,10 +12,28 @@ struct Training: Identifiable, Decodable, Hashable {
     let name: String
     let date: Date
     let note: String?
-    let isCompleted: Bool
-    let completedAt: Date?
+    var isCompleted: Bool
+    var completedAt: Date?
     let client: Person
     let exercises: [Exercise]
+    // When the training really started and ended, marked by the coach.
+    // Started and not completed is in progress, clients see it then.
+    var startedAt: Date? = nil
+    var endedAt: Date? = nil
+    // Client's heart rate in between, from Apple Health on the client's iPhone.
+    var heartRate: HeartRate? = nil
+
+    /// Beats per minute.
+    struct HeartRate: Codable, Hashable {
+        let min: Int
+        let max: Int
+        let average: Int
+    }
+
+    /// Started by the coach, not completed yet.
+    var isInProgress: Bool {
+        !isCompleted && startedAt != nil
+    }
 
     struct Person: Decodable, Hashable {
         let id: UUID
@@ -33,6 +51,8 @@ struct Training: Identifiable, Decodable, Hashable {
         let sets: [ExerciseSet]
         // Done right after the previous exercise without rest (superset).
         var isSupersetWithPrevious = false
+        // PaceType raw value of the workout: sets with a distance show this pace.
+        var paceType: String? = nil
     }
 
     struct ExerciseSet: Identifiable, Decodable, Hashable {
@@ -44,12 +64,14 @@ struct Training: Identifiable, Decodable, Hashable {
         var isDropSet = false
         // How long the set lasted, for workouts done for a time (e.g. plank).
         var durationSeconds: Int? = nil
+        // Distance covered, for workouts with a pace type (e.g. rowing 2000 m).
+        var distanceMeters: Int? = nil
     }
 }
 
 extension Training.ExerciseSet {
     private enum CodingKeys: String, CodingKey {
-        case id, order, reps, weight, isDropSet, durationSeconds
+        case id, order, reps, weight, isDropSet, durationSeconds, distanceMeters
     }
 
     // In an extension so the memberwise initializer stays available.
@@ -61,6 +83,22 @@ extension Training.ExerciseSet {
         weight = try container.decodeIfPresent(Decimal.self, forKey: .weight)
         isDropSet = try container.decodeIfPresent(Bool.self, forKey: .isDropSet) ?? false
         durationSeconds = try container.decodeIfPresent(Int.self, forKey: .durationSeconds)
+        distanceMeters = try container.decodeIfPresent(Int.self, forKey: .distanceMeters)
+    }
+
+    /// Distance, duration, pace and reps of a set over a distance, e.g.
+    /// "2 km · 7:30 · 1:52 /500 m" like the web; nil for a set without a distance.
+    func distanceText(paceType: String?) -> String? {
+        guard let distanceMeters, distanceMeters > 0 else { return nil }
+        let duration = durationSeconds.flatMap { $0 > 0 ? SetDuration.text($0) : nil } ?? ""
+        return [
+            SetPace.distance(distanceMeters),
+            duration,
+            SetPace.pace(paceType, meters: distanceMeters, seconds: durationSeconds),
+            reps?.trimmingCharacters(in: .whitespaces) ?? ""
+        ]
+        .filter { !$0.isEmpty }
+        .joined(separator: " · ")
     }
 }
 
@@ -73,6 +111,48 @@ enum SetDuration {
         return hours > 0
             ? String(format: "%d:%02d:%02d", hours, minutes, rest)
             : String(format: "%d:%02d", minutes, rest)
+    }
+}
+
+/// Distance and pace of sets over a distance, formatted like the web
+/// (Croatian decimal comma): "800 m", "5,25 km", "1:52 /500 m", "24,5 km/h".
+enum SetPace {
+    /// Metres below a kilometre, otherwise kilometres: "800 m", "2 km", "5,25 km".
+    static func distance(_ meters: Int) -> String {
+        guard meters > 0 else { return "" }
+        return meters < 1000
+            ? "\(meters) m"
+            : "\(number(Double(meters) / 1000, maximumFractionDigits: 2)) km"
+    }
+
+    /// Pace of a set from its distance and duration, "" when one is missing.
+    static func pace(_ paceType: String?, meters: Int?, seconds: Int?) -> String {
+        guard let meters, let seconds, meters > 0, seconds > 0 else { return "" }
+        return speed(paceType, metersPerMinute: Double(meters) * 60 / Double(seconds))
+    }
+
+    /// Pace from a speed in metres per minute, as the fastest pace record is kept.
+    static func speed(_ paceType: String?, metersPerMinute: Double) -> String {
+        guard metersPerMinute > 0 else { return "" }
+
+        if paceType == PaceType.kmh.rawValue {
+            return "\(number(metersPerMinute * 60 / 1000, maximumFractionDigits: 1)) km/h"
+        }
+
+        let isPer500m = paceType == PaceType.per500m.rawValue
+        let per: Double = isPer500m ? 500 : 1000
+        let seconds = Int((per / metersPerMinute * 60).rounded())
+        return "\(SetDuration.text(seconds)) /\(isPer500m ? "500 m" : "km")"
+    }
+
+    private static func number(_ value: Double, maximumFractionDigits: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: "hr_HR")
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = maximumFractionDigits
+        formatter.roundingMode = .halfUp
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 }
 
@@ -96,7 +176,7 @@ extension Array where Element == Training.ExerciseSet {
 
 extension Training.Exercise {
     private enum CodingKeys: String, CodingKey {
-        case id, workoutId, workoutName, order, note, sets, isSupersetWithPrevious
+        case id, workoutId, workoutName, order, note, sets, isSupersetWithPrevious, paceType
     }
 
     // In an extension so the memberwise initializer stays available.
@@ -109,6 +189,7 @@ extension Training.Exercise {
         note = try container.decodeIfPresent(String.self, forKey: .note)
         sets = try container.decode([Training.ExerciseSet].self, forKey: .sets)
         isSupersetWithPrevious = try container.decodeIfPresent(Bool.self, forKey: .isSupersetWithPrevious) ?? false
+        paceType = try container.decodeIfPresent(String.self, forKey: .paceType)
     }
 }
 
@@ -152,6 +233,12 @@ extension Training {
     @MainActor
     static func loadCompleted() async throws -> [Training] {
         try await loadAll().filter(\.isCompleted)
+    }
+
+    /// Client's trainings: in progress (started by the coach) and completed.
+    @MainActor
+    static func loadStartedOrCompleted() async throws -> [Training] {
+        try await loadAll().filter { $0.isCompleted || $0.isInProgress }
     }
 
     /// Creates a training, or updates it when an id is given (staff only).
@@ -232,5 +319,6 @@ struct SaveTrainingRequest: Encodable {
         let weight: Decimal?
         var isDropSet = false
         var durationSeconds: Int? = nil
+        var distanceMeters: Int? = nil
     }
 }

@@ -173,13 +173,15 @@ private struct NumberWheelSheet: View {
     }
 }
 
-/// Field showing a duration as "1:30" that opens minutes and seconds
-/// wheels, e.g. how long a plank lasted.
+/// Field showing a duration as "1:30" (or "1:02:30" from an hour on) that
+/// opens minutes and seconds wheels, e.g. how long a plank lasted.
 struct DurationWheelField: View {
     @Binding var seconds: Int?
     // Value the wheels start at when there is no value yet.
     var defaultSeconds = 60
     var title: LocalizedStringKey? = nil
+    // Adds an hours wheel (0–9), e.g. for long walks or rides.
+    var showsHours = false
 
     @State private var isPresented = false
 
@@ -202,28 +204,36 @@ struct DurationWheelField: View {
         }
         .buttonStyle(.borderless)
         .sheet(isPresented: $isPresented) {
-            DurationWheelSheet(seconds: $seconds, defaultSeconds: defaultSeconds, title: title)
+            DurationWheelSheet(seconds: $seconds, defaultSeconds: defaultSeconds, title: title,
+                               showsHours: showsHours)
                 .presentationDetents([.height(320)])
                 .presentationDragIndicator(.visible)
         }
     }
 }
 
-/// Bottom sheet with minutes (0–59) and seconds (in steps of 5) wheels.
+/// Bottom sheet with minutes (0–59) and seconds (in steps of 5) wheels,
+/// and an hours wheel (0–9) when asked for.
 private struct DurationWheelSheet: View {
     @Binding var seconds: Int?
     let title: LocalizedStringKey?
+    let showsHours: Bool
 
     @Environment(\.dismiss) private var dismiss
 
+    @State private var hours: Int
     @State private var minutes: Int
     @State private var secondsPart: Int
 
-    init(seconds: Binding<Int?>, defaultSeconds: Int, title: LocalizedStringKey?) {
+    init(seconds: Binding<Int?>, defaultSeconds: Int, title: LocalizedStringKey?, showsHours: Bool = false) {
         _seconds = seconds
         self.title = title
-        let start = min(max(seconds.wrappedValue ?? defaultSeconds, 0), 59 * 60 + 55)
-        _minutes = State(initialValue: start / 60)
+        self.showsHours = showsHours
+        // 9:59:55 with the hours wheel, otherwise 59:55.
+        let maximum = showsHours ? 9 * 3600 + 59 * 60 + 55 : 59 * 60 + 55
+        let start = min(max(seconds.wrappedValue ?? defaultSeconds, 0), maximum)
+        _hours = State(initialValue: showsHours ? start / 3600 : 0)
+        _minutes = State(initialValue: showsHours ? start % 3600 / 60 : start / 60)
         // Rounded down to the wheel's steps of 5 seconds.
         _secondsPart = State(initialValue: start % 60 / 5 * 5)
     }
@@ -231,6 +241,18 @@ private struct DurationWheelSheet: View {
     var body: some View {
         NavigationStack {
             HStack(spacing: 0) {
+                if showsHours {
+                    Picker(selection: $hours) {
+                        ForEach(0..<10, id: \.self) { Text(verbatim: "\($0)").tag($0) }
+                    } label: {
+                        EmptyView()
+                    }
+                    .pickerStyle(.wheel)
+                    Text(verbatim: "h")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                }
+
                 Picker(selection: $minutes) {
                     ForEach(0..<60, id: \.self) { Text(verbatim: "\($0)").tag($0) }
                 } label: {
@@ -260,7 +282,7 @@ private struct DurationWheelSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("done") {
-                        let total = minutes * 60 + secondsPart
+                        let total = hours * 3600 + minutes * 60 + secondsPart
                         // The API takes 1 second at least.
                         seconds = total > 0 ? total : nil
                         dismiss()

@@ -57,7 +57,7 @@ struct ChatListView: View {
                             }
                         } else {
                             LazyVStack(spacing: 0) {
-                                ForEach(store.conversations) { conversation in
+                                ShowMoreForEach(items: store.conversations) { conversation in
                                     NavigationLink(value: conversation.id) {
                                         row(conversation)
                                     }
@@ -254,7 +254,7 @@ struct ChatContactPickerView: View {
                     Text("chat_no_contacts")
                         .foregroundStyle(.secondary)
                 }
-                ForEach(filteredContacts) { contact in
+                ShowMoreForEach(items: filteredContacts) { contact in
                     Button {
                         onPick(contact)
                     } label: {

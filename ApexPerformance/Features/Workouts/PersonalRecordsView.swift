@@ -17,7 +17,6 @@ struct PersonalRecordsView: View {
     @State private var exercises: [ExerciseRecords] = []
     @State private var searchText = ""
     @State private var isLoading = false
-    @State private var hasLoaded = false
 
     private var filteredExercises: [ExerciseRecords] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -48,7 +47,7 @@ struct PersonalRecordsView: View {
                 }
 
                 LazyVStack(spacing: 12) {
-                    ForEach(filteredExercises) { exercise in
+                    ShowMoreForEach(items: filteredExercises) { exercise in
                         NavigationLink {
                             PersonalRecordHistoryView(exercise: exercise)
                         } label: {
@@ -71,10 +70,10 @@ struct PersonalRecordsView: View {
         .refreshable {
             await Task { await load() }.value
         }
+        // Fresh data every time the screen is shown, not only after pulling
+        // to refresh. Own task, so leaving the screen doesn't cancel it.
         .task {
-            guard !hasLoaded else { return }
-            hasLoaded = true
-            await load()
+            await Task { await load() }.value
         }
         .navigationTitle(clientName.map { Text(verbatim: $0) } ?? Text("personal_records"))
         .navigationBarTitleDisplayMode(.inline)
@@ -105,7 +104,12 @@ struct PersonalRecordsView: View {
             }
 
             HStack(spacing: 0) {
-                if let longestDuration = exercise.longestDuration {
+                if exercise.longestDistance != nil || exercise.fastestPace != nil {
+                    // A workout done over a distance (e.g. rowing) has no weight records.
+                    stat(label: "longest_distance", record: exercise.longestDistance)
+                    Divider().overlay(Color.apexBorder)
+                    stat(label: "fastest_pace", record: exercise.fastestPace)
+                } else if let longestDuration = exercise.longestDuration {
                     // A workout done for a time has no weight records.
                     stat(label: "longest_duration", record: longestDuration)
                 } else {
@@ -133,6 +137,9 @@ struct PersonalRecordsView: View {
             Text(verbatim: record.map(PersonalRecordFormat.value) ?? "—")
                 .font(.system(size: 20, weight: .bold))
                 .monospacedDigit()
+                // A pace like "1:52 /500 m" is longer than a weight.
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
             Text(label)
                 .font(.system(size: 9, weight: .semibold))
                 .tracking(0.6)
@@ -189,15 +196,13 @@ struct PersonalRecordHistoryView: View {
     var body: some View {
         List {
             Section {
-                ForEach(exercise.history) { record in
+                ShowMoreForEach(items: exercise.history) { record in
                     HStack(spacing: 12) {
-                        Image(systemName: record.isLongestDuration ? "stopwatch"
-                              : record.isMaxWeight ? "scalemass" : "function")
+                        Image(systemName: PersonalRecordFormat.systemImage(record))
                             .foregroundStyle(Color.apexAccent)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(record.isLongestDuration ? "longest_duration"
-                                 : record.isMaxWeight ? "max_weight" : "estimated_one_rep_max")
+                            Text(PersonalRecordFormat.label(record))
                                 .font(.subheadline.weight(.semibold))
                             Text(verbatim: DateFormatter.dateWithDots.string(from: record.achievedAt))
                                 .font(.caption)
@@ -208,12 +213,14 @@ struct PersonalRecordHistoryView: View {
                             Text(verbatim: PersonalRecordFormat.value(record))
                                 .font(.subheadline.weight(.bold))
                                 .monospacedDigit()
-                            // The set the record comes from.
-                            Text(verbatim: record.isLongestDuration
-                                 ? (record.weight > 0 ? PersonalRecordFormat.kilograms(record.weight) : "—")
-                                 : PersonalRecordFormat.set(weight: record.weight, reps: record.reps))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            // The set the record comes from; distance and pace records are the whole set.
+                            if !record.isLongestDistance && !record.isFastestPace {
+                                Text(verbatim: record.isLongestDuration
+                                     ? (record.weight > 0 ? PersonalRecordFormat.kilograms(record.weight) : "—")
+                                     : PersonalRecordFormat.set(weight: record.weight, reps: record.reps))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                     .padding(.vertical, 2)
@@ -236,11 +243,33 @@ enum PersonalRecordFormat {
         "\(number(value)) kg"
     }
 
-    // Kilograms, or minutes and seconds for the longest duration.
+    // Kilograms, minutes and seconds for the longest duration, metres or
+    // kilometres for the longest distance and the workout's pace for the fastest pace.
     static func value(_ record: PersonalRecord) -> String {
-        record.isLongestDuration
-            ? SetDuration.text(NSDecimalNumber(decimal: record.value).intValue)
-            : kilograms(record.value)
+        if record.isLongestDuration {
+            return SetDuration.text(NSDecimalNumber(decimal: record.value).intValue)
+        }
+        if record.isLongestDistance {
+            return SetPace.distance(NSDecimalNumber(decimal: record.value).intValue)
+        }
+        if record.isFastestPace {
+            return SetPace.speed(record.paceType, metersPerMinute: NSDecimalNumber(decimal: record.value).doubleValue)
+        }
+        return kilograms(record.value)
+    }
+
+    static func label(_ record: PersonalRecord) -> LocalizedStringKey {
+        if record.isLongestDuration { return "longest_duration" }
+        if record.isLongestDistance { return "longest_distance" }
+        if record.isFastestPace { return "fastest_pace" }
+        return record.isMaxWeight ? "max_weight" : "estimated_one_rep_max"
+    }
+
+    static func systemImage(_ record: PersonalRecord) -> String {
+        if record.isLongestDuration { return "stopwatch" }
+        if record.isLongestDistance { return "ruler" }
+        if record.isFastestPace { return "speedometer" }
+        return record.isMaxWeight ? "scalemass" : "function"
     }
 
     // "10 × 40 kg" or "40 kg".

@@ -20,7 +20,6 @@ struct ClientHomeView: View {
     @State private var approvedAppointments: [Appointment] = []
     @State private var pendingAppointments: [Appointment] = []
     @State private var isLoading = false
-    @State private var hasLoaded = false
     @State private var showCreateAppointment = false
     @State private var goal: ClientGoal?
     @State private var showGoalSheet = false
@@ -49,10 +48,10 @@ struct ClientHomeView: View {
             .refreshable {
                 await Task { await load() }.value
             }
+            // Fresh data every time the screen is shown, not only after pulling
+            // to refresh. Own task, so leaving the screen doesn't cancel it.
             .task {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                await load()
+                await Task { await load() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -25,6 +25,8 @@ struct WorkoutEditView: View {
     @State private var muscles: [String: MuscleRole]
     // Sets record a duration instead of repetitions (e.g. plank).
     @State private var isTimed: Bool
+    // PaceType raw value for workouts done over a distance, "" for none.
+    @State private var paceType: String
     @State private var category: WorkoutCategory
     // Picked by the coach, then picking a type no longer changes it.
     @State private var isCategoryPicked: Bool
@@ -53,6 +55,7 @@ struct WorkoutEditView: View {
         _selectedWorkoutTypeIds = State(initialValue: Set(workout?.workoutTypes.map(\.id) ?? []))
         _muscles = State(initialValue: Self.roles(of: workout))
         _isTimed = State(initialValue: workout?.isTimed ?? false)
+        _paceType = State(initialValue: workout?.paceType ?? "")
         _category = State(initialValue: workout?.workoutCategory ?? .strengthConditioning)
         _isCategoryPicked = State(initialValue: workout != nil)
     }
@@ -85,6 +88,7 @@ struct WorkoutEditView: View {
             || selectedWorkoutTypeIds != Set(workout?.workoutTypes.map(\.id) ?? [])
             || muscles != Self.roles(of: workout)
             || isTimed != (workout?.isTimed ?? false)
+            || paceType != (workout?.paceType ?? "")
             || category != (workout?.workoutCategory ?? .strengthConditioning)
     }
 
@@ -176,10 +180,40 @@ struct WorkoutEditView: View {
             }
 
             Section {
-                Toggle("timed_workout", isOn: $isTimed)
+                Toggle("timed_workout", isOn: Binding(
+                    get: { isTimed },
+                    set: { newValue in
+                        isTimed = newValue
+                        // A pace needs a duration: without one the workout has no pace type,
+                        // otherwise the API keeps it timed and switching off had no effect.
+                        if !newValue { paceType = "" }
+                    }
+                ))
                     .tint(Color.apexMainColor)
             } footer: {
                 Text("timed_workout_hint")
+            }
+
+            Section {
+                Picker("pace_type", selection: Binding(
+                    get: { paceType },
+                    set: { newValue in
+                        paceType = newValue
+                        // The pace comes from distance and duration, so these sets record a duration too.
+                        if !newValue.isEmpty { isTimed = true }
+                    }
+                )) {
+                    Text("pace_none").tag("")
+                    ForEach(PaceType.allCases) { option in
+                        Text(option.title).tag(option.rawValue)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } header: {
+                Text("pace_type")
+            } footer: {
+                Text("pace_type_hint")
             }
 
             Section {
@@ -335,8 +369,10 @@ struct WorkoutEditView: View {
             workoutTypes: Array(selectedWorkoutTypeIds),
             muscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.primary),
             secondaryMuscles: isNew && muscles.isEmpty ? nil : selectedMuscles(.secondary),
-            isTimed: isTimed,
-            category: category.rawValue
+            isTimed: isTimed || !paceType.isEmpty,
+            category: category.rawValue,
+            // "" clears it, the API keeps workouts with a pace type timed.
+            paceType: paceType
         )
 
         do {

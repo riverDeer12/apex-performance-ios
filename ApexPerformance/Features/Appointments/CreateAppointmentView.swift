@@ -115,7 +115,7 @@ struct CreateAppointmentView: View {
                             ProgressView("loading_clients")
                         }
                         
-                        ForEach(clients) { client in
+                        ShowMoreForEach(items: clients) { client in
                             Toggle(client.fullName, isOn: Binding(
                                 get: { selectedClients.contains(client.id) },
                                 set: { isOn in
@@ -186,6 +186,12 @@ struct CreateAppointmentView: View {
     
     @MainActor
     private func loadInitialData() async {
+        // Clients book from tomorrow: the picker shows tomorrow, so the slots
+        // must be for tomorrow too (before, today's were loaded, e.g. none
+        // on a Sunday while the picker showed Monday).
+        if selectedDay < getStartDate() {
+            selectedDay = getStartDate()
+        }
         await withTaskGroup(of: Void.self) { group in
             
             if authManager.hasRole(role: "Coach"){
@@ -550,6 +556,8 @@ struct CreateAppointmentView: View {
         
         func dateFrom(dayComponents: DateComponents, timeString: String) -> Date? {
             let timeFormatter = DateFormatter()
+            // Fixed format, also with the 12-hour clock set on the phone.
+            timeFormatter.locale = Locale(identifier: "en_US_POSIX")
             timeFormatter.dateFormat = "HH:mm:ss"
             
             guard let timeDate = timeFormatter.date(from: timeString) else {

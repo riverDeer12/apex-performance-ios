@@ -13,7 +13,6 @@ struct CompletedTrainingsView: View {
     @State private var workouts: [UUID: Workout] = [:]
     @State private var searchText = ""
     @State private var isLoading = false
-    @State private var hasLoaded = false
     // Training a tapped push opens.
     @State private var openedTraining: Training?
     @State private var showsOpenedTraining = false
@@ -50,7 +49,8 @@ struct CompletedTrainingsView: View {
                         }
                         .padding(.horizontal, 20)
                     } else {
-                        // Planned trainings are for the coach, the API only returns completed ones.
+                        // Planned trainings are for the coach; started ones are in progress.
+                        trainingsSection(title: "trainings_in_progress", trainings: inProgressTrainings)
                         trainingsSection(title: "completed_trainings", trainings: completedTrainings)
                     }
                 }
@@ -65,11 +65,10 @@ struct CompletedTrainingsView: View {
             .refreshable {
                 await Task { await load() }.value
             }
+            // Fresh data every time the screen is shown, not only after pulling
+            // to refresh. Own task, so leaving the screen doesn't cancel it.
             .task {
-                if !hasLoaded {
-                    hasLoaded = true
-                    await load()
-                }
+                await Task { await load() }.value
                 await openPendingTraining()
             }
             .onChange(of: notificationRouter.pendingTrainingId) {
@@ -106,6 +105,10 @@ struct CompletedTrainingsView: View {
         filteredTrainings.filter(\.isCompleted)
     }
 
+    private var inProgressTrainings: [Training] {
+        filteredTrainings.filter(\.isInProgress)
+    }
+
     @ViewBuilder
     private func trainingsSection(title: LocalizedStringKey, trainings: [Training]) -> some View {
         if !trainings.isEmpty {
@@ -114,7 +117,7 @@ struct CompletedTrainingsView: View {
                     .apexLabel()
 
                 LazyVStack(spacing: 12) {
-                    ForEach(trainings) { training in
+                    ShowMoreForEach(items: trainings) { training in
                         NavigationLink {
                             TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
                         } label: {
@@ -168,7 +171,9 @@ struct CompletedTrainingsView: View {
         defer { isLoading = false }
 
         do {
-            trainings = try await Training.loadCompleted()
+            trainings = try await Training.loadStartedOrCompleted()
+            // Heart rate of trainings the coach marked, once the client connected Apple Health.
+            trainings = await AppleHealth.sendMissing(in: trainings)
         } catch let error where error.isCancellation {
             return
         } catch {
@@ -209,14 +214,15 @@ struct TrainingCardView: View {
                         .tracking(1)
 
                     if !training.isCompleted {
-                        Text("planned")
+                        let tint: Color = training.isInProgress ? .blue : .orange
+                        Text(training.isInProgress ? "in_progress" : "planned")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(0.8)
                             .textCase(.uppercase)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(tint)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Capsule().fill(Color.orange.opacity(0.15)))
+                            .background(Capsule().fill(tint.opacity(0.15)))
                     }
                 }
 
@@ -266,13 +272,13 @@ struct TrainingRowsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(trainings) { training in
+            ShowMoreForEach(items: trainings) { training in
                 NavigationLink {
                     TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
                 } label: {
                     SettingsRowView(
-                        icon: training.isCompleted ? "checkmark.circle" : "calendar",
-                        iconTint: training.isCompleted ? .green : .orange,
+                        icon: training.statusIcon,
+                        iconTint: training.statusTint,
                         title: Text(verbatim: training.name),
                         subtitle: Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
                             + Text(verbatim: " · ")
@@ -365,6 +371,7 @@ struct TrainingDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var showEditSheet = false
     @State private var showCopySheet = false
@@ -406,6 +413,10 @@ struct TrainingDetailView: View {
                         }
                         .font(.subheadline)
                         .foregroundStyle(.green)
+                    } else if training.isInProgress {
+                        Label("in_progress", systemImage: "timer")
+                            .font(.subheadline)
+                            .foregroundStyle(.blue)
                     } else {
                         Label("planned", systemImage: "calendar")
                             .font(.subheadline)
@@ -414,6 +425,11 @@ struct TrainingDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
+
+                // Start and end marked by the coach, heart rate from the client's Apple Health.
+                TrainingTimesCard(training: $training, isStaff: !authManager.hasRole(role: "Client")) { changed in
+                    onSaved?(changed)
+                }
 
                 if training.exercises.isEmpty {
                     CardView {
@@ -624,8 +640,12 @@ struct TrainingExerciseCards: View {
                 let numbers = sets.setNumbers
                 // Sets of a timed workout (e.g. plank) have a duration instead of reps.
                 let isTimed = sets.contains { $0.durationSeconds != nil }
+                // Sets over a distance (e.g. rowing) show the distance, duration and pace.
+                let hasDistance = sets.contains { ($0.distanceMeters ?? 0) > 0 }
                 if !sets.isEmpty {
-                    setRow(Text("set"), Text(isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps")),
+                    setRow(Text("set"),
+                           Text(hasDistance ? LocalizedStringKey("distance")
+                                : isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps")),
                            Text("kg"), isHeader: true)
                 }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
@@ -635,7 +655,8 @@ struct TrainingExerciseCards: View {
                         number.map { Text(verbatim: "\($0)") }
                             // Drop set of the set above, done right after it.
                             ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
-                        Text(verbatim: set.durationSeconds.map(SetDuration.text)
+                        Text(verbatim: set.distanceText(paceType: exercise.paceType)
+                            ?? set.durationSeconds.map(SetDuration.text)
                             ?? set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
                         Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
                         isDropSet: number == nil
@@ -731,4 +752,5 @@ struct TrainingWorkoutView: View {
             ]))
     }
     .environmentObject(ToastManager())
+    .environmentObject(AuthManager())
 }

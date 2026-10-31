@@ -141,9 +141,12 @@ enum DemoAPI {
         static let bench = 1, inclinePress = 2, squat = 3, romanianDeadlift = 4, deadlift = 5,
                    pullUp = 6, row = 7, overheadPress = 8, lateralRaise = 9, hipThrust = 10,
                    lunge = 11, curl = 12, pushdown = 13, plank = 14, hipFlexorStretch = 15,
-                   thoracicRotation = 16, catCow = 17, hipSwitch = 18, worldsGreatestStretch = 19,
-                   hamstringStretch = 20, ankleMobility = 21
+                   thoracicRotation = 16, rowErg = 17, catCow = 18, hipSwitch = 19, worldsGreatestStretch = 20,
+                   hamstringStretch = 21, ankleMobility = 22
     }
+
+    // Done over a distance: sets record the distance and show the pace (min/500 m).
+    static let paceTypes: [Int: String] = [WorkoutNumber.rowErg: "Per500m"]
 
     // Strength, upper body, lower body, core, mobility (the plan's library).
     static let workoutTypes: [(number: Int, en: String, hr: String)] = [
@@ -255,6 +258,12 @@ enum DemoAPI {
             description: ("Lying on your side with your knees bent, open your top arm and chest towards the floor behind you and return slowly. 8–10 reps per side.",
                           "Ležeći na boku savijenih koljena otvori gornju ruku i prsa prema podu iza sebe pa se polako vrati. 8–10 ponavljanja po strani."),
             types: [5], muscles: ["upper_back"], secondaryMuscles: ["chest", "obliques"]),
+        WorkoutInfo(
+            number: WorkoutNumber.rowErg,
+            name: ("Row Erg", "Veslački ergometar"),
+            description: ("Drive with your legs first, then lean back slightly and pull the handle to your lower ribs. Return in the reverse order.",
+                          "Prvo se odgurni nogama, zatim se lagano zabaci i povuci ručku prema donjim rebrima. Vrati se obrnutim redom."),
+            types: [2, 3], muscles: ["quads", "upper_back"], secondaryMuscles: ["glutes", "hamstrings", "lats", "biceps"]),
         WorkoutInfo(
             number: WorkoutNumber.catCow,
             name: ("Cat-Cow", "Mačka-krava"),
@@ -783,6 +792,26 @@ fileprivate struct Fixtures {
                 "achievedAt": iso(anaTrainingDate(row.0).addingTimeInterval(75 * 60))
             ])
         }
+        // Row erg 2000 m: the distance, and the fastest pace as metres per minute
+        // (2000 m in 7:45, then in 7:30 = 1:52 /500 m).
+        let distanceRows: [(Int, String, Double)] = [
+            (3, "LongestDistance", 2000), (3, "FastestPace", 258.06), (5, "FastestPace", 266.67)
+        ]
+        for (offset, row) in distanceRows.enumerated() {
+            records.append([
+                "id": DemoAPI.id(.record, rows.count + 2 + offset + 1).uuidString,
+                "clientId": DemoAPI.anaClientId.uuidString,
+                "workoutId": DemoAPI.id(.workout, DemoAPI.WorkoutNumber.rowErg).uuidString,
+                "workoutName": workoutName(DemoAPI.WorkoutNumber.rowErg),
+                "trainingId": DemoAPI.id(.training, row.0).uuidString,
+                "type": row.1,
+                "value": row.2,
+                "weight": 0,
+                "reps": NSNull(),
+                "achievedAt": iso(anaTrainingDate(row.0).addingTimeInterval(75 * 60)),
+                "paceType": paceType(DemoAPI.WorkoutNumber.rowErg)
+            ])
+        }
         return records
     }
 
@@ -794,6 +823,11 @@ fileprivate struct Fixtures {
             "id": DemoAPI.id(.workoutType, type.number).uuidString,
             "name": text(type.en, type.hr)
         ]
+    }
+
+    // The workout's pace type, null for workouts not done over a distance.
+    func paceType(_ number: Int?) -> Any {
+        null(number.flatMap { DemoAPI.paceTypes[$0] })
     }
 
     func workoutName(_ number: Int) -> JSON {
@@ -813,9 +847,10 @@ fileprivate struct Fixtures {
             "workoutTypes": info.types.map { workoutType($0) },
             "muscles": info.muscles,
             "secondaryMuscles": info.secondaryMuscles,
-            // Plank sets record a duration.
-            "isTimed": info.number == DemoAPI.WorkoutNumber.plank,
-            "category": info.types.contains(DemoAPI.mobilityTypeNumber) ? "MobilityFlexibility" : "StrengthConditioning"
+            // Plank sets record a duration, row erg sets a distance and a duration.
+            "isTimed": info.number == DemoAPI.WorkoutNumber.plank || DemoAPI.paceTypes[info.number] != nil,
+            "category": info.types.contains(DemoAPI.mobilityTypeNumber) ? "MobilityFlexibility" : "StrengthConditioning",
+            "paceType": paceType(info.number)
         ]
     }
 
@@ -848,15 +883,21 @@ fileprivate struct Fixtures {
         for (index, exercise) in exercises.enumerated() {
             var sets: [JSON] = []
             for (setIndex, set) in exercise.sets.enumerated() {
-                // "45 s" is a duration (plank), not repetitions.
-                let duration = set.reps.hasSuffix(" s") ? Int(set.reps.dropLast(2)) : nil
+                // "45 s" is a duration (plank) and "2000 m 450 s" a distance
+                // with a duration (row erg), not repetitions.
+                let parts = set.reps.split(separator: " ")
+                let isDistance = parts.count == 4 && parts[1] == "m" && parts[3] == "s"
+                let distance = isDistance ? Int(parts[0]) : nil
+                let duration = isDistance ? Int(parts[2])
+                    : set.reps.hasSuffix(" s") ? Int(set.reps.dropLast(2)) : nil
                 sets.append([
                     "id": DemoAPI.id(.exerciseSet, number * 10_000 + index * 100 + setIndex).uuidString,
                     "order": setIndex + 1,
-                    "reps": duration == nil ? set.reps : NSNull(),
+                    "reps": duration == nil && distance == nil ? set.reps : NSNull(),
                     "weight": null(set.weight),
                     "isDropSet": set.isDropSet,
-                    "durationSeconds": null(duration)
+                    "durationSeconds": null(duration),
+                    "distanceMeters": null(distance)
                 ])
             }
             result.append([
@@ -866,7 +907,8 @@ fileprivate struct Fixtures {
                 "order": index + 1,
                 "note": null(exercise.note),
                 "sets": sets,
-                "isSupersetWithPrevious": exercise.isSuperset
+                "isSupersetWithPrevious": exercise.isSuperset,
+                "paceType": paceType(exercise.workout)
             ])
         }
         return result
@@ -914,7 +956,8 @@ fileprivate struct Fixtures {
                 ex(W.deadlift, [s("5", 95), s("3", 105), s("3", 115)]),
                 ex(W.hipThrust, sets(3, "10", 90)),
                 ex(W.lunge, sets(3, "12", 10)),
-                ex(W.plank, sets(3, "50 s", nil))
+                ex(W.plank, sets(3, "50 s", nil)),
+                ex(W.rowErg, [s("2000 m 465 s", nil)], note: "2000 m at a steady pace.")
             ]),
             training(4, "Upper Body Strength", client: ana, date: anaTrainingDate(4), completed: true, [
                 ex(W.bench, [s("10", 57.5), s("8", 62.5), s("6", 67.5), s("6", 67.5)]),
@@ -928,7 +971,8 @@ fileprivate struct Fixtures {
                 ex(W.deadlift, [s("5", 100), s("3", 110), s("3", 120)]),
                 ex(W.hipThrust, sets(3, "10", 100)),
                 ex(W.lunge, sets(3, "12", 12.5)),
-                ex(W.plank, sets(3, "60 s", nil))
+                ex(W.plank, sets(3, "60 s", nil)),
+                ex(W.rowErg, [s("2000 m 450 s", nil)], note: "New 2000 m best: 1:52 /500 m.")
             ]),
             training(6, "Upper Body Strength", client: ana, date: anaTrainingDate(6), completed: true,
                      note: "Strong session — new bench press record: 70 kg for 6 reps!", [
@@ -1485,7 +1529,8 @@ fileprivate struct Fixtures {
                     "reps": null(set["reps"] as? String),
                     "weight": null(set["weight"] as? NSNumber),
                     "isDropSet": set["isDropSet"] as? Bool ?? false,
-                    "durationSeconds": null(set["durationSeconds"] as? NSNumber)
+                    "durationSeconds": null(set["durationSeconds"] as? NSNumber),
+                    "distanceMeters": null(set["distanceMeters"] as? NSNumber)
                 ])
             }
             exercises.append([
@@ -1495,7 +1540,8 @@ fileprivate struct Fixtures {
                 "order": index + 1,
                 "note": null(exercise["note"] as? String),
                 "sets": sets,
-                "isSupersetWithPrevious": exercise["isSupersetWithPrevious"] as? Bool ?? false
+                "isSupersetWithPrevious": exercise["isSupersetWithPrevious"] as? Bool ?? false,
+                "paceType": paceType(workoutNumber(workoutId))
             ])
         }
         return exercises
@@ -1533,6 +1579,8 @@ fileprivate struct Fixtures {
     func savedWorkout(id: UUID, _ input: JSON) -> JSON {
         let typeIds = (input["workoutTypes"] as? [String] ?? []).compactMap { UUID(uuidString: $0) }
         let types = DemoAPI.workoutTypes.filter { typeIds.contains(DemoAPI.id(.workoutType, $0.number)) }
+        // "" records no distance; workouts with a pace type are timed, like on the API.
+        let paceType = (input["paceType"] as? String).flatMap { $0.isEmpty ? nil : $0 }
         return [
             "id": id.uuidString,
             "name": input["name"] ?? text("", ""),
@@ -1542,8 +1590,9 @@ fileprivate struct Fixtures {
             "workoutTypes": types.map { workoutType($0.number) },
             "muscles": input["muscles"] as? [String] ?? [String](),
             "secondaryMuscles": input["secondaryMuscles"] as? [String] ?? [String](),
-            "isTimed": input["isTimed"] as? Bool ?? false,
-            "category": input["category"] as? String ?? "StrengthConditioning"
+            "isTimed": (input["isTimed"] as? Bool ?? false) || paceType != nil,
+            "category": input["category"] as? String ?? "StrengthConditioning",
+            "paceType": null(paceType)
         ]
     }
 

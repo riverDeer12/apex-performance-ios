@@ -114,7 +114,7 @@ struct TrainingFormView: View {
     private var fingerprint: String {
         let exercisesText = exercises.map { exercise in
             let sets = exercise.sets.map {
-                "\($0.reps)x\($0.weight)\($0.isDropSet ? "d" : "")\($0.durationSeconds.map { "t\($0)" } ?? "")"
+                "\($0.reps)x\($0.weight)\($0.isDropSet ? "d" : "")\($0.durationSeconds.map { "t\($0)" } ?? "")m\($0.distance)"
             }.joined(separator: ",")
             return "\(exercise.workoutId?.uuidString ?? "")|\(exercise.note)|\(exercise.isSupersetWithPrevious)|\(sets)"
         }.joined(separator: ";")
@@ -174,6 +174,22 @@ struct TrainingFormView: View {
                 } footer: {
                     if exercises.isEmpty {
                         Text("no_exercises_yet")
+                    }
+                }
+
+                if canStart {
+                    Section {
+                        Button {
+                            Task { await save(starting: true) }
+                        } label: {
+                            Text("save_and_start_training")
+                        }
+                        .buttonStyle(ApexPrimaryButtonStyle(systemImage: "play.fill"))
+                        .disabled(isSaving || !isValid)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                    } footer: {
+                        Text("save_and_start_training_hint")
                     }
                 }
             }
@@ -239,12 +255,15 @@ struct TrainingFormView: View {
     private func exerciseSection(_ exercise: Binding<ExerciseDraft>) -> some View {
         let index = exercises.firstIndex { $0.id == exercise.wrappedValue.id } ?? 0
         let previous = previousSets(for: exercise.wrappedValue.workoutId)
-        // Done for a time (e.g. plank): a duration instead of repetitions.
-        let isTimed = workout(exercise.wrappedValue.workoutId)?.isTimed == true
+        // Done over a distance (e.g. rowing): a distance instead of the weight, and the pace.
+        let paceType = self.paceType(of: exercise.wrappedValue)
+        // Done for a time (e.g. plank): a duration instead of repetitions. The pace
+        // comes from distance and duration, so sets over a distance have one too.
+        let isTimed = workout(exercise.wrappedValue.workoutId)?.isTimed == true || paceType != nil
 
         return Section {
             NavigationLink {
-                WorkoutPickerView(workouts: workouts, selection: exercise.workoutId)
+                WorkoutPickerView(workouts: workouts, trainingName: name, selection: exercise.workoutId)
             } label: {
                 HStack {
                     Text("exercise")
@@ -261,7 +280,7 @@ struct TrainingFormView: View {
             }
 
             if !exercise.wrappedValue.sets.isEmpty {
-                setsHeader(previous: previous, isTimed: isTimed)
+                setsHeader(previous: previous, isTimed: isTimed, hasDistance: paceType != nil)
             }
 
             let setNumbers = exercise.wrappedValue.setNumbers
@@ -281,7 +300,8 @@ struct TrainingFormView: View {
                             .accessibilityLabel(Text("drop_set"))
                     }
                     if isTimed {
-                        DurationWheelField(seconds: set.durationSeconds, title: "time")
+                        // Walks and rides over a distance can last longer than an hour.
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: paceType != nil)
                             .frame(maxWidth: .infinity)
                     } else {
                         NumberWheelField(
@@ -296,22 +316,28 @@ struct TrainingFormView: View {
                         )
                         .frame(maxWidth: .infinity)
                     }
-                    Text(verbatim: "×")
+                    Text(verbatim: paceType == nil ? "×" : "·")
                         .foregroundStyle(.secondary)
-                    NumberWheelField(
-                        value: set.weightValue,
-                        range: 0...300,
-                        step: 0.5,
-                        unit: "kg",
-                        defaultValue: 20,
-                        allowsEmpty: true,
-                        title: "weight"
-                    )
-                    .frame(maxWidth: .infinity)
+                    if let paceType {
+                        distanceField(set, paceType: paceType)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        NumberWheelField(
+                            value: set.weightValue,
+                            range: 0...300,
+                            step: 0.5,
+                            unit: "kg",
+                            defaultValue: 20,
+                            allowsEmpty: true,
+                            title: "weight"
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
                     if let previous {
                         // Same set on the previous training, shown on the side.
                         Text(verbatim: previous.sets.indices.contains(setIndex)
-                             ? Self.setDescription(previous.sets[setIndex]) : "—")
+                             ? Self.setDescription(previous.sets[setIndex], paceType: previous.paceType ?? paceType)
+                             : "—")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
@@ -351,7 +377,8 @@ struct TrainingFormView: View {
                       || exercise.wrappedValue.sets.count >= ExerciseDraft.maxSets)
 
             if let previous {
-                previousSetsView(previous, currentCount: exercise.wrappedValue.sets.count) {
+                previousSetsView(previous, currentCount: exercise.wrappedValue.sets.count,
+                                 paceType: previous.paceType ?? paceType) {
                     exercise.wrappedValue.sets = previous.sets.map(SetDraft.init)
                 }
             }
@@ -412,8 +439,31 @@ struct TrainingFormView: View {
         }
     }
 
+    /// Distance of a set in metres with its pace shown as it is typed, like the web.
+    private func distanceField(_ set: Binding<SetDraft>, paceType: String) -> some View {
+        let pace = SetPace.pace(paceType, meters: set.wrappedValue.distanceMeters,
+                                seconds: set.wrappedValue.durationSeconds)
+        return VStack(spacing: 2) {
+            HStack(spacing: 4) {
+                TextField("distance_placeholder", text: set.distance)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .accessibilityLabel(Text("distance"))
+                Text(verbatim: "m")
+                    .foregroundStyle(.secondary)
+            }
+            if !pace.isEmpty {
+                Text(verbatim: pace)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color.apexMainColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+        }
+    }
+
     /// Column titles of the sets, with the previous training's date.
-    private func setsHeader(previous: PreviousSets?, isTimed: Bool) -> some View {
+    private func setsHeader(previous: PreviousSets?, isTimed: Bool, hasDistance: Bool) -> some View {
         HStack(spacing: 8) {
             Text(verbatim: "#")
                 .frame(width: 22, alignment: .leading)
@@ -421,7 +471,9 @@ struct TrainingFormView: View {
                 .frame(maxWidth: .infinity)
             Text(verbatim: "×")
                 .hidden()
-            Text("kg")
+            Text(hasDistance ? LocalizedStringKey("distance") : LocalizedStringKey("kg"))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity)
             if let previous {
                 Text("last_time")
@@ -437,12 +489,12 @@ struct TrainingFormView: View {
 
     /// Copies the previous training's sets. Sets the current exercise
     /// doesn't have yet are listed so they aren't missed.
-    private func previousSetsView(_ previous: PreviousSets, currentCount: Int,
+    private func previousSetsView(_ previous: PreviousSets, currentCount: Int, paceType: String?,
                                   onUse: @escaping () -> Void) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             if previous.sets.count > currentCount {
                 ForEach(Array(previous.sets.enumerated()).dropFirst(currentCount), id: \.element.id) { index, set in
-                    Text(verbatim: "\(index + 1). \(Self.setDescription(set))")
+                    Text(verbatim: "\(index + 1). \(Self.setDescription(set, paceType: paceType))")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -516,11 +568,23 @@ struct TrainingFormView: View {
         return workouts.first { $0.id == id }
     }
 
+    /// Pace type of the exercise's workout: its sets record a distance and show a pace.
+    /// Sets that already have a distance keep it shown (also when the workout was changed since).
+    private func paceType(of exercise: ExerciseDraft) -> String? {
+        if let paceType = workout(exercise.workoutId)?.paceType, !paceType.isEmpty {
+            return paceType
+        }
+        guard exercise.sets.contains(where: { $0.distanceMeters != nil }) else { return nil }
+        return exercise.savedPaceType ?? PaceType.perKm.rawValue
+    }
+
     // MARK: - Previous training
 
     struct PreviousSets {
         let date: Date
         let sets: [Training.ExerciseSet]
+        // Pace type of the workout then, for sets over a distance.
+        var paceType: String? = nil
     }
 
     /// Sets of the same exercise from the client's latest training
@@ -534,17 +598,22 @@ struct TrainingFormView: View {
 
         for previous in earlier {
             if let exercise = previous.exercises.first(where: { $0.workoutId == workoutId && !$0.sets.isEmpty }) {
-                return PreviousSets(date: previous.date, sets: exercise.sets.sorted { $0.order < $1.order })
+                return PreviousSets(date: previous.date, sets: exercise.sets.sorted { $0.order < $1.order },
+                                    paceType: exercise.paceType)
             }
         }
         return nil
     }
 
-    // For example "10 × 40 kg", "10", "40 kg" or "1:30 · 10 kg" for a timed set.
-    static func setDescription(_ set: Training.ExerciseSet) -> String {
+    // For example "10 × 40 kg", "10", "40 kg", "1:30 · 10 kg" for a timed set
+    // or "2 km · 7:30 · 1:52 /500 m" for a set over a distance.
+    static func setDescription(_ set: Training.ExerciseSet, paceType: String? = nil) -> String {
         let reps = set.reps?.trimmingCharacters(in: .whitespaces)
         let weight = set.weight.map {
             NSDecimalNumber(decimal: $0).doubleValue.formatted(.number.precision(.fractionLength(0...2))) + " kg"
+        }
+        if let distance = set.distanceText(paceType: paceType) {
+            return [distance, weight].compactMap { $0 }.joined(separator: " · ")
         }
         if let duration = set.durationSeconds {
             return [SetDuration.text(duration), weight].compactMap { $0 }.joined(separator: " · ")
@@ -583,8 +652,14 @@ struct TrainingFormView: View {
         templates = (try? await TrainingTemplate.loadAll()) ?? []
     }
 
+    // A training not started or completed yet can be started right away.
+    private var canStart: Bool {
+        !isTemplate && !isCompleted && training?.startedAt == nil
+    }
+
+    /// Saves the training; starting also marks it as started now (in progress).
     @MainActor
-    private func save() async {
+    private func save(starting: Bool = false) async {
         isSaving = true
         defer { isSaving = false }
 
@@ -597,7 +672,8 @@ struct TrainingFormView: View {
         let request = SaveTrainingRequest(
             client: clientId,
             name: trimmed(name),
-            date: ISO8601DateFormatter().string(from: date),
+            // A started training happens today.
+            date: ISO8601DateFormatter().string(from: starting ? .now : date),
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
             exercises: exercises.compactMap(\.request),
@@ -605,9 +681,12 @@ struct TrainingFormView: View {
         )
 
         do {
-            let saved = try await Training.save(request, id: training?.id)
+            var saved = try await Training.save(request, id: training?.id)
+            if starting {
+                saved = try await saved.settingTimes(startedAt: .now, endedAt: nil)
+            }
             onSaved?(saved)
-            toastManager.show("training_saved_successfully", type: .success)
+            toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
             dismiss()
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
@@ -648,6 +727,8 @@ private struct ExerciseDraft: Identifiable {
     // New exercise starts with one empty set.
     var sets = [SetDraft()]
     var isSupersetWithPrevious = false
+    // Pace type the exercise was saved with, for sets over a distance.
+    var savedPaceType: String?
 
     init() {}
 
@@ -655,6 +736,7 @@ private struct ExerciseDraft: Identifiable {
         workoutId = exercise.workoutId
         note = exercise.note ?? ""
         isSupersetWithPrevious = exercise.isSupersetWithPrevious
+        savedPaceType = exercise.paceType
         sets = exercise.sets.sorted { $0.order < $1.order }.map(SetDraft.init)
     }
 
@@ -671,6 +753,7 @@ private struct ExerciseDraft: Identifiable {
             set.reps = last.reps
             set.weight = last.weight
             set.durationSeconds = last.durationSeconds
+            set.distance = last.distance
         }
         sets.append(set)
     }
@@ -686,6 +769,7 @@ private struct ExerciseDraft: Identifiable {
         drop.isDropSet = true
         drop.reps = previous.reps
         drop.durationSeconds = previous.durationSeconds
+        drop.distance = previous.distance
         drop.weightValue = previous.weightValue.map { weight in
             // Rounded to half a kilogram, like the weight wheel.
             var lighter = weight * Decimal(0.8) * 2
@@ -718,7 +802,7 @@ private struct ExerciseDraft: Identifiable {
         return SaveTrainingRequest.Exercise(
             workout: workoutId,
             note: note.isEmpty ? nil : note,
-            // Sets without repetitions, weight and duration are not saved.
+            // Sets without repetitions, weight, duration and distance are not saved.
             sets: sets.compactMap(\.request),
             isSupersetWithPrevious: isSupersetWithPrevious
         )
@@ -733,12 +817,15 @@ private struct SetDraft: Identifiable {
     var isDropSet = false
     // How long the set lasted, for timed workouts (e.g. plank).
     var durationSeconds: Int?
+    // Metres as typed, for workouts done over a distance (e.g. rowing).
+    var distance = ""
 
     init() {}
 
     init(_ set: Training.ExerciseSet) {
         isDropSet = set.isDropSet
         durationSeconds = set.durationSeconds
+        distance = set.distanceMeters.map { String($0) } ?? ""
         reps = set.reps ?? ""
         weight = set.weight.map { NSDecimalNumber(decimal: $0).description(withLocale: Locale.current) } ?? ""
     }
@@ -771,44 +858,77 @@ private struct SetDraft: Identifiable {
         return parsedWeight >= 0 && parsedWeight <= 9999
     }
 
+    private var trimmedDistance: String {
+        distance.trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Metres, nil when empty or not a whole number above zero.
+    var distanceMeters: Int? {
+        Int(trimmedDistance).flatMap { $0 > 0 ? $0 : nil }
+    }
+
+    // Same limits as the web form and API.
+    var isDistanceValid: Bool {
+        if trimmedDistance.isEmpty { return true }
+        guard let distanceMeters else { return false }
+        return distanceMeters <= 500_000
+    }
+
     var isValid: Bool {
-        trimmedReps.count <= 50 && isWeightValid
+        trimmedReps.count <= 50 && isWeightValid && isDistanceValid
     }
 
     var request: SaveTrainingRequest.ExerciseSet? {
         let reps = trimmedReps
-        guard !reps.isEmpty || parsedWeight != nil || durationSeconds != nil else { return nil }
+        // A set with only a distance is saved too.
+        guard !reps.isEmpty || parsedWeight != nil || durationSeconds != nil || distanceMeters != nil else {
+            return nil
+        }
         return SaveTrainingRequest.ExerciseSet(reps: reps.isEmpty ? nil : reps, weight: parsedWeight,
-                                               isDropSet: isDropSet, durationSeconds: durationSeconds)
+                                               isDropSet: isDropSet, durationSeconds: durationSeconds,
+                                               distanceMeters: distanceMeters)
     }
 }
 
 // MARK: - Workout picker
 
-/// Searchable list of all workouts to choose a training exercise.
+/// Searchable list of all workouts to choose a training exercise, with
+/// the ones that fit the training's name on top (GET workouts/suggested).
 private struct WorkoutPickerView: View {
     let workouts: [Workout]
+    let trainingName: String
     @Binding var selection: UUID?
 
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
+    @State private var suggestedIds: [UUID] = []
+
+    // Suggestions while not searching, in the API's order (best first).
+    private var suggested: [Workout] {
+        guard searchText.isEmpty else { return [] }
+        let byId = Dictionary(workouts.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return suggestedIds.compactMap { byId[$0] }
+    }
 
     var body: some View {
-        List(workouts.filter { $0.matches(searchText) }) { workout in
-            Button {
-                selection = workout.id
-                dismiss()
-            } label: {
-                HStack {
-                    Text(verbatim: workout.name.localized)
-                        .foregroundStyle(Color.primary)
-                    Spacer()
-                    if workout.id == selection {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.apexMainColor)
-                    }
+        List {
+            if !suggested.isEmpty {
+                Section {
+                    ForEach(suggested) { row($0) }
+                } header: {
+                    Label("suggested_for_training", systemImage: "sparkles")
                 }
             }
+            Section {
+                ShowMoreForEach(items: workouts.filter { $0.matches(searchText) }) { row($0) }
+            } header: {
+                if !suggested.isEmpty {
+                    Text("all_workouts")
+                }
+            }
+        }
+        .task {
+            await loadSuggestions()
         }
         .overlay {
             if workouts.isEmpty {
@@ -818,6 +938,36 @@ private struct WorkoutPickerView: View {
         .searchable(text: $searchText, prompt: Text("search_workouts"))
         .navigationTitle("select_exercise")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func row(_ workout: Workout) -> some View {
+        Button {
+            selection = workout.id
+            dismiss()
+        } label: {
+            HStack {
+                Text(verbatim: workout.name.localized)
+                    .foregroundStyle(Color.primary)
+                Spacer()
+                if workout.id == selection {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
+        }
+    }
+
+    // Without suggestions (no name, or an API without them) the list is as before.
+    @MainActor
+    private func loadSuggestions() async {
+        let name = trainingName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty,
+              var components = URLComponents(url: AppEnvironment.apiURL.appendingPathComponent("workouts/suggested"),
+                                             resolvingAgainstBaseURL: false) else { return }
+        components.queryItems = [URLQueryItem(name: "name", value: name)]
+        guard let url = components.url else { return }
+        let ids: [UUID]? = try? await APIClient.shared.request(url)
+        suggestedIds = ids ?? []
     }
 }
 

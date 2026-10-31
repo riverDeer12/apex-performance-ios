@@ -15,7 +15,6 @@ struct WorkoutsView: View {
     // Nil shows all workouts.
     @State private var category: WorkoutCategory?
     @State private var isLoading = false
-    @State private var hasLoaded = false
     @State private var showFileImporter = false
     @State private var isImporting = false
     // Workout picked for deletion from the long-press menu.
@@ -112,7 +111,7 @@ struct WorkoutsView: View {
                                 .padding(.vertical, 8)
                         } else {
                             LazyVStack(spacing: 0) {
-                                ForEach(filteredWorkouts) { workout in
+                                ShowMoreForEach(items: filteredWorkouts) { workout in
                                     // Destination link, not a value link: the library is also
                                     // pushed from the client's home, where a value destination
                                     // registered in the pushed view only opened after going back.
@@ -154,10 +153,10 @@ struct WorkoutsView: View {
                 // view updates during pull-to-refresh.
                 await Task { await loadWorkouts() }.value
             }
+            // Fresh data every time the screen is shown, not only after pulling
+            // to refresh. Own task, so leaving the screen doesn't cancel it.
             .task {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                await loadWorkouts()
+                await Task { await loadWorkouts() }.value
             }
             .confirmationDialog(
                 "delete_workout_question",

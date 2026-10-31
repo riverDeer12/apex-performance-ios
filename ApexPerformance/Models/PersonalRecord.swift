@@ -14,17 +14,22 @@ struct PersonalRecord: Identifiable, Decodable, Hashable {
     // Persisted JSON with the workout name translations.
     let workoutName: LocalizedText
     let trainingId: UUID
-    // "MaxWeight", "EstimatedOneRepMax" or "LongestDuration" (value in
-    // seconds, for workouts done for a time).
+    // "MaxWeight", "EstimatedOneRepMax", "LongestDuration" (value in
+    // seconds, for workouts done for a time), "LongestDistance" (metres) or
+    // "FastestPace" (average speed in metres per minute, higher is better).
     let type: String
     let value: Decimal
     let weight: Decimal
     let reps: Decimal?
     let achievedAt: Date
+    // PaceType raw value of the workout, shows the fastest pace; nil from an API without it.
+    var paceType: String? = nil
 
     var isMaxWeight: Bool { type == "MaxWeight" }
     var isOneRepMax: Bool { type == "EstimatedOneRepMax" }
     var isLongestDuration: Bool { type == "LongestDuration" }
+    var isLongestDistance: Bool { type == "LongestDistance" }
+    var isFastestPace: Bool { type == "FastestPace" }
 }
 
 extension PersonalRecord {
@@ -57,6 +62,9 @@ struct ExerciseRecords: Identifiable {
     let oneRepMax: PersonalRecord?
     // Longest set of a workout done for a time (e.g. plank).
     let longestDuration: PersonalRecord?
+    // Workouts done over a distance (e.g. rowing).
+    let longestDistance: PersonalRecord?
+    let fastestPace: PersonalRecord?
     // Newest first.
     let history: [PersonalRecord]
 
@@ -80,6 +88,8 @@ struct ExerciseRecords: Identifiable {
                     maxWeight: history.first(where: \.isMaxWeight),
                     oneRepMax: history.first(where: \.isOneRepMax),
                     longestDuration: history.first(where: \.isLongestDuration),
+                    longestDistance: history.first(where: \.isLongestDistance),
+                    fastestPace: history.first(where: \.isFastestPace),
                     history: history
                 )
             }

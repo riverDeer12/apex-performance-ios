@@ -22,7 +22,6 @@ struct StaffTrainingsView: View {
     @State private var status = StatusFilter.all
     @State private var clientId: UUID?
     @State private var isLoading = false
-    @State private var hasLoaded = false
 
     enum StatusFilter: Hashable, CaseIterable {
         case all, planned, completed
@@ -104,7 +103,7 @@ struct StaffTrainingsView: View {
                             .padding(.vertical, 8)
                     } else {
                         LazyVStack(spacing: 0) {
-                            ForEach(filteredTrainings) { training in
+                            ShowMoreForEach(items: filteredTrainings) { training in
                                 NavigationLink {
                                     TrainingDetailView(
                                         training: training,
@@ -138,10 +137,10 @@ struct StaffTrainingsView: View {
         .refreshable {
             await Task { await load() }.value
         }
+        // Fresh data every time the screen is shown, not only after pulling
+        // to refresh. Own task, so leaving the screen doesn't cancel it.
         .task {
-            guard !hasLoaded else { return }
-            hasLoaded = true
-            await load()
+            await Task { await load() }.value
         }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showClientPicker, onDismiss: {
@@ -201,8 +200,8 @@ struct StaffTrainingsView: View {
 
     private func row(_ training: Training) -> some View {
         SettingsRowView(
-            icon: training.isCompleted ? "checkmark.circle" : "calendar",
-            iconTint: training.isCompleted ? .green : .orange,
+            icon: training.statusIcon,
+            iconTint: training.statusTint,
             title: Text(verbatim: training.name),
             subtitle: Text(verbatim: "\(Self.name(training.client)) · \(DateFormatter.dateWithDots.string(from: training.date))"),
             showChevron: true
@@ -351,7 +350,7 @@ struct ClientsList<Row: View>: View {
                 Text("no_clients")
                     .foregroundStyle(.secondary)
             }
-            ForEach(filteredClients) { client in
+            ShowMoreForEach(items: filteredClients) { client in
                 row(client)
             }
         }

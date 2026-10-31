@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "hr",
+  "strings" : {
+    "NSHealthShareUsageDescription" : {
+      "comment" : "Asked when the client connects Apple Health",
+      "extractionState" : "manual",
+      "localizations" : {
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex čita tvoj puls za vrijeme treninga s trenerom. Treneru se šalju samo najniži, najviši i prosječni puls."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex reads your heart rate during trainings with your coach. Only the lowest, highest and average heart rate are sent to your coach."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex legge la tua frequenza cardiaca durante gli allenamenti con il coach. Al coach vengono inviate solo la frequenza minima, massima e media."
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription" : {
+      "comment" : "Required with HealthKit, the app doesn't write",
+      "extractionState" : "manual",
+      "localizations" : {
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex ne zapisuje podatke u Apple Health, samo čita tvoj puls za vrijeme treninga s trenerom."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex doesn't write to Apple Health, it only reads your heart rate during trainings with your coach."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apex non scrive dati in Apple Salute, legge solo la tua frequenza cardiaca durante gli allenamenti con il coach."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
