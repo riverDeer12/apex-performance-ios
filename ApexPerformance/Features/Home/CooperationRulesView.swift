@@ -12,15 +12,22 @@ struct CooperationRules: Decodable, Identifiable, Equatable {
     let document: String
     // Version to accept, sent back when accepting.
     let version: String
-    // PDF of the rules.
+    // PDF of the rules in Croatian, the binding version.
     let documentUrl: String
     let isRequired: Bool
     // The current version is accepted.
     let isAccepted: Bool
     let acceptedVersion: String?
     let acceptedAt: Date?
+    // PDF by language ("hr", "en", "it", "de"); missing on an older API.
+    let documentUrls: [String: String]?
 
     var id: String { version }
+
+    /// PDF in the app's language, the Croatian one when there's no translation.
+    var localizedDocumentURL: URL? {
+        URL(string: documentUrls?[AppLanguage.current] ?? documentUrl)
+    }
 
     var needsAcceptance: Bool { isRequired && !isAccepted }
 
@@ -124,7 +131,7 @@ struct CooperationRulesView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
 
-            if let url = URL(string: current.documentUrl) {
+            if let url = current.localizedDocumentURL {
                 Link(destination: url) {
                     Label("rules_open_document", systemImage: "doc.richtext")
                         .font(.subheadline.weight(.semibold))
@@ -241,7 +248,7 @@ struct CooperationRulesRow: View {
 
     var body: some View {
         Group {
-            if let rules, let acceptedVersion = rules.acceptedVersion, let url = URL(string: rules.documentUrl) {
+            if let rules, let acceptedVersion = rules.acceptedVersion, let url = rules.localizedDocumentURL {
                 Divider().padding(.leading, 52)
                 Link(destination: url) {
                     SettingsRowView(
