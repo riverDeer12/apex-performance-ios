@@ -165,6 +165,9 @@ struct LocalizedText: Codable, Hashable {
     // Uses the same localization iOS picked for the app's own strings.
     var localized: String {
         value(for: AppLanguage.current)
+            // Names are written in Croatian and English (e.g. not in German): English
+            // for other languages, Croatian for Croatian.
+            ?? value(for: AppLanguage.current == "hr" ? "HR" : "EN")
             ?? value(for: "HR")
             ?? translations.values.first { !$0.isEmpty }
             ?? ""

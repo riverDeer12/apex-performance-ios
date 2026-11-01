@@ -743,6 +743,7 @@
 				en,
 				hr,
 				it,
+				de,
 				Base,
 			);
 			mainGroup = 61E9740F2EF0AB9100D225C5;
