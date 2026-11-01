@@ -8,12 +8,12 @@ import SwiftUI
 /// Language of the app, picked in the app (profile or login) at any time.
 /// "System" follows the device's language like before.
 enum AppLanguage: String, CaseIterable, Identifiable {
-    case system, hr, en, it
+    case system, hr, en, it, de
 
     static let storageKey = "appLanguage"
 
     // Languages the app is translated to.
-    private static let supported = ["hr", "en", "it"]
+    private static let supported = ["hr", "en", "it", "de"]
 
     var id: String { rawValue }
 
@@ -24,6 +24,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .hr: "Hrvatski"
         case .en: "English"
         case .it: "Italiano"
+        case .de: "Deutsch"
         }
     }
 
