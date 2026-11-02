@@ -24,6 +24,9 @@ struct ClientHomeView: View {
     @State private var goal: ClientGoal?
     @State private var showGoalSheet = false
 
+    // Changed on every load, the Apple Health card reads the day again.
+    @State private var healthRefresh = UUID()
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -37,6 +40,8 @@ struct ClientHomeView: View {
                     if let goal, !goal.isEmpty {
                         goalCard(goal)
                     }
+
+                    HealthDailyCard(refreshID: healthRefresh)
 
                     shortcuts
                 }
@@ -361,6 +366,8 @@ struct ClientHomeView: View {
 
     @MainActor
     private func load() async {
+        // The Health card reads the day again too.
+        healthRefresh = UUID()
         isLoading = true
         defer { isLoading = false }
 
