@@ -638,15 +638,14 @@ struct TrainingExerciseCards: View {
 
                 let sets = exercise.sets.sorted { $0.order < $1.order }
                 let numbers = sets.setNumbers
-                // Sets of a timed workout (e.g. plank) have a duration instead of reps.
-                let isTimed = sets.contains { $0.durationSeconds != nil }
                 // Sets over a distance (e.g. rowing) show the distance, duration and pace.
                 let hasDistance = sets.contains { ($0.distanceMeters ?? 0) > 0 }
+                // Any set can have a duration: a time column then, next to repetitions and weight.
+                let hasDuration = !hasDistance && sets.contains { $0.durationSeconds != nil }
                 if !sets.isEmpty {
                     setRow(Text("set"),
-                           Text(hasDistance ? LocalizedStringKey("distance")
-                                : isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps")),
-                           Text("kg"), isHeader: true)
+                           Text(hasDistance ? LocalizedStringKey("distance") : LocalizedStringKey("reps")),
+                           Text("kg"), time: hasDuration ? Text("time") : nil, isHeader: true)
                 }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
                     let number = numbers[index]
@@ -656,9 +655,9 @@ struct TrainingExerciseCards: View {
                             // Drop set of the set above, done right after it.
                             ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
                         Text(verbatim: set.distanceText(paceType: exercise.paceType)
-                            ?? set.durationSeconds.map(SetDuration.text)
                             ?? set.reps?.trimmingCharacters(in: .whitespaces).nilIfEmpty ?? "—"),
                         Text(verbatim: set.weight.map(Self.formatWeight) ?? "—"),
+                        time: hasDuration ? Text(verbatim: set.durationSeconds.map(SetDuration.text) ?? "—") : nil,
                         isDropSet: number == nil
                     )
                 }
@@ -674,8 +673,8 @@ struct TrainingExerciseCards: View {
         }
     }
 
-    /// Row of the sets table: set number, repetitions and weight.
-    private func setRow(_ set: Text, _ reps: Text, _ weight: Text, isHeader: Bool = false,
+    /// Row of the sets table: set number, repetitions, weight and the duration when sets have one.
+    private func setRow(_ set: Text, _ reps: Text, _ weight: Text, time: Text? = nil, isHeader: Bool = false,
                         isDropSet: Bool = false) -> some View {
         HStack {
             (isDropSet ? set.font(.caption.weight(.semibold)).foregroundStyle(Color.apexMainColor) : set)
@@ -685,6 +684,9 @@ struct TrainingExerciseCards: View {
                 .frame(width: 64, alignment: .leading)
             reps.frame(maxWidth: .infinity, alignment: .leading)
             weight.frame(width: 64, alignment: .trailing)
+            if let time {
+                time.frame(width: 64, alignment: .trailing)
+            }
         }
         .font(isHeader ? .system(size: 11, weight: .semibold) : .subheadline)
         .tracking(isHeader ? 1 : 0)
