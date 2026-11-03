@@ -5,7 +5,7 @@
 	<key>API_URL</key>
 	<string>${API_URL}</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Apex čita tvoj puls za vrijeme treninga s trenerom. Treneru se šalju samo najniži, najviši i prosječni puls.</string>
+	<string>Apex čita tvoj puls za vrijeme treninga s trenerom te san, korake, potrošene kalorije i puls u mirovanju za tvoj dnevni pregled. Treneru se šalju samo najniži, najviši i prosječni puls za vrijeme treninga; dnevni pregled vidiš samo ti.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Apex ne zapisuje podatke u Apple Health, samo čita tvoj puls za vrijeme treninga s trenerom.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

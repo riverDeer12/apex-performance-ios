@@ -8,25 +8,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apex liest deine Herzfrequenz während der Trainings mit deinem Coach. An deinen Coach werden nur die niedrigste, höchste und durchschnittliche Herzfrequenz gesendet."
+            "value" : "Apex liest deine Herzfrequenz während der Trainings mit deinem Coach sowie Schlaf, Schritte, verbrannte Kalorien und Ruhepuls für deinen Tagesüberblick. An deinen Coach werden nur die niedrigste, höchste und durchschnittliche Herzfrequenz während der Trainings gesendet; den Tagesüberblick siehst nur du."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apex reads your heart rate during trainings with your coach. Only the lowest, highest and average heart rate are sent to your coach."
+            "value" : "Apex reads your heart rate during trainings with your coach, and your sleep, steps, burned calories and resting heart rate for your daily overview. Only the lowest, highest and average heart rate during trainings are sent to your coach; the daily overview is shown only to you."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apex čita tvoj puls za vrijeme treninga s trenerom. Treneru se šalju samo najniži, najviši i prosječni puls."
+            "value" : "Apex čita tvoj puls za vrijeme treninga s trenerom te san, korake, potrošene kalorije i puls u mirovanju za tvoj dnevni pregled. Treneru se šalju samo najniži, najviši i prosječni puls za vrijeme treninga; dnevni pregled vidiš samo ti."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apex legge la tua frequenza cardiaca durante gli allenamenti con il coach. Al coach vengono inviate solo la frequenza minima, massima e media."
+            "value" : "Apex legge la tua frequenza cardiaca durante gli allenamenti con il coach e sonno, passi, calorie bruciate e frequenza a riposo per la tua panoramica giornaliera. Al coach vengono inviate solo la frequenza minima, massima e media durante gli allenamenti; la panoramica giornaliera è visibile solo a te."
           }
         }
       }
