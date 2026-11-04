@@ -255,11 +255,11 @@ struct TrainingFormView: View {
     private func exerciseSection(_ exercise: Binding<ExerciseDraft>) -> some View {
         let index = exercises.firstIndex { $0.id == exercise.wrappedValue.id } ?? 0
         let previous = previousSets(for: exercise.wrappedValue.workoutId)
-        // Done over a distance (e.g. rowing): a distance instead of the weight, and the pace.
+        // Done over a distance (e.g. rowing): a duration and a distance, and the pace.
+        // Other sets have repetitions, weight and a duration, none of them required.
         let paceType = self.paceType(of: exercise.wrappedValue)
-        // Done for a time (e.g. plank): a duration instead of repetitions. The pace
-        // comes from distance and duration, so sets over a distance have one too.
-        let isTimed = workout(exercise.wrappedValue.workoutId)?.isTimed == true || paceType != nil
+        // Width of the previous training's sets on the side, narrower next to three fields.
+        let previousWidth: CGFloat = paceType == nil ? 64 : 92
 
         return Section {
             NavigationLink {
@@ -280,7 +280,7 @@ struct TrainingFormView: View {
             }
 
             if !exercise.wrappedValue.sets.isEmpty {
-                setsHeader(previous: previous, isTimed: isTimed, hasDistance: paceType != nil)
+                setsHeader(previous: previous, hasDistance: paceType != nil, previousWidth: previousWidth)
             }
 
             let setNumbers = exercise.wrappedValue.setNumbers
@@ -299,9 +299,9 @@ struct TrainingFormView: View {
                             .frame(width: 22, alignment: .trailing)
                             .accessibilityLabel(Text("drop_set"))
                     }
-                    if isTimed {
+                    if paceType != nil {
                         // Walks and rides over a distance can last longer than an hour.
-                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: paceType != nil)
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: true)
                             .frame(maxWidth: .infinity)
                     } else {
                         NumberWheelField(
@@ -332,6 +332,9 @@ struct TrainingFormView: View {
                             title: "weight"
                         )
                         .frame(maxWidth: .infinity)
+                        // How long the set lasted, optional for every exercise.
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: false)
+                            .frame(maxWidth: .infinity)
                     }
                     if let previous {
                         // Same set on the previous training, shown on the side.
@@ -342,7 +345,7 @@ struct TrainingFormView: View {
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
-                            .frame(width: 92, alignment: .trailing)
+                            .frame(width: previousWidth, alignment: .trailing)
                     }
                 }
                 .swipeActions(edge: .leading) {
@@ -463,11 +466,11 @@ struct TrainingFormView: View {
     }
 
     /// Column titles of the sets, with the previous training's date.
-    private func setsHeader(previous: PreviousSets?, isTimed: Bool, hasDistance: Bool) -> some View {
+    private func setsHeader(previous: PreviousSets?, hasDistance: Bool, previousWidth: CGFloat) -> some View {
         HStack(spacing: 8) {
             Text(verbatim: "#")
                 .frame(width: 22, alignment: .leading)
-            Text(isTimed ? LocalizedStringKey("time") : LocalizedStringKey("reps"))
+            Text(hasDistance ? LocalizedStringKey("time") : LocalizedStringKey("reps"))
                 .frame(maxWidth: .infinity)
             Text(verbatim: "×")
                 .hidden()
@@ -475,11 +478,17 @@ struct TrainingFormView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity)
+            if !hasDistance {
+                Text("time")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: .infinity)
+            }
             if let previous {
                 Text("last_time")
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                    .frame(width: 92, alignment: .trailing)
+                    .frame(width: previousWidth, alignment: .trailing)
             }
         }
         .font(.system(size: 11, weight: .semibold))
@@ -605,8 +614,9 @@ struct TrainingFormView: View {
         return nil
     }
 
-    // For example "10 × 40 kg", "10", "40 kg", "1:30 · 10 kg" for a timed set
-    // or "2 km · 7:30 · 1:52 /500 m" for a set over a distance.
+    // For example "10 × 40 kg", "10", "40 kg", "10 × 40 kg · 0:45" with a duration,
+    // "1:30 · 10 kg" for a set held for a time or "2 km · 7:30 · 1:52 /500 m" for a
+    // set over a distance.
     static func setDescription(_ set: Training.ExerciseSet, paceType: String? = nil) -> String {
         let reps = set.reps?.trimmingCharacters(in: .whitespaces)
         let weight = set.weight.map {
@@ -615,15 +625,18 @@ struct TrainingFormView: View {
         if let distance = set.distanceText(paceType: paceType) {
             return [distance, weight].compactMap { $0 }.joined(separator: " · ")
         }
-        if let duration = set.durationSeconds {
+        let hasReps = reps?.isEmpty == false
+        if let duration = set.durationSeconds, !hasReps {
             return [SetDuration.text(duration), weight].compactMap { $0 }.joined(separator: " · ")
         }
-        switch (reps?.isEmpty == false ? reps : nil, weight) {
-        case let (reps?, weight?): return "\(reps) × \(weight)"
-        case let (reps?, nil): return reps
-        case let (nil, weight?): return weight
-        default: return "—"
+        let lift: String? = switch (hasReps ? reps : nil, weight) {
+        case let (reps?, weight?): "\(reps) × \(weight)"
+        case let (reps?, nil): reps
+        case let (nil, weight?): weight
+        default: nil
         }
+        let text = [lift, set.durationSeconds.map(SetDuration.text)].compactMap { $0 }.joined(separator: " · ")
+        return text.isEmpty ? "—" : text
     }
 
     // MARK: - API
