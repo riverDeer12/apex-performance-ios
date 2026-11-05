@@ -305,27 +305,37 @@ struct TrainingProgressView: View {
         let sets: Int
     }
 
-    /// Logged sets per workout type. Exercises without a type count as other.
+    /// Logged sets per primary muscle of the exercise's workout. Exercises
+    /// whose workout has no muscles count as other.
     private func muscleGroups(_ sessions: [Session]) -> [MuscleGroup] {
         let workoutsById = Dictionary(workouts.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let otherId = "__other"
         let other = String(localized: "other")
 
         var sets: [String: Int] = [:]
         for exercise in sessions.flatMap(\.training.exercises) where !exercise.sets.isEmpty {
-            let types = workoutsById[exercise.workoutId]?.workoutTypes.map(\.name.localized) ?? []
-            for type in types.isEmpty ? [other] : types {
-                sets[type, default: 0] += exercise.sets.sorted { $0.order < $1.order }.mainSetCount
+            let muscles = Array(Set(workoutsById[exercise.workoutId]?.muscles ?? []))
+            for muscle in muscles.isEmpty ? [otherId] : muscles {
+                sets[muscle, default: 0] += exercise.sets.sorted { $0.order < $1.order }.mainSetCount
             }
         }
 
         let sorted = sets
-            .map { MuscleGroup(id: $0.key, name: $0.key, sets: $0.value) }
-            .sorted { $0.sets > $1.sets }
+            .map { code, count in
+                MuscleGroup(
+                    id: code,
+                    name: code == otherId ? other : String(localized: String.LocalizationValue("muscle_" + code)),
+                    sets: count
+                )
+            }
+            .sorted { $0.sets != $1.sets ? $0.sets > $1.sets : $0.name < $1.name }
 
-        // At most six slices, the rest is grouped as other.
+        // At most six slices: five muscles, the rest is grouped as other.
         guard sorted.count > 6 else { return sorted }
-        let rest = sorted.dropFirst(5).reduce(0) { $0 + $1.sets }
-        return Array(sorted.prefix(5)) + [MuscleGroup(id: "__other", name: other, sets: rest)]
+        let muscles = sorted.filter { $0.id != otherId }
+        let rest = muscles.dropFirst(5).reduce(0) { $0 + $1.sets }
+            + (sorted.first { $0.id == otherId }?.sets ?? 0)
+        return Array(muscles.prefix(5)) + [MuscleGroup(id: otherId, name: other, sets: rest)]
     }
 
     private static let sliceColors: [Color] = [.apexAccent, .teal, .indigo, .orange, .pink, .gray]
