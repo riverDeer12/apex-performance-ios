@@ -87,6 +87,10 @@ struct ClientDetailsView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
                 
+                // Trainings first, the coach opens them most often.
+                trainingsCard
+                    .padding(.horizontal, 20)
+                
                 CardView(title: "personal_info") {
                     VStack(spacing: 0) {
                         editableRow(title: "first_name") {
@@ -282,9 +286,6 @@ struct ClientDetailsView: View {
                     .padding(.horizontal, 20)
                 
                 monthlyReviewsCard
-                    .padding(.horizontal, 20)
-                
-                trainingsCard
                     .padding(.horizontal, 20)
                 
             }
