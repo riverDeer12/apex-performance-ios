@@ -159,24 +159,19 @@ platform :ios do
   desc "being prepared. deliver only selects a build when it submits for review."
   lane :store_build do
     store_id, _api_key, version, build_number = newest_store_build
+    build = wait_until_processed(store_id, version, build_number)
 
     platform = Spaceship::ConnectAPI::Platform::IOS
     app = Spaceship::ConnectAPI::App.find(store_id)
     edit = app.get_edit_app_store_version(platform: platform)
     UI.user_error!("No App Store version is being prepared") unless edit
 
-    build = Spaceship::ConnectAPI::Build.all(
-      app_id: app.id, version: version, build_number: build_number, platform: platform
-    ).first
-    UI.user_error!("No build #{version} (#{build_number}) on App Store Connect") unless build
-    UI.user_error!("Build #{build_number} is #{build.processing_state}, not a valid processed build") unless build.processing_state == "VALID"
-
     edit.select_build(build_id: build.id)
     UI.success("Version #{edit.version_string} now has build #{version} (#{build_number})")
   end
 
   # App Store app id, API key and the version and number of its newest
-  # TestFlight build.
+  # build, also one Apple is still processing (just uploaded).
   def newest_store_build
     store_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
     api_key = app_store_connect_api_key(
@@ -186,11 +181,40 @@ platform :ios do
       is_key_content_base64: true
     )
 
-    latest_testflight_build_number(api_key: api_key, app_identifier: store_id)
-    version = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
-    build_number = lane_context[SharedValues::LATEST_TESTFLIGHT_BUILD_NUMBER].to_s
+    app = Spaceship::ConnectAPI::App.find(store_id)
+    UI.user_error!("No app #{store_id} on App Store Connect") unless app
+    build = Spaceship::ConnectAPI::Build.all(
+      app_id: app.id, platform: Spaceship::ConnectAPI::Platform::IOS, sort: "-uploadedDate", limit: 1
+    ).first
+    UI.user_error!("No builds of #{store_id} on App Store Connect") unless build
+
+    version = build.app_version
+    build_number = build.version.to_s
     UI.message("App Store version #{version} with build #{build_number}")
     [store_id, api_key, version, build_number]
+  end
+
+  # Apple processes an uploaded build before it can be selected, usually
+  # in 10 to 30 minutes. Waits for it up to an hour.
+  def wait_until_processed(store_id, version, build_number)
+    app = Spaceship::ConnectAPI::App.find(store_id)
+    deadline = Time.now + 60 * 60
+    loop do
+      build = Spaceship::ConnectAPI::Build.all(
+        app_id: app.id, version: version, build_number: build_number,
+        platform: Spaceship::ConnectAPI::Platform::IOS
+      ).first
+      state = build&.processing_state
+      return build if state == Spaceship::ConnectAPI::Build::ProcessingState::VALID
+      if [Spaceship::ConnectAPI::Build::ProcessingState::FAILED,
+          Spaceship::ConnectAPI::Build::ProcessingState::INVALID].include?(state)
+        UI.user_error!("Build #{version} (#{build_number}) is #{state}")
+      end
+      UI.user_error!("Build #{version} (#{build_number}) still not processed after an hour") if Time.now > deadline
+
+      UI.message("Build #{version} (#{build_number}) is #{state || 'not on App Store Connect yet'}, waiting...")
+      sleep(60)
+    end
   end
 
   # Turns on a capability (e.g. HEALTHKIT) of the bundle id on the
