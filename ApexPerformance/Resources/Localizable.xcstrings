@@ -13535,62 +13535,6 @@
         }
       }
     },
-    "save_and_start_training" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Speichern und Training starten"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save and start training"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spremi i započni trening"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salva e inizia l'allenamento"
-          }
-        }
-      }
-    },
-    "save_and_start_training_hint" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Training wird für heute gespeichert und läuft sofort: Der Kunde sieht es, und du beendest es in den Details mit „Training beenden“."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The training is saved for today and is in progress right away: the client sees it, and you end it with “End training” in its details."
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trening se sprema za danas i odmah je u tijeku: klijent ga vidi, a u detaljima ga završavaš s „Završi trening”."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L'allenamento viene salvato per oggi ed è subito in corso: il cliente lo vede e lo termini con “Termina allenamento” nei dettagli."
-          }
-        }
-      }
-    },
     "save_as_template" : {
       "extractionState" : "manual",
       "localizations" : {

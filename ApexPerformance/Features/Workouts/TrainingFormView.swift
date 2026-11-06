@@ -176,22 +176,6 @@ struct TrainingFormView: View {
                         Text("no_exercises_yet")
                     }
                 }
-
-                if canStart {
-                    Section {
-                        Button {
-                            Task { await save(starting: true) }
-                        } label: {
-                            Text("save_and_start_training")
-                        }
-                        .buttonStyle(ApexPrimaryButtonStyle(systemImage: "play.fill"))
-                        .disabled(isSaving || !isValid)
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets())
-                    } footer: {
-                        Text("save_and_start_training_hint")
-                    }
-                }
             }
             .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
                 dismiss()
@@ -665,14 +649,17 @@ struct TrainingFormView: View {
         templates = (try? await TrainingTemplate.loadAll()) ?? []
     }
 
-    // A training not started or completed yet can be started right away.
-    private var canStart: Bool {
-        !isTemplate && !isCompleted && training?.startedAt == nil
+    /// A new training for today that is not completed starts when it is
+    /// saved, so its time is measured without another tap.
+    private var startsOnSave: Bool {
+        !isTemplate && training == nil && !isCompleted && Calendar.current.isDateInToday(date)
     }
 
-    /// Saves the training; starting also marks it as started now (in progress).
+    /// Saves the training; a new one for today is also marked as started now
+    /// (in progress).
     @MainActor
-    private func save(starting: Bool = false) async {
+    private func save() async {
+        let starting = startsOnSave
         isSaving = true
         defer { isSaving = false }
 
