@@ -2,11 +2,10 @@ name: App Store listing
 
 # Prepares the App Store version of the newest App Store build on App
 # Store Connect: What's New (fastlane/whats_new), the latest App Store
-# screenshots (AppStore-screenshots artifact of the last App Store build)
-# and the build itself. Nothing is submitted for review.
-# Started by hand (Actions -> App Store listing -> Run workflow) or by a
-# push to the store-listing branch; a push to store-build only selects
-# the build.
+# screenshots (AppStore-screenshots artifact) and the build itself, once
+# Apple has processed it. Nothing is submitted for review.
+# Runs after every App Store build (TestFlight workflow with app: store)
+# and can be started by hand: Actions -> App Store listing -> Run workflow.
 on:
   workflow_dispatch:
     inputs:
@@ -14,11 +13,15 @@ on:
         description: "Only select the newest build (texts and screenshots stay as they are)"
         type: boolean
         default: false
-  push:
-    branches: [store-listing, store-build]
+  workflow_call:
+    inputs:
+      screenshots_from_this_run:
+        description: "Take the AppStore-screenshots artifact of the calling run"
+        type: boolean
+        default: false
 
 env:
-  ONLY_BUILD: ${{ inputs.only_build || github.ref_name == 'store-build' }}
+  ONLY_BUILD: ${{ inputs.only_build == true }}
 
 permissions:
   contents: read
@@ -27,7 +30,8 @@ permissions:
 jobs:
   store-listing:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Includes waiting up to an hour for Apple to process the build.
+    timeout-minutes: 100
 
     steps:
       - name: Checkout
@@ -39,8 +43,15 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
-      - name: Download the App Store screenshots
-        if: env.ONLY_BUILD != 'true'
+      - name: Take the App Store screenshots of this run
+        if: inputs.screenshots_from_this_run == true
+        uses: actions/download-artifact@v4
+        with:
+          name: AppStore-screenshots
+          path: store-screenshots
+
+      - name: Download the latest App Store screenshots
+        if: env.ONLY_BUILD != 'true' && inputs.screenshots_from_this_run != true
         run: |
           id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=AppStore-screenshots&per_page=1" \
             --jq '.artifacts[0].id')

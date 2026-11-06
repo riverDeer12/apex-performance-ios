@@ -80,3 +80,15 @@ jobs:
     permissions:
       contents: write
 
+  # Then What's New, the screenshots and the build go to the App Store
+  # version on App Store Connect; submitting for review stays manual.
+  store-listing:
+    needs: screenshots
+    uses: ./.github/workflows/store-listing.yml
+    with:
+      screenshots_from_this_run: true
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: read
+
