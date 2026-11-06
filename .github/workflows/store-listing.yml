@@ -1,0 +1,70 @@
+name: App Store listing
+
+# Prepares the App Store version of the newest App Store build on App
+# Store Connect: What's New (fastlane/whats_new), the latest App Store
+# screenshots (AppStore-screenshots artifact of the last App Store build)
+# and the build itself. Nothing is submitted for review.
+# Started by hand (Actions -> App Store listing -> Run workflow) or by a
+# push to the store-listing branch; a push to store-build only selects
+# the build.
+on:
+  workflow_dispatch:
+    inputs:
+      only_build:
+        description: "Only select the newest build (texts and screenshots stay as they are)"
+        type: boolean
+        default: false
+  push:
+    branches: [store-listing, store-build]
+
+env:
+  ONLY_BUILD: ${{ inputs.only_build || github.ref_name == 'store-build' }}
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  store-listing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby and fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Download the App Store screenshots
+        if: env.ONLY_BUILD != 'true'
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=AppStore-screenshots&per_page=1" \
+            --jq '.artifacts[0].id')
+          [ -n "$id" ] && [ "$id" != "null" ] || { echo "::error::No AppStore-screenshots artifact"; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > screenshots.zip
+          mkdir -p store-screenshots
+          unzip -q screenshots.zip -d store-screenshots
+          find store-screenshots -name "*.png" | sort
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload to App Store Connect
+        run: |
+          set -o pipefail
+          lane=store_listing
+          [ "$ONLY_BUILD" = "true" ] && lane=store_build
+          bundle exec fastlane $lane 2>&1 | tee fastlane.log
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          SCREENSHOTS_DIR: ${{ github.workspace }}/store-screenshots
+
+      - name: Show the errors
+        if: failure()
+        run: |
+          grep -E "error|Error|ERROR|\[!\]|failed|Failed" fastlane.log | grep -v "^::" | tail -15 | sed 's/^/::error::/' || true
