@@ -29,6 +29,8 @@ struct TrainingFormView: View {
     @State private var date: Date
     @State private var note: String
     @State private var isCompleted: Bool
+    // Planned trainings are saved without starting; others start on save.
+    @State private var isPlanned: Bool
     @State private var exercises: [ExerciseDraft]
     // The client gets a push about a new training, about an edit only when asked.
     @State private var notifyClient: Bool
@@ -52,6 +54,7 @@ struct TrainingFormView: View {
         _date = State(initialValue: training?.date ?? .now)
         _note = State(initialValue: training?.note ?? "")
         _isCompleted = State(initialValue: training?.isCompleted ?? false)
+        _isPlanned = State(initialValue: training.map { !$0.isCompleted && $0.startedAt == nil } ?? false)
         _notifyClient = State(initialValue: training == nil)
         _exercises = State(initialValue: (training?.exercises ?? [])
             .sorted { $0.order < $1.order }
@@ -81,6 +84,7 @@ struct TrainingFormView: View {
         _date = State(initialValue: .now)
         _note = State(initialValue: template?.note ?? "")
         _isCompleted = State(initialValue: false)
+        _isPlanned = State(initialValue: false)
         _notifyClient = State(initialValue: false)
         _exercises = State(initialValue: (template?.exercises ?? [])
             .sorted { $0.order < $1.order }
@@ -119,7 +123,7 @@ struct TrainingFormView: View {
             return "\(exercise.workoutId?.uuidString ?? "")|\(exercise.note)|\(exercise.isSupersetWithPrevious)|\(sets)"
         }.joined(separator: ";")
         let day = Calendar.current.startOfDay(for: date).timeIntervalSince1970
-        return [name, note, "\(isCompleted)", "\(day)", exercisesText].joined(separator: "\n")
+        return [name, note, "\(isCompleted)", "\(isPlanned)", "\(day)", exercisesText].joined(separator: "\n")
     }
 
     // Closes the form, asking first when there are unsaved changes.
@@ -154,10 +158,18 @@ struct TrainingFormView: View {
                         DatePicker("date", selection: $date, displayedComponents: .date)
                         Toggle("completed", isOn: $isCompleted)
                             .tint(Color.apexMainColor)
+                        if canBePlanned {
+                            Toggle("planned", isOn: $isPlanned)
+                                .tint(Color.apexMainColor)
+                        }
                         NotifyClientToggle(isOn: $notifyClient)
                     }
                     TextField("note", text: $note, axis: .vertical)
                         .lineLimit(1...4)
+                } footer: {
+                    if !isTemplate && canBePlanned {
+                        Text(isPlanned ? "planned_training_hint" : "starts_on_save_hint")
+                    }
                 }
 
                 ForEach($exercises) { $exercise in
@@ -649,14 +661,19 @@ struct TrainingFormView: View {
         templates = (try? await TrainingTemplate.loadAll()) ?? []
     }
 
-    /// A new training for today that is not completed starts when it is
-    /// saved, so its time is measured without another tap.
-    private var startsOnSave: Bool {
-        !isTemplate && training == nil && !isCompleted && Calendar.current.isDateInToday(date)
+    // A training not started or completed yet can be marked as planned.
+    private var canBePlanned: Bool {
+        !isCompleted && training?.startedAt == nil
     }
 
-    /// Saves the training; a new one for today is also marked as started now
-    /// (in progress).
+    /// A training not marked as planned starts when it is saved, so its
+    /// time is measured without another tap.
+    private var startsOnSave: Bool {
+        !isTemplate && canBePlanned && !isPlanned
+    }
+
+    /// Saves the training; one not marked as planned is also marked as
+    /// started now (in progress).
     @MainActor
     private func save() async {
         let starting = startsOnSave

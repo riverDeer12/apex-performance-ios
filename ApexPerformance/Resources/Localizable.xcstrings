@@ -12044,6 +12044,35 @@
         }
       }
     },
+    "planned_training_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein geplantes Training startet beim Speichern nicht. Starte es später im Training."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A planned training doesn't start when saved. Start it later from the training."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planirani trening ne pokreće se spremanjem. Pokreni ga kasnije u treningu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un allenamento pianificato non inizia al salvataggio. Avvialo più tardi dall'allenamento."
+          }
+        }
+      }
+    },
     "previous_reviews" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -14508,6 +14537,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inizia allenamento"
+          }
+        }
+      }
+    },
+    "starts_on_save_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Training startet beim Speichern und seine Zeit wird gemessen. Markiere es als geplant, um es später zu starten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The training starts when saved and its time is measured. Mark it as planned to start it later."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trening se pokreće spremanjem i mjeri mu se vrijeme. Označi ga kao planiran da ga pokreneš kasnije."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’allenamento inizia al salvataggio e ne viene misurato il tempo. Segnalo come pianificato per avviarlo più tardi."
           }
         }
       }
