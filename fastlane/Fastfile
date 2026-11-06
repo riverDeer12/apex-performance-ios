@@ -87,6 +87,83 @@ platform :ios do
     File.delete(key_path) if key_path && File.exist?(key_path)
   end
 
+  desc "Prepare the App Store version of the newest App Store build:"
+  desc "What's New from fastlane/whats_new/<language>.txt, the screenshots"
+  desc "in SCREENSHOTS_DIR (iPhone 6.9\" and iPad 13\" PNGs, in order) and"
+  desc "the build. Nothing is submitted for review."
+  lane :store_listing do
+    store_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_KEY_CONTENT"),
+      is_key_content_base64: true
+    )
+
+    latest_testflight_build_number(api_key: api_key, app_identifier: store_id)
+    version = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
+    build_number = lane_context[SharedValues::LATEST_TESTFLIGHT_BUILD_NUMBER].to_s
+    UI.message("App Store version #{version} with build #{build_number}")
+
+    # Only the languages the App Store listing already has are filled;
+    # a new language would need its own description and keywords.
+    app = Spaceship::ConnectAPI::App.find(store_id)
+    UI.user_error!("No app #{store_id} on App Store Connect") unless app
+    platform = Spaceship::ConnectAPI::Platform::IOS
+    listing = app.get_edit_app_store_version(platform: platform) ||
+              app.get_live_app_store_version(platform: platform)
+    localizations = listing.get_app_store_version_localizations
+    locales = localizations.map(&:locale)
+    UI.message("Languages: #{locales.join(', ')}, primary #{app.primary_locale}")
+
+    # Screenshots go to the primary language and to every language that
+    # has its own; the others show the primary language's.
+    screenshot_locales = localizations.select do |localization|
+      localization.locale == app.primary_locale || localization.get_app_screenshot_sets.any?
+    end.map(&:locale)
+
+    Dir.mktmpdir do |dir|
+      metadata_path = File.join(dir, "metadata")
+      screenshots_path = File.join(dir, "screenshots")
+      source = File.expand_path(ENV.fetch("SCREENSHOTS_DIR"))
+      pngs = Dir.glob(File.join(source, "**", "*.png")).sort
+      UI.user_error!("No screenshots in #{source}") if pngs.empty?
+
+      locales.each do |locale|
+        language = locale.split("-").first
+        notes = File.join("whats_new", "#{language}.txt")
+        notes = File.join("whats_new", "en.txt") unless File.exist?(notes)
+        FileUtils.mkdir_p(File.join(metadata_path, locale))
+        FileUtils.cp(notes, File.join(metadata_path, locale, "release_notes.txt"))
+      end
+
+      screenshot_locales.each do |locale|
+        target = File.join(screenshots_path, locale)
+        FileUtils.mkdir_p(target)
+        # deliver keeps the order of the file names; the device folder
+        # goes into the name so both devices stay apart.
+        pngs.each do |png|
+          device = File.basename(File.dirname(png)).gsub(/[^A-Za-z0-9]/, "")
+          FileUtils.cp(png, File.join(target, "#{device}-#{File.basename(png)}"))
+        end
+      end
+
+      deliver(
+        api_key: api_key,
+        app_identifier: store_id,
+        app_version: version,
+        build_number: build_number,
+        skip_binary_upload: true,
+        metadata_path: metadata_path,
+        screenshots_path: screenshots_path,
+        overwrite_screenshots: true,
+        submit_for_review: false,
+        run_precheck_before_submit: false,
+        force: true
+      )
+    end
+  end
+
   # Turns on a capability (e.g. HEALTHKIT) of the bundle id on the
   # Developer portal through the App Store Connect API, once.
   def enable_capability(app_id, type)

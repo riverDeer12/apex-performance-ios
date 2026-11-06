@@ -1,0 +1,8 @@
+• Aplikacija je sada dostupna i na njemačkom jeziku.
+• Dnevni pregled iz Apple Healtha na početnom ekranu: san prošle noći, koraci, potrošene kalorije i puls u mirovanju. Podatke vidiš samo ti, ne šalju se treneru.
+• Svaka vježba sada ima i polje za vrijeme serije. Unos nije obavezan, pa uz ponavljanja i kilograme možeš upisati i trajanje (npr. 10 × 40 kg · 0:45).
+• Više nema podjele na vježbe na vrijeme i ostale vježbe, sve se unose na isti način.
+• Grafikon mišićnih skupina u napretku treninga sada prikazuje mišiće koje vježbe rade (prsa, triceps...).
+• Trening se pokreće čim ga trener spremi i vrijeme se mjeri automatski. Trening za kasnije označi se kao planiran.
+• U detaljima klijenta treninzi su sada na prvom mjestu.
+• Manja poboljšanja i ispravci.
