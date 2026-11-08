@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseCore
+import FirebaseCrashlytics
 import FirebaseMessaging
 import UserNotifications
 
@@ -17,6 +18,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Configure Firebase
         FirebaseApp.configure()
+        // Crash reports (Crashlytics) only from TestFlight and App Store builds.
+        #if DEBUG
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+        #endif
         
         // Set up notifications
         UNUserNotificationCenter.current().delegate = self

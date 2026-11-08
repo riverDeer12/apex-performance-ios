@@ -98,6 +98,7 @@ final class AuthManager: ObservableObject {
     func logout() {
         KeychainService.shared.deleteToken()
         isAuthenticated = false
+        Task { @MainActor in TrainingLiveActivity.endAll() }
     }
     
     func hasPermission(permission: String) -> Bool {
