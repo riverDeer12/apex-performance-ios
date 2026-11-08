@@ -259,7 +259,8 @@ platform :ios do
 
     upload_symbols_to_crashlytics(
       dsym_path: dsym,
-      gsp_path: "../ApexPerformance/GoogleService-Info.plist",
+      # Actions run from the repository root, so the path is absolute.
+      gsp_path: File.expand_path("../ApexPerformance/GoogleService-Info.plist", __dir__),
       binary_path: tool
     )
   rescue StandardError => e
