@@ -33,6 +33,10 @@ struct ContentView: View {
                 // Notifications may have come while the app was in the background.
                 if authManager.isAuthenticated {
                     Task { await NotificationInbox.shared.refreshCount() }
+                    // A training on the lock screen may have ended elsewhere.
+                    if TrainingLiveActivity.hasActivities {
+                        Task { _ = try? await Training.loadAll() }
+                    }
                 }
             }
         }

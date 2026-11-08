@@ -226,6 +226,8 @@ extension Training {
     static func loadAll() async throws -> [Training] {
         let url = AppEnvironment.apiURL.appendingPathComponent("trainings")
         let trainings: [Training] = try await APIClient.shared.request(url)
+        // Trainings ended elsewhere (web, another device) leave the lock screen.
+        TrainingLiveActivity.sync(with: trainings)
         return trainings.sorted { $0.date > $1.date }
     }
 

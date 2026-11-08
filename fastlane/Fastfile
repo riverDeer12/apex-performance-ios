@@ -48,6 +48,8 @@ platform :ios do
     # Apple Health: the cloud managed profiles include HealthKit only when
     # the App ID has the capability.
     enable_capability(app_id, "HEALTHKIT")
+    # Live Activity of a training in progress (widget extension).
+    ensure_bundle_id("#{app_id}.TrainingActivity", "Apex Training Activity#{test_app ? ' Test' : ''}")
 
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
@@ -83,6 +85,8 @@ platform :ios do
       # The build appears in TestFlight once Apple has processed it.
       skip_waiting_for_build_processing: true
     )
+
+    upload_crashlytics_symbols
   ensure
     File.delete(key_path) if key_path && File.exist?(key_path)
   end
@@ -226,6 +230,40 @@ platform :ios do
 
     bundle_id.create_capability(type)
     UI.message("Turned on #{type} for #{app_id}")
+  end
+
+  # Registers the bundle id of an app extension on the Developer portal
+  # when it isn't there yet, so the export can sign it.
+  def ensure_bundle_id(identifier, name)
+    return if Spaceship::ConnectAPI::BundleId.find(identifier)
+
+    Spaceship::ConnectAPI::BundleId.create(
+      name: name,
+      platform: Spaceship::ConnectAPI::Platform::IOS,
+      identifier: identifier
+    )
+    UI.message("Registered #{identifier}")
+  end
+
+  # Crash reports name the code lines only with the build's dSYMs. A failed
+  # upload doesn't stop the release, it shows as a warning on the run.
+  def upload_crashlytics_symbols
+    dsym = lane_context[SharedValues::DSYM_OUTPUT_PATH]
+    tool = Dir.glob(File.expand_path(
+      "~/Library/Developer/Xcode/DerivedData/*/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols"
+    )).first
+    unless dsym && tool
+      puts "::warning title=Crashlytics::No dSYMs or upload-symbols tool, crash reports won't show code lines"
+      return
+    end
+
+    upload_symbols_to_crashlytics(
+      dsym_path: dsym,
+      gsp_path: "../ApexPerformance/GoogleService-Info.plist",
+      binary_path: tool
+    )
+  rescue StandardError => e
+    puts "::warning title=Crashlytics::dSYM upload failed: #{e.message}"
   end
 
   # Without the aps-environment entitlement iOS gives the app no push

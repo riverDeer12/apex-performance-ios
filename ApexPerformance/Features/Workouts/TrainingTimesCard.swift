@@ -211,23 +211,35 @@ extension Training {
         let completedAt: Date?
     }
 
-    /// Marks when the training started and ended (PUT trainings/{id}/times, staff only).
+    /// Marks when the training started and ended (PUT trainings/{id}/times,
+    /// staff only); the Live Activity follows.
     @MainActor
     func settingTimes(startedAt: Date?, endedAt: Date?) async throws -> Training {
-        let formatter = ISO8601DateFormatter()
-        let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
-                                   endedAt: endedAt.map(formatter.string(from:)))
-        let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/times")
-        let response: TimesResponse = try await APIClient.shared.request(
-            url, method: .put, body: JSONEncoder().encode(request)
-        )
+        let response = try await Self.putTimes(id: id, startedAt: startedAt, endedAt: endedAt)
         var updated = self
         updated.startedAt = response.startedAt
         updated.endedAt = response.endedAt
         updated.heartRate = response.heartRate
         updated.isCompleted = response.isCompleted
         updated.completedAt = response.completedAt
+        TrainingLiveActivity.update(for: updated)
         return updated
+    }
+
+    /// Ends the training from the button of its Live Activity.
+    @MainActor
+    static func endFromLiveActivity(id: UUID, startedAt: Date) async throws {
+        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: .now)
+        TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: response.endedAt ?? .now)
+    }
+
+    @MainActor
+    private static func putTimes(id: UUID, startedAt: Date?, endedAt: Date?) async throws -> TimesResponse {
+        let formatter = ISO8601DateFormatter()
+        let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
+                                   endedAt: endedAt.map(formatter.string(from:)))
+        let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/times")
+        return try await APIClient.shared.request(url, method: .put, body: JSONEncoder().encode(request))
     }
 
     /// Icon of the status in lists: planned, in progress or completed.
