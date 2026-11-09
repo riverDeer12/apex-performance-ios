@@ -1,4 +1,5 @@
-• Trening u tijeku sada se vidi na zaključanom ekranu i u Dynamic Islandu: klijent, naziv treninga i vrijeme od početka. Trener ga može završiti jednim dodirom, bez otvaranja aplikacije.
-• Završeni trening još nekoliko minuta prikazuje ukupno trajanje.
+• Novi trening počinje čim trener upiše naziv i u obrascu se vidi vrijeme koje teče, pa je početak treninga točan i kad obrazac ostane otvoren.
+• Ako trener zaključa mobitel ili izađe iz aplikacije dok trening traje, trening se automatski spremi kao "u tijeku", pa se ništa ne izgubi.
+• Trening u tijeku vidi se na zaključanom ekranu i u Dynamic Islandu: klijent, naziv treninga i vrijeme od početka. Trener ga može završiti jednim dodirom, bez otvaranja aplikacije.
 • Aplikacija automatski prijavljuje rušenja, kako bismo greške mogli brže pronaći i ispraviti.
 • Manja poboljšanja i ispravci.
