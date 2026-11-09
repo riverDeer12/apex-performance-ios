@@ -282,12 +282,10 @@ final class AppStoreScreenshotTests: XCTestCase {
         allowSystemAlerts()
         let usernameField = app.textFields["login-username"]
         XCTAssertTrue(usernameField.waitForExistence(timeout: 10), "Login screen not shown")
-        usernameField.tap()
-        usernameField.typeText(username)
+        type(username, into: usernameField)
 
         let passwordField = app.secureTextFields["login-password"]
-        passwordField.tap()
-        passwordField.typeText(password)
+        type(password, into: passwordField)
 
         app.buttons["login-button"].tap()
         allowSystemAlerts()
@@ -309,6 +307,22 @@ final class AppStoreScreenshotTests: XCTestCase {
             }
             Thread.sleep(forTimeInterval: 0.5)
         }
+    }
+
+    /// Types into a field once it has the keyboard focus. The first tap can
+    /// only close something over it (e.g. the language menu on the iPad).
+    private func type(_ text: String, into field: XCUIElement) {
+        for _ in 0..<5 {
+            field.tap()
+            if hasKeyboardFocus(field) { break }
+            waitForContent(seconds: 1)
+            if hasKeyboardFocus(field) { break }
+        }
+        field.typeText(text)
+    }
+
+    private func hasKeyboardFocus(_ element: XCUIElement) -> Bool {
+        (element.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
     }
 
     /// Closes a "Save Password?" prompt that is already showing, without
