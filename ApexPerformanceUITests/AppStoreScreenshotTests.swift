@@ -311,6 +311,20 @@ final class AppStoreScreenshotTests: XCTestCase {
         }
     }
 
+    /// Closes a "Save Password?" prompt that is already showing, without
+    /// waiting for one.
+    private func closeLateSavePasswordPrompt() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        for source in [springboard, app!] {
+            let notNow = source.buttons["Not Now"]
+            if notNow.exists {
+                notNow.tap()
+                waitForContent(seconds: 1)
+                return
+            }
+        }
+    }
+
     /// Answers the notification permission alert, which covers the app.
     private func allowSystemAlerts() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -400,6 +414,8 @@ final class AppStoreScreenshotTests: XCTestCase {
     }
 
     private func takeScreenshot(_ role: String, _ name: String) {
+        // The "Save Password?" prompt can come late, over the next screen.
+        closeLateSavePasswordPrompt()
         screenshotIndex += 1
         let fileName = String(format: "%@-%02d-%@", role, screenshotIndex, name)
         let screenshot = XCUIScreen.main.screenshot()
