@@ -133,6 +133,15 @@ jobs:
             done
           done
           ls -R AppStore
+          # A failed test leaves the set short; App Store Connect must never
+          # get half a set (the App Store listing job runs after this one).
+          for target in "AppStore/iPhone 6.9" "AppStore/iPad 13"; do
+            count=$(ls "$target"/*.png 2>/dev/null | wc -l | tr -d ' ')
+            if [ "$count" -ne 10 ]; then
+              echo "::error::$target has $count screenshots instead of 10"
+              exit 1
+            fi
+          done
 
       - name: Keep the App Store set
         uses: actions/upload-artifact@v4
