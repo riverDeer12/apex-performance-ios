@@ -1,8 +1,4 @@
-• Die App ist jetzt auch auf Deutsch verfügbar.
-• Ein Tagesüberblick aus Apple Health auf dem Startbildschirm: Schlaf der letzten Nacht, Schritte, verbrannte Kalorien und Ruhepuls. Nur du siehst ihn, er wird nicht an deinen Coach gesendet.
-• Jede Übung hat jetzt für jeden Satz eine optionale Dauer, sodass du neben Wiederholungen und Gewicht auch die Zeit eintragen kannst (z. B. 10 × 40 kg · 0:45).
-• Zeitbasierte und normale Übungen werden nicht mehr unterschieden: Alle werden gleich erfasst.
-• Das Diagramm der Muskelgruppen im Trainingsfortschritt zeigt jetzt die Muskeln, die deine Übungen trainieren (Brust, Trizeps...).
-• Ein Training startet, sobald der Coach es speichert, und seine Zeit wird automatisch gemessen. Trainings für später werden als geplant markiert.
-• In den Kundendetails stehen die Trainings jetzt an erster Stelle.
+• Ein laufendes Training erscheint jetzt auf dem Sperrbildschirm und in der Dynamic Island: der Kunde, das Training und die Zeit seit dem Start. Der Coach kann es mit einem Tippen beenden, ohne die App zu öffnen.
+• Ein beendetes Training zeigt noch einige Minuten lang die Gesamtdauer.
+• Die App meldet Abstürze jetzt automatisch, damit wir Fehler schneller finden und beheben können.
 • Kleinere Verbesserungen und Fehlerbehebungen.
