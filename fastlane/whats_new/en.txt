@@ -1,8 +1,4 @@
-• The app is now also available in German.
-• A daily overview from Apple Health on the home screen: last night's sleep, steps, burned calories and resting heart rate. Only you can see it; it is not sent to your coach.
-• Every exercise now has an optional duration for each set, so you can log time next to reps and weight (e.g. 10 × 40 kg · 0:45).
-• Timed and regular exercises are no longer separate: every exercise is logged the same way.
-• The muscle group chart in training progress now shows the muscles your exercises work (chest, triceps...).
-• A training starts as soon as the coach saves it and its time is measured automatically. Trainings for later are marked as planned.
-• Trainings now come first in the client details.
+• A training in progress now shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. The coach can end it with one tap, without opening the app.
+• An ended training shows its total duration for a few more minutes.
+• The app now reports crashes automatically, so we can find and fix errors faster.
 • Minor improvements and fixes.

@@ -1,8 +1,4 @@
-• L'app è ora disponibile anche in tedesco.
-• Un riepilogo giornaliero da Apple Salute nella schermata iniziale: sonno della notte scorsa, passi, calorie bruciate e frequenza cardiaca a riposo. Lo vedi solo tu, non viene inviato al tuo coach.
-• Ogni esercizio ha ora una durata facoltativa per ogni serie, così puoi registrare il tempo accanto a ripetizioni e peso (es. 10 × 40 kg · 0:45).
-• Non c'è più distinzione tra esercizi a tempo ed esercizi normali: tutti si registrano allo stesso modo.
-• Il grafico dei gruppi muscolari nei progressi di allenamento ora mostra i muscoli che lavorano negli esercizi (petto, tricipiti...).
-• L'allenamento inizia appena il coach lo salva e il tempo viene misurato automaticamente. Gli allenamenti per dopo si segnano come pianificati.
-• Nei dettagli del cliente gli allenamenti sono ora al primo posto.
+• L'allenamento in corso ora appare nella schermata di blocco e nella Dynamic Island: il cliente, l'allenamento e il tempo trascorso dall'inizio. L'allenatore può terminarlo con un tocco, senza aprire l'app.
+• Un allenamento terminato mostra la durata totale ancora per qualche minuto.
+• L'app ora segnala automaticamente gli arresti anomali, così possiamo trovare e correggere gli errori più velocemente.
 • Piccoli miglioramenti e correzioni.
