@@ -1,4 +1,5 @@
-• L'allenamento in corso ora appare nella schermata di blocco e nella Dynamic Island: il cliente, l'allenamento e il tempo trascorso dall'inizio. L'allenatore può terminarlo con un tocco, senza aprire l'app.
-• Un allenamento terminato mostra la durata totale ancora per qualche minuto.
+• Un nuovo allenamento inizia appena l'allenatore ne scrive il nome e il modulo mostra il tempo che scorre, così l'inizio è corretto anche se il modulo resta aperto.
+• Se l'allenatore blocca il telefono o esce dall'app durante l'allenamento, questo viene salvato automaticamente come in corso, così non si perde nulla.
+• L'allenamento in corso appare nella schermata di blocco e nella Dynamic Island: il cliente, l'allenamento e il tempo trascorso. L'allenatore può terminarlo con un tocco, senza aprire l'app.
 • L'app ora segnala automaticamente gli arresti anomali, così possiamo trovare e correggere gli errori più velocemente.
 • Piccoli miglioramenti e correzioni.

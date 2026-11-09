@@ -1,4 +1,5 @@
-• A training in progress now shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. The coach can end it with one tap, without opening the app.
-• An ended training shows its total duration for a few more minutes.
+• A new training starts as soon as the coach writes its name, and the form shows the time running, so the start is right even when the form stays open.
+• If the coach locks the phone or leaves the app during a training, it is saved automatically as in progress, so nothing is lost.
+• A training in progress shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. The coach can end it with one tap, without opening the app.
 • The app now reports crashes automatically, so we can find and fix errors faster.
 • Minor improvements and fixes.
