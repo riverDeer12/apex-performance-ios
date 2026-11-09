@@ -31,6 +31,9 @@ struct TrainingFormView: View {
     @State private var isCompleted: Bool
     // Planned trainings are saved without starting; others start on save.
     @State private var isPlanned: Bool
+    // When the coach wrote the new training's name: its start, so the time
+    // is right even when the form stays open during the training.
+    @State private var startedAt: Date?
     @State private var exercises: [ExerciseDraft]
     // The client gets a push about a new training, about an edit only when asked.
     @State private var notifyClient: Bool
@@ -154,6 +157,17 @@ struct TrainingFormView: View {
 
                 Section {
                     TextField("name", text: $name)
+                        .onChange(of: name) { _, _ in startTimerIfNeeded() }
+                    if let startedAt, startsOnSave {
+                        LabeledContent {
+                            Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
+                                .monospacedDigit()
+                                .foregroundStyle(.orange)
+                        } label: {
+                            Label("training_in_progress", systemImage: "timer")
+                                .foregroundStyle(.orange)
+                        }
+                    }
                     if !isTemplate {
                         DatePicker("date", selection: $date, displayedComponents: .date)
                         Toggle("completed", isOn: $isCompleted)
@@ -193,6 +207,8 @@ struct TrainingFormView: View {
                 dismiss()
             }
             .onAppear {
+                // A copied training comes with its name.
+                startTimerIfNeeded()
                 if initialFingerprint == nil { initialFingerprint = fingerprint }
             }
             .navigationTitle(title)
@@ -672,11 +688,19 @@ struct TrainingFormView: View {
         !isTemplate && canBePlanned && !isPlanned
     }
 
+    /// A new training starts when its name is written, not when it is saved.
+    private func startTimerIfNeeded() {
+        guard startedAt == nil, training == nil, !isTemplate,
+              !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        startedAt = .now
+    }
+
     /// Saves the training; one not marked as planned is also marked as
     /// started now (in progress).
     @MainActor
     private func save() async {
         let starting = startsOnSave
+        let start = startedAt ?? .now
         isSaving = true
         defer { isSaving = false }
 
@@ -690,7 +714,7 @@ struct TrainingFormView: View {
             client: clientId,
             name: trimmed(name),
             // A started training happens today.
-            date: ISO8601DateFormatter().string(from: starting ? .now : date),
+            date: ISO8601DateFormatter().string(from: starting ? start : date),
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
             exercises: exercises.compactMap(\.request),
@@ -700,7 +724,7 @@ struct TrainingFormView: View {
         do {
             var saved = try await Training.save(request, id: training?.id)
             if starting {
-                saved = try await saved.settingTimes(startedAt: .now, endedAt: nil)
+                saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
             }
             onSaved?(saved)
             toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
