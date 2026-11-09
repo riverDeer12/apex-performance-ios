@@ -23,6 +23,7 @@ struct TrainingFormView: View {
     private var onTemplateSaved: ((TrainingTemplate) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var name: String
@@ -34,6 +35,14 @@ struct TrainingFormView: View {
     // When the coach wrote the new training's name: its start, so the time
     // is right even when the form stays open during the training.
     @State private var startedAt: Date?
+    // The running new training saved when the app went to the background,
+    // so it isn't lost; the form then goes on editing it.
+    @State private var autosaved: Training?
+
+    // The training being edited: the given one or the autosaved new one.
+    private var currentTraining: Training? {
+        autosaved ?? training
+    }
     @State private var exercises: [ExerciseDraft]
     // The client gets a push about a new training, about an edit only when asked.
     @State private var notifyClient: Bool
@@ -158,7 +167,7 @@ struct TrainingFormView: View {
                 Section {
                     TextField("name", text: $name)
                         .onChange(of: name) { _, _ in startTimerIfNeeded() }
-                    if let startedAt, startsOnSave {
+                    if let startedAt, startsOnSave || autosaved != nil {
                         LabeledContent {
                             Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
                                 .monospacedDigit()
@@ -205,6 +214,12 @@ struct TrainingFormView: View {
             }
             .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
                 dismiss()
+            }
+            // Locking the phone or leaving the app saves the running training.
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .background {
+                    Task { await autosave() }
+                }
             }
             .onAppear {
                 // A copied training comes with its name.
@@ -614,7 +629,7 @@ struct TrainingFormView: View {
         guard let workoutId, let clientId else { return nil }
 
         let earlier = history
-            .filter { $0.client.id == clientId && $0.id != training?.id && $0.date <= date }
+            .filter { $0.client.id == clientId && $0.id != currentTraining?.id && $0.date <= date }
             .sorted { $0.date > $1.date }
 
         for previous in earlier {
@@ -679,13 +694,60 @@ struct TrainingFormView: View {
 
     // A training not started or completed yet can be marked as planned.
     private var canBePlanned: Bool {
-        !isCompleted && training?.startedAt == nil
+        !isCompleted && currentTraining?.startedAt == nil
     }
 
     /// A training not marked as planned starts when it is saved, so its
     /// time is measured without another tap.
     private var startsOnSave: Bool {
         !isTemplate && canBePlanned && !isPlanned
+    }
+
+    /// Saves the running new training as in progress when the app goes to
+    /// the background (locked phone, another app), so nothing is lost if
+    /// the app is closed. The form stays open and goes on editing it; a
+    /// failed try is repeated the next time.
+    @MainActor
+    private func autosave() async {
+        // An unfinished exercise (no workout picked yet) waits for the next save.
+        guard let start = startedAt, let clientId, !isTemplate, !isSaving, !trimmed(name).isEmpty,
+              autosaved != nil || startsOnSave else { return }
+
+        // iOS gives the app a little time in the background to finish.
+        let app = UIApplication.shared
+        var backgroundTask = UIBackgroundTaskIdentifier.invalid
+        backgroundTask = app.beginBackgroundTask {
+            app.endBackgroundTask(backgroundTask)
+            backgroundTask = .invalid
+        }
+        defer {
+            if backgroundTask != .invalid { app.endBackgroundTask(backgroundTask) }
+        }
+
+        let request = SaveTrainingRequest(
+            client: clientId,
+            name: trimmed(name),
+            date: ISO8601DateFormatter().string(from: autosaved?.date ?? start),
+            note: trimmed(note).isEmpty ? nil : trimmed(note),
+            isCompleted: false,
+            exercises: exercises.filter(\.isValid).compactMap(\.request),
+            // The client hears about the new training once.
+            notifyClient: autosaved == nil && notifyClient
+        )
+
+        do {
+            var saved = try await Training.save(request, id: autosaved?.id)
+            if autosaved == nil {
+                saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
+            }
+            autosaved = saved
+            notifyClient = false
+            // Nothing to discard any more: it is saved.
+            initialFingerprint = fingerprint
+            onSaved?(saved)
+        } catch {
+            print("Training not autosaved: \(error)")
+        }
     }
 
     /// A new training starts when its name is written, not when it is saved.
@@ -722,7 +784,7 @@ struct TrainingFormView: View {
         )
 
         do {
-            var saved = try await Training.save(request, id: training?.id)
+            var saved = try await Training.save(request, id: currentTraining?.id)
             if starting {
                 saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
             }
