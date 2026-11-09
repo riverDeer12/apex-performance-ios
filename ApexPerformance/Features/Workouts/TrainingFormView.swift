@@ -38,6 +38,8 @@ struct TrainingFormView: View {
     // The running new training saved when the app went to the background,
     // so it isn't lost; the form then goes on editing it.
     @State private var autosaved: Training?
+    // Live Activity started with the timer, before the training is saved.
+    @State private var activityKey: String?
 
     // The training being edited: the given one or the autosaved new one.
     private var currentTraining: Training? {
@@ -166,7 +168,12 @@ struct TrainingFormView: View {
 
                 Section {
                     TextField("name", text: $name)
-                        .onChange(of: name) { _, _ in startTimerIfNeeded() }
+                        .onChange(of: name) { _, _ in
+                            startTimerIfNeeded()
+                            if let activityKey {
+                                TrainingLiveActivity.renameDraft(activityKey, name: trimmed(name))
+                            }
+                        }
                     if let startedAt, startsOnSave || autosaved != nil {
                         LabeledContent {
                             Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
@@ -214,6 +221,15 @@ struct TrainingFormView: View {
             }
             .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
                 dismiss()
+            }
+            // A planned training doesn't run: its activity goes away (and comes
+            // back when it isn't planned any more).
+            .onChange(of: isPlanned) { _, _ in updateDraftActivity() }
+            .onDisappear {
+                // Closed without saving: nothing runs.
+                if let activityKey, autosaved == nil {
+                    TrainingLiveActivity.endDraft(activityKey)
+                }
             }
             // Locking the phone or leaving the app saves the running training.
             .onChange(of: scenePhase) { _, phase in
@@ -738,6 +754,7 @@ struct TrainingFormView: View {
         do {
             var saved = try await Training.save(request, id: autosaved?.id)
             if autosaved == nil {
+                if let activityKey { await TrainingLiveActivity.link(activityKey, to: saved) }
                 saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
             }
             autosaved = saved
@@ -755,6 +772,21 @@ struct TrainingFormView: View {
         guard startedAt == nil, training == nil, !isTemplate,
               !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         startedAt = .now
+        updateDraftActivity()
+    }
+
+    /// Shows the running new training on the lock screen and in the Dynamic
+    /// Island right away: iOS starts activities only while the app is open.
+    private func updateDraftActivity() {
+        guard autosaved == nil, let startedAt else { return }
+        if startsOnSave, activityKey == nil {
+            let client = history.first { $0.client.id == clientId }?.client
+            let clientName = [client?.firstName, client?.lastName].compactMap { $0 }.joined(separator: " ")
+            activityKey = TrainingLiveActivity.startDraft(name: trimmed(name), clientName: clientName, startedAt: startedAt)
+        } else if !startsOnSave, let activityKey {
+            TrainingLiveActivity.endDraft(activityKey)
+            self.activityKey = nil
+        }
     }
 
     /// Saves the training; one not marked as planned is also marked as
@@ -786,8 +818,11 @@ struct TrainingFormView: View {
         do {
             var saved = try await Training.save(request, id: currentTraining?.id)
             if starting {
+                if let activityKey { await TrainingLiveActivity.link(activityKey, to: saved) }
                 saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
             }
+            // Saved: the activity stays with the training.
+            activityKey = nil
             onSaved?(saved)
             toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
             dismiss()
