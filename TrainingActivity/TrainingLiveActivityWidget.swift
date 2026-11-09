@@ -24,7 +24,9 @@ struct TrainingLiveActivityWidget: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     Label {
-                        Text(verbatim: context.attributes.clientName)
+                        Text(verbatim: context.attributes.clientName.isEmpty
+                             ? context.state.trainingName
+                             : context.attributes.clientName)
                             .lineLimit(1)
                     } icon: {
                         Image(systemName: "figure.strengthtraining.traditional")
@@ -39,7 +41,7 @@ struct TrainingLiveActivityWidget: Widget {
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(verbatim: context.attributes.trainingName)
+                        Text(verbatim: context.state.trainingName)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
@@ -79,11 +81,13 @@ private struct LockScreenView: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.7))
                         .textCase(.uppercase)
-                    Text(verbatim: context.attributes.clientName)
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                    Text(verbatim: context.attributes.trainingName)
+                    if !context.attributes.clientName.isEmpty {
+                        Text(verbatim: context.attributes.clientName)
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                    }
+                    Text(verbatim: context.state.trainingName)
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.7))
                         .lineLimit(1)
@@ -121,8 +125,9 @@ private struct EndButton: View {
     let context: ActivityViewContext<TrainingActivityAttributes>
 
     var body: some View {
-        if context.state.endedAt == nil {
-            Button(intent: EndTrainingIntent(trainingId: context.attributes.trainingId,
+        // Ending needs the saved training.
+        if context.state.endedAt == nil, let trainingId = context.state.trainingId {
+            Button(intent: EndTrainingIntent(trainingId: trainingId,
                                              startedAt: context.state.startedAt)) {
                 Label {
                     Text(verbatim: context.attributes.endText)

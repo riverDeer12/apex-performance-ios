@@ -14547,25 +14547,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Training startet beim Speichern und seine Zeit wird gemessen. Markiere es als geplant, um es später zu starten."
+            "value" : "Das Training beginnt mit der Eingabe des Namens, ab dann wird die Zeit gemessen. Markiere es als geplant, um es später zu starten."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The training starts when saved and its time is measured. Mark it as planned to start it later."
+            "value" : "The training starts when its name is written, and its time is measured from then. Mark it as planned to start it later."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trening se pokreće spremanjem i mjeri mu se vrijeme. Označi ga kao planiran da ga pokreneš kasnije."
+            "value" : "Trening počinje upisom naziva i od tada mu se mjeri vrijeme. Označi ga kao planiran da ga pokreneš kasnije."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’allenamento inizia al salvataggio e ne viene misurato il tempo. Segnalo come pianificato per avviarlo più tardi."
+            "value" : "L’allenamento inizia con l’inserimento del nome e da quel momento ne viene misurato il tempo. Segnalo come pianificato per avviarlo più tardi."
           }
         }
       }
