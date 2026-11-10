@@ -348,15 +348,33 @@ private struct ChatToolbarModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.toolbar {
             if let openChat {
-                ToolbarItem(placement: .topBarLeading) {
-                    ChatToolbarButton(action: openChat.action)
-                }
+                ChatToolbarItem(action: openChat.action)
             }
         }
     }
 }
 
-/// Round chat button in the top bar, with the unread count.
+/// The chat button without the glass circle iOS 26 puts behind toolbar
+/// buttons: only the blue icon, like the bell without its circle.
+private struct ChatToolbarItem: ToolbarContent {
+    let action: () -> Void
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: .topBarLeading) {
+                ChatToolbarButton(action: action)
+            }
+            .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: .topBarLeading) {
+                ChatToolbarButton(action: action)
+            }
+        }
+    }
+}
+
+/// Chat button in the top bar, drawn like the notification bell: the blue
+/// outlined icon with the unread count in a red badge at its top right.
 struct ChatToolbarButton: View {
     let action: () -> Void
 
@@ -365,11 +383,8 @@ struct ChatToolbarButton: View {
     var body: some View {
         let unreadCount = chatStore.unreadCount
         Button(action: action) {
-            Image(systemName: "bubble.left.and.bubble.right.fill")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color.apexOnAccent)
-                .frame(width: 34, height: 34)
-                .background(Circle().fill(Color.apexAccent))
+            Image(systemName: "bubble.left.and.bubble.right")
+                .foregroundStyle(Color.apexMainColor)
                 .overlay(alignment: .topTrailing) {
                     if unreadCount > 0 {
                         Text(verbatim: unreadCount > 99 ? "99+" : "\(unreadCount)")
@@ -378,12 +393,12 @@ struct ChatToolbarButton: View {
                             .padding(.horizontal, 4)
                             .frame(minWidth: 16, minHeight: 16)
                             .background(Capsule().fill(Color.red))
-                            .offset(x: 6, y: -4)
+                            .offset(x: 10, y: -8)
                     }
                 }
-                .contentShape(Circle())
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
         .accessibilityIdentifier("chat-button")
         .accessibilityLabel(Text("tab_chat"))
         .accessibilityValue(unreadCount > 0 ? Text(verbatim: "\(unreadCount)") : Text(verbatim: ""))

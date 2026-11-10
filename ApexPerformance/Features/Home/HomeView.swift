@@ -146,7 +146,7 @@ struct HomeView: View {
         }
         // Chat opens from a round button in the top bar of every tab's
         // root screen (chatToolbarButton), so nothing covers the content.
-        .environment(\.openChat, canChat ? OpenChatAction { showsChat = true } : nil)
+        .environment(\.openChat, canChat ? OpenChatAction(action: { showsChat = true }) : nil)
         .sheet(isPresented: $showsChat) {
             ChatListView(showsCloseButton: true)
         }

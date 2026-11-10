@@ -289,13 +289,13 @@ private extension Text {
     /// 44 points tall with a 19 point number.
     func wheelFieldLabel(isEmpty: Bool, isLarge: Bool) -> some View {
         self
-            .font(isLarge ? .system(size: 19, weight: .semibold) : nil)
+            .font(isLarge ? Font.system(size: 19, weight: .semibold) : Font?.none)
             .monospacedDigit()
             .foregroundStyle(isEmpty ? Color.secondary : Color.primary)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
-            .frame(minWidth: 44, minHeight: isLarge ? 44 : nil)
-            .frame(maxWidth: isLarge ? .infinity : nil)
+            .frame(minWidth: 44, minHeight: isLarge ? CGFloat(44) : nil)
+            .frame(maxWidth: isLarge ? CGFloat.infinity : nil)
             .padding(.horizontal, isLarge ? 4 : 8)
             .padding(.vertical, isLarge ? 0 : 5)
             .background(
