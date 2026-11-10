@@ -61,6 +61,7 @@ struct StaffTrainingsView: View {
     var body: some View {
         NavigationStack {
             content
+                .chatToolbarButton()
         }
     }
 
@@ -115,6 +116,7 @@ struct StaffTrainingsView: View {
                                     row(training)
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityIdentifier("staff-training-row")
 
                                 if training.id != filteredTrainings.last?.id {
                                     Divider().padding(.leading, 52)

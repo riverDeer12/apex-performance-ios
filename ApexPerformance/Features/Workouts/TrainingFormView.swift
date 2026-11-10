@@ -267,6 +267,7 @@ struct TrainingFormView: View {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(Color.apexMainColor)
                     }
+                    .accessibilityIdentifier("training-form-close")
                 }
             }
             .task {
@@ -344,7 +345,8 @@ struct TrainingFormView: View {
                     }
                     if paceType != nil {
                         // Walks and rides over a distance can last longer than an hour.
-                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: true)
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: true,
+                                           isLarge: true)
                             .frame(maxWidth: .infinity)
                     } else {
                         NumberWheelField(
@@ -355,7 +357,8 @@ struct TrainingFormView: View {
                             title: "reps",
                             // Reps written as text earlier (e.g. "8-10") are kept as they are.
                             displayText: set.wrappedValue.repsValue == nil && !set.wrappedValue.reps.isEmpty
-                                ? set.wrappedValue.reps : nil
+                                ? set.wrappedValue.reps : nil,
+                            isLarge: true
                         )
                         .frame(maxWidth: .infinity)
                     }
@@ -372,11 +375,13 @@ struct TrainingFormView: View {
                             unit: "kg",
                             defaultValue: 20,
                             allowsEmpty: true,
-                            title: "weight"
+                            title: "weight",
+                            isLarge: true
                         )
                         .frame(maxWidth: .infinity)
                         // How long the set lasted, optional for every exercise.
-                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: false)
+                        DurationWheelField(seconds: set.durationSeconds, title: "time", showsHours: false,
+                                           isLarge: true)
                             .frame(maxWidth: .infinity)
                     }
                     if let previous {
@@ -404,19 +409,29 @@ struct TrainingFormView: View {
                 exercise.wrappedValue.removeSets(atOffsets: offsets)
             }
 
-            Button {
-                exercise.wrappedValue.addSet()
-            } label: {
-                Label("add_set", systemImage: "plus")
-                    .foregroundStyle(Color.apexMainColor)
+            if exercise.wrappedValue.sets.isEmpty {
+                Button {
+                    exercise.wrappedValue.addSet()
+                } label: {
+                    Label("add_set", systemImage: "plus")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            } else {
+                // +1 rep and +2.5 kg change the last set; repeat set adds a copy of
+                // the last one that isn't a drop set. Sets over a distance or for
+                // a time have no reps and weight to change.
+                quickSetButtons(exercise,
+                                changesRepsAndWeight: paceType == nil
+                                    && workout(exercise.wrappedValue.workoutId)?.isTimed != true)
             }
-            .disabled(exercise.wrappedValue.sets.count >= ExerciseDraft.maxSets)
 
             // Same exercise right after the last set, with less weight.
             Button {
                 exercise.wrappedValue.addDropSet(after: exercise.wrappedValue.sets.count - 1)
             } label: {
                 Label("add_drop_set", systemImage: "arrow.turn.down.right")
+                    .fontWeight(.semibold)
                     .foregroundStyle(Color.apexMainColor)
             }
             .disabled(exercise.wrappedValue.sets.isEmpty
@@ -436,13 +451,22 @@ struct TrainingFormView: View {
                 Text("exercise")
                 if isInSuperset(index) {
                     Text("superset")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(Color.apexOnAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(Capsule().fill(Color.apexAccent))
                 }
-                Spacer()
+                Spacer(minLength: 8)
+                if let previous, let topSet = Self.topSetDescription(previous, paceType: previous.paceType ?? paceType) {
+                    // Best set of the previous training, e.g. "Last time 6 × 70 kg".
+                    (Text("last_time") + Text(verbatim: " ") + Text(verbatim: topSet).fontWeight(.semibold))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .accessibilityIdentifier("last-time")
+                }
                 Menu {
                     if index > 0 {
                         // Done right after the previous exercise without rest.
@@ -482,7 +506,56 @@ struct TrainingFormView: View {
                         .foregroundStyle(Color.apexMainColor)
                 }
             }
+            .font(.subheadline.weight(.semibold))
+            .textCase(nil)
         }
+    }
+
+    /// +1 rep, +2.5 kg (on the last set) and repeat set, under the sets.
+    private func quickSetButtons(_ exercise: Binding<ExerciseDraft>, changesRepsAndWeight: Bool) -> some View {
+        let draft = exercise.wrappedValue
+        let isFull = draft.sets.count >= ExerciseDraft.maxSets
+        return HStack(spacing: 8) {
+            if changesRepsAndWeight {
+                quickButton("quick_add_rep", systemImage: "plus") {
+                    exercise.wrappedValue.addRepToLastSet()
+                }
+                .disabled(!draft.canAddRepToLastSet)
+                .accessibilityIdentifier("quick-add-rep")
+
+                quickButton("quick_add_weight", systemImage: "scalemass") {
+                    exercise.wrappedValue.addWeightToLastSet()
+                }
+                .disabled(!draft.canAddWeightToLastSet)
+                .accessibilityIdentifier("quick-add-weight")
+            }
+
+            quickButton("repeat_set", systemImage: "arrow.clockwise") {
+                exercise.wrappedValue.addSet()
+            }
+            .disabled(isFull)
+            .accessibilityIdentifier("quick-repeat-set")
+        }
+    }
+
+    private func quickButton(_ title: LocalizedStringKey, systemImage: String,
+                             action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .labelStyle(.titleOnly)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.apexMainColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity, minHeight: 40)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color.apexMainColor.opacity(0.12))
+                )
+                .contentShape(Rectangle())
+        }
+        // Each button tappable on its own inside the form row.
+        .buttonStyle(.borderless)
     }
 
     /// Distance of a set in metres with its pace shown as it is typed, like the web.
@@ -492,12 +565,19 @@ struct TrainingFormView: View {
         return VStack(spacing: 2) {
             HStack(spacing: 4) {
                 TextField("distance_placeholder", text: set.distance)
+                    .font(.system(size: 19, weight: .semibold))
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .accessibilityLabel(Text("distance"))
                 Text(verbatim: "m")
                     .foregroundStyle(.secondary)
             }
+            .padding(.horizontal, 8)
+            .frame(minHeight: 44)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color.primary.opacity(0.07))
+            )
             if !pace.isEmpty {
                 Text(verbatim: pace)
                     .font(.caption.weight(.semibold))
@@ -534,8 +614,7 @@ struct TrainingFormView: View {
                     .frame(width: previousWidth, alignment: .trailing)
             }
         }
-        .font(.system(size: 11, weight: .semibold))
-        .textCase(.uppercase)
+        .font(.system(size: 13, weight: .semibold))
         .foregroundStyle(.secondary)
     }
 
@@ -555,7 +634,7 @@ struct TrainingFormView: View {
             Button(action: onUse) {
                 Label("use_previous_sets_from \(DateFormatter.dateWithDots.string(from: previous.date))",
                       systemImage: "doc.on.doc")
-                    .font(.subheadline)
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.apexMainColor)
             }
             .buttonStyle(.borderless)
@@ -655,6 +734,27 @@ struct TrainingFormView: View {
             }
         }
         return nil
+    }
+
+    /// Heaviest set of the previous training (then the one with most
+    /// repetitions), e.g. "6 × 70 kg"; the last set when none has a weight.
+    static func topSetDescription(_ previous: PreviousSets, paceType: String?) -> String? {
+        let sets = previous.sets.filter { !$0.isDropSet }
+        let weighted = sets.filter { $0.weight != nil }
+        let top = weighted.max { first, second in
+            let firstWeight = NSDecimalNumber(decimal: first.weight ?? 0).doubleValue
+            let secondWeight = NSDecimalNumber(decimal: second.weight ?? 0).doubleValue
+            if firstWeight != secondWeight { return firstWeight < secondWeight }
+            return leadingNumber(first.reps) < leadingNumber(second.reps)
+        } ?? sets.last ?? previous.sets.last
+        guard let top else { return nil }
+        let text = setDescription(top, paceType: paceType)
+        return text == "—" ? nil : text
+    }
+
+    // First number of a repetitions text, e.g. 8 for "8-10", 0 without one.
+    private static func leadingNumber(_ reps: String?) -> Int {
+        Int(reps?.trimmingCharacters(in: .whitespaces).prefix { $0.isNumber } ?? "") ?? 0
     }
 
     // For example "10 × 40 kg", "10", "40 kg", "10 × 40 kg · 0:45" with a duration,
@@ -894,6 +994,33 @@ private struct ExerciseDraft: Identifiable {
             set.distance = last.distance
         }
         sets.append(set)
+    }
+
+    /// The last set's repetitions can go up by one (a number up to 100, or none yet).
+    var canAddRepToLastSet: Bool {
+        guard let last = sets.last else { return false }
+        if last.reps.trimmingCharacters(in: .whitespaces).isEmpty { return true }
+        return last.repsValue.map { $0 < 100 } ?? false
+    }
+
+    /// One more repetition in the last set.
+    mutating func addRepToLastSet() {
+        guard canAddRepToLastSet, let index = sets.indices.last else { return }
+        sets[index].repsValue = (sets[index].repsValue ?? 0) + 1
+    }
+
+    var canAddWeightToLastSet: Bool {
+        guard let last = sets.last, last.isWeightValid else { return false }
+        return (last.weightValue ?? 0) + Self.weightStep <= 300
+    }
+
+    // Weight added by the +2.5 kg button.
+    static let weightStep = Decimal(string: "2.5") ?? 2.5
+
+    /// 2.5 kg more in the last set.
+    mutating func addWeightToLastSet() {
+        guard canAddWeightToLastSet, let index = sets.indices.last else { return }
+        sets[index].weightValue = (sets[index].weightValue ?? 0) + Self.weightStep
     }
 
     /// Adds a drop set after the set at the index and its drop sets:

@@ -65,10 +65,11 @@ struct WorkoutDetailView: View {
                 .padding(.horizontal, 20)
 
                 CardView(title: "description") {
-                    Text(workout.description.localized.isEmpty ? "—" : workout.description.localized)
-                        .font(.body)
-                        .foregroundStyle(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ExpandableText(
+                        text: workout.description.localized.isEmpty ? "—" : workout.description.localized,
+                        lineLimit: 4,
+                        font: .body
+                    )
                 }
                 .padding(.horizontal, 20)
 

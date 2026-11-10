@@ -99,7 +99,36 @@ final class AppStoreScreenshotTests: XCTestCase {
             goBack()
         }
 
-        // Chat with a client: pictures and shared workouts.
+        // A training's form: big set fields, last time and quick set buttons.
+        if tab("Trainings").exists {
+            tab("Trainings").tap()
+            let trainingRow = app.buttons["staff-training-row"].firstMatch
+            if trainingRow.waitForExistence(timeout: 10) {
+                trainingRow.tap()
+                waitForContent()
+                let actions = app.buttons["training-actions"].firstMatch
+                if actions.waitForExistence(timeout: 5) {
+                    actions.tap()
+                    let edit = app.buttons["edit-training"].firstMatch
+                    if edit.waitForExistence(timeout: 3) {
+                        edit.tap()
+                        waitForContent()
+                        takeScreenshot("coach", "training-form")
+                        let close = app.buttons["training-form-close"].firstMatch
+                        if close.exists { close.tap() }
+                        waitForContent(seconds: 1)
+                        if close.exists { dismissSheet() }
+                    } else {
+                        // Closes the menu.
+                        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)).tap()
+                    }
+                }
+                goBack()
+            }
+        }
+
+        // Chat with a client from the chat button in the top bar:
+        // pictures and shared workouts.
         openChat(role: "coach")
 
         // Clients list.
@@ -348,7 +377,8 @@ final class AppStoreScreenshotTests: XCTestCase {
         }
     }
 
-    /// Opens the first conversation from the chat button and closes the chat after.
+    /// Opens the first conversation from the chat button (top bar of the
+    /// tab's root screen) and closes the chat after.
     private func openChat(role: String) {
         let chatButton = app.buttons["chat-button"].firstMatch
         guard chatButton.waitForExistence(timeout: 5) else { return }

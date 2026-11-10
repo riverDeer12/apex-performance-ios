@@ -1,3 +1,9 @@
+• Un aspetto nuovo e più leggibile: un solo blu in tutta l'app, titoli più piccoli e la maggior parte dei testi non più in maiuscolo.
+• La home mostra il prossimo allenamento con durata, allenatore e tempo che manca, e il tuo obiettivo e piano in frasi complete.
+• La chat ora si apre da un pulsante in alto, così non copre più nulla.
+• Gli allenatori inseriscono le serie più velocemente: campi più grandi, la serie migliore dell'ultima volta accanto a ogni esercizio e i pulsanti +1 rip., +2,5 kg e Ripeti serie.
+• I progressi degli allenamenti iniziano con gli ultimi 30 giorni confrontati con i 30 precedenti e ogni grafico mostra quanto è cambiato.
+• Gli esercizi mostrano i muscoli che allenano, quelli senza immagine hanno l'icona della loro categoria e gli allenatori trovano l'importazione nel menu +.
 • Un nuovo allenamento inizia appena l'allenatore ne scrive il nome e il modulo mostra il tempo che scorre, così l'inizio è corretto anche se il modulo resta aperto.
 • Se l'allenatore blocca il telefono o esce dall'app durante l'allenamento, questo viene salvato automaticamente come in corso, così non si perde nulla.
 • L'allenamento in corso appare nella schermata di blocco e nella Dynamic Island: il cliente, l'allenamento e il tempo trascorso. L'allenatore può terminarlo con un tocco, senza aprire l'app.

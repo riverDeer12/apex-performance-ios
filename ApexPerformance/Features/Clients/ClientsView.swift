@@ -108,6 +108,7 @@ struct ClientsView: View {
                 await Task { await loadData() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {

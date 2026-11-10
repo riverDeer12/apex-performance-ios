@@ -211,8 +211,8 @@ struct NotificationsView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.leading)
                 Text(notification.createdAt, format: .relative(presentation: .named))
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
             if !notification.isRead {

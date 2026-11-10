@@ -69,9 +69,7 @@ struct AppointmentRequestDetailsView: View {
                                 Text("comment")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-                                Text(request.comment)
-                                    .font(.subheadline)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                ExpandableText(text: request.comment)
                             }
                         }
                     }

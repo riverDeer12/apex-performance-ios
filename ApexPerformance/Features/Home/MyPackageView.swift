@@ -68,9 +68,7 @@ struct MyPackageView: View {
                 }
 
                 Label("cancelation_terms_by_agreement", systemImage: "info.circle")
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(0.6)
-                    .textCase(.uppercase)
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 20)
@@ -99,9 +97,7 @@ struct MyPackageView: View {
                 Spacer()
                 if package.isActive {
                     Text("active_package")
-                        .font(.system(size: 10, weight: .bold))
-                        .tracking(0.6)
-                        .textCase(.uppercase)
+                        .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(.green)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
@@ -126,9 +122,7 @@ struct MyPackageView: View {
             )
 
             Text("remaining_includes_reserved \(package.remaining) \(package.reserved)")
-                .font(.system(size: 11, weight: .medium))
-                .tracking(0.5)
-                .textCase(.uppercase)
+                .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.secondary)
 
             if authManager.hasPermission(permission: Permissions.canGetAppointments) {
@@ -149,9 +143,7 @@ struct MyPackageView: View {
             Text(verbatim: "\(value)")
                 .font(.system(size: 22, weight: .bold))
             Text(label)
-                .font(.system(size: 9, weight: .semibold))
-                .tracking(0.6)
-                .textCase(.uppercase)
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -177,8 +169,7 @@ struct MyPackageView: View {
                             .font(.subheadline.weight(.semibold))
                         if appointment.status.name == BusinessStatus.pending.rawValue {
                             Text("pending")
-                                .font(.system(size: 10, weight: .bold))
-                                .textCase(.uppercase)
+                                .font(.system(size: 12, weight: .bold))
                                 .foregroundStyle(.orange)
                         }
                         Spacer()

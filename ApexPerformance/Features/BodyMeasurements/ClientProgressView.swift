@@ -34,7 +34,7 @@ enum ProgressPeriod: Int, CaseIterable, Identifiable {
     }
 }
 
-/// Menu to pick the period of the progress charts, e.g. "6 MJESECI ▾".
+/// Menu to pick the period of the progress charts, e.g. "6 mjeseci ▾".
 struct ProgressPeriodMenu: View {
     @Binding var period: ProgressPeriod
 
@@ -51,11 +51,10 @@ struct ProgressPeriodMenu: View {
             HStack(spacing: 4) {
                 Text(period.title)
                 Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
             }
-            .font(.system(size: 11, weight: .semibold))
-            .tracking(1)
-            .textCase(.uppercase)
-            .foregroundStyle(.secondary)
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(Color.apexMainColor)
         }
         .accessibilityIdentifier("progress-period")
     }
@@ -183,10 +182,10 @@ struct ClientProgressView: View {
             HStack(spacing: 4) {
                 MonthTitle(date: month)
                 Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
             }
-            .font(.system(size: 11, weight: .semibold))
-            .tracking(1)
-            .foregroundStyle(.secondary)
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(Color.apexMainColor)
             .padding(.bottom, 2)
             .overlay(alignment: .bottom) {
                 Rectangle().fill(Color.apexBorder).frame(height: 1)
@@ -213,13 +212,10 @@ struct ClientProgressView: View {
 
             if let review {
                 MonthTitle(date: review.monthDate)
-                    .font(.system(size: 11, weight: .semibold))
-                    .tracking(0.8)
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.secondary)
 
-                Text(verbatim: review.content)
-                    .font(.subheadline)
-                    .fixedSize(horizontal: false, vertical: true)
+                ExpandableText(text: review.content, font: .body)
             } else if !isLoading {
                 Text("no_monthly_reviews")
                     .font(.subheadline)
@@ -236,9 +232,7 @@ struct ClientProgressView: View {
                         Spacer()
                         Image(systemName: "chevron.right")
                     }
-                    .font(.system(size: 11, weight: .bold))
-                    .tracking(0.8)
-                    .textCase(.uppercase)
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.apexAccent)
                     .contentShape(Rectangle())
                 }
@@ -276,9 +270,8 @@ struct ClientProgressView: View {
                     Text("body_mass")
                         .apexSectionTitle()
                     if let latest {
-                        Text(verbatim: "\(BodyProgressView.format(BodyProgressView.double(latest.weight))) KG")
+                        Text(verbatim: "\(BodyProgressView.format(BodyProgressView.double(latest.weight))) kg")
                             .font(.system(size: 28, weight: .bold))
-                            .tracking(1)
                     } else {
                         Text("no_measurements")
                             .font(.subheadline)
@@ -294,9 +287,7 @@ struct ClientProgressView: View {
                         changeLabel(change, unit: "kg")
                             .font(.system(size: 13, weight: .bold))
                         Text("compared_to_month \(previous.measuredAt.formatted(.dateTime.month(.wide)))")
-                            .font(.system(size: 9, weight: .semibold))
-                            .tracking(0.6)
-                            .textCase(.uppercase)
+                            .font(.system(size: 13))
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -339,8 +330,8 @@ struct ClientProgressView: View {
                 Text("body_circumferences")
                     .apexSectionTitle()
                 Spacer()
-                Text(verbatim: "CM")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(verbatim: "cm")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.secondary)
             }
             .padding(.bottom, 8)
@@ -351,7 +342,6 @@ struct ClientProgressView: View {
                     Divider().overlay(Color.apexBorder)
                     HStack {
                         Text(row.0)
-                            .textCase(.uppercase)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(verbatim: value > 0 ? BodyProgressView.format(value) : "—")
                             .frame(width: 56, alignment: .trailing)
@@ -364,7 +354,7 @@ struct ClientProgressView: View {
                         }
                         .frame(width: 64, alignment: .trailing)
                     }
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .padding(.vertical, 9)
                 }
 
@@ -375,9 +365,7 @@ struct ClientProgressView: View {
                         Text("show_all_measurements")
                         Image(systemName: "chevron.right")
                     }
-                    .font(.system(size: 11, weight: .bold))
-                    .tracking(0.8)
-                    .textCase(.uppercase)
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.apexAccent)
                     .padding(.top, 8)
                 }

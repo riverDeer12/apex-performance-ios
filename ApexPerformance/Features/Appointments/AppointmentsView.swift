@@ -162,6 +162,7 @@ struct AppointmentsView: View {
             .onAppear { openRequestsFromNotification() }
             .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .toolbar {
                 // Clients have the bell on home.
                 ToolbarItem(placement: .topBarLeading) {
@@ -204,6 +205,8 @@ struct AppointmentsView: View {
             }
             .sheet(isPresented: $showSentRequests) {
                 AppointmentRequestsView()
+                    // A sheet over appointments, not a tab: no chat button.
+                    .environment(\.openChat, nil)
                     .presentationDragIndicator(.visible)
             }
         }
@@ -261,7 +264,7 @@ struct AppointmentsView: View {
     
     private func appointmentRequestRow(_ request: AppointmentRequest) -> some View {
         let isCancelation = request.type.name.lowercased() == "cancelationrequest"
-        let tint: Color = isCancelation ? .red : .blue
+        let tint: Color = isCancelation ? .red : Color.apexMainColor
         let isProcessing = processingRequestId == request.id
         
         return VStack(spacing: 0) {

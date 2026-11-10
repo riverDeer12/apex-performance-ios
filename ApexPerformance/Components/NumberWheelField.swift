@@ -21,6 +21,8 @@ struct NumberWheelField: View {
     var title: LocalizedStringKey? = nil
     // Text shown instead of the number, e.g. reps written as "8-10".
     var displayText: String? = nil
+    // Big field, easy to tap during a training (e.g. sets of a training).
+    var isLarge = false
 
     @State private var isPresented = false
 
@@ -29,17 +31,7 @@ struct NumberWheelField: View {
             isPresented = true
         } label: {
             Text(verbatim: displayText ?? value.map { Self.format($0, step: step) } ?? "—")
-                .monospacedDigit()
-                .foregroundStyle(value == nil && displayText == nil ? Color.secondary : Color.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .frame(minWidth: 44)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(Color.primary.opacity(0.06))
-                )
+                .wheelFieldLabel(isEmpty: value == nil && displayText == nil, isLarge: isLarge)
         }
         .buttonStyle(.borderless)
         .sheet(isPresented: $isPresented) {
@@ -182,6 +174,8 @@ struct DurationWheelField: View {
     var title: LocalizedStringKey? = nil
     // Adds an hours wheel (0–9), e.g. for long walks or rides.
     var showsHours = false
+    // Big field, easy to tap during a training.
+    var isLarge = false
 
     @State private var isPresented = false
 
@@ -190,17 +184,7 @@ struct DurationWheelField: View {
             isPresented = true
         } label: {
             Text(verbatim: seconds.map(SetDuration.text) ?? "—")
-                .monospacedDigit()
-                .foregroundStyle(seconds == nil ? Color.secondary : Color.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .frame(minWidth: 44)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(Color.primary.opacity(0.06))
-                )
+                .wheelFieldLabel(isEmpty: seconds == nil, isLarge: isLarge)
         }
         .buttonStyle(.borderless)
         .sheet(isPresented: $isPresented) {
@@ -297,6 +281,28 @@ private struct DurationWheelSheet: View {
                 }
             }
         }
+    }
+}
+
+private extension Text {
+    /// Value of a wheel field drawn like a text field; the large one is
+    /// 44 points tall with a 19 point number.
+    func wheelFieldLabel(isEmpty: Bool, isLarge: Bool) -> some View {
+        self
+            .font(isLarge ? .system(size: 19, weight: .semibold) : nil)
+            .monospacedDigit()
+            .foregroundStyle(isEmpty ? Color.secondary : Color.primary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .frame(minWidth: 44, minHeight: isLarge ? 44 : nil)
+            .frame(maxWidth: isLarge ? .infinity : nil)
+            .padding(.horizontal, isLarge ? 4 : 8)
+            .padding(.vertical, isLarge ? 0 : 5)
+            .background(
+                RoundedRectangle(cornerRadius: isLarge ? 10 : 7, style: .continuous)
+                    .fill(Color.primary.opacity(isLarge ? 0.07 : 0.06))
+            )
+            .contentShape(Rectangle())
     }
 }
 

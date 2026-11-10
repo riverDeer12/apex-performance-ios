@@ -142,6 +142,7 @@ struct UserProfileView: View {
                 await Task { await loadUserProfile() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {
                 Button("logout", role: .destructive) {
                     PushTokenService.unregister()
@@ -177,9 +178,7 @@ struct UserProfileView: View {
                     
                     VStack(spacing: 4) {
                         Text(fullName)
-                            .font(.system(size: 18, weight: .bold))
-                            .tracking(1.5)
-                            .textCase(.uppercase)
+                            .font(.system(size: 20, weight: .bold))
                         Text("@\(authManager.username)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -189,9 +188,7 @@ struct UserProfileView: View {
                         showEditProfileSheet = true
                     } label: {
                         Text(accountProfile.hasProfilePicture ? LocalizedStringKey("change_profile_picture") : LocalizedStringKey("upload_profile_picture"))
-                            .font(.system(size: 12, weight: .bold))
-                            .tracking(1.2)
-                            .textCase(.uppercase)
+                            .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(Color.primary)
                             .frame(maxWidth: .infinity, minHeight: 40)
                             .background(

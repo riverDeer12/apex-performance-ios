@@ -252,7 +252,7 @@ struct ClientDetailsView: View {
                                     } label: {
                                         SettingsRowView(
                                             icon: "ruler",
-                                            iconTint: .blue,
+                                            iconTint: Color.apexMainColor,
                                             title: Text(DateFormatter.dateAndTimeWithDots.string(from: bodyMeasurement.measuredAt)),
                                             subtitle: nil,
                                             showChevron: true
@@ -628,7 +628,7 @@ struct ClientDetailsView: View {
                             } label: {
                                 SettingsRowView(
                                     icon: "figure.strengthtraining.functional",
-                                    iconTint: .blue,
+                                    iconTint: Color.apexMainColor,
                                     title: Text(DateFormatter.dateAndTimeWithDots.string(from: screen.createdAt)),
                                     subtitle: nil,
                                     showChevron: true

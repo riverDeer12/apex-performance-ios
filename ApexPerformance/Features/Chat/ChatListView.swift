@@ -313,30 +313,75 @@ struct ChatContactPickerView: View {
     }
 }
 
-/// Round chat button floating over the tabs, with the unread count.
-struct ChatFloatingButton: View {
-    let unreadCount: Int
+/// Opens the chat sheet over the tabs. Set by HomeView for users who
+/// can chat (coaches and clients); nil for everyone else.
+struct OpenChatAction {
     let action: () -> Void
 
+    func callAsFunction() {
+        action()
+    }
+}
+
+private struct OpenChatKey: EnvironmentKey {
+    static let defaultValue: OpenChatAction? = nil
+}
+
+extension EnvironmentValues {
+    var openChat: OpenChatAction? {
+        get { self[OpenChatKey.self] }
+        set { self[OpenChatKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Round chat button with the unread count on the leading side of the
+    /// top bar, for the root screen of a tab. Nothing for users who can't chat.
+    func chatToolbarButton() -> some View {
+        modifier(ChatToolbarModifier())
+    }
+}
+
+private struct ChatToolbarModifier: ViewModifier {
+    @Environment(\.openChat) private var openChat
+
+    func body(content: Content) -> some View {
+        content.toolbar {
+            if let openChat {
+                ToolbarItem(placement: .topBarLeading) {
+                    ChatToolbarButton(action: openChat.action)
+                }
+            }
+        }
+    }
+}
+
+/// Round chat button in the top bar, with the unread count.
+struct ChatToolbarButton: View {
+    let action: () -> Void
+
+    @ObservedObject private var chatStore = ChatStore.shared
+
     var body: some View {
+        let unreadCount = chatStore.unreadCount
         Button(action: action) {
             Image(systemName: "bubble.left.and.bubble.right.fill")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Color.apexOnAccent)
-                .frame(width: 56, height: 56)
+                .frame(width: 34, height: 34)
                 .background(Circle().fill(Color.apexAccent))
-                .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
                 .overlay(alignment: .topTrailing) {
                     if unreadCount > 0 {
                         Text(verbatim: unreadCount > 99 ? "99+" : "\(unreadCount)")
-                            .font(.caption2.weight(.bold))
+                            .font(.system(size: 10, weight: .bold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, 4)
+                            .frame(minWidth: 16, minHeight: 16)
                             .background(Capsule().fill(Color.red))
-                            .offset(x: 4, y: -4)
+                            .offset(x: 6, y: -4)
                     }
                 }
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("chat-button")

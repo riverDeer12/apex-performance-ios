@@ -217,9 +217,8 @@ struct ChatWorkoutCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
                 Text("chat_shared_workout")
-                    .font(.caption2.weight(.semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
                 title
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.primary)

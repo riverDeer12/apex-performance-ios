@@ -62,9 +62,8 @@ struct BodyProgressView: View {
         return CardView(title: "body_mass") {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(verbatim: "\(Self.format(latest)) KG")
+                    Text(verbatim: "\(Self.format(latest)) kg")
                         .font(.system(size: 30, weight: .bold))
-                        .tracking(1)
 
                     Spacer()
 
@@ -208,9 +207,8 @@ struct BodyProgressView: View {
                 .foregroundStyle(isHeader ? Color.secondary : changeColor)
                 .frame(width: 56, alignment: .trailing)
         }
-        .font(isHeader ? .system(size: 11, weight: .semibold) : .subheadline)
+        .font(isHeader ? .system(size: 13, weight: .semibold) : .subheadline)
         .foregroundStyle(isHeader ? Color.secondary : Color.primary)
-        .textCase(.uppercase)
         .padding(.vertical, isHeader ? 6 : 10)
     }
 

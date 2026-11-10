@@ -12,8 +12,8 @@ import WidgetKit
 /// training, client, the time since the start and an "End training"
 /// button. An ended training shows its duration for a few minutes.
 struct TrainingLiveActivityWidget: Widget {
-    // The app's main blue (apexMainColor).
-    static let accent = Color(red: 0.24, green: 0.58, blue: 0.88)
+    // The app's blue (apexMainColor / apexAccent, #3A98E4).
+    static let accent = Color(red: 0x3A / 255, green: 0x98 / 255, blue: 0xE4 / 255)
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: TrainingActivityAttributes.self) { context in

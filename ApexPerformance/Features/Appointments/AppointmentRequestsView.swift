@@ -80,6 +80,7 @@ struct AppointmentRequestsView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
         }
     }
     
@@ -139,7 +140,7 @@ struct AppointmentRequestsView: View {
                 
                 if !request.comment.isEmpty {
                     Text(request.comment)
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
@@ -148,8 +149,8 @@ struct AppointmentRequestsView: View {
                     Text("sent_at")
                     Text(DateFormatter.dateAndTimeWithDots.string(from: request.createdAt))
                 }
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
         }
         .padding(.vertical, 10)
@@ -170,7 +171,7 @@ struct AppointmentRequestsView: View {
         case "approved": return ("request_status_approved", .green)
         case "declined": return ("request_status_declined", .red)
         case "canceled", "cancelled": return ("request_status_canceled", .gray)
-        case "inprogress": return ("request_status_in_progress", .blue)
+        case "inprogress": return ("request_status_in_progress", Color.apexMainColor)
         default: return ("request_status_pending", .orange)
         }
     }
@@ -197,7 +198,7 @@ struct AppointmentRequestsView: View {
             if !request.comment.isEmpty {
                 HStack {
                     Text(request.comment)
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                         .padding(.leading, 46)

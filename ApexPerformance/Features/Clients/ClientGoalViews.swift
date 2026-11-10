@@ -11,6 +11,8 @@ import SwiftUI
 /// focus and next assessment. Empty sections are hidden.
 struct ClientGoalContentView: View {
     let goal: ClientGoal
+    // Lines of each text before "Show more".
+    var lineLimit = 6
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -27,8 +29,7 @@ struct ClientGoalContentView: View {
                             .font(.subheadline.weight(.semibold))
                     }
                     if let text = goal.nextAssessment, !text.isEmpty {
-                        Text(verbatim: text)
-                            .font(.subheadline)
+                        ExpandableText(text: text, lineLimit: lineLimit, font: .body)
                     }
                 }
             }
@@ -42,9 +43,7 @@ struct ClientGoalContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Label(title, systemImage: systemImage)
                     .apexLabel()
-                Text(verbatim: text)
-                    .font(.subheadline)
-                    .fixedSize(horizontal: false, vertical: true)
+                ExpandableText(text: text, lineLimit: lineLimit, font: .body)
             }
         }
     }
@@ -258,8 +257,9 @@ struct MonthTitle: View {
     let date: Date
 
     var body: some View {
-        Text(date, format: .dateTime.month(.wide).year())
-            .textCase(.uppercase)
+        // Croatian month names start with a small letter ("listopad 2026.").
+        let text = date.formatted(.dateTime.month(.wide).year())
+        Text(verbatim: text.prefix(1).uppercased() + text.dropFirst())
     }
 }
 
@@ -283,11 +283,8 @@ struct MonthlyReviewsView: View {
                 ShowMoreForEach(items: reviews) { review in
                     VStack(alignment: .leading, spacing: 8) {
                         MonthTitle(date: review.monthDate)
-                            .font(.system(size: 13, weight: .bold))
-                            .tracking(1)
-                        Text(verbatim: review.content)
-                            .font(.subheadline)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .font(.system(size: 16, weight: .semibold))
+                        ExpandableText(text: review.content, lineLimit: 4, font: .body)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)

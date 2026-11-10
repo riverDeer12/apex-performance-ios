@@ -248,6 +248,6 @@ extension Training {
     }
 
     var statusTint: Color {
-        isCompleted ? .green : (isInProgress ? .blue : .orange)
+        isCompleted ? .green : (isInProgress ? Color.apexMainColor : .orange)
     }
 }
