@@ -102,8 +102,12 @@ final class AppStoreScreenshotTests: XCTestCase {
         // A training's form: big set fields, last time and quick set buttons.
         if tab("Trainings").exists {
             tab("Trainings").tap()
-            let trainingRow = element("staff-training-row")
-            if trainingRow.waitForExistence(timeout: 10) {
+            // Ana's planned training: its exercises were done before.
+            let rows = app.descendants(matching: .any).matching(identifier: "staff-training-row")
+            let planned = rows.matching(NSPredicate(format: "label CONTAINS[c] %@", "Lower Body")).firstMatch
+            _ = rows.firstMatch.waitForExistence(timeout: 10)
+            let trainingRow = planned.exists ? planned : rows.firstMatch
+            if trainingRow.exists {
                 trainingRow.tap()
                 waitForContent()
                 let actions = element("training-actions")
@@ -113,6 +117,11 @@ final class AppStoreScreenshotTests: XCTestCase {
                     if edit.waitForExistence(timeout: 3) {
                         edit.tap()
                         waitForContent()
+                        // Up to the first exercise: its sets and the quick buttons.
+                        let window = app.windows.firstMatch
+                        window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+                            .press(forDuration: 0.1, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
+                        waitForContent(seconds: 1)
                         takeScreenshot("coach", "training-form")
                         let close = app.buttons["training-form-close"].firstMatch
                         if close.exists { close.tap() }
