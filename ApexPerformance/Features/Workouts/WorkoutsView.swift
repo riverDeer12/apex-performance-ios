@@ -116,7 +116,7 @@ struct WorkoutsView: View {
                                     } label: {
                                         workoutRow(workout)
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.apexPlain)
                                     .accessibilityIdentifier("workout-row")
                                     .contextMenu {
                                         if canManageWorkouts {
@@ -263,7 +263,7 @@ struct WorkoutsView: View {
                                 .fill(isSelected ? Color.apexMainColor : Color.apexMainColor.opacity(0.1))
                         )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
                 .accessibilityIdentifier("category-\(option.rawValue)")
             }
@@ -286,7 +286,7 @@ struct WorkoutsView: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .padding(.horizontal, 12)

@@ -23,6 +23,11 @@ struct StaffTrainingsView: View {
     @State private var clientId: UUID?
     @State private var isLoading = false
 
+    // Training opened from its Live Activity (or a training push).
+    @ObservedObject private var notificationRouter = NotificationRouter.shared
+    @State private var openedTraining: Training?
+    @State private var showsOpenedTraining = false
+
     enum StatusFilter: Hashable, CaseIterable {
         case all, planned, completed
 
@@ -62,6 +67,22 @@ struct StaffTrainingsView: View {
         NavigationStack {
             content
                 .chatToolbarButton()
+        }
+    }
+
+    /// Opens the training the coach tapped on the lock screen (its Live
+    /// Activity) or in a push.
+    @MainActor
+    private func openPendingTraining() async {
+        guard let id = notificationRouter.pendingTrainingId else { return }
+        notificationRouter.pendingTrainingId = nil
+
+        if !trainings.contains(where: { $0.id == id }) {
+            await load()
+        }
+        if let training = trainings.first(where: { $0.id == id }) {
+            openedTraining = training
+            showsOpenedTraining = true
         }
     }
 
@@ -115,7 +136,7 @@ struct StaffTrainingsView: View {
                                 } label: {
                                     row(training)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                                 .accessibilityIdentifier("staff-training-row")
 
                                 if training.id != filteredTrainings.last?.id {
@@ -143,6 +164,20 @@ struct StaffTrainingsView: View {
         // to refresh. Own task, so leaving the screen doesn't cancel it.
         .task {
             await Task { await load() }.value
+            await openPendingTraining()
+        }
+        .onChange(of: notificationRouter.pendingTrainingId) {
+            Task { await openPendingTraining() }
+        }
+        .navigationDestination(isPresented: $showsOpenedTraining) {
+            if let openedTraining {
+                TrainingDetailView(
+                    training: openedTraining,
+                    history: trainings.filter { $0.client.id == openedTraining.client.id },
+                    onSaved: { upsert($0) },
+                    onDeleted: { id in trainings.removeAll { $0.id == id } }
+                )
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showClientPicker, onDismiss: {
@@ -178,7 +213,7 @@ struct StaffTrainingsView: View {
                     showChevron: true
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
 
             Divider().padding(.leading, 46)
 
@@ -193,7 +228,7 @@ struct StaffTrainingsView: View {
                     showChevron: true
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 4)

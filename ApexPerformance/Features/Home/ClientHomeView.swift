@@ -253,7 +253,7 @@ struct ClientHomeView: View {
             .apexCardBackground()
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityIdentifier("package-card")
     }
 
@@ -303,7 +303,7 @@ struct ClientHomeView: View {
             .apexCardBackground()
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityIdentifier("goal-card")
     }
 
@@ -338,7 +338,7 @@ struct ClientHomeView: View {
             } label: {
                 shortcutRow(title: "my_trainings", systemImage: "dumbbell")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
 
             Divider().overlay(Color.apexBorder)
 
@@ -347,7 +347,7 @@ struct ClientHomeView: View {
             } label: {
                 shortcutRow(title: "progress", systemImage: "chart.bar.xaxis")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
             .accessibilityIdentifier("progress-tile")
 
             // Workout library depends on the plan agreed with the coach.
@@ -367,7 +367,7 @@ struct ClientHomeView: View {
                         systemImage: access == .all ? "figure.strengthtraining.functional" : "figure.flexibility"
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("library-tile")
             }
         }

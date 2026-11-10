@@ -124,7 +124,7 @@ struct CompletedTrainingsView: View {
                         } label: {
                             TrainingCardView(training: training, imageURL: imageURL(for: training))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         .accessibilityIdentifier("training-row")
                     }
                 }
@@ -282,7 +282,7 @@ struct TrainingRowsView: View {
                         showChevron: true
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .contextMenu {
                     if onSaved != nil {
                         Button {
@@ -624,7 +624,7 @@ struct TrainingExerciseCards: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("exercise-link")
                 .padding(.bottom, 10)
 

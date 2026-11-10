@@ -15,11 +15,18 @@ struct TrainingLiveActivityWidget: Widget {
     // The app's blue (apexMainColor / apexAccent, #3A98E4).
     static let accent = Color(red: 0x3A / 255, green: 0x98 / 255, blue: 0xE4 / 255)
 
+    /// A tap opens the app on the training (apexperformance://training/<id>);
+    /// before it is saved, on the open form.
+    static func url(_ state: TrainingActivityAttributes.ContentState) -> URL? {
+        URL(string: "apexperformance://training/\(state.trainingId ?? "")")
+    }
+
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: TrainingActivityAttributes.self) { context in
             LockScreenView(context: context)
                 .activityBackgroundTint(Color.black.opacity(0.75))
                 .activitySystemActionForegroundColor(.white)
+                .widgetURL(Self.url(context.state))
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
@@ -60,6 +67,7 @@ struct TrainingLiveActivityWidget: Widget {
                 Image(systemName: "timer")
                     .foregroundStyle(Self.accent)
             }
+            .widgetURL(Self.url(context.state))
         }
     }
 }

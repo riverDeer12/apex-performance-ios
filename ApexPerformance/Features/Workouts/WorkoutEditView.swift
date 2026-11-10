@@ -235,7 +235,7 @@ struct WorkoutEditView: View {
                             }
                             .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                     }
                 }
             }

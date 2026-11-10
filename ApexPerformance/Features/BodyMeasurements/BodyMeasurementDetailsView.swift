@@ -137,7 +137,7 @@ struct BodyMeasurementDetailsView: View {
                                 .foregroundStyle(Color.apexMainColor)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                     .accessibilityLabel("save")
                     .disabled(isSaving)
                 }

@@ -180,7 +180,7 @@ struct MyPackageView: View {
                     .padding(.vertical, 12)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .padding(.horizontal, 16)

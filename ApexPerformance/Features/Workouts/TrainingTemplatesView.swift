@@ -62,7 +62,7 @@ struct TrainingTemplatesView: View {
                                 } label: {
                                     row(template)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                                 .contextMenu {
                                     if template.canEdit {
                                         Button("delete_template", systemImage: "trash", role: .destructive) {

@@ -177,7 +177,7 @@ struct WorkoutDetailView: View {
                 } label: {
                     thumbnail
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             } else {
                 thumbnail
             }

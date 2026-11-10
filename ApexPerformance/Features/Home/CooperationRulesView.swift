@@ -190,7 +190,7 @@ struct CooperationRulesView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
             .foregroundStyle(.red)
         }
         .padding(20)
@@ -212,7 +212,7 @@ struct CooperationRulesView: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityAddTraits(isOn.wrappedValue ? .isSelected : [])
     }
 
@@ -260,7 +260,7 @@ struct CooperationRulesRow: View {
                         showChevron: true
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .task {

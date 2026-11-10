@@ -45,7 +45,7 @@ struct ClientsView: View {
                             } label: {
                                 ButtonContentView("", style: .iconOnly(systemName: "xmark"))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                         }
                     }
                     .padding(.vertical, 10)
@@ -73,7 +73,7 @@ struct ClientsView: View {
                                 } label: {
                                     clientRow(client)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                                 .background(Color.clear)
                                 .accessibilityIdentifier("client-row")
                                 .onTapGesture {
@@ -134,7 +134,7 @@ struct ClientsView: View {
                             .foregroundStyle(Color.apexMainColor)
                     }
                     .accessibilityLabel("new_client")
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                 }
             }
             .navigationDestination(isPresented: $showCreateClientForm) {

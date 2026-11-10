@@ -53,7 +53,7 @@ struct PersonalRecordsView: View {
                         } label: {
                             card(exercise)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                     }
                 }
                 .padding(.horizontal, 20)

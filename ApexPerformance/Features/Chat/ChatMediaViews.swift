@@ -110,7 +110,7 @@ struct ChatImageBubble: View {
             .frame(width: Self.maxWidth, height: Self.maxWidth / max(0.5, min(aspectRatio, 2)))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityLabel(Text(attachment.isGIF ? "chat_gif" : "chat_photo"))
         .task(id: attachment.id) {
             do {
@@ -204,7 +204,7 @@ struct ChatWorkoutCard: View {
             } label: {
                 content(title: Text(verbatim: workout.name.localized), thumbnail: workout.thumbnailUrl)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
         } else {
             content(title: Text("chat_workout_unavailable"), thumbnail: nil)
         }

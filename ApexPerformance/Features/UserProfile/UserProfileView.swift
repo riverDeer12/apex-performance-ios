@@ -54,7 +54,7 @@ struct UserProfileView: View {
                                         showChevron: true
                                     )
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                                 
                                 Divider().padding(.leading, 52)
                             }
@@ -68,7 +68,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             Divider().padding(.leading, 52)
                             
@@ -81,7 +81,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             if isClient {
                                 // Accepted cooperation rules, shown once they are.
@@ -105,7 +105,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .accessibilityIdentifier("language-row")
                             
                             Divider().padding(.leading, 52)
@@ -120,7 +120,7 @@ struct UserProfileView: View {
                                     titleColor: .red
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -196,7 +196,7 @@ struct UserProfileView: View {
                                     .fill(Color.primary.opacity(0.06))
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                 }
                 .frame(maxWidth: .infinity)
             }

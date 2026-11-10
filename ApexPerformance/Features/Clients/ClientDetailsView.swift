@@ -258,7 +258,7 @@ struct ClientDetailsView: View {
                                             showChevron: true
                                         )
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.apexPlain)
                                     if bodyMeasurement.id != measurements.last?.id {
                                         Divider().padding(.leading, 52)
                                     }
@@ -376,7 +376,7 @@ struct ClientDetailsView: View {
             .padding(.vertical, 4)
             .apexCardBackground()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .disabled(isOpeningChat)
     }
     
@@ -485,7 +485,7 @@ struct ClientDetailsView: View {
                                 )
                                 .lineLimit(2)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             if review.id != monthlyReviews.last?.id {
                                 Divider().padding(.leading, 52)
@@ -553,7 +553,7 @@ struct ClientDetailsView: View {
                                 showChevron: true
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         
                         Divider().padding(.leading, 52)
                         
@@ -569,7 +569,7 @@ struct ClientDetailsView: View {
                                 showChevron: true
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         
                         Divider().padding(.leading, 52)
                     }
@@ -634,7 +634,7 @@ struct ClientDetailsView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             if screen.id != functionalMovementScreens.last?.id {
                                 Divider().padding(.leading, 52)
                             }

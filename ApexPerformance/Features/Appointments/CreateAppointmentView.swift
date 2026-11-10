@@ -175,7 +175,7 @@ struct CreateAppointmentView: View {
                     }
                 }
                 .disabled(!canCreateAppointment)
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -479,7 +479,7 @@ struct CreateAppointmentView: View {
                     .fill(isSelected ? Color.apexAccent : Color.primary.opacity(0.06))
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         // The client is already in this appointment.
         .disabled(isOwnAppointment)
         .opacity(isOwnAppointment ? 0.6 : 1)

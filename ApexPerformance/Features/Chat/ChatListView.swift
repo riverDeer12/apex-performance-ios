@@ -61,7 +61,7 @@ struct ChatListView: View {
                                     NavigationLink(value: conversation.id) {
                                         row(conversation)
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.apexPlain)
                                     .accessibilityIdentifier("chat-row")
 
                                     if conversation.id != store.conversations.last?.id {
@@ -354,21 +354,14 @@ private struct ChatToolbarModifier: ViewModifier {
     }
 }
 
-/// The chat button without the glass circle iOS 26 puts behind toolbar
-/// buttons: only the blue icon, like the bell without its circle.
+/// The chat button in the top bar, on the same background as the bell and
+/// the other top bar buttons.
 private struct ChatToolbarItem: ToolbarContent {
     let action: () -> Void
 
     var body: some ToolbarContent {
-        if #available(iOS 26.0, *) {
-            ToolbarItem(placement: .topBarLeading) {
-                ChatToolbarButton(action: action)
-            }
-            .sharedBackgroundVisibility(.hidden)
-        } else {
-            ToolbarItem(placement: .topBarLeading) {
-                ChatToolbarButton(action: action)
-            }
+        ToolbarItem(placement: .topBarLeading) {
+            ChatToolbarButton(action: action)
         }
     }
 }
@@ -396,8 +389,6 @@ struct ChatToolbarButton: View {
                             .offset(x: 10, y: -8)
                     }
                 }
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
         }
         .accessibilityIdentifier("chat-button")
         .accessibilityLabel(Text("tab_chat"))

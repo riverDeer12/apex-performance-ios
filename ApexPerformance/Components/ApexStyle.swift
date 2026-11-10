@@ -75,6 +75,21 @@ extension View {
     }
 }
 
+/// Like `.plain`, but the whole row reacts to a tap, also its empty space
+/// (between the title and the chevron), not only the text and icons.
+struct ApexPlainButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .opacity(configuration.isPressed ? 0.6 : 1)
+    }
+}
+
+extension ButtonStyle where Self == ApexPlainButtonStyle {
+    /// Plain row or button whose whole area is tappable.
+    static var apexPlain: ApexPlainButtonStyle { ApexPlainButtonStyle() }
+}
+
 /// "APEX" wordmark with an uppercase screen title and an optional subtitle.
 struct ApexScreenHeader: View {
     let title: LocalizedStringKey

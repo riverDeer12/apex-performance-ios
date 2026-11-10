@@ -46,7 +46,7 @@ struct AppointmentRequestsView: View {
                                         } label: {
                                             requestRow(request)
                                         }
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(.apexPlain)
                                     
                                         if request.id != requests.last?.id {
                                             Divider().padding(.leading, 52)

@@ -33,7 +33,7 @@ struct ExpandableText: View {
                 } label: {
                     ShowMoreLabel(isExpanded: isExpanded)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("expandable-text-toggle")
             }
         }

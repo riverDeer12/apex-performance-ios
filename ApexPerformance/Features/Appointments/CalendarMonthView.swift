@@ -77,7 +77,7 @@ struct CalendarMonthView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .frame(width: 32, height: 32)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
 
                 Spacer()
 
@@ -94,7 +94,7 @@ struct CalendarMonthView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .frame(width: 32, height: 32)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
 
             HStack(spacing: 0) {
@@ -166,7 +166,7 @@ struct CalendarMonthView: View {
                     .frame(height: 5)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
         } else {
             Color.clear.frame(height: 41)
         }

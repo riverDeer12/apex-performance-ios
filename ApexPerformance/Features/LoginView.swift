@@ -149,7 +149,7 @@ struct LoginView: View {
                                 .foregroundColor(Color.apexOnAccent)
                                 .cornerRadius(10)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .disabled(isLoading)
                             .accessibilityIdentifier("login-button")
                             

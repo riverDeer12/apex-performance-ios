@@ -93,7 +93,7 @@ struct TrainingTimesCard: View {
                 Text("clear_training_times")
                     .font(.footnote.weight(.semibold))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
             .foregroundStyle(.red)
             .disabled(isSaving)
         }

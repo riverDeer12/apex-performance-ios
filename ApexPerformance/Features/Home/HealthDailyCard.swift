@@ -62,7 +62,7 @@ struct HealthDailyCard: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
     }
 
     @ViewBuilder

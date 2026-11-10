@@ -105,7 +105,7 @@ struct ClientProgressView: View {
                     .apexCardBackground()
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("training-progress-row")
 
                 // The client's own records from completed trainings.
@@ -129,7 +129,7 @@ struct ClientProgressView: View {
                     .apexCardBackground()
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("personal-records-row")
             }
             .padding(.horizontal, 20)
@@ -236,7 +236,7 @@ struct ClientProgressView: View {
                     .foregroundStyle(Color.apexAccent)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -369,7 +369,7 @@ struct ClientProgressView: View {
                     .foregroundStyle(Color.apexAccent)
                     .padding(.top, 8)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("all-measurements-link")
             } else {
                 Text("no_measurements")

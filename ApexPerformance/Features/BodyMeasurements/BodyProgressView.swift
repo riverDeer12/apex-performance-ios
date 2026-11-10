@@ -225,7 +225,7 @@ struct BodyProgressView: View {
                     } label: {
                         historyRow(measurement, previous: previous)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                     .accessibilityIdentifier("measurement-row")
 
                     if measurement.id != measurements.last?.id {
