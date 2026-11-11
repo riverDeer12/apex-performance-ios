@@ -100,7 +100,7 @@ struct AppointmentsView: View {
                                         } label: {
                                             appointmentRow(appointment)
                                         }
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(.apexPlain)
                                         .opacity(appointment.isActive ? 1 : 0.80)
 
                                         if appointment.id != appointmentsForSelectedDate.last?.id {
@@ -162,6 +162,7 @@ struct AppointmentsView: View {
             .onAppear { openRequestsFromNotification() }
             .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .toolbar {
                 // Clients have the bell on home.
                 ToolbarItem(placement: .topBarLeading) {
@@ -182,7 +183,7 @@ struct AppointmentsView: View {
                         }
                         .accessibilityLabel("appointment_requests")
                         .accessibilityIdentifier("requests-button")
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         .padding(.horizontal, 8)
                     }
                     
@@ -194,7 +195,7 @@ struct AppointmentsView: View {
                                 .foregroundStyle(Color.apexMainColor)
                         }
                         .accessibilityLabel("generate_recurring_appointments")
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         .disabled(isGeneratingRecurring)
                     }
                 }
@@ -204,6 +205,8 @@ struct AppointmentsView: View {
             }
             .sheet(isPresented: $showSentRequests) {
                 AppointmentRequestsView()
+                    // A sheet over appointments, not a tab: no chat button.
+                    .environment(\.openChat, nil)
                     .presentationDragIndicator(.visible)
             }
         }
@@ -261,7 +264,7 @@ struct AppointmentsView: View {
     
     private func appointmentRequestRow(_ request: AppointmentRequest) -> some View {
         let isCancelation = request.type.name.lowercased() == "cancelationrequest"
-        let tint: Color = isCancelation ? .red : .blue
+        let tint: Color = isCancelation ? .red : Color.apexMainColor
         let isProcessing = processingRequestId == request.id
         
         return VStack(spacing: 0) {
@@ -320,7 +323,7 @@ struct AppointmentsView: View {
                     .foregroundStyle(.green)
                     .cornerRadius(8)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .disabled(isProcessing)
                 
                 Button {
@@ -338,7 +341,7 @@ struct AppointmentsView: View {
                     .foregroundStyle(.red)
                     .cornerRadius(8)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .disabled(isProcessing)
             }
             .padding(.bottom, 8)
@@ -496,7 +499,7 @@ struct AppointmentsView: View {
                     .foregroundStyle(.green)
                     .cornerRadius(8)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .disabled(processingAppointmentId == appointment.id)
                 
                 Button {
@@ -514,7 +517,7 @@ struct AppointmentsView: View {
                     .foregroundStyle(.red)
                     .cornerRadius(8)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .disabled(processingAppointmentId == appointment.id)
             }
             .padding(.bottom, 8)

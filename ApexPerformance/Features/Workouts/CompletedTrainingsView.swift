@@ -80,6 +80,7 @@ struct CompletedTrainingsView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
         }
     }
 
@@ -123,7 +124,7 @@ struct CompletedTrainingsView: View {
                         } label: {
                             TrainingCardView(training: training, imageURL: imageURL(for: training))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         .accessibilityIdentifier("training-row")
                     }
                 }
@@ -210,15 +211,12 @@ struct TrainingCardView: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                        .font(.system(size: 13, weight: .bold))
-                        .tracking(1)
+                        .font(.system(size: 14, weight: .semibold))
 
                     if !training.isCompleted {
-                        let tint: Color = training.isInProgress ? .blue : .orange
+                        let tint: Color = training.isInProgress ? Color.apexMainColor : .orange
                         Text(training.isInProgress ? "in_progress" : "planned")
-                            .font(.system(size: 10, weight: .bold))
-                            .tracking(0.8)
-                            .textCase(.uppercase)
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(tint)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -239,9 +237,7 @@ struct TrainingCardView: View {
                         Text(verbatim: "+\(exerciseNames.count - 3)")
                     }
                 }
-                .font(.system(size: 11, weight: .medium))
-                .tracking(0.8)
-                .textCase(.uppercase)
+                .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.secondary)
 
                 Spacer(minLength: 0)
@@ -286,7 +282,7 @@ struct TrainingRowsView: View {
                         showChevron: true
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .contextMenu {
                     if onSaved != nil {
                         Button {
@@ -401,8 +397,7 @@ struct TrainingDetailView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                        .font(.system(size: 15, weight: .bold))
-                        .tracking(1)
+                        .font(.system(size: 15, weight: .semibold))
                     Text(verbatim: training.name)
                         .apexTitle()
                     if let completedAt = training.completedAt {
@@ -415,8 +410,8 @@ struct TrainingDetailView: View {
                         .foregroundStyle(.green)
                     } else if training.isInProgress {
                         Label("in_progress", systemImage: "timer")
-                            .font(.subheadline)
-                            .foregroundStyle(.blue)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color.apexMainColor)
                     } else {
                         Label("planned", systemImage: "calendar")
                             .font(.subheadline)
@@ -444,8 +439,7 @@ struct TrainingDetailView: View {
 
                 if let note = training.note, !note.isEmpty {
                     CardView(title: "notes") {
-                        Text(verbatim: note)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        ExpandableText(text: note, font: .body)
                     }
                     .padding(.horizontal, 20)
                 }
@@ -464,6 +458,7 @@ struct TrainingDetailView: View {
                         } label: {
                             Label("edit_training", systemImage: "pencil")
                         }
+                        .accessibilityIdentifier("edit-training")
 
                         Button {
                             Task { await toggleCompletion() }
@@ -501,6 +496,7 @@ struct TrainingDetailView: View {
                     }
                     .disabled(isUpdating)
                     .accessibilityLabel(Text("training_actions"))
+                    .accessibilityIdentifier("training-actions")
                 }
             }
         }
@@ -604,9 +600,7 @@ struct TrainingExerciseCards: View {
                 if isInSuperset {
                     // Exercises of a superset are done one after another without rest.
                     Text("superset")
-                        .font(.system(size: 10, weight: .bold))
-                        .tracking(0.8)
-                        .textCase(.uppercase)
+                        .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(Color.apexOnAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -620,9 +614,7 @@ struct TrainingExerciseCards: View {
                 } label: {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(verbatim: "\(label) \(exercise.workoutName.localized)")
-                            .font(.system(size: 15, weight: .bold))
-                            .tracking(1)
-                            .textCase(.uppercase)
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(Color.primary)
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
@@ -632,7 +624,7 @@ struct TrainingExerciseCards: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("exercise-link")
                 .padding(.bottom, 10)
 
@@ -688,9 +680,7 @@ struct TrainingExerciseCards: View {
                 time.frame(width: 64, alignment: .trailing)
             }
         }
-        .font(isHeader ? .system(size: 11, weight: .semibold) : .subheadline)
-        .tracking(isHeader ? 1 : 0)
-        .textCase(isHeader ? .uppercase : nil)
+        .font(isHeader ? .system(size: 13, weight: .semibold) : .subheadline)
         .foregroundStyle(isHeader ? Color.secondary : Color.primary)
         .padding(.vertical, isHeader ? 6 : 9)
     }

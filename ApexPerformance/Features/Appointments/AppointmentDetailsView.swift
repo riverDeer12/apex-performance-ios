@@ -101,7 +101,7 @@ struct AppointmentDetailsView: View {
                                         showChevron: true
                                     )
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                             }
                             
                             if(!authManager.hasRole(role: "Client")){
@@ -119,7 +119,7 @@ struct AppointmentDetailsView: View {
                                         titleColor: .red
                                     )
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                             }
                         }
                     }

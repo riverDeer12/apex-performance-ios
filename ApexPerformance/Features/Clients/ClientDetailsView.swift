@@ -252,13 +252,13 @@ struct ClientDetailsView: View {
                                     } label: {
                                         SettingsRowView(
                                             icon: "ruler",
-                                            iconTint: .blue,
+                                            iconTint: Color.apexMainColor,
                                             title: Text(DateFormatter.dateAndTimeWithDots.string(from: bodyMeasurement.measuredAt)),
                                             subtitle: nil,
                                             showChevron: true
                                         )
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.apexPlain)
                                     if bodyMeasurement.id != measurements.last?.id {
                                         Divider().padding(.leading, 52)
                                     }
@@ -376,7 +376,7 @@ struct ClientDetailsView: View {
             .padding(.vertical, 4)
             .apexCardBackground()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .disabled(isOpeningChat)
     }
     
@@ -485,7 +485,7 @@ struct ClientDetailsView: View {
                                 )
                                 .lineLimit(2)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             if review.id != monthlyReviews.last?.id {
                                 Divider().padding(.leading, 52)
@@ -553,7 +553,7 @@ struct ClientDetailsView: View {
                                 showChevron: true
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         
                         Divider().padding(.leading, 52)
                         
@@ -569,7 +569,7 @@ struct ClientDetailsView: View {
                                 showChevron: true
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.apexPlain)
                         
                         Divider().padding(.leading, 52)
                     }
@@ -628,13 +628,13 @@ struct ClientDetailsView: View {
                             } label: {
                                 SettingsRowView(
                                     icon: "figure.strengthtraining.functional",
-                                    iconTint: .blue,
+                                    iconTint: Color.apexMainColor,
                                     title: Text(DateFormatter.dateAndTimeWithDots.string(from: screen.createdAt)),
                                     subtitle: nil,
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             if screen.id != functionalMovementScreens.last?.id {
                                 Divider().padding(.leading, 52)
                             }

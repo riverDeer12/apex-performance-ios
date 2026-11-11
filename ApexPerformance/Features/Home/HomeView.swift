@@ -144,21 +144,13 @@ struct HomeView: View {
         .task {
             await profilePicture.refresh()
         }
-        // Chat opens from a floating button on every tab.
-        .overlay(alignment: .bottomTrailing) {
-            if canChat {
-                ChatFloatingButton(unreadCount: chatStore.unreadCount) {
-                    showsChat = true
-                }
-                .padding(.trailing, 16)
-                // Above the tab bar.
-                .padding(.bottom, 62)
-            }
-        }
+        // Chat opens from a round button in the top bar of every tab's
+        // root screen (chatToolbarButton), so nothing covers the content.
+        .environment(\.openChat, canChat ? OpenChatAction(action: { showsChat = true }) : nil)
         .sheet(isPresented: $showsChat) {
             ChatListView(showsCloseButton: true)
         }
-        // A popup over everything, also over the chat button and the tabs:
+        // A popup over everything, also over the top bars and the tabs:
         // accepting or logging out are the only ways out.
         .overlay {
             if let rules = rulesToAccept {

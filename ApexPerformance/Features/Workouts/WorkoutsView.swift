@@ -76,6 +76,7 @@ struct WorkoutsView: View {
         if wrapsInNavigationStack {
             NavigationStack {
                 content
+                    .chatToolbarButton()
             }
         } else {
             content
@@ -89,11 +90,6 @@ struct WorkoutsView: View {
                     ApexScreenHeader(title: title, subtitle: subtitle)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
-
-                    if canManageWorkouts {
-                        importSection
-                            .padding(.horizontal, 20)
-                    }
 
                     searchField
                         .padding(.horizontal, 20)
@@ -120,7 +116,7 @@ struct WorkoutsView: View {
                                     } label: {
                                         workoutRow(workout)
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.apexPlain)
                                     .accessibilityIdentifier("workout-row")
                                     .contextMenu {
                                         if canManageWorkouts {
@@ -180,13 +176,7 @@ struct WorkoutsView: View {
             .toolbar {
                 if canManageWorkouts {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showCreateWorkout = true
-                        } label: {
-                            Image(systemName: "plus")
-                                .foregroundStyle(Color.apexMainColor)
-                        }
-                        .accessibilityLabel(Text("new_workout"))
+                        addMenu
                     }
                 }
             }
@@ -208,44 +198,39 @@ struct WorkoutsView: View {
         }
     }
     
-    private var importSection: some View {
-        HStack(spacing: 12) {
+    /// "+" in the top bar: new workout, import from Excel and its template.
+    private var addMenu: some View {
+        Menu {
+            Button {
+                showCreateWorkout = true
+            } label: {
+                Label("new_workout", systemImage: "plus")
+            }
             Button {
                 showFileImporter = true
             } label: {
-                HStack(spacing: 6) {
-                    if isImporting {
-                        ProgressView()
-                            .tint(Color(.systemBackground))
-                    } else {
-                        Image(systemName: "square.and.arrow.down")
-                    }
-                    Text("import_workouts")
-                        .fontWeight(.semibold)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .background(Color.apexMainColor)
-                // apexMainColor is white in dark mode.
-                .foregroundStyle(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                Label("import_workouts", systemImage: "square.and.arrow.down")
             }
-            .buttonStyle(.plain)
             .disabled(isImporting)
-
             Link(destination: importTemplateURL) {
-                HStack(spacing: 6) {
-                    Image(systemName: "doc.text")
-                    Text("download_template")
-                        .fontWeight(.semibold)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .foregroundStyle(Color.apexMainColor)
-                .background(Color.apexMainColor.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                Label("download_template", systemImage: "doc.text")
+            }
+        } label: {
+            if isImporting {
+                ProgressView()
+            } else {
+                Image(systemName: "plus")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.apexMainColor)
             }
         }
+        .accessibilityLabel(Text("new_workout"))
+        .accessibilityIdentifier("workouts-add-menu")
+    }
+
+    // Workouts per category among the ones the search finds.
+    private func count(of category: WorkoutCategory) -> Int {
+        visibleWorkouts.filter { $0.workoutCategory == category && $0.matches(searchText) }.count
     }
 
     /// Two buttons, one per category: a tapped one shows only its workouts,
@@ -259,22 +244,26 @@ struct WorkoutsView: View {
                         category = isSelected ? nil : option
                     }
                 } label: {
-                    Label(option.title, systemImage: option.systemImage)
+                    // e.g. "Mobility and flexibility · 11".
+                    Label {
+                        Text(option.title) + Text(verbatim: " · \(count(of: option))")
+                    } icon: {
+                        Image(systemName: option.systemImage)
+                    }
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                         .minimumScaleFactor(0.85)
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .padding(.horizontal, 8)
-                        // The main color is white in dark mode, so the selected
-                        // button's text takes the background color.
-                        .foregroundStyle(isSelected ? Color(.systemBackground) : Color.apexMainColor)
+                        // Dark text on the selected button's sky blue.
+                        .foregroundStyle(isSelected ? Color.apexOnAccent : Color.apexMainColor)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
                                 .fill(isSelected ? Color.apexMainColor : Color.apexMainColor.opacity(0.1))
                         )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
                 .accessibilityIdentifier("category-\(option.rawValue)")
             }
@@ -297,7 +286,7 @@ struct WorkoutsView: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
         }
         .padding(.horizontal, 12)
@@ -309,7 +298,7 @@ struct WorkoutsView: View {
 
     private func workoutRow(_ workout: Workout) -> some View {
         HStack(spacing: 12) {
-            WorkoutThumbnailView(url: workout.thumbnailUrl)
+            WorkoutThumbnailView(url: workout.thumbnailUrl, category: workout.workoutCategory)
                 .frame(width: 96, height: 54)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
@@ -320,11 +309,18 @@ struct WorkoutsView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
-                if !workout.workoutTypes.isEmpty {
-                    Text(workout.workoutTypes.map { $0.name.localized }.joined(separator: ", "))
-                        .font(.caption)
+                // Primary muscles as on the muscle map, otherwise the types.
+                if let muscles = workout.muscles, !muscles.isEmpty {
+                    Text(muscles.map { String(localized: String.LocalizationValue("muscle_" + $0)) }
+                        .joined(separator: ", "))
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                } else if !workout.workoutTypes.isEmpty {
+                    Text(workout.workoutTypes.map { $0.name.localized }.joined(separator: ", "))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
                 }
             }
 
@@ -406,6 +402,8 @@ struct WorkoutsView: View {
 
 struct WorkoutThumbnailView: View {
     let url: String?
+    // Without a picture, an icon and a soft color of the category.
+    var category: WorkoutCategory? = nil
 
     var body: some View {
         AsyncImage(url: url.flatMap(URL.init(string:))) { phase in
@@ -416,13 +414,30 @@ struct WorkoutThumbnailView: View {
                     .scaledToFill()
             default:
                 ZStack {
-                    Color.apexMainColor.opacity(0.12)
-                    Image(systemName: "dumbbell.fill")
-                        .foregroundStyle(Color.apexMainColor)
+                    placeholderColor.opacity(0.16)
+                    Image(systemName: placeholderImage)
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(placeholderColor)
                 }
             }
         }
         .clipped()
+    }
+
+    private var placeholderColor: Color {
+        switch category {
+        case .mobilityFlexibility: .teal
+        case .strengthConditioning: .orange
+        case nil: .apexMainColor
+        }
+    }
+
+    private var placeholderImage: String {
+        switch category {
+        case .mobilityFlexibility: "figure.flexibility"
+        case .strengthConditioning: "dumbbell.fill"
+        case nil: "dumbbell.fill"
+        }
     }
 }
 

@@ -22,6 +22,10 @@ struct TrainingProgressView: View {
         let sessions = sessions
 
         VStack(spacing: 16) {
+            if !recentCompleted.isEmpty {
+                recentCard
+            }
+
             if sessions.isEmpty {
                 CardView {
                     Group {
@@ -54,14 +58,14 @@ struct TrainingProgressView: View {
 
     private func volumeCard(_ sessions: [Session]) -> some View {
         let points = sessions.map { ChartPoint(id: $0.id, date: $0.date, value: $0.volume) }
-        return chartCard(title: "volume_per_training") {
+        return chartCard(title: "volume_per_training", points: points, caption: Self.lastAndFirstKg(points)) {
             barChart(points)
         }
     }
 
     private func totalRepsCard(_ sessions: [Session]) -> some View {
         let points = sessions.map { ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps)) }
-        return chartCard(title: "total_reps_per_training") {
+        return chartCard(title: "total_reps_per_training", points: points) {
             lineChart(points)
         }
     }
@@ -70,13 +74,14 @@ struct TrainingProgressView: View {
         let points = sessions
             .filter { $0.repSets > 0 }
             .map { ChartPoint(id: $0.id, date: $0.date, value: Double($0.reps) / Double($0.repSets)) }
-        return chartCard(title: "average_reps_per_set") {
+        return chartCard(title: "average_reps_per_set", points: points) {
             lineChart(points)
         }
     }
 
     private func weeklyCard(_ sessions: [Session]) -> some View {
         let weeks: [WeekCount] = trainingsPerWeek(sessions)
+        // No change shown: the current week isn't over yet.
         return chartCard(title: "trainings_per_week") {
             Chart(weeks, id: \.week) { item in
                 BarMark(
@@ -131,20 +136,24 @@ struct TrainingProgressView: View {
             .map { training in
                 let sets = training.exercises.flatMap(\.sets)
                 let reps = sets.compactMap { Self.reps($0.reps) }
-                let volume = sets.reduce(0.0) { total, set in
-                    guard let reps = Self.reps(set.reps), let weight = set.weight else { return total }
-                    return total + Double(reps) * Self.double(weight)
-                }
                 return Session(
                     id: training.id,
                     date: training.date,
                     training: training,
-                    volume: volume,
+                    volume: Self.volume(of: training),
                     reps: reps.reduce(0, +),
                     sets: sets.filter { !$0.isDropSet }.count,
                     repSets: reps.count
                 )
             }
+    }
+
+    /// Sum of repetitions × weight of a training's sets.
+    private static func volume(of training: Training) -> Double {
+        training.exercises.flatMap(\.sets).reduce(0.0) { total, set in
+            guard let reps = Self.reps(set.reps), let weight = set.weight else { return total }
+            return total + Double(reps) * Self.double(weight)
+        }
     }
 
     /// First number in the repetitions text, e.g. 8 for "8-10".
@@ -156,6 +165,88 @@ struct TrainingProgressView: View {
 
     private static func double(_ value: Decimal) -> Double {
         NSDecimalNumber(decimal: value).doubleValue
+    }
+
+    // MARK: - Last 30 days
+
+    private static let day: TimeInterval = 86_400
+
+    // Completed trainings of the last 30 days, whatever the period.
+    private var recentCompleted: [Training] {
+        let now = Date()
+        return trainings.filter { $0.isCompleted && $0.date <= now && $0.date > now - 30 * Self.day }
+    }
+
+    /// Volume of the last 30 days against the 30 days before, or the number
+    /// of trainings when there is nothing to compare; under it the weeks in
+    /// a row with a training, or the trainings of the last 30 days.
+    private var recentCard: some View {
+        let now = Date()
+        let recent = recentCompleted
+        let before = trainings.filter {
+            $0.isCompleted && $0.date <= now - 30 * Self.day && $0.date > now - 60 * Self.day
+        }
+        let recentVolume = recent.reduce(0) { $0 + Self.volume(of: $1) }
+        let beforeVolume = before.reduce(0) { $0 + Self.volume(of: $1) }
+        let streak = weeksInARow(now: now)
+
+        return VStack(alignment: .leading, spacing: 6) {
+            Text("last_30_days")
+                .font(.system(size: 15, weight: .semibold))
+                .opacity(0.8)
+
+            Group {
+                if recentVolume > 0, beforeVolume > 0 {
+                    let change = (recentVolume / beforeVolume - 1)
+                        .formatted(.percent.precision(.fractionLength(0)).sign(strategy: .always(includingZero: false)))
+                    Text("volume_change_headline \(change)")
+                } else {
+                    Text("trainings_count \(recent.count)")
+                }
+            }
+            .font(.system(size: 28, weight: .bold))
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+
+            Group {
+                if streak >= 2 {
+                    Text("weeks_in_a_row \(streak)")
+                } else {
+                    Text("trainings_last_30_days \(recent.count)")
+                }
+            }
+            .font(.system(size: 15, weight: .medium))
+        }
+        .foregroundStyle(Color.apexOnAccent)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.apexAccent)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("progress-recent-card")
+    }
+
+    /// Weeks in a row with a completed training up to now. The current
+    /// week counts once it has one, it isn't over yet.
+    private func weeksInARow(now: Date) -> Int {
+        let calendar = Calendar.current
+        let weeks = Set(trainings.filter { $0.isCompleted && $0.date <= now }.compactMap {
+            calendar.dateInterval(of: .weekOfYear, for: $0.date)?.start
+        })
+        guard var week = calendar.dateInterval(of: .weekOfYear, for: now)?.start else { return 0 }
+        if !weeks.contains(week) {
+            guard let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: week) else { return 0 }
+            week = previous
+        }
+        var count = 0
+        while weeks.contains(week), count < 520 {
+            count += 1
+            guard let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: week) else { break }
+            week = previous
+        }
+        return count
     }
 
     // MARK: - Summary
@@ -230,6 +321,7 @@ struct TrainingProgressView: View {
                 HStack {
                     Text("max_weight")
                         .apexLabel()
+                    ChangeBadge(points: points.map(\.value))
                     Spacer()
                     if let selected {
                         Menu {
@@ -249,9 +341,7 @@ struct TrainingProgressView: View {
                                     .lineLimit(1)
                                 Image(systemName: "chevron.down")
                             }
-                            .font(.system(size: 11, weight: .semibold))
-                            .tracking(1)
-                            .textCase(.uppercase)
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Color.apexAccent)
                         }
                     }
@@ -264,6 +354,11 @@ struct TrainingProgressView: View {
                 } else {
                     barChart(points)
                         .frame(height: 150)
+                    if let caption = Self.lastAndFirstKg(points) {
+                        Text(caption)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
@@ -379,8 +474,7 @@ struct TrainingProgressView: View {
                                     Text(Double(group.sets) / Double(total), format: .percent.precision(.fractionLength(0)))
                                         .foregroundStyle(.secondary)
                                 }
-                                .font(.caption)
-                                .textCase(.uppercase)
+                                .font(.footnote)
                             }
                         }
                     }
@@ -395,11 +489,39 @@ struct TrainingProgressView: View {
 
     // MARK: - Chart helpers
 
-    private func chartCard<Content: View>(title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
-        CardView(title: title) {
+    /// Card with a chart, the change from the first to the last value on
+    /// the right of the title and an optional line under the chart.
+    private func chartCard<Content: View>(title: LocalizedStringKey, points: [ChartPoint] = [],
+                                          caption: LocalizedStringKey? = nil,
+                                          @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .apexLabel()
+                Spacer(minLength: 8)
+                ChangeBadge(points: points.map(\.value))
+            }
+            .padding(.top, 2)
+
             content()
                 .frame(height: 140)
+
+            if let caption {
+                Text(caption)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .apexCardBackground()
+    }
+
+    /// "Last 6,700 kg · first 5,200 kg", nil with fewer than two values.
+    private static func lastAndFirstKg(_ points: [ChartPoint]) -> LocalizedStringKey? {
+        guard points.count >= 2, let first = points.first, let last = points.last else { return nil }
+        let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1))
+        return "last_and_first_kg \(last.value.formatted(format)) \(first.value.formatted(format))"
     }
 
     private func lineChart(_ points: [ChartPoint]) -> some View {
@@ -432,6 +554,25 @@ struct TrainingProgressView: View {
         AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { _ in
             AxisGridLine().foregroundStyle(Color.apexBorder)
             AxisValueLabel()
+        }
+    }
+}
+
+/// Change from the first to the last value of a chart, e.g. "↑ 29%" in
+/// green or "↓ 8%" in orange; nothing with fewer than two values.
+struct ChangeBadge: View {
+    let points: [Double]
+
+    var body: some View {
+        if points.count >= 2, let first = points.first, let last = points.last, first > 0 {
+            let change = last / first - 1
+            let rounded = (change * 100).rounded()
+            let color: Color = rounded > 0 ? .green : (rounded < 0 ? .orange : .secondary)
+            let arrow = rounded > 0 ? "↑" : (rounded < 0 ? "↓" : "→")
+            Text(verbatim: "\(arrow) \(abs(change).formatted(.percent.precision(.fractionLength(0))))")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(color)
+                .accessibilityIdentifier("chart-change")
         }
     }
 }

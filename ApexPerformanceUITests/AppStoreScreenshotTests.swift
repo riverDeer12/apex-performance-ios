@@ -99,7 +99,45 @@ final class AppStoreScreenshotTests: XCTestCase {
             goBack()
         }
 
-        // Chat with a client: pictures and shared workouts.
+        // A training's form: big set fields, last time and quick set buttons.
+        if tab("Trainings").exists {
+            tab("Trainings").tap()
+            // Ana's planned training: its exercises were done before.
+            let rows = app.descendants(matching: .any).matching(identifier: "staff-training-row")
+            let planned = rows.matching(NSPredicate(format: "label CONTAINS[c] %@", "Lower Body")).firstMatch
+            _ = rows.firstMatch.waitForExistence(timeout: 10)
+            let trainingRow = planned.exists ? planned : rows.firstMatch
+            if trainingRow.exists {
+                trainingRow.tap()
+                waitForContent()
+                let actions = element("training-actions")
+                if actions.waitForExistence(timeout: 5) {
+                    actions.tap()
+                    let edit = element("edit-training")
+                    if edit.waitForExistence(timeout: 3) {
+                        edit.tap()
+                        waitForContent()
+                        // Up to the first exercise: its sets and the quick buttons.
+                        let window = app.windows.firstMatch
+                        window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+                            .press(forDuration: 0.1, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
+                        waitForContent(seconds: 1)
+                        takeScreenshot("coach", "training-form")
+                        let close = app.buttons["training-form-close"].firstMatch
+                        if close.exists { close.tap() }
+                        waitForContent(seconds: 1)
+                        if close.exists { dismissSheet() }
+                    } else {
+                        // Closes the menu.
+                        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)).tap()
+                    }
+                }
+                goBack()
+            }
+        }
+
+        // Chat with a client from the chat button in the top bar:
+        // pictures and shared workouts.
         openChat(role: "coach")
 
         // Clients list.
@@ -160,6 +198,9 @@ final class AppStoreScreenshotTests: XCTestCase {
             waitForContent(seconds: 1)
             takeScreenshot("client", "cooperation-rules")
             app.buttons["rules-checkbox"].firstMatch.tap()
+            // Accept is enabled once the checkbox is ticked.
+            let enabled = NSPredicate(format: "isEnabled == true")
+            _ = XCTWaiter.wait(for: [expectation(for: enabled, evaluatedWith: acceptRules)], timeout: 5)
             acceptRules.tap()
             waitForContent()
             XCTAssertFalse(acceptRules.exists, "Cooperation rules not accepted")
@@ -348,9 +389,11 @@ final class AppStoreScreenshotTests: XCTestCase {
         }
     }
 
-    /// Opens the first conversation from the chat button and closes the chat after.
+    /// Opens the first conversation from the chat button (top bar of the
+    /// tab's root screen) and closes the chat after.
     private func openChat(role: String) {
-        let chatButton = app.buttons["chat-button"].firstMatch
+        // In the top bar, where an iPad may not show it as a plain button.
+        let chatButton = element("chat-button")
         guard chatButton.waitForExistence(timeout: 5) else { return }
         chatButton.tap()
         let row = app.buttons["chat-row"].firstMatch
@@ -368,6 +411,11 @@ final class AppStoreScreenshotTests: XCTestCase {
             dismissSheet()
         }
         waitForContent(seconds: 1)
+    }
+
+    /// Element with the accessibility identifier, whatever its type.
+    private func element(_ identifier: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
     /// Scrolls up until the element is on screen, a few times at most.

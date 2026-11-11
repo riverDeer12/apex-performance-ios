@@ -62,7 +62,7 @@ struct HealthDailyCard: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
     }
 
     @ViewBuilder
@@ -140,8 +140,7 @@ struct HealthDailyCard: View {
                 Image(systemName: icon)
                     .foregroundStyle(Color.apexAccent)
             }
-            .font(.caption.weight(.medium))
-            .textCase(.uppercase)
+            .font(.footnote.weight(.medium))
             .foregroundStyle(.secondary)
             Text(verbatim: value)
                 .font(.title3.weight(.semibold))

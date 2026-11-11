@@ -77,7 +77,7 @@ struct CalendarMonthView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .frame(width: 32, height: 32)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
 
                 Spacer()
 
@@ -94,7 +94,7 @@ struct CalendarMonthView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .frame(width: 32, height: 32)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
             }
 
             HStack(spacing: 0) {
@@ -145,9 +145,8 @@ struct CalendarMonthView: View {
                 VStack(spacing: 4) {
                     Text(verbatim: "\(calendar.component(.day, from: day))")
                         .font(.subheadline.weight(isToday ? .bold : .regular))
-                        // The main color is white in dark mode, so the selected day's
-                        // number takes the background color (white in light mode).
-                        .foregroundStyle(isSelected ? Color(.systemBackground) : (isToday ? Color.apexMainColor : .primary))
+                        // Dark text on the sky blue of the selected day.
+                        .foregroundStyle(isSelected ? Color.apexOnAccent : (isToday ? Color.apexMainColor : .primary))
                         .frame(width: 32, height: 32)
                         .background(
                             Circle().fill(isSelected ? Color.apexMainColor : Color.clear)
@@ -167,7 +166,7 @@ struct CalendarMonthView: View {
                     .frame(height: 5)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
         } else {
             Color.clear.frame(height: 41)
         }

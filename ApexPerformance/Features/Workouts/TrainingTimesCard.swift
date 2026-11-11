@@ -93,7 +93,7 @@ struct TrainingTimesCard: View {
                 Text("clear_training_times")
                     .font(.footnote.weight(.semibold))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
             .foregroundStyle(.red)
             .disabled(isSaving)
         }
@@ -200,6 +200,9 @@ extension Training {
     private struct TimesRequest: Encodable {
         let startedAt: String?
         let endedAt: String?
+        // This iPhone shows the training's Live Activity itself: the backend
+        // starts it by push only on the other devices.
+        let deviceToken: String?
     }
 
     private struct TimesResponse: Decodable {
@@ -237,7 +240,8 @@ extension Training {
     private static func putTimes(id: UUID, startedAt: Date?, endedAt: Date?) async throws -> TimesResponse {
         let formatter = ISO8601DateFormatter()
         let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
-                                   endedAt: endedAt.map(formatter.string(from:)))
+                                   endedAt: endedAt.map(formatter.string(from:)),
+                                   deviceToken: PushTokenService.registeredToken)
         let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/times")
         return try await APIClient.shared.request(url, method: .put, body: JSONEncoder().encode(request))
     }
@@ -248,6 +252,6 @@ extension Training {
     }
 
     var statusTint: Color {
-        isCompleted ? .green : (isInProgress ? .blue : .orange)
+        isCompleted ? .green : (isInProgress ? Color.apexMainColor : .orange)
     }
 }

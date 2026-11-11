@@ -52,7 +52,7 @@ struct AppearanceSwitcherView: View {
                 showChevron: true
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
     }
 }
 

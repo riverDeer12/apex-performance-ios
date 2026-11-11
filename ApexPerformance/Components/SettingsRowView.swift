@@ -55,6 +55,8 @@ struct SettingsRowView: View {
             }
         }
         .padding(.vertical, 10)
+        // The whole row is tappable when it is a link or button label.
+        .contentShape(Rectangle())
     }
 }
 

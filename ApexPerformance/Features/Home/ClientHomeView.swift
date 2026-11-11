@@ -23,6 +23,10 @@ struct ClientHomeView: View {
     @State private var showCreateAppointment = false
     @State private var goal: ClientGoal?
     @State private var showGoalSheet = false
+    // The client's coach, shown with the next training when there is one.
+    @State private var coachName: String?
+    // Goal card lines cut at their line limit, for "Show more".
+    @State private var truncatedGoalLines: Set<String> = []
 
     // Changed on every load, the Apple Health card reads the day again.
     @State private var healthRefresh = UUID()
@@ -59,6 +63,7 @@ struct ClientHomeView: View {
                 await Task { await load() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     ApexTitleBar(subtitle: ClientPlan.title(for: client?.plan))
@@ -91,14 +96,10 @@ struct ClientHomeView: View {
             VStack(alignment: .leading, spacing: 2) {
                 if let firstName = client?.firstName, !firstName.isEmpty {
                     Text("hello_name \(firstName)")
-                        .font(.system(size: 16, weight: .bold))
-                        .tracking(1)
-                        .textCase(.uppercase)
+                        .font(.system(size: 22, weight: .bold))
                 }
                 Text("ready_for_next_training")
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(0.8)
-                    .textCase(.uppercase)
+                    .font(.system(size: 15))
                     .foregroundStyle(.secondary)
             }
 
@@ -110,36 +111,53 @@ struct ClientHomeView: View {
         ApexPictureBackground(systemImage: "figure.strengthtraining.traditional")
             .frame(height: 210)
             .overlay {
-                LinearGradient(colors: [.clear, .black.opacity(0.8)], startPoint: .center, endPoint: .bottom)
+                LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom)
+            }
+            // Time left until an approved training, e.g. "in 21 h".
+            .overlay(alignment: .topLeading) {
+                if let appointment = nextAppointment, !appointment.isPending,
+                   let countdown = Self.countdown(to: appointment.startTime) {
+                    Label {
+                        Text(countdown)
+                    } icon: {
+                        Image(systemName: "clock")
+                    }
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.apexOnAccent)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Capsule().fill(Color.apexAccent))
+                    .padding(14)
+                    .accessibilityIdentifier("next-training-countdown")
+                }
             }
             .overlay(alignment: .bottom) {
-                HStack(alignment: .bottom, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
                         if let appointment = nextAppointment {
                             Text(appointment.isPending
                                  ? LocalizedStringKey("next_appointment_pending")
                                  : LocalizedStringKey("next_appointment"))
-                                .font(.system(size: 11, weight: .semibold))
-                                .tracking(1.2)
-                                .textCase(.uppercase)
-                                .foregroundStyle(.white.opacity(0.8))
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.85))
 
                             Text(verbatim: Self.dateAndTime(appointment.startTime))
-                                .font(.system(size: 17, weight: .bold))
+                                .font(.system(size: 20, weight: .bold))
                                 .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+
+                            nextAppointmentDetails(appointment)
                         } else if isLoading {
                             ProgressView()
                                 .tint(.white)
                         } else {
                             Text("no_upcoming_appointments")
-                                .font(.system(size: 14, weight: .bold))
-                                .tracking(1)
-                                .textCase(.uppercase)
+                                .font(.system(size: 17, weight: .bold))
                                 .foregroundStyle(.white)
                         }
                     }
-
-                    Spacer(minLength: 0)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     if canGetAppointments {
                         Button("book_appointment") {
@@ -152,6 +170,52 @@ struct ClientHomeView: View {
                 .padding(14)
             }
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    /// Duration and coach of the next training, e.g. "60 min · Luka Marić".
+    @ViewBuilder
+    private func nextAppointmentDetails(_ appointment: NextAppointment) -> some View {
+        let minutes = Int(appointment.endTime.timeIntervalSince(appointment.startTime) / 60)
+        let hasDuration = minutes > 0 && minutes < 24 * 60
+        if hasDuration || coachName != nil {
+            HStack(spacing: 12) {
+                if hasDuration {
+                    Label {
+                        Text("duration_minutes \(minutes)")
+                    } icon: {
+                        Image(systemName: "timer")
+                    }
+                }
+                if let coachName {
+                    Label {
+                        Text(verbatim: coachName)
+                            .lineLimit(1)
+                    } icon: {
+                        Image(systemName: "person")
+                    }
+                }
+            }
+            .font(.system(size: 15, weight: .medium))
+            .foregroundStyle(.white.opacity(0.9))
+        }
+    }
+
+    /// "in 45 min", "in 21 h", "tomorrow" or "in 3 days", nil when it already started.
+    static func countdown(to date: Date, now: Date = .now) -> LocalizedStringKey? {
+        let seconds = date.timeIntervalSince(now)
+        guard seconds > 0 else { return nil }
+        let minutes = Int((seconds / 60).rounded(.up))
+        if minutes < 60 {
+            return "countdown_minutes \(minutes)"
+        }
+        let hours = Int(seconds / 3600)
+        if hours < 24 {
+            return "countdown_hours \(hours)"
+        }
+        let calendar = Calendar.current
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now),
+                                           to: calendar.startOfDay(for: date)).day ?? 0
+        return days <= 1 ? "countdown_tomorrow" : "countdown_days \(days)"
     }
 
     private var packageCard: some View {
@@ -174,23 +238,22 @@ struct ClientHomeView: View {
                         .foregroundStyle(.tertiary)
                 }
 
-                HStack {
+                HStack(alignment: .firstTextBaseline) {
                     Text("package_done_of_total \(package.done) \(package.total)")
-                    Spacer()
+                        .font(.system(size: 15, weight: .semibold))
+                    Spacer(minLength: 8)
                     Text("package_remaining \(package.remaining)")
+                        .font(.system(size: 15))
+                        .foregroundStyle(.secondary)
                 }
-                .font(.system(size: 12, weight: .semibold))
-                .tracking(0.6)
-                .textCase(.uppercase)
-                .foregroundStyle(.secondary)
 
-                ApexProgressBar(value: package.progress)
+                ApexProgressBar(value: package.progress, height: 8)
             }
             .padding(16)
             .apexCardBackground()
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityIdentifier("package-card")
     }
 
@@ -198,32 +261,36 @@ struct ClientHomeView: View {
         NavigationLink {
             ClientGoalDetailView(goal: goal)
         } label: {
-            HStack(spacing: 14) {
+            HStack(alignment: .top, spacing: 14) {
                 Image(systemName: "scope")
                     .font(.system(size: 26, weight: .regular))
                     .foregroundStyle(Color.apexAccent)
                     .frame(width: 34)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("my_goal_and_plan")
                         .apexSectionTitle()
                         .padding(.bottom, 2)
 
+                    // Whole sentences on a few lines; the rest in the details.
+                    goalLine("goal", "goal_line \(goal.goal ?? "")", value: goal.goal, isPrimary: true)
+                    goalLine("block", "current_block_line \(goal.currentBlock ?? "")", value: goal.currentBlock)
+                    goalLine("focus", "focus_line \(goal.focus ?? "")", value: goal.focus)
                     Group {
-                        goalLine("goal_line \(goal.goal ?? "")", isEmpty: goal.goal)
-                        goalLine("current_block_line \(goal.currentBlock ?? "")", isEmpty: goal.currentBlock)
-                        goalLine("focus_line \(goal.focus ?? "")", isEmpty: goal.focus)
                         if let date = goal.nextAssessmentDate {
                             Text("next_assessment_line \(DateFormatter.dateWithDots.string(from: date))")
                         } else if let text = goal.nextAssessment, !text.isEmpty {
                             Text("next_assessment_line \(text)")
+                                .lineLimit(2)
                         }
                     }
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(0.4)
-                    .textCase(.uppercase)
+                    .font(.system(size: 15))
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
+
+                    // Opens the details, as the whole card does.
+                    if !truncatedGoalLines.isEmpty {
+                        ShowMoreLabel()
+                    }
                 }
 
                 Spacer(minLength: 0)
@@ -236,14 +303,29 @@ struct ClientHomeView: View {
             .apexCardBackground()
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityIdentifier("goal-card")
     }
 
     @ViewBuilder
-    private func goalLine(_ text: LocalizedStringKey, isEmpty value: String?) -> some View {
+    private func goalLine(_ id: String, _ text: LocalizedStringKey, value: String?, isPrimary: Bool = false) -> some View {
         if let value, !value.isEmpty {
-            Text(text)
+            TruncationAwareText(
+                text: Text(text)
+                    .font(.system(size: isPrimary ? 16 : 15, weight: isPrimary ? .semibold : .regular))
+                    .foregroundStyle(isPrimary ? Color.primary : Color.secondary),
+                lineLimit: 3,
+                isTruncated: Binding(
+                    get: { truncatedGoalLines.contains(id) },
+                    set: { isTruncated in
+                        if isTruncated {
+                            truncatedGoalLines.insert(id)
+                        } else {
+                            truncatedGoalLines.remove(id)
+                        }
+                    }
+                )
+            )
         }
     }
 
@@ -256,7 +338,7 @@ struct ClientHomeView: View {
             } label: {
                 shortcutRow(title: "my_trainings", systemImage: "dumbbell")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
 
             Divider().overlay(Color.apexBorder)
 
@@ -265,7 +347,7 @@ struct ClientHomeView: View {
             } label: {
                 shortcutRow(title: "progress", systemImage: "chart.bar.xaxis")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.apexPlain)
             .accessibilityIdentifier("progress-tile")
 
             // Workout library depends on the plan agreed with the coach.
@@ -285,7 +367,7 @@ struct ClientHomeView: View {
                         systemImage: access == .all ? "figure.strengthtraining.functional" : "figure.flexibility"
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.apexPlain)
                 .accessibilityIdentifier("library-tile")
             }
         }
@@ -297,11 +379,10 @@ struct ClientHomeView: View {
         HStack(spacing: 14) {
             Image(systemName: systemImage)
                 .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(Color.apexMainColor)
                 .frame(width: 26)
             Text(title)
-                .font(.system(size: 12, weight: .bold))
-                .tracking(1)
-                .textCase(.uppercase)
+                .font(.system(size: 16, weight: .semibold))
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.footnote.weight(.semibold))
@@ -340,6 +421,7 @@ struct ClientHomeView: View {
 
     private struct NextAppointment {
         let startTime: Date
+        let endTime: Date
         let isPending: Bool
     }
 
@@ -349,12 +431,12 @@ struct ClientHomeView: View {
         if let approved = approvedAppointments
             .filter({ $0.startTime > now })
             .min(by: { $0.startTime < $1.startTime }) {
-            return NextAppointment(startTime: approved.startTime, isPending: false)
+            return NextAppointment(startTime: approved.startTime, endTime: approved.endTime, isPending: false)
         }
         if let pending = pendingAppointments
             .filter({ $0.startTime > now })
             .min(by: { $0.startTime < $1.startTime }) {
-            return NextAppointment(startTime: pending.startTime, isPending: true)
+            return NextAppointment(startTime: pending.startTime, endTime: pending.endTime, isPending: true)
         }
         return nil
     }
@@ -392,6 +474,17 @@ struct ClientHomeView: View {
         if let loadedGoal = try? await ClientGoal.loadMine() {
             goal = loadedGoal
             showGoalIfChanged()
+        }
+        // Appointments don't name the coach: shown when the client has one coach.
+        if canGetAppointments, coachName == nil,
+           let coaches: [Coach] = try? await APIClient.shared.request(
+               AppEnvironment.apiURL.appendingPathComponent("coaches/client")),
+           coaches.count == 1 {
+            let name = [coaches[0].firstName, coaches[0].lastName]
+                .compactMap { $0?.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+            coachName = name.isEmpty ? nil : name
         }
     }
 
@@ -434,9 +527,7 @@ struct ApexTitleBar: View {
                 .tracking(4)
             if let subtitle {
                 Text(subtitle)
-                    .font(.system(size: 8, weight: .semibold))
-                    .tracking(1.5)
-                    .textCase(.uppercase)
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.secondary)
             }
         }
@@ -444,21 +535,19 @@ struct ApexTitleBar: View {
     }
 }
 
-/// Small accent button used on pictures, e.g. "REZERVIRAJ TERMIN →".
+/// Small accent button used on pictures, e.g. "Rezerviraj termin →".
 struct ApexCompactButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 6) {
             configuration.label
-                .font(.system(size: 11, weight: .bold))
-                .tracking(0.8)
-                .textCase(.uppercase)
+                .font(.system(size: 15, weight: .semibold))
                 .lineLimit(1)
             Image(systemName: "arrow.right")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: 13, weight: .bold))
         }
         .foregroundStyle(Color.apexOnAccent)
-        .padding(.horizontal, 12)
-        .frame(minHeight: 34)
+        .padding(.horizontal, 14)
+        .frame(minHeight: 38)
         .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .fill(Color.apexAccent)

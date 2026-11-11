@@ -54,7 +54,7 @@ struct UserProfileView: View {
                                         showChevron: true
                                     )
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.apexPlain)
                                 
                                 Divider().padding(.leading, 52)
                             }
@@ -68,7 +68,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             Divider().padding(.leading, 52)
                             
@@ -81,7 +81,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             
                             if isClient {
                                 // Accepted cooperation rules, shown once they are.
@@ -105,7 +105,7 @@ struct UserProfileView: View {
                                     showChevron: true
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .accessibilityIdentifier("language-row")
                             
                             Divider().padding(.leading, 52)
@@ -120,7 +120,7 @@ struct UserProfileView: View {
                                     titleColor: .red
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -142,6 +142,7 @@ struct UserProfileView: View {
                 await Task { await loadUserProfile() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {
                 Button("logout", role: .destructive) {
                     PushTokenService.unregister()
@@ -177,9 +178,7 @@ struct UserProfileView: View {
                     
                     VStack(spacing: 4) {
                         Text(fullName)
-                            .font(.system(size: 18, weight: .bold))
-                            .tracking(1.5)
-                            .textCase(.uppercase)
+                            .font(.system(size: 20, weight: .bold))
                         Text("@\(authManager.username)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -189,9 +188,7 @@ struct UserProfileView: View {
                         showEditProfileSheet = true
                     } label: {
                         Text(accountProfile.hasProfilePicture ? LocalizedStringKey("change_profile_picture") : LocalizedStringKey("upload_profile_picture"))
-                            .font(.system(size: 12, weight: .bold))
-                            .tracking(1.2)
-                            .textCase(.uppercase)
+                            .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(Color.primary)
                             .frame(maxWidth: .infinity, minHeight: 40)
                             .background(
@@ -199,7 +196,7 @@ struct UserProfileView: View {
                                     .fill(Color.primary.opacity(0.06))
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                 }
                 .frame(maxWidth: .infinity)
             }

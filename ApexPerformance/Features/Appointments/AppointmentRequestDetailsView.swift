@@ -69,9 +69,7 @@ struct AppointmentRequestDetailsView: View {
                                 Text("comment")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-                                Text(request.comment)
-                                    .font(.subheadline)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                ExpandableText(text: request.comment)
                             }
                         }
                     }
@@ -91,7 +89,7 @@ struct AppointmentRequestDetailsView: View {
                             showChevron: true
                         )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.apexPlain)
                 }
                 .padding(.horizontal, 20)
                 
@@ -112,7 +110,7 @@ struct AppointmentRequestDetailsView: View {
                                     titleColor: .green
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .disabled(isProcessing)
                             
                             Divider().padding(.leading, 52)
@@ -129,7 +127,7 @@ struct AppointmentRequestDetailsView: View {
                                     titleColor: .red
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .disabled(isProcessing)
                         }
                     }

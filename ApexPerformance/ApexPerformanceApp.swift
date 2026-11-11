@@ -30,6 +30,8 @@ import FirebaseCore
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // A tap on the training's Live Activity.
+                .onOpenURL { NotificationRouter.shared.handle(url: $0) }
                 .environment(\.locale, AppLanguage.locale)
                 .id(language)
                 .environmentObject(authManager)

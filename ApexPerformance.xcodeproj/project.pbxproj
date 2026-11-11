@@ -74,6 +74,7 @@
 		61CFB5582F0536EE009E9624 /* AppointmentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */; };
 		61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5592F0A6D0D009E9624 /* CardView.swift */; };
 		3E9ED92A23B3938CC5247038 /* ShowMoreForEach.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6161CA68865A1F4D912A1 /* ShowMoreForEach.swift */; };
+		B26A2A3F970CBAA00349E869 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4CD0D71B706D8EE1F69AE4 /* ExpandableText.swift */; };
 		DE474882F1ECE25867E2C4E9 /* NumberWheelField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0A2E308A3677342C655BEA /* NumberWheelField.swift */; };
 		8FD5D9BC0BE0BDE3D00D3507 /* ApexStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2042155A96499D73E5E0E4 /* ApexStyle.swift */; };
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
@@ -136,6 +137,7 @@
 		01B5C8CEDEC58C1D70C0B3F0 /* TrainingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */; };
 		1AD2437BC6643B397C225E6F /* EndTrainingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */; };
 		00E50CBC6B73F2608BBEC346 /* TrainingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */; };
+		03ECA55C165EC42ACDE14FF8 /* LiveActivityPushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */; };
 		7362A1929FA7BB82D86BAE77 /* TrainingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */; };
 		AA58FA67E478172632785F15 /* EndTrainingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */; };
 		63DDC9BD13DC21F05917C520 /* TrainingActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */; };
@@ -253,6 +255,7 @@
 		61CFB5572F0536EE009E9624 /* AppointmentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailsView.swift; sourceTree = "<group>"; };
 		61CFB5592F0A6D0D009E9624 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		D3A6161CA68865A1F4D912A1 /* ShowMoreForEach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShowMoreForEach.swift"; sourceTree = "<group>"; };
+		EA4CD0D71B706D8EE1F69AE4 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpandableText.swift"; sourceTree = "<group>"; };
 		BE0A2E308A3677342C655BEA /* NumberWheelField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberWheelField.swift; sourceTree = "<group>"; };
 		8F2042155A96499D73E5E0E4 /* ApexStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexStyle.swift; sourceTree = "<group>"; };
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
@@ -318,6 +321,7 @@
 		8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityAttributes.swift; sourceTree = "<group>"; };
 		F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTrainingIntent.swift; sourceTree = "<group>"; };
 		F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivity.swift; sourceTree = "<group>"; };
+		CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LiveActivityPushService.swift"; sourceTree = "<group>"; };
 		F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityBundle.swift; sourceTree = "<group>"; };
 		E706A6D42DE11C9F3F68EA8E /* TrainingLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivityWidget.swift; sourceTree = "<group>"; };
 		FE45599CF3C3160A8D126DE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -494,6 +498,7 @@
 				AD0324B3307091769C04277E /* WeightProgressChartView.swift */,
 				61CFB5592F0A6D0D009E9624 /* CardView.swift */,
 				D3A6161CA68865A1F4D912A1 /* ShowMoreForEach.swift */,
+				EA4CD0D71B706D8EE1F69AE4 /* ExpandableText.swift */,
 				BE0A2E308A3677342C655BEA /* NumberWheelField.swift */,
 				8F2042155A96499D73E5E0E4 /* ApexStyle.swift */,
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
@@ -713,6 +718,7 @@
 				8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */,
 				F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */,
 				F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */,
+				CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */,
 			);
 			path = LiveActivity;
 			sourceTree = "<group>";
@@ -938,6 +944,7 @@
 				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
 				61CFB55A2F0A6D0D009E9624 /* CardView.swift in Sources */,
 				3E9ED92A23B3938CC5247038 /* ShowMoreForEach.swift in Sources */,
+				B26A2A3F970CBAA00349E869 /* ExpandableText.swift in Sources */,
 				DE474882F1ECE25867E2C4E9 /* NumberWheelField.swift in Sources */,
 				8FD5D9BC0BE0BDE3D00D3507 /* ApexStyle.swift in Sources */,
 				61E63F902F1ACA50004D74F3 /* Coach.swift in Sources */,
@@ -1012,6 +1019,7 @@
 				01B5C8CEDEC58C1D70C0B3F0 /* TrainingActivityAttributes.swift in Sources */,
 				1AD2437BC6643B397C225E6F /* EndTrainingIntent.swift in Sources */,
 				00E50CBC6B73F2608BBEC346 /* TrainingLiveActivity.swift in Sources */,
+				03ECA55C165EC42ACDE14FF8 /* LiveActivityPushService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

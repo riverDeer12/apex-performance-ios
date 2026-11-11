@@ -50,7 +50,7 @@ struct ShowMoreButton: View {
             .frame(maxWidth: .infinity, minHeight: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.apexPlain)
         .accessibilityIdentifier("show-more")
     }
 }

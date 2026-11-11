@@ -139,18 +139,17 @@ struct LoginView: View {
                                     if isLoading {
                                         ProgressView()
                                             .progressViewStyle(.circular)
-                                            .tint(Color(.systemBackground))
+                                            .tint(Color.apexOnAccent)
                                     }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 48)
                                 .background(Color.apexMainColor)
-                                // apexMainColor is white in dark mode, so the text
-                                // uses the background colour (white / black).
-                                .foregroundColor(Color(.systemBackground))
+                                // Dark text on the sky blue in both appearances.
+                                .foregroundColor(Color.apexOnAccent)
                                 .cornerRadius(10)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.apexPlain)
                             .disabled(isLoading)
                             .accessibilityIdentifier("login-button")
                             

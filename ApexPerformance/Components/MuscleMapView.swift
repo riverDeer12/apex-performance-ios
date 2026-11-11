@@ -63,7 +63,7 @@ struct MuscleMapView: View {
                 muscle.opacity = opacity
                 muscle.drawLayer { layer in
                     layer.clip(to: path)
-                    // The main color is white in dark mode, the muscles stay blue.
+                    // The same blue in both appearances.
                     layer.fill(path, with: .color(Color.apexMainBlue))
                     // The picture's shading over the color.
                     layer.blendMode = .overlay
@@ -102,9 +102,8 @@ struct MuscleLegendView: View {
                 .frame(width: 10, height: 10)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.caption.weight(.semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
                 Text(muscles.map { String(localized: String.LocalizationValue("muscle_" + $0)) }
                     .joined(separator: " · "))
                     .font(.subheadline)

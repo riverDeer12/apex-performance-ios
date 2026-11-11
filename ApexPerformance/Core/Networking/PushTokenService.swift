@@ -12,6 +12,12 @@ enum PushTokenService {
     // device doesn't get every push twice.
     private static let lastTokenKey = "lastRegisteredFcmToken"
 
+    /// FCM token the backend has for this device: Live Activity tokens and
+    /// changed training times name the device with it.
+    static var registeredToken: String? {
+        UserDefaults.standard.string(forKey: lastTokenKey)
+    }
+
     // The backend links the FCM token to the user from the bearer token,
     // so registration is skipped until the user is logged in.
     static func register(_ fcmToken: String) {
@@ -49,6 +55,8 @@ enum PushTokenService {
                     throw URLError(.badServerResponse)
                 }
                 UserDefaults.standard.set(fcmToken, forKey: lastTokenKey)
+                // Live Activity tokens belong to the FCM token on the backend.
+                await LiveActivityPushService.shared.deviceRegistered()
             } catch {
                 #if DEBUG
                 print("❌ Failed to send FCM token to server: \(error)")

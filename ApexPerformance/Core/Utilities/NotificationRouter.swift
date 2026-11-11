@@ -34,6 +34,17 @@ final class NotificationRouter: ObservableObject {
 
     private init() {}
 
+    /// apexperformance://training/<id>, from a tap on the training's Live
+    /// Activity: opens the training like a training push does.
+    func handle(url: URL) {
+        guard url.scheme == "apexperformance", url.host == "training" else { return }
+        let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:))
+        // Not saved yet: the app opens on the new training form, still open.
+        guard let id else { return }
+        pendingTrainingId = id
+        pendingTab = .trainings
+    }
+
     func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil) {
         switch notificationType {
         case "training":
