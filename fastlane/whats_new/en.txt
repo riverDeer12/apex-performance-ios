@@ -1,11 +1,9 @@
+• Clients now also see a training in progress on the lock screen and in the Dynamic Island of their iPhone, and a tap on it opens that training.
 • A fresh, easier to read look: one blue across the app, smaller headings and most texts no longer in capitals.
 • Home shows the next training with its length, your coach and the time left until it, and your goal and plan in whole sentences.
 • Chat now opens from a button in the top bar, so it no longer covers anything.
 • Coaches enter sets faster: bigger fields, last time's best set next to each exercise and +1 rep, +2.5 kg and Repeat set buttons.
 • Training progress starts with the last 30 days compared to the 30 before, and every chart shows how much it changed.
 • Workouts show the muscles they work, workouts without a picture get an icon of their category, and coaches find import in the + menu.
-• A new training starts as soon as the coach writes its name, and the form shows the time running, so the start is right even when the form stays open.
-• If the coach locks the phone or leaves the app during a training, it is saved automatically as in progress, so nothing is lost.
-• A training in progress shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. Clients see it on their iPhone too, and a tap opens that training. The coach can end it with one tap, without opening the app.
-• The app now reports crashes automatically, so we can find and fix errors faster.
+• A list item now opens with a tap anywhere on its row, not only on the text.
 • Minor improvements and fixes.
