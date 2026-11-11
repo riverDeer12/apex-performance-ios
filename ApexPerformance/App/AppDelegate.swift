@@ -44,6 +44,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Set FCM messaging delegate
         Messaging.messaging().delegate = self
+
+        // Live Activities of trainings started by push (client, coach's other iPhones).
+        if application.isProtectedDataAvailable {
+            KeychainService.shared.makeAvailableInBackground()
+        }
+        MainActor.assumeIsolated { LiveActivityPushService.shared.start() }
         
         return true
     }

@@ -6,8 +6,10 @@
 import ActivityKit
 import SwiftUI
 
-/// Starts, updates and ends the Live Activity of a training in progress.
-/// Only the coach's iPhone that marks the times shows it.
+/// Starts, updates and ends the Live Activity of a training in progress
+/// on the coach's iPhone that marks the times. The backend starts, updates
+/// and ends it by push on the client's and the coach's other iPhones
+/// (`LiveActivityPushService` registers the tokens for that).
 ///
 /// iOS starts an activity only while the app is in the foreground, so the
 /// new training form starts a draft one as soon as the name is written and
@@ -48,6 +50,8 @@ enum TrainingLiveActivity {
             state.trainingName = training.name
             await activity.update(ActivityContent(state: state, staleDate: nil))
         }
+        // Its push token now belongs to the training on the backend.
+        LiveActivityPushService.shared.activitiesChanged()
     }
 
     /// The form closed without saving, or the training is planned after all.
@@ -138,11 +142,17 @@ enum TrainingLiveActivity {
             endText: String(localized: "end_training")
         )
 
+        let content = ActivityContent(state: state, staleDate: nil)
         do {
-            _ = try TrainingActivity.request(
-                attributes: attributes,
-                content: ActivityContent(state: state, staleDate: nil)
-            )
+            // With a push token, so the backend can end it when the training
+            // ends on the web or on another device.
+            _ = try TrainingActivity.request(attributes: attributes, content: content, pushType: .token)
+            return true
+        } catch {
+            print("Live Activity with push not started: \(error)")
+        }
+        do {
+            _ = try TrainingActivity.request(attributes: attributes, content: content)
             return true
         } catch {
             print("Live Activity not started: \(error)")

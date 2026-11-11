@@ -21,11 +21,28 @@ final class KeychainService {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: "accessToken",
-            kSecValueData as String: data
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: Self.accessibility
         ]
         
         SecItemDelete(query as CFDictionary) // overwrite
         SecItemAdd(query as CFDictionary, nil)
+    }
+
+    // Readable after the first unlock, also while the iPhone is locked: a
+    // training's Live Activity started by push launches the app in the
+    // background, which then registers the activity with the backend.
+    private static let accessibility = kSecAttrAccessibleAfterFirstUnlock
+
+    /// Tokens saved before by older versions are readable only while unlocked.
+    func makeAvailableInBackground() {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: "accessToken"
+        ]
+        SecItemUpdate(query as CFDictionary,
+                      [kSecAttrAccessible as String: Self.accessibility] as CFDictionary)
     }
     
     func getToken() -> String? {

@@ -96,6 +96,8 @@ final class AuthManager: ObservableObject {
     }
     
     func logout() {
+        // Needs the login token, deleted next.
+        LiveActivityPushService.unregisterDevice()
         KeychainService.shared.deleteToken()
         isAuthenticated = false
         Task { @MainActor in TrainingLiveActivity.endAll() }

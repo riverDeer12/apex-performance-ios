@@ -133,8 +133,9 @@ private struct EndButton: View {
     let context: ActivityViewContext<TrainingActivityAttributes>
 
     var body: some View {
-        // Ending needs the saved training.
-        if context.state.endedAt == nil, let trainingId = context.state.trainingId {
+        // Ending needs the saved training; clients can't end it.
+        if context.state.endedAt == nil, context.attributes.showsEndButton != false,
+           let trainingId = context.state.trainingId {
             Button(intent: EndTrainingIntent(trainingId: trainingId,
                                              startedAt: context.state.startedAt)) {
                 Label {
