@@ -6,6 +6,6 @@
 • Workouts show the muscles they work, workouts without a picture get an icon of their category, and coaches find import in the + menu.
 • A new training starts as soon as the coach writes its name, and the form shows the time running, so the start is right even when the form stays open.
 • If the coach locks the phone or leaves the app during a training, it is saved automatically as in progress, so nothing is lost.
-• A training in progress shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. The coach can end it with one tap, without opening the app.
+• A training in progress shows on the lock screen and in the Dynamic Island: the client, the training and the time since it started. Clients see it on their iPhone too, and a tap opens that training. The coach can end it with one tap, without opening the app.
 • The app now reports crashes automatically, so we can find and fix errors faster.
 • Minor improvements and fixes.
