@@ -189,6 +189,15 @@ final class LiveActivityPushService {
 
     private nonisolated static func send<Body: Encodable>(path: String, method: String, body: Body,
                                                           authToken: String) async -> Bool {
+        // Also when iOS launched the app in the background for an activity
+        // started by push, which it suspends again soon.
+        let backgroundTask = await MainActor.run {
+            UIApplication.shared.beginBackgroundTask(withName: "LiveActivityToken", expirationHandler: nil)
+        }
+        defer {
+            Task { @MainActor in UIApplication.shared.endBackgroundTask(backgroundTask) }
+        }
+
         do {
             var request = URLRequest(url: AppEnvironment.apiURL.appendingPathComponent(path))
             request.httpMethod = method
