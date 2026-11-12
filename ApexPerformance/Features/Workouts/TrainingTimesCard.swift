@@ -203,6 +203,9 @@ extension Training {
         // This iPhone shows the training's Live Activity itself: the backend
         // starts it by push only on the other devices.
         let deviceToken: String?
+        // Only if the training still runs with this start (the end reminder's
+        // button tapped after it was ended or restarted elsewhere).
+        var onlyIfRunning: Bool? = nil
     }
 
     private struct TimesResponse: Decodable {
@@ -236,12 +239,25 @@ extension Training {
         TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: response.endedAt ?? .now)
     }
 
+    /// Ends the training from "End training" of the reminder that it still
+    /// runs an hour after its start, only if it still runs with that start.
     @MainActor
-    private static func putTimes(id: UUID, startedAt: Date?, endedAt: Date?) async throws -> TimesResponse {
+    static func endFromReminder(id: UUID, startedAt: Date) async throws {
+        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: .now, onlyIfRunning: true)
+        // Ended here or elsewhere: its activity on this iPhone ends.
+        if let endedAt = response.endedAt {
+            TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: endedAt)
+        }
+    }
+
+    @MainActor
+    private static func putTimes(id: UUID, startedAt: Date?, endedAt: Date?,
+                                 onlyIfRunning: Bool = false) async throws -> TimesResponse {
         let formatter = ISO8601DateFormatter()
         let request = TimesRequest(startedAt: startedAt.map(formatter.string(from:)),
                                    endedAt: endedAt.map(formatter.string(from:)),
-                                   deviceToken: PushTokenService.registeredToken)
+                                   deviceToken: PushTokenService.registeredToken,
+                                   onlyIfRunning: onlyIfRunning ? true : nil)
         let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/times")
         return try await APIClient.shared.request(url, method: .put, body: JSONEncoder().encode(request))
     }

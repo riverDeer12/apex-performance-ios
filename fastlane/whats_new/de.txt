@@ -1,3 +1,4 @@
+• Läuft ein Training schon seit einer Stunde, bekommt der Coach eine Mitteilung mit der Taste Training beenden, die es beendet, ohne die App zu öffnen.
 • Auch Kunden sehen ein laufendes Training jetzt auf dem Sperrbildschirm und in der Dynamic Island ihres iPhones, und ein Tippen öffnet dieses Training.
 • Ein neuer, besser lesbarer Look: ein Blau in der ganzen App, kleinere Überschriften und die meisten Texte nicht mehr in Großbuchstaben.
 • Die Startseite zeigt das nächste Training mit Dauer, Coach und verbleibender Zeit sowie dein Ziel und deinen Plan in ganzen Sätzen.
