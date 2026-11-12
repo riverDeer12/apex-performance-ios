@@ -19,6 +19,10 @@ on:
         description: "App version, e.g. 1.6 (empty: worked out automatically)"
         required: false
         default: ""
+      screenshots:
+        description: "Store: also take new App Store screenshots (off: the App Store version keeps the previous ones)"
+        type: boolean
+        default: false
 
 # One upload at a time, so build numbers don't clash.
 concurrency:
@@ -72,23 +76,28 @@ jobs:
           path: ~/Library/Logs/gym
           if-no-files-found: ignore
 
-  # Every App Store build also gets new screenshots for App Store Connect.
+  # New App Store screenshots only when asked for (input "screenshots");
+  # otherwise the new App Store version keeps the previous version's.
   screenshots:
     needs: testflight
-    if: inputs.app == 'store'
+    if: inputs.app == 'store' && inputs.screenshots
     uses: ./.github/workflows/screenshots.yml
     permissions:
       contents: write
 
-  # Then What's New, the screenshots and the build go to the App Store
-  # version on App Store Connect; submitting for review stays manual.
+  # Then What's New, the screenshots (if taken) and the build go to the
+  # App Store version on App Store Connect; submitting for review stays manual.
   store-listing:
-    needs: screenshots
+    needs: [testflight, screenshots]
+    if: >-
+      always() && inputs.app == 'store' &&
+      needs.testflight.result == 'success' &&
+      (needs.screenshots.result == 'success' || needs.screenshots.result == 'skipped')
     uses: ./.github/workflows/store-listing.yml
     with:
-      screenshots_from_this_run: true
+      screenshots_from_this_run: ${{ inputs.screenshots == true }}
+      skip_screenshots: ${{ inputs.screenshots != true }}
     secrets: inherit
     permissions:
       contents: read
       actions: read
-
