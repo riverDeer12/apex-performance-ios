@@ -1,3 +1,4 @@
+• If a training has been running for an hour, the coach gets a notification with an End training button that ends it without opening the app.
 • Clients now also see a training in progress on the lock screen and in the Dynamic Island of their iPhone, and a tap on it opens that training.
 • A fresh, easier to read look: one blue across the app, smaller headings and most texts no longer in capitals.
 • Home shows the next training with its length, your coach and the time left until it, and your goal and plan in whole sentences.

@@ -25,6 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Set up notifications
         UNUserNotificationCenter.current().delegate = self
+        Self.registerNotificationCategories()
         
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
@@ -96,10 +97,67 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([[.banner, .sound, .badge]])
     }
 
+    // MARK: - Training end reminder
+
+    // Category of the backend's reminder that a training started an hour ago is
+    // still running (aps.category), with "End training", which ends it without
+    // opening the app.
+    static let trainingEndReminderCategory = "TRAINING_END_REMINDER"
+    static let endTrainingAction = "END_TRAINING"
+
+    private static func registerNotificationCategories() {
+        let endTraining = UNNotificationAction(identifier: endTrainingAction,
+                                               title: String(localized: "end_training"),
+                                               options: [.authenticationRequired])
+        let reminder = UNNotificationCategory(identifier: trainingEndReminderCategory,
+                                              actions: [endTraining], intentIdentifiers: [],
+                                              options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([reminder])
+    }
+
+    /// Ends the training of the reminder (PUT trainings/{id}/times with its
+    /// start and the end now) and its Live Activity on this iPhone. If that
+    /// fails, the reminder is shown again so the coach can retry or open it.
+    @MainActor
+    private static func endTraining(from notification: UNNotification) async {
+        let userInfo = notification.request.content.userInfo
+        guard let id = (userInfo["trainingId"] as? String).flatMap(UUID.init(uuidString:)),
+              let startedAt = (userInfo["startedAt"] as? String).flatMap(date(fromISO8601:)) else { return }
+
+        do {
+            try await Training.endFromReminder(id: id, startedAt: startedAt)
+        } catch {
+            #if DEBUG
+            print("❌ Training \(id) could not be ended from the reminder: \(error)")
+            #endif
+            let request = UNNotificationRequest(identifier: UUID().uuidString,
+                                                content: notification.request.content, trigger: nil)
+            try? await UNUserNotificationCenter.current().add(request)
+        }
+    }
+
+    // "2026-11-11T10:00:00.250Z", also without the milliseconds.
+    private static func date(fromISO8601 string: String) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.date(from: string) ?? ISO8601DateFormatter().date(from: string)
+    }
+
     // Called when user taps on notification
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        // "End training" of the reminder: the app stays in the background
+        // until the training was ended.
+        if response.actionIdentifier == Self.endTrainingAction {
+            let notification = response.notification
+            Task { @MainActor in
+                await Self.endTraining(from: notification)
+                completionHandler()
+            }
+            return
+        }
+
         let userInfo = response.notification.request.content.userInfo
         if let type = userInfo["type"] as? String {
             let conversationId = userInfo["conversationId"] as? String

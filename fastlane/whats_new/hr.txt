@@ -1,3 +1,4 @@
+• Ako trening traje već sat vremena, trener dobiva obavijest s gumbom Završi trening, koji ga završava bez otvaranja aplikacije.
 • Trening u tijeku sada vidi i klijent na zaključanom ekranu i u Dynamic Islandu svog iPhonea, a dodir na njega otvara taj trening.
 • Novi, čitljiviji izgled: jedna plava boja u cijeloj aplikaciji, manji naslovi i većina teksta više nije velikim slovima.
 • Početna prikazuje sljedeći trening s trajanjem, trenerom i vremenom do početka te tvoj cilj i plan u cijelim rečenicama.

@@ -47,7 +47,8 @@ final class NotificationRouter: ObservableObject {
 
     func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil) {
         switch notificationType {
-        case "training":
+        // The reminder to end a training still running opens it too.
+        case "training", "training_end_reminder":
             pendingTrainingId = trainingId.flatMap(UUID.init(uuidString:))
             pendingTab = .trainings
         case "chat_message":
