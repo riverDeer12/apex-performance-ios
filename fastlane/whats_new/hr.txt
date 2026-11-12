@@ -1,10 +1,2 @@
 • Ako trening traje već sat vremena, trener dobiva obavijest s gumbom Završi trening, koji ga završava bez otvaranja aplikacije.
-• Trening u tijeku sada vidi i klijent na zaključanom ekranu i u Dynamic Islandu svog iPhonea, a dodir na njega otvara taj trening.
-• Novi, čitljiviji izgled: jedna plava boja u cijeloj aplikaciji, manji naslovi i većina teksta više nije velikim slovima.
-• Početna prikazuje sljedeći trening s trajanjem, trenerom i vremenom do početka te tvoj cilj i plan u cijelim rečenicama.
-• Poruke se otvaraju gumbom na vrhu ekrana, pa više ništa ne prekrivaju.
-• Treneri brže upisuju serije: veća polja, najbolja serija s prošlog treninga uz svaku vježbu te gumbi +1 pon., +2,5 kg i Ponovi seriju.
-• Napredak na treninzima počinje usporedbom zadnjih 30 dana s 30 dana prije, a svaki grafikon pokazuje koliko se promijenio.
-• Vježbe prikazuju mišiće koje rade, vježbe bez slike dobile su ikonu svoje kategorije, a treneri uvoz nalaze u izborniku +.
-• Stavka u popisu otvara se dodirom bilo gdje na retku, ne samo na tekstu.
 • Manja poboljšanja i ispravci.

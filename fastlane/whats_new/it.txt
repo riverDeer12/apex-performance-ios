@@ -1,10 +1,2 @@
 • Se un allenamento è in corso da un'ora, l'allenatore riceve una notifica con il pulsante Termina allenamento, che lo termina senza aprire l'app.
-• Ora anche il cliente vede l'allenamento in corso nella schermata di blocco e nella Dynamic Island del suo iPhone, e un tocco apre quell'allenamento.
-• Un aspetto nuovo e più leggibile: un solo blu in tutta l'app, titoli più piccoli e la maggior parte dei testi non più in maiuscolo.
-• La home mostra il prossimo allenamento con durata, allenatore e tempo che manca, e il tuo obiettivo e piano in frasi complete.
-• La chat ora si apre da un pulsante in alto, così non copre più nulla.
-• Gli allenatori inseriscono le serie più velocemente: campi più grandi, la serie migliore dell'ultima volta accanto a ogni esercizio e i pulsanti +1 rip., +2,5 kg e Ripeti serie.
-• I progressi degli allenamenti iniziano con gli ultimi 30 giorni confrontati con i 30 precedenti e ogni grafico mostra quanto è cambiato.
-• Gli esercizi mostrano i muscoli che allenano, quelli senza immagine hanno l'icona della loro categoria e gli allenatori trovano l'importazione nel menu +.
-• Un elemento dell'elenco ora si apre toccando qualsiasi punto della riga, non solo il testo.
 • Piccoli miglioramenti e correzioni.
