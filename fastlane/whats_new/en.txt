@@ -1,10 +1,2 @@
 • If a training has been running for an hour, the coach gets a notification with an End training button that ends it without opening the app.
-• Clients now also see a training in progress on the lock screen and in the Dynamic Island of their iPhone, and a tap on it opens that training.
-• A fresh, easier to read look: one blue across the app, smaller headings and most texts no longer in capitals.
-• Home shows the next training with its length, your coach and the time left until it, and your goal and plan in whole sentences.
-• Chat now opens from a button in the top bar, so it no longer covers anything.
-• Coaches enter sets faster: bigger fields, last time's best set next to each exercise and +1 rep, +2.5 kg and Repeat set buttons.
-• Training progress starts with the last 30 days compared to the 30 before, and every chart shows how much it changed.
-• Workouts show the muscles they work, workouts without a picture get an icon of their category, and coaches find import in the + menu.
-• A list item now opens with a tap anywhere on its row, not only on the text.
 • Minor improvements and fixes.

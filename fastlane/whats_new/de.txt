@@ -1,10 +1,2 @@
 • Läuft ein Training schon seit einer Stunde, bekommt der Coach eine Mitteilung mit der Taste Training beenden, die es beendet, ohne die App zu öffnen.
-• Auch Kunden sehen ein laufendes Training jetzt auf dem Sperrbildschirm und in der Dynamic Island ihres iPhones, und ein Tippen öffnet dieses Training.
-• Ein neuer, besser lesbarer Look: ein Blau in der ganzen App, kleinere Überschriften und die meisten Texte nicht mehr in Großbuchstaben.
-• Die Startseite zeigt das nächste Training mit Dauer, Coach und verbleibender Zeit sowie dein Ziel und deinen Plan in ganzen Sätzen.
-• Der Chat öffnet sich jetzt über eine Taste oben, damit er nichts mehr verdeckt.
-• Coaches erfassen Sätze schneller: größere Felder, der beste Satz vom letzten Mal bei jeder Übung und die Tasten +1 Wdh., +2,5 kg und Satz wiederholen.
-• Der Trainingsfortschritt beginnt mit den letzten 30 Tagen im Vergleich zu den 30 davor, und jedes Diagramm zeigt, wie stark es sich verändert hat.
-• Übungen zeigen die trainierten Muskeln, Übungen ohne Bild erhalten ein Symbol ihrer Kategorie und Coaches finden den Import im Menü +.
-• Ein Listeneintrag öffnet sich jetzt mit einem Tippen irgendwo auf der Zeile, nicht nur auf dem Text.
 • Kleinere Verbesserungen und Fehlerbehebungen.
