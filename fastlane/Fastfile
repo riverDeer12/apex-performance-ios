@@ -95,6 +95,7 @@ platform :ios do
   desc "What's New from fastlane/whats_new/<language>.txt, the screenshots"
   desc "in SCREENSHOTS_DIR (iPhone 6.9\" and iPad 13\" PNGs, in order) and"
   desc "selects the build. Nothing is submitted for review."
+  desc "SKIP_SCREENSHOTS=true leaves the screenshots as they are."
   lane :store_listing do
     store_id, api_key, version, build_number = newest_store_build
 
@@ -115,12 +116,19 @@ platform :ios do
       localization.locale == app.primary_locale || localization.get_app_screenshot_sets.any?
     end.map(&:locale)
 
+    # Without new screenshots a new App Store version keeps the previous
+    # version's (App Store Connect copies them when it creates the version).
+    skip_screenshots = ENV["SKIP_SCREENSHOTS"] == "true"
+
     Dir.mktmpdir do |dir|
       metadata_path = File.join(dir, "metadata")
       screenshots_path = File.join(dir, "screenshots")
-      source = File.expand_path(ENV.fetch("SCREENSHOTS_DIR"))
-      pngs = Dir.glob(File.join(source, "**", "*.png")).sort
-      UI.user_error!("No screenshots in #{source}") if pngs.empty?
+      pngs = []
+      unless skip_screenshots
+        source = File.expand_path(ENV.fetch("SCREENSHOTS_DIR"))
+        pngs = Dir.glob(File.join(source, "**", "*.png")).sort
+        UI.user_error!("No screenshots in #{source}") if pngs.empty?
+      end
 
       locales.each do |locale|
         language = locale.split("-").first
@@ -130,7 +138,7 @@ platform :ios do
         FileUtils.cp(notes, File.join(metadata_path, locale, "release_notes.txt"))
       end
 
-      screenshot_locales.each do |locale|
+      (skip_screenshots ? [] : screenshot_locales).each do |locale|
         target = File.join(screenshots_path, locale)
         FileUtils.mkdir_p(target)
         # deliver keeps the order of the file names; the device folder
@@ -149,7 +157,8 @@ platform :ios do
         skip_binary_upload: true,
         metadata_path: metadata_path,
         screenshots_path: screenshots_path,
-        overwrite_screenshots: true,
+        skip_screenshots: skip_screenshots,
+        overwrite_screenshots: !skip_screenshots,
         submit_for_review: false,
         run_precheck_before_submit: false,
         force: true
