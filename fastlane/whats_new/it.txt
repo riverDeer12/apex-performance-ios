@@ -1,2 +1,3 @@
+• Se l'allenatore non trova un esercizio mentre lo aggiunge a un allenamento, può crearlo subito come nuovo (nome e categoria) e finisce direttamente nell'allenamento. Il resto si modifica più tardi in Esercizi.
 • Se un allenamento è in corso da un'ora, l'allenatore riceve una notifica con il pulsante Termina allenamento, che lo termina senza aprire l'app.
 • Piccoli miglioramenti e correzioni.

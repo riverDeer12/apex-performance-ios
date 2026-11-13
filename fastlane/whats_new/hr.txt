@@ -1,2 +1,3 @@
+• Ako trener kod unosa vježbi u trening ne nađe vježbu, može je odmah dodati kao novu (naziv i kategorija) i ona ide ravno u trening. Ostalo se uređuje kasnije u Vježbama.
 • Ako trening traje već sat vremena, trener dobiva obavijest s gumbom Završi trening, koji ga završava bez otvaranja aplikacije.
 • Manja poboljšanja i ispravci.
