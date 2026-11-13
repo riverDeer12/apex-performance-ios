@@ -1927,6 +1927,14 @@ extension DemoAPI {
             muscles: ["chest"], secondaryMuscles: ["triceps"], isTimed: false,
             category: WorkoutCategory.strengthConditioning.rawValue
         ))
+        // A workout added from the training form: name, category and the name as its description.
+        let quickWorkoutBody = try? JSONEncoder().encode(UpdateWorkoutRequest(
+            name: LocalizedText(translations: ["HR": "Iskorak unatrag"]),
+            description: LocalizedText(translations: ["HR": "Iskorak unatrag"]),
+            thumbnailUrl: "", videoUrl: "", workoutTypes: [],
+            muscles: nil, secondaryMuscles: nil, isTimed: false,
+            category: WorkoutCategory.strengthConditioning.rawValue
+        ))
         let goalBody = try? JSONEncoder().encode(ClientGoal(goal: "Bench press 80 kg", nextAssessmentDate: Date()))
         let profileBody = try? JSONEncoder().encode(UpdateProfileRequest(
             email: "ana.kovac@example.com", firstName: "Ana", lastName: "Kovač", phone: "+385 91 555 0123"
@@ -2001,6 +2009,7 @@ extension DemoAPI {
             check([Workout].self, "workouts", as: .coach),
             check(Workout.self, "workouts/\(bench.uuidString)", method: "PUT", as: .coach, body: workoutBody),
             check(ImportWorkoutsResponse.self, "workouts/import", method: "POST", as: .coach),
+            check(Workout.self, "workouts", method: "POST", as: .coach, body: quickWorkoutBody),
             check(ClientGoal.self, "client-goals/\(ana)", as: .coach),
             check(ClientGoal.self, "client-goals/\(marko)", as: .coach),
             check(ClientGoal.self, "client-goals/\(ana)", method: "PUT", as: .coach, body: goalBody),

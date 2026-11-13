@@ -25,6 +25,7 @@ struct TrainingFormView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var toastManager: ToastManager
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var name: String
     @State private var date: Date
@@ -307,7 +308,8 @@ struct TrainingFormView: View {
 
         return Section {
             NavigationLink {
-                WorkoutPickerView(workouts: workouts, trainingName: name, selection: exercise.workoutId)
+                WorkoutPickerView(workouts: workouts, trainingName: name, selection: exercise.workoutId,
+                                  onCreated: canCreateWorkouts ? { addCreatedWorkout($0) } : nil)
             } label: {
                 HStack {
                     Text("exercise")
@@ -691,6 +693,21 @@ struct TrainingFormView: View {
         }
         withAnimation {
             _ = exercises.remove(at: index)
+        }
+    }
+
+    // Like the Workouts tab: everyone but clients can add workouts.
+    private var canCreateWorkouts: Bool {
+        !authManager.hasRole(role: "Client")
+    }
+
+    /// A workout added from the picker goes into the list at its place,
+    /// so its exercise shows its name and the next pickers have it.
+    private func addCreatedWorkout(_ created: Workout) {
+        guard !workouts.contains(where: { $0.id == created.id }) else { return }
+        workouts.append(created)
+        workouts.sort {
+            $0.name.localized.localizedStandardCompare($1.name.localized) == .orderedAscending
         }
     }
 
@@ -1159,14 +1176,25 @@ private struct SetDraft: Identifiable {
 
 /// Searchable list of all workouts to choose a training exercise, with
 /// the ones that fit the training's name on top (GET workouts/suggested).
+/// A coach who can't find the exercise adds it here with just a name and
+/// a category; it is picked right away and edited later in Workouts.
 private struct WorkoutPickerView: View {
     let workouts: [Workout]
     let trainingName: String
     @Binding var selection: UUID?
+    // Given when the user can add workouts: gets the new one.
+    var onCreated: ((Workout) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
     @State private var suggestedIds: [UUID] = []
+    @State private var isAddingWorkout = false
+    // The workout just added, so the picker closes once its form is gone.
+    @State private var createdWorkout: Workout?
+
+    private var trimmedSearch: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     // Suggestions while not searching, in the API's order (best first).
     private var suggested: [Workout] {
@@ -1191,9 +1219,43 @@ private struct WorkoutPickerView: View {
                     Text("all_workouts")
                 }
             }
+            // At the end of the list, and the only row when the search finds nothing.
+            if onCreated != nil {
+                Section {
+                    Button {
+                        isAddingWorkout = true
+                    } label: {
+                        Label {
+                            if trimmedSearch.isEmpty {
+                                Text("add_new_exercise")
+                            } else {
+                                Text("add_new_exercise_named \(trimmedSearch)")
+                            }
+                        } icon: {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .foregroundStyle(Color.apexMainColor)
+                    }
+                } footer: {
+                    if !trimmedSearch.isEmpty && !workouts.isEmpty && !workouts.contains(where: { $0.matches(searchText) }) {
+                        Text("no_exercise_found_add_hint")
+                    }
+                }
+            }
         }
         .task {
             await loadSuggestions()
+        }
+        .sheet(isPresented: $isAddingWorkout, onDismiss: {
+            if createdWorkout != nil {
+                dismiss()
+            }
+        }) {
+            QuickWorkoutForm(name: trimmedSearch) { created in
+                onCreated?(created)
+                selection = created.id
+                createdWorkout = created
+            }
         }
         .overlay {
             if workouts.isEmpty {
@@ -1236,7 +1298,139 @@ private struct WorkoutPickerView: View {
     }
 }
 
+// MARK: - Quick new workout
+
+/// Short form to add a workout from the training form: only the name
+/// (from the search) and the category. The API needs a description, so
+/// the name stands in for it; muscles are guessed from the name. The rest
+/// (description, video, types, muscles) is edited later in Workouts.
+private struct QuickWorkoutForm: View {
+    var onCreated: (Workout) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toastManager: ToastManager
+
+    @State private var name: String
+    @State private var category: WorkoutCategory = .strengthConditioning
+    @State private var isSaving = false
+    @FocusState private var isNameFocused: Bool
+
+    // Same limit as the workout form and the API.
+    private static let maxNameLength = 60
+    // ErrorCodes.AlreadyExists on the API.
+    private static let duplicateErrorCode = "1300"
+
+    init(name: String, onCreated: @escaping (Workout) -> Void) {
+        self.onCreated = onCreated
+        _name = State(initialValue: String(name.prefix(Self.maxNameLength)))
+    }
+
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isValid: Bool {
+        !trimmedName.isEmpty && trimmedName.count <= Self.maxNameLength
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("name", text: $name)
+                        .focused($isNameFocused)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            if isValid && !isSaving {
+                                Task { await save() }
+                            }
+                        }
+                } header: {
+                    Text("name")
+                }
+
+                Section {
+                    Picker("category", selection: $category) {
+                        ForEach(WorkoutCategory.allCases) { option in
+                            Text(option.title).tag(option)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
+                } header: {
+                    Text("category")
+                } footer: {
+                    Text("quick_new_exercise_hint")
+                }
+            }
+            .navigationTitle("new_exercise")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("cancel") {
+                        dismiss()
+                    }
+                    .disabled(isSaving)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isSaving {
+                        ProgressView()
+                    } else {
+                        Button("add_to_training") {
+                            Task { await save() }
+                        }
+                        .disabled(!isValid)
+                    }
+                }
+            }
+            .interactiveDismissDisabled(isSaving)
+            .onAppear {
+                isNameFocused = true
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    @MainActor
+    private func save() async {
+        guard isValid, !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+
+        let text = LocalizedText(translations: ["HR": trimmedName])
+        let request = UpdateWorkoutRequest(
+            name: text,
+            description: text,
+            thumbnailUrl: "",
+            videoUrl: "",
+            workoutTypes: [],
+            // Guessed from the name on the API.
+            muscles: nil,
+            secondaryMuscles: nil,
+            isTimed: false,
+            category: category.rawValue
+        )
+
+        do {
+            let created: Workout = try await APIClient.shared.request(
+                AppEnvironment.apiURL.appendingPathComponent("workouts"),
+                method: .post,
+                body: JSONEncoder().encode(request)
+            )
+            onCreated(created)
+            toastManager.show("exercise_added_to_training", type: .success)
+            dismiss()
+        } catch ApiError.validation(let response)
+                    where response.errors?["generalErrors"]?.contains(Self.duplicateErrorCode) == true {
+            toastManager.show("workout_duplicate", type: .error)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+}
+
 #Preview {
     TrainingFormView(clientId: UUID(), history: [])
         .environmentObject(ToastManager())
+        .environmentObject(AuthManager())
 }

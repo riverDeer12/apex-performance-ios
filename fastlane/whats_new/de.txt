@@ -1,2 +1,3 @@
+• Findet der Coach beim Hinzufügen von Übungen zu einem Training eine Übung nicht, kann er sie direkt als neue anlegen (Name und Kategorie) und sie kommt sofort ins Training. Den Rest bearbeitet er später unter Übungen.
 • Läuft ein Training schon seit einer Stunde, bekommt der Coach eine Mitteilung mit der Taste Training beenden, die es beendet, ohne die App zu öffnen.
 • Kleinere Verbesserungen und Fehlerbehebungen.
