@@ -53,7 +53,7 @@ struct ProgressPeriodMenu: View {
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
             }
-            .font(.system(size: 15, weight: .semibold))
+            .font(.subheadline.weight(.semibold))
             .foregroundStyle(Color.apexMainColor)
         }
         .accessibilityIdentifier("progress-period")
@@ -184,7 +184,7 @@ struct ClientProgressView: View {
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
             }
-            .font(.system(size: 15, weight: .semibold))
+            .font(.subheadline.weight(.semibold))
             .foregroundStyle(Color.apexMainColor)
             .padding(.bottom, 2)
             .overlay(alignment: .bottom) {
@@ -212,7 +212,7 @@ struct ClientProgressView: View {
 
             if let review {
                 MonthTitle(date: review.monthDate)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
 
                 ExpandableText(text: review.content, font: .body)
@@ -232,7 +232,7 @@ struct ClientProgressView: View {
                         Spacer()
                         Image(systemName: "chevron.right")
                     }
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.apexAccent)
                     .contentShape(Rectangle())
                 }
@@ -271,7 +271,7 @@ struct ClientProgressView: View {
                         .apexSectionTitle()
                     if let latest {
                         Text(verbatim: "\(BodyProgressView.format(BodyProgressView.double(latest.weight))) kg")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.title.weight(.bold))
                     } else {
                         Text("no_measurements")
                             .font(.subheadline)
@@ -285,9 +285,9 @@ struct ClientProgressView: View {
                     let change = BodyProgressView.double(latest.weight) - BodyProgressView.double(previous.weight)
                     VStack(alignment: .trailing, spacing: 2) {
                         changeLabel(change, unit: "kg")
-                            .font(.system(size: 13, weight: .bold))
+                            .font(.footnote.weight(.bold))
                         Text("compared_to_month \(previous.measuredAt.formatted(.dateTime.month(.wide)))")
-                            .font(.system(size: 13))
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -331,7 +331,7 @@ struct ClientProgressView: View {
                     .apexSectionTitle()
                 Spacer()
                 Text(verbatim: "cm")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
             }
             .padding(.bottom, 8)
@@ -354,7 +354,7 @@ struct ClientProgressView: View {
                         }
                         .frame(width: 64, alignment: .trailing)
                     }
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .padding(.vertical, 9)
                 }
 
@@ -365,7 +365,7 @@ struct ClientProgressView: View {
                         Text("show_all_measurements")
                         Image(systemName: "chevron.right")
                     }
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.apexAccent)
                     .padding(.top, 8)
                 }

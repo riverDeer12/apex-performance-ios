@@ -105,7 +105,7 @@ struct NotificationBellButton: View {
                 .overlay(alignment: .topTrailing) {
                     if inbox.unreadCount > 0 {
                         Text(verbatim: inbox.unreadCount > 99 ? "99+" : "\(inbox.unreadCount)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.caption2.weight(.bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
                             .frame(minWidth: 16, minHeight: 16)

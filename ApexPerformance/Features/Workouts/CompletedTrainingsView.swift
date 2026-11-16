@@ -152,7 +152,7 @@ struct CompletedTrainingsView: View {
         }
         .font(.subheadline)
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .apexCardBackground(cornerRadius: 10)
     }
 
@@ -211,12 +211,12 @@ struct TrainingCardView: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
 
                     if !training.isCompleted {
                         let tint: Color = training.isInProgress ? Color.apexMainColor : .orange
                         Text(training.isInProgress ? "in_progress" : "planned")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(tint)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -237,7 +237,7 @@ struct TrainingCardView: View {
                         Text(verbatim: "+\(exerciseNames.count - 3)")
                     }
                 }
-                .font(.system(size: 13, weight: .medium))
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(.secondary)
 
                 Spacer(minLength: 0)
@@ -404,7 +404,7 @@ struct TrainingDetailView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                     Text(verbatim: training.name)
                         .apexTitle()
                     if let completedAt = training.completedAt {
@@ -627,7 +627,7 @@ struct TrainingExerciseCards: View {
                 if isInSuperset {
                     // Exercises of a superset are done one after another without rest.
                     Text("superset")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(Color.apexOnAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -711,7 +711,7 @@ struct TrainingExerciseCards: View {
                 time.frame(width: 64, alignment: .trailing)
             }
         }
-        .font(isHeader ? .system(size: 13, weight: .semibold) : .subheadline)
+        .font(isHeader ? .footnote.weight(.semibold) : .subheadline)
         .foregroundStyle(isHeader ? Color.secondary : Color.primary)
         .padding(.vertical, isHeader ? 6 : 9)
     }

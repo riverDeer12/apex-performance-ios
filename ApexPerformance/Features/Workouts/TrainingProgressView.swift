@@ -266,7 +266,7 @@ struct TrainingProgressView: View {
 
         return VStack(alignment: .leading, spacing: 6) {
             Text("last_30_days")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .opacity(0.8)
 
             Group {
@@ -278,7 +278,7 @@ struct TrainingProgressView: View {
                     Text("trainings_count \(recent.count)")
                 }
             }
-            .font(.system(size: 28, weight: .bold))
+            .font(.title.weight(.bold))
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
@@ -289,7 +289,7 @@ struct TrainingProgressView: View {
                     Text("trainings_last_30_days \(recent.count)")
                 }
             }
-            .font(.system(size: 15, weight: .medium))
+            .font(.subheadline.weight(.medium))
         }
         .foregroundStyle(Color.apexOnAccent)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -341,7 +341,7 @@ struct TrainingProgressView: View {
     private func summaryValue(_ value: String, label: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(verbatim: value)
-                .font(.system(size: 20, weight: .bold))
+                .font(.title3.weight(.bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
             Text(label)
@@ -415,7 +415,7 @@ struct TrainingProgressView: View {
                                     .lineLimit(1)
                                 Image(systemName: "chevron.down")
                             }
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.footnote.weight(.semibold))
                             .foregroundStyle(Color.apexAccent)
                         }
                     }
@@ -644,7 +644,7 @@ struct ChangeBadge: View {
             let color: Color = rounded > 0 ? .green : (rounded < 0 ? .orange : .secondary)
             let arrow = rounded > 0 ? "↑" : (rounded < 0 ? "↓" : "→")
             Text(verbatim: "\(arrow) \(abs(change).formatted(.percent.precision(.fractionLength(0))))")
-                .font(.system(size: 15, weight: .bold))
+                .font(.subheadline.weight(.bold))
                 .foregroundStyle(color)
                 .accessibilityIdentifier("chart-change")
         }

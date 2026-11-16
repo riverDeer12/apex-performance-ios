@@ -293,7 +293,7 @@ struct WorkoutsView: View {
             }
         }
         .padding(.horizontal, 12)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)

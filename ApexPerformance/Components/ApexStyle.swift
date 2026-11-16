@@ -60,7 +60,7 @@ extension View {
     /// Small label above values and sections, in sentence case,
     /// e.g. "Sljedeći trening".
     func apexLabel() -> some View {
-        font(.system(size: 13, weight: .semibold))
+        font(.footnote.weight(.semibold))
             .foregroundStyle(.secondary)
     }
 
@@ -124,7 +124,7 @@ struct ApexPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
             Spacer(minLength: 8)
             if let systemImage {
                 Image(systemName: systemImage)
@@ -146,7 +146,7 @@ struct ApexPrimaryButtonStyle: ButtonStyle {
 struct ApexDestructiveButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 16, weight: .semibold))
+            .font(.callout.weight(.semibold))
             .foregroundStyle(.red)
             .frame(maxWidth: .infinity, minHeight: 46)
             .overlay(

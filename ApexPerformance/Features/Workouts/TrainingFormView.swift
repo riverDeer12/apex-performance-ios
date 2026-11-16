@@ -614,7 +614,7 @@ struct TrainingFormView: View {
                 Text("exercise")
                 if isInSuperset(index) {
                     Text("superset")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(Color.apexOnAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -728,7 +728,7 @@ struct TrainingFormView: View {
         return VStack(spacing: 2) {
             HStack(spacing: 4) {
                 TextField("distance_placeholder", text: set.distance)
-                    .font(.system(size: 19, weight: .semibold))
+                    .font(.title3.weight(.semibold))
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .accessibilityLabel(Text("distance"))
@@ -777,7 +777,7 @@ struct TrainingFormView: View {
                     .frame(width: previousWidth, alignment: .trailing)
             }
         }
-        .font(.system(size: 13, weight: .semibold))
+        .font(.footnote.weight(.semibold))
         .foregroundStyle(.secondary)
     }
 

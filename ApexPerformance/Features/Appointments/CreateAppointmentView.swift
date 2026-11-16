@@ -450,11 +450,11 @@ struct CreateAppointmentView: View {
         } label: {
             VStack(spacing: 3) {
                 Text(verbatim: time)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                 if isOwnAppointment {
                     Label("already_in_appointment", systemImage: "checkmark.circle.fill")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(Color.apexAccent)
                 }
                 
@@ -466,7 +466,7 @@ struct CreateAppointmentView: View {
                     } icon: {
                         Image(systemName: "person.2.fill")
                     }
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(isSelected ? Color.apexOnAccent.opacity(0.8) : Color.secondary)
                 }
             }
