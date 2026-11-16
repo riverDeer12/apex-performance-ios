@@ -96,10 +96,10 @@ struct ClientHomeView: View {
             VStack(alignment: .leading, spacing: 2) {
                 if let firstName = client?.firstName, !firstName.isEmpty {
                     Text("hello_name \(firstName)")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.title2.weight(.bold))
                 }
                 Text("ready_for_next_training")
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
@@ -108,68 +108,71 @@ struct ClientHomeView: View {
     }
 
     private var nextAppointmentCard: some View {
-        ApexPictureBackground(systemImage: "figure.strengthtraining.traditional")
-            .frame(height: 210)
-            .overlay {
-                LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom)
-            }
+        // Grows with large text instead of cutting it: the picture is the background.
+        VStack(alignment: .leading, spacing: 0) {
             // Time left until an approved training, e.g. "in 21 h".
-            .overlay(alignment: .topLeading) {
-                if let appointment = nextAppointment, !appointment.isPending,
-                   let countdown = Self.countdown(to: appointment.startTime) {
-                    Label {
-                        Text(countdown)
-                    } icon: {
-                        Image(systemName: "clock")
-                    }
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.apexOnAccent)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Capsule().fill(Color.apexAccent))
-                    .padding(14)
-                    .accessibilityIdentifier("next-training-countdown")
+            if let appointment = nextAppointment, !appointment.isPending,
+               let countdown = Self.countdown(to: appointment.startTime) {
+                Label {
+                    Text(countdown)
+                } icon: {
+                    Image(systemName: "clock")
                 }
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Color.apexOnAccent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Capsule().fill(Color.apexAccent))
+                .accessibilityIdentifier("next-training-countdown")
             }
-            .overlay(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        if let appointment = nextAppointment {
-                            Text(appointment.isPending
-                                 ? LocalizedStringKey("next_appointment_pending")
-                                 : LocalizedStringKey("next_appointment"))
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.85))
 
-                            Text(verbatim: Self.dateAndTime(appointment.startTime))
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
+            Spacer(minLength: 40)
 
-                            nextAppointmentDetails(appointment)
-                        } else if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        } else {
-                            Text("no_upcoming_appointments")
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    if let appointment = nextAppointment {
+                        Text(appointment.isPending
+                             ? LocalizedStringKey("next_appointment_pending")
+                             : LocalizedStringKey("next_appointment"))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.85))
 
-                    if canGetAppointments {
-                        Button("book_appointment") {
-                            showCreateAppointment = true
-                        }
-                        .buttonStyle(ApexCompactButtonStyle())
-                        .accessibilityIdentifier("book-appointment-button")
+                        Text(verbatim: Self.dateAndTime(appointment.startTime))
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(.white)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.8)
+
+                        nextAppointmentDetails(appointment)
+                    } else if isLoading {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text("no_upcoming_appointments")
+                            .font(.body.weight(.bold))
+                            .foregroundStyle(.white)
                     }
                 }
-                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if canGetAppointments {
+                    Button("book_appointment") {
+                        showCreateAppointment = true
+                    }
+                    .buttonStyle(ApexCompactButtonStyle())
+                    .accessibilityIdentifier("book-appointment-button")
+                }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 210, alignment: .topLeading)
+        .background {
+            ApexPictureBackground(systemImage: "figure.strengthtraining.traditional")
+                .overlay {
+                    LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom)
+                }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
     /// Duration and coach of the next training, e.g. "60 min · Luka Marić".
@@ -195,7 +198,7 @@ struct ClientHomeView: View {
                     }
                 }
             }
-            .font(.system(size: 15, weight: .medium))
+            .font(.subheadline.weight(.medium))
             .foregroundStyle(.white.opacity(0.9))
         }
     }
@@ -240,10 +243,10 @@ struct ClientHomeView: View {
 
                 HStack(alignment: .firstTextBaseline) {
                     Text("package_done_of_total \(package.done) \(package.total)")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                     Spacer(minLength: 8)
                     Text("package_remaining \(package.remaining)")
-                        .font(.system(size: 15))
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
@@ -284,7 +287,7 @@ struct ClientHomeView: View {
                                 .lineLimit(2)
                         }
                     }
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
 
                     // Opens the details, as the whole card does.
@@ -312,7 +315,7 @@ struct ClientHomeView: View {
         if let value, !value.isEmpty {
             TruncationAwareText(
                 text: Text(text)
-                    .font(.system(size: isPrimary ? 16 : 15, weight: isPrimary ? .semibold : .regular))
+                    .font(isPrimary ? .callout.weight(.semibold) : .subheadline)
                     .foregroundStyle(isPrimary ? Color.primary : Color.secondary),
                 lineLimit: 3,
                 isTruncated: Binding(
@@ -382,7 +385,7 @@ struct ClientHomeView: View {
                 .foregroundStyle(Color.apexMainColor)
                 .frame(width: 26)
             Text(title)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.footnote.weight(.semibold))
@@ -486,6 +489,15 @@ struct ClientHomeView: View {
                 .joined(separator: " ")
             coachName = name.isEmpty ? nil : name
         }
+
+        // The home screen widget: next appointment and package.
+        if appointments != nil {
+            HomeWidgetWriter.client(
+                appointments: approvedAppointments,
+                coachName: coachName,
+                package: PackageSummary(client: client, approvedAppointments: approvedAppointments)
+            )
+        }
     }
 
     @MainActor
@@ -527,7 +539,7 @@ struct ApexTitleBar: View {
                 .tracking(4)
             if let subtitle {
                 Text(subtitle)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
             }
         }
@@ -540,7 +552,7 @@ struct ApexCompactButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 6) {
             configuration.label
-                .font(.system(size: 15, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .lineLimit(1)
             Image(systemName: "arrow.right")
                 .font(.system(size: 13, weight: .bold))

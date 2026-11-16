@@ -181,6 +181,11 @@ struct HomeView: View {
             NotificationInbox.shared.reset()
         }
         .tint(.apexAccent)
+        // Trainings kept on the device without a connection, above the tabs.
+        .overlay(alignment: .bottom) {
+            TrainingSaveBanner()
+                .padding(.bottom, 58)
+        }
         .onAppear {
             // Clients start on home, others on their first tab.
             if !hasSelectedFirstTab || !availableTabs.contains(selectedTab) {
@@ -228,6 +233,13 @@ struct HomeView: View {
             } else {
                 tab = .clients
             }
+        case .home where !availableTabs.contains(.home):
+            // Staff have no home: their first tab.
+            tab = availableTabs.first ?? .profile
+        case .appointments where !availableTabs.contains(.appointments):
+            // Without the appointments tab (clients without the permission) the requests open.
+            tab = availableTabs.contains(.appointmentRequests) ? .appointmentRequests : (availableTabs.first ?? .profile)
+            notificationRouter.pendingAppointmentId = nil
         case .appointmentRequests where !availableTabs.contains(.appointmentRequests):
             // Requests open from appointments when there is no requests tab.
             tab = .appointments

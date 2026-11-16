@@ -1,3 +1,8 @@
-• Ako trener kod unosa vježbi u trening ne nađe vježbu, može je odmah dodati kao novu (naziv i kategorija) i ona ide ravno u trening. Ostalo se uređuje kasnije u Vježbama.
-• Ako trening traje već sat vremena, trener dobiva obavijest s gumbom Završi trening, koji ga završava bez otvaranja aplikacije.
+• Treneri: Termini se otvaraju na pregledu Danas – današnji termini, treninzi u tijeku i zahtjevi koje možeš odmah prihvatiti ili odbiti.
+• Ponovi zadnji trening: novi trening klijenta popuni se iz njegovog zadnjeg treninga (vježbe, serije, drop serije i bilješke).
+• Bez interneta se unos treninga ne gubi: sprema se na uređaju i šalje čim se veza vrati.
+• Obrisana serija, drop serija ili vježba vraća se dodirom na Poništi.
+• Osobni rekordi u napretku treninga i oznaka 🏆 Novi rekord na treningu.
+• Podsjetnik 2 sata prije odobrenog termina.
+• Prazni popisi pokazuju što dalje, a tekst prati veličinu slova iz postavki i čitljiviji je u tamnom načinu.
 • Manja poboljšanja i ispravci.

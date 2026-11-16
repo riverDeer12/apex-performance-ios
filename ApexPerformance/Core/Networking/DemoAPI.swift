@@ -915,7 +915,7 @@ fileprivate struct Fixtures {
     }
 
     func training(_ number: Int, _ name: String, client: Int, date: Date, completed: Bool,
-                  note: String? = nil, _ exercises: [ExerciseSpec]) -> JSON {
+                  note: String? = nil, startedAt: Date? = nil, _ exercises: [ExerciseSpec]) -> JSON {
         [
             "id": DemoAPI.id(.training, number).uuidString,
             "name": name,
@@ -924,7 +924,9 @@ fileprivate struct Fixtures {
             "isCompleted": completed,
             "completedAt": null(completed ? iso(date.addingTimeInterval(75 * 60)) : nil),
             "client": person(client),
-            "exercises": exercisesJSON(number, exercises)
+            "exercises": exercisesJSON(number, exercises),
+            // Started by the coach and still running: in progress.
+            "startedAt": null(startedAt.map { iso($0) })
         ]
     }
 
@@ -1015,6 +1017,13 @@ fileprivate struct Fixtures {
                 ex(W.hipThrust, sets(4, "10", 70)),
                 ex(W.romanianDeadlift, sets(3, "10", 50)),
                 ex(W.lunge, sets(3, "12", 8))
+            ]),
+            // Marko's training running right now (the coach's today overview).
+            training(23, "Full Body Conditioning", client: C.marko, date: minutesAgo(35), completed: false,
+                     startedAt: minutesAgo(35), [
+                ex(W.squat, [s("8", 100), s("8", 102.5), s("6", 105)]),
+                ex(W.pullUp, sets(3, "8", nil)),
+                ex(W.overheadPress, sets(3, "10", 45))
             ])
         ]
     }

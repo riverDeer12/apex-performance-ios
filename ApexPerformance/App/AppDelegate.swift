@@ -162,9 +162,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         if let type = userInfo["type"] as? String {
             let conversationId = userInfo["conversationId"] as? String
             let trainingId = userInfo["trainingId"] as? String
+            let appointmentId = userInfo["appointmentId"] as? String
             Task { @MainActor in
                 NotificationRouter.shared.handle(notificationType: type, conversationId: conversationId,
-                                                 trainingId: trainingId)
+                                                 trainingId: trainingId, appointmentId: appointmentId)
             }
         }
 

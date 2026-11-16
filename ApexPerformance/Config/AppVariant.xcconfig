@@ -18,3 +18,7 @@ APP_DISPLAY_NAME_Test = Test Apex
 
 APP_ICON_NAME_Store = AppIcon
 APP_ICON_NAME_Test = AppIconTest
+
+// App Group for the home screen widget data, shared by the app and its
+// widget extension; not in the entitlements yet (needs the Developer portal).
+APP_GROUP_ID = group.software.rdd.ApexPerformance$(APP_BUNDLE_ID_SUFFIX_$(APP_VARIANT))

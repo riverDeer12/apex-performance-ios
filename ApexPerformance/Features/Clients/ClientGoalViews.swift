@@ -283,7 +283,7 @@ struct MonthlyReviewsView: View {
                 ShowMoreForEach(items: reviews) { review in
                     VStack(alignment: .leading, spacing: 8) {
                         MonthTitle(date: review.monthDate)
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                         ExpandableText(text: review.content, lineLimit: 4, font: .body)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

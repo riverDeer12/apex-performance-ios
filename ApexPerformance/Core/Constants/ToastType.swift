@@ -24,7 +24,9 @@ enum ToastType {
         case .error:
             return .red
         case .info:
-            return .secondary
+            // Dark gray: white text stays readable in dark mode too
+            // (.secondary is light gray there).
+            return Color(white: 0.32)
         }
     }
     

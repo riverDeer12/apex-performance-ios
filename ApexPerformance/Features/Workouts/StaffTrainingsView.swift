@@ -119,10 +119,12 @@ struct StaffTrainingsView: View {
 
                 CardView {
                     if filteredTrainings.isEmpty, !isLoading {
-                        Text(trainings.isEmpty ? LocalizedStringKey("no_trainings") : LocalizedStringKey("no_trainings_found"))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 8)
+                        EmptyStateView(systemImage: trainings.isEmpty ? "list.bullet.clipboard" : "magnifyingglass",
+                                       message: trainings.isEmpty ? "no_trainings" : "no_trainings_found",
+                                       actionTitle: trainings.isEmpty ? "new_training" : nil) {
+                            pickedClient = nil
+                            showClientPicker = true
+                        }
                     } else {
                         LazyVStack(spacing: 0) {
                             ShowMoreForEach(items: filteredTrainings) { training in
@@ -284,7 +286,7 @@ struct StaffTrainingsView: View {
         }
         .font(.subheadline)
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .apexCardBackground(cornerRadius: 10)
     }
 
@@ -384,8 +386,8 @@ struct ClientsList<Row: View>: View {
     var body: some View {
         List {
             if clients.isEmpty, !isLoading {
-                Text("no_clients")
-                    .foregroundStyle(.secondary)
+                EmptyStateView(systemImage: "person.3", message: "no_clients")
+                    .listRowBackground(Color.clear)
             }
             ShowMoreForEach(items: filteredClients) { client in
                 row(client)

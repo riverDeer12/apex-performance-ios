@@ -83,11 +83,11 @@ struct PersonalRecordsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Text(verbatim: exercise.name)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.subheadline.weight(.bold))
                     .lineLimit(2)
                 if exercise.isRecent {
                     Text("new_record")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(Color.apexOnAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -114,7 +114,7 @@ struct PersonalRecordsView: View {
                     stat(label: "estimated_one_rep_max", record: exercise.oneRepMax)
                 }
             }
-            .frame(height: 64)
+            .frame(minHeight: 64)
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(Color.apexBorder, lineWidth: 1)
@@ -131,13 +131,13 @@ struct PersonalRecordsView: View {
     private func stat(label: LocalizedStringKey, record: PersonalRecord?) -> some View {
         VStack(spacing: 4) {
             Text(verbatim: record.map(PersonalRecordFormat.value) ?? "—")
-                .font(.system(size: 20, weight: .bold))
+                .font(.title3.weight(.bold))
                 .monospacedDigit()
                 // A pace like "1:52 /500 m" is longer than a weight.
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
             Text(label)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -164,7 +164,7 @@ struct PersonalRecordsView: View {
         }
         .font(.subheadline)
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .apexCardBackground(cornerRadius: 10)
     }
 

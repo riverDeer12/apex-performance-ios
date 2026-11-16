@@ -30,9 +30,7 @@ struct BodyProgressView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("no_measurements")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            EmptyStateView(systemImage: "ruler", message: "no_measurements")
                         }
                     }
                     .padding(.vertical, 8)
@@ -63,7 +61,7 @@ struct BodyProgressView: View {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(verbatim: "\(Self.format(latest)) kg")
-                        .font(.system(size: 30, weight: .bold))
+                        .font(.title.weight(.bold))
 
                     Spacer()
 
@@ -207,7 +205,7 @@ struct BodyProgressView: View {
                 .foregroundStyle(isHeader ? Color.secondary : changeColor)
                 .frame(width: 56, alignment: .trailing)
         }
-        .font(isHeader ? .system(size: 13, weight: .semibold) : .subheadline)
+        .font(isHeader ? .footnote.weight(.semibold) : .subheadline)
         .foregroundStyle(isHeader ? Color.secondary : Color.primary)
         .padding(.vertical, isHeader ? 6 : 10)
     }

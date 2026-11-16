@@ -1,3 +1,8 @@
-• Se l'allenatore non trova un esercizio mentre lo aggiunge a un allenamento, può crearlo subito come nuovo (nome e categoria) e finisce direttamente nell'allenamento. Il resto si modifica più tardi in Esercizi.
-• Se un allenamento è in corso da un'ora, l'allenatore riceve una notifica con il pulsante Termina allenamento, che lo termina senza aprire l'app.
+• Allenatori: gli Appuntamenti si aprono sulla panoramica Oggi – appuntamenti di oggi, allenamenti in corso e richieste da approvare o rifiutare subito.
+• Ripeti l'ultimo allenamento: il nuovo allenamento del cliente si compila dal suo ultimo (esercizi, serie, drop set e note).
+• Senza internet l'allenamento inserito non si perde: viene salvato sul dispositivo e inviato appena torna la connessione.
+• Una serie, un drop set o un esercizio eliminato torna con Annulla.
+• Record personali nei progressi degli allenamenti e il badge 🏆 Nuovo record sull'allenamento.
+• Un promemoria 2 ore prima di un appuntamento confermato.
+• Le liste vuote indicano cosa fare, il testo segue la dimensione impostata ed è più leggibile in modalità scura.
 • Piccoli miglioramenti e correzioni.

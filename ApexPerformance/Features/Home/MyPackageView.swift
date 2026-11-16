@@ -68,7 +68,7 @@ struct MyPackageView: View {
                 }
 
                 Label("cancelation_terms_by_agreement", systemImage: "info.circle")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.footnote.weight(.medium))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 20)
@@ -97,7 +97,7 @@ struct MyPackageView: View {
                 Spacer()
                 if package.isActive {
                     Text("active_package")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(.green)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
@@ -115,14 +115,14 @@ struct MyPackageView: View {
                 Divider().overlay(Color.apexBorder)
                 stat(package.available, label: "to_book")
             }
-            .frame(height: 64)
+            .frame(minHeight: 64)
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(Color.apexBorder, lineWidth: 1)
             )
 
             Text("remaining_includes_reserved \(package.remaining) \(package.reserved)")
-                .font(.system(size: 13, weight: .medium))
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(.secondary)
 
             if authManager.hasPermission(permission: Permissions.canGetAppointments) {
@@ -141,9 +141,9 @@ struct MyPackageView: View {
     private func stat(_ value: Int, label: LocalizedStringKey) -> some View {
         VStack(spacing: 4) {
             Text(verbatim: "\(value)")
-                .font(.system(size: 22, weight: .bold))
+                .font(.title2.weight(.bold))
             Text(label)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -169,7 +169,7 @@ struct MyPackageView: View {
                             .font(.subheadline.weight(.semibold))
                         if appointment.status.name == BusinessStatus.pending.rawValue {
                             Text("pending")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.caption.weight(.bold))
                                 .foregroundStyle(.orange)
                         }
                         Spacer()

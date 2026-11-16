@@ -34,10 +34,7 @@ struct AppointmentRequestsView: View {
                         // Content card
                         CardView {
                             if requests.isEmpty, !isInitialLoading {
-                                Text("no_requests")
-                                    .foregroundStyle(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.vertical, 8)
+                                EmptyStateView(systemImage: "tray", message: "no_requests_to_answer")
                             } else {
                                 VStack(spacing: 0) {
                                     ShowMoreForEach(items: requests) { request in
@@ -91,10 +88,7 @@ struct AppointmentRequestsView: View {
     private var sentRequestsCard: some View {
         CardView {
             if sentRequests.isEmpty, !isInitialLoading {
-                Text("no_requests")
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 8)
+                EmptyStateView(systemImage: "tray", message: "no_sent_requests")
             } else {
                 VStack(spacing: 0) {
                     ShowMoreForEach(items: sentRequests) { request in

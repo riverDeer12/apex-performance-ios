@@ -31,13 +31,31 @@ final class NotificationRouter: ObservableObject {
     @Published var pendingConversationId: UUID?
     // Training a tapped training push opens.
     @Published var pendingTrainingId: UUID?
+    // Appointment a tapped appointment reminder opens.
+    @Published var pendingAppointmentId: UUID?
 
     private init() {}
 
     /// apexperformance://training/<id>, from a tap on the training's Live
     /// Activity: opens the training like a training push does.
     func handle(url: URL) {
-        guard url.scheme == "apexperformance", url.host == "training" else { return }
+        guard url.scheme == "apexperformance" else { return }
+        // The home screen widget: an appointment, the appointments or home.
+        switch url.host {
+        case "appointment":
+            pendingAppointmentId = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:))
+            pendingTab = .appointments
+            return
+        case "appointments":
+            pendingTab = .appointments
+            return
+        case "home":
+            pendingTab = .home
+            return
+        default:
+            break
+        }
+        guard url.host == "training" else { return }
         let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:))
         // Not saved yet: the app opens on the new training form, still open.
         guard let id else { return }
@@ -45,7 +63,8 @@ final class NotificationRouter: ObservableObject {
         pendingTab = .trainings
     }
 
-    func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil) {
+    func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil,
+                appointmentId: String? = nil) {
         switch notificationType {
         // The reminder to end a training still running opens it too.
         case "training", "training_end_reminder":
@@ -57,6 +76,10 @@ final class NotificationRouter: ObservableObject {
         case "appointment_request":
             pendingTab = .appointmentRequests
         case "appointment_updated":
+            pendingTab = .appointments
+        // "Training in 2 h": opens that appointment.
+        case "appointment_reminder":
+            pendingAppointmentId = appointmentId.flatMap(UUID.init(uuidString:))
             pendingTab = .appointments
         case "body_measurement":
             pendingTab = .bodyMeasurements

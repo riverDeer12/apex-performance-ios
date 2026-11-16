@@ -20,6 +20,7 @@ struct AppNotification: Identifiable, Decodable, Hashable {
     var systemImage: String {
         switch type {
         case "appointment_request", "appointment_updated": "calendar"
+        case "appointment_reminder": "alarm"
         case "body_measurement": "ruler"
         case "client_goal": "scope"
         case "monthly_review", "monthly_review_reminder": "doc.text"
@@ -104,7 +105,7 @@ struct NotificationBellButton: View {
                 .overlay(alignment: .topTrailing) {
                     if inbox.unreadCount > 0 {
                         Text(verbatim: inbox.unreadCount > 99 ? "99+" : "\(inbox.unreadCount)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.caption2.weight(.bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
                             .frame(minWidth: 16, minHeight: 16)
@@ -137,8 +138,8 @@ struct NotificationsView: View {
         NavigationStack {
             List {
                 if inbox.notifications.isEmpty && inbox.hasLoaded {
-                    Text("no_notifications")
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(systemImage: "bell.slash", message: "no_notifications")
+                        .listRowBackground(Color.clear)
                 }
                 ShowMoreForEach(items: inbox.notifications) { notification in
                     Button {
@@ -247,7 +248,8 @@ struct NotificationsView: View {
         NotificationRouter.shared.handle(
             notificationType: notification.type,
             conversationId: notification.data["conversationId"],
-            trainingId: notification.data["trainingId"]
+            trainingId: notification.data["trainingId"],
+            appointmentId: notification.data["appointmentId"]
         )
     }
 

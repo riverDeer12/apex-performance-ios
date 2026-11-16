@@ -46,10 +46,11 @@ struct TrainingTemplatesView: View {
 
                 CardView {
                     if filteredTemplates.isEmpty, !isLoading {
-                        (searchText.isEmpty ? Text("no_templates") : Text("no_templates_found"))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 8)
+                        EmptyStateView(systemImage: searchText.isEmpty ? "doc.on.clipboard" : "magnifyingglass",
+                                       message: searchText.isEmpty ? "no_templates" : "no_templates_found",
+                                       actionTitle: searchText.isEmpty ? "new_template" : nil) {
+                            showCreateSheet = true
+                        }
                     } else {
                         LazyVStack(spacing: 0) {
                             ShowMoreForEach(items: filteredTemplates) { template in
@@ -160,7 +161,7 @@ struct TrainingTemplatesView: View {
         }
         .font(.subheadline)
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .apexCardBackground(cornerRadius: 10)
     }
 

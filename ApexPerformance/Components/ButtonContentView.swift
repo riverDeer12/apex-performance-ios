@@ -31,7 +31,7 @@ struct ButtonContentView: View {
                     .accessibilityLabel(text) // important for icon-only
             }
         }
-        .font(.system(size: 15, weight: .semibold))
+        .font(.subheadline.weight(.semibold))
         .foregroundStyle(Color.apexMainColor)
         .padding(.horizontal, style == .iconOnly(systemName: "") ? 0 : 12) // (see note below)
         .frame(height: 34)

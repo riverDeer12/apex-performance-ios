@@ -1,3 +1,8 @@
-• If the coach can't find an exercise while adding exercises to a training, they can add it as a new one right there (name and category) and it goes straight into the training. The rest can be edited later in Workouts.
-• If a training has been running for an hour, the coach gets a notification with an End training button that ends it without opening the app.
+• Coaches: Appointments open on a Today overview – today's appointments, trainings in progress and requests you can approve or reject right there.
+• Repeat last training: a client's new training is filled from their latest one (exercises, sets, drop sets and notes).
+• Training entries aren't lost without internet: they're kept on the device and sent as soon as the connection is back.
+• A deleted set, drop set or exercise comes back with Undo.
+• Personal records in training progress and a 🏆 New record badge on the training.
+• A reminder 2 hours before an approved appointment.
+• Empty lists show what to do next, text follows your text size setting and reads better in dark mode.
 • Minor improvements and fixes.
