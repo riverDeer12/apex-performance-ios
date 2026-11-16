@@ -14,6 +14,16 @@ struct AppointmentsView: View {
     @State private var showSentRequests = false
     @State private var isGeneratingRecurring = false
     @State private var selectedDate = Calendar.current.startOfDay(for: Date())
+    // Staff: today's overview or the calendar.
+    @State private var staffMode: StaffMode = .today
+    // Staff: their clients' trainings, for the ones in progress today.
+    @State private var trainings: [Training] = []
+    // Training in progress opened from today's overview, in its form.
+    @State private var openedTraining: Training?
+
+    enum StaffMode: Hashable {
+        case today, calendar
+    }
     
     @EnvironmentObject private var toastManager: ToastManager
     @EnvironmentObject private var authManager: AuthManager
@@ -35,7 +45,109 @@ struct AppointmentsView: View {
                     }
                     .buttonStyle(ApexPrimaryButtonStyle())
                     .padding(.horizontal, 20)
+
+                    // Staff start on today: appointments, trainings in progress and requests.
+                    if canManageRequests {
+                        Picker("appointments_view", selection: $staffMode) {
+                            Text("today").tag(StaffMode.today)
+                            Text("calendar").tag(StaffMode.calendar)
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal, 20)
+                        .accessibilityIdentifier("appointments-mode")
+                    }
+
+                    if canManageRequests && staffMode == .today {
+                        todaySections
+                    } else {
+                        calendarSections
+                    }
+                }
+                .padding(.bottom, 24)
+            }
+            .background(Color.apexBackground)
+            .overlay {
+                if isInitialLoading && appointments.isEmpty {
+                    ProgressView()
+                }
+            }
+            .overlay {
+                if isGeneratingRecurring {
+                    generatingOverlay
+                }
+            }
+            .sheet(item: $openedTraining) { training in
+                TrainingFormView(
+                    clientId: training.client.id,
+                    training: training,
+                    history: trainings.filter { $0.client.id == training.client.id }
+                ) { saved in
+                    trainings.removeAll { $0.id == saved.id }
+                    trainings.append(saved)
+                }
+            }
+            .refreshable {
+                await loadData(showInitialSpinner: false)
+            }
+            // Every time the screen is shown; own task, so leaving it doesn't cancel the request.
+            .task {
+                await Task { await loadData(showInitialSpinner: true) }.value
+            }
+            .onAppear { openRequestsFromNotification() }
+            .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
+            .navigationBarTitleDisplayMode(.inline)
+            .chatToolbarButton()
+            .toolbar {
+                // Clients have the bell on home.
+                ToolbarItem(placement: .topBarLeading) {
+                    if !isClient {
+                        NotificationBellButton()
+                    }
+                }
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     
+                    if showsRequestsButton {
+                        // Clients: requests they sent, with their status.
+                        // Staff: requests waiting for approval.
+                        Button {
+                            showSentRequests = true
+                        } label: {
+                            Image(systemName: "calendar.badge.clock")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel("appointment_requests")
+                        .accessibilityIdentifier("requests-button")
+                        .buttonStyle(.apexPlain)
+                        .padding(.horizontal, 8)
+                    }
+                    
+                    if(authManager.hasRole(role: "Coach")){
+                        Button {
+                            Task { await generateRecurringAppointments() }
+                        } label: {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundStyle(Color.apexMainColor)
+                        }
+                        .accessibilityLabel("generate_recurring_appointments")
+                        .buttonStyle(.apexPlain)
+                        .disabled(isGeneratingRecurring)
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $showCreateAppointmentForm) {
+                CreateAppointmentView()
+            }
+            .sheet(isPresented: $showSentRequests) {
+                AppointmentRequestsView()
+                    // A sheet over appointments, not a tab: no chat button.
+                    .environment(\.openChat, nil)
+                    .presentationDragIndicator(.visible)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var calendarSections: some View {
                     // Pending Appointments Section
                     if !pendingAppointments.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
@@ -112,103 +224,221 @@ struct AppointmentsView: View {
                         }
                         .padding(.horizontal, 20)
                     }
+    }
+
+    // MARK: - Today (staff)
+
+    /// Today's appointments, trainings in progress and requests waiting
+    /// for an answer, approved or rejected right here.
+    @ViewBuilder
+    private var todaySections: some View {
+        todaySection(title: "todays_appointments") {
+            if todaysAppointments.isEmpty {
+                EmptyStateView(systemImage: "calendar", message: "no_appointments_today",
+                               actionTitle: "new_appointment") {
+                    showCreateAppointmentForm = true
                 }
-                .padding(.bottom, 24)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(todaysAppointments) { appointment in
+                        NavigationLink {
+                            AppointmentDetailsView(appointment: appointment)
+                        } label: {
+                            todayAppointmentRow(appointment)
+                        }
+                        .buttonStyle(.apexPlain)
+                        .accessibilityIdentifier("today-appointment-row")
+
+                        if appointment.id != todaysAppointments.last?.id {
+                            Divider().padding(.leading, 52)
+                        }
+                    }
+                }
             }
-            .background(Color.apexBackground)
-            .overlay {
+        }
+
+        todaySection(title: "trainings_in_progress") {
+            if trainingsInProgress.isEmpty {
+                EmptyStateView(systemImage: "timer", message: "no_trainings_in_progress")
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(trainingsInProgress) { training in
+                        Button {
+                            openedTraining = training
+                        } label: {
+                            trainingInProgressRow(training)
+                        }
+                        .buttonStyle(.apexPlain)
+                        .accessibilityIdentifier("today-training-row")
+
+                        if training.id != trainingsInProgress.last?.id {
+                            Divider().padding(.leading, 52)
+                        }
+                    }
+                }
+            }
+        }
+
+        todaySection(title: "pending_requests") {
+            if pendingAppointments.isEmpty && appointmentRequests.isEmpty {
+                EmptyStateView(systemImage: "checkmark.circle", message: "no_pending_requests")
+            } else {
+                VStack(spacing: 0) {
+                    ShowMoreForEach(items: pendingAppointments) { appointment in
+                        pendingAppointmentRow(appointment)
+                        Divider().padding(.leading, 52)
+                    }
+                    ShowMoreForEach(items: appointmentRequests) { request in
+                        appointmentRequestRow(request)
+                        if request.id != appointmentRequests.last?.id {
+                            Divider().padding(.leading, 52)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func todaySection<Content: View>(title: LocalizedStringKey,
+                                             @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .apexLabel()
+                .padding(.horizontal, 20)
+
+            CardView {
                 if isInitialLoading && appointments.isEmpty {
                     ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                } else {
+                    content()
                 }
             }
-            .overlay {
-                if isGeneratingRecurring {
-                    ZStack {
-                        Color.black.opacity(0.4)
-                            .ignoresSafeArea()
-                        
-                        VStack(spacing: 20) {
-                            Image("logo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                            
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(Color.apexMainColor)
-                            
-                            Text("generating_recurring_appointments")
-                                .font(.headline)
-                                .foregroundStyle(.primary)
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding(40)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color(.systemBackground))
-                                .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
-                        )
-                        .padding(.horizontal, 40)
-                    }
-                }
+            .padding(.horizontal, 20)
+        }
+    }
+
+    // Approved and requested appointments of today, by time.
+    private var todaysAppointments: [Appointment] {
+        (appointments + pendingAppointments)
+            .filter { Calendar.current.isDateInToday($0.startTime) }
+            .sorted { $0.startTime < $1.startTime }
+    }
+
+    // Started by a coach and not completed yet, the latest start first.
+    private var trainingsInProgress: [Training] {
+        trainings
+            .filter { $0.isInProgress && $0.endedAt == nil }
+            .sorted { ($0.startedAt ?? $0.date) > ($1.startedAt ?? $1.date) }
+    }
+
+    private func todayAppointmentRow(_ appointment: Appointment) -> some View {
+        let isPending = appointment.status.name == BusinessStatus.pending.rawValue
+        let isOver = appointment.endTime <= Date()
+        let tint: Color = isPending ? .orange : (isOver ? .green : Color.apexMainColor)
+
+        return HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(tint.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                Image(systemName: isPending ? "calendar.badge.exclamationmark" : (isOver ? "checkmark.diamond" : "calendar"))
+                    .foregroundStyle(tint)
             }
-            .refreshable {
-                await loadData(showInitialSpinner: false)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: appointment.timeSlot.description
+                     ?? appointment.startTime.formatted(date: .omitted, time: .shortened))
+                    .font(.body.bold())
+                    .foregroundStyle(.primary)
+                Text(verbatim: appointment.clients.isEmpty
+                     ? "—" : appointment.clients.map(\.fullName).joined(separator: ", "))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
             }
-            // Every time the screen is shown; own task, so leaving it doesn't cancel the request.
-            .task {
-                await Task { await loadData(showInitialSpinner: true) }.value
+
+            Spacer(minLength: 8)
+
+            BadgeView(text: isPending ? "appointment_status_pending" : (isOver ? "appointment_status_done" : "appointment_status_approved"),
+                      color: tint)
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 10)
+        .contentShape(Rectangle())
+    }
+
+    private func trainingInProgressRow(_ training: Training) -> some View {
+        let client = [training.client.firstName, training.client.lastName].compactMap { $0 }.joined(separator: " ")
+        return HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                Image(systemName: "timer")
+                    .foregroundStyle(.orange)
             }
-            .onAppear { openRequestsFromNotification() }
-            .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
-            .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
-            .toolbar {
-                // Clients have the bell on home.
-                ToolbarItem(placement: .topBarLeading) {
-                    if !isClient {
-                        NotificationBellButton()
-                    }
-                }
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    
-                    if showsRequestsButton {
-                        // Clients: requests they sent, with their status.
-                        // Staff: requests waiting for approval.
-                        Button {
-                            showSentRequests = true
-                        } label: {
-                            Image(systemName: "calendar.badge.clock")
-                                .foregroundStyle(Color.apexMainColor)
-                        }
-                        .accessibilityLabel("appointment_requests")
-                        .accessibilityIdentifier("requests-button")
-                        .buttonStyle(.apexPlain)
-                        .padding(.horizontal, 8)
-                    }
-                    
-                    if(authManager.hasRole(role: "Coach")){
-                        Button {
-                            Task { await generateRecurringAppointments() }
-                        } label: {
-                            Image(systemName: "arrow.triangle.2.circlepath")
-                                .foregroundStyle(Color.apexMainColor)
-                        }
-                        .accessibilityLabel("generate_recurring_appointments")
-                        .buttonStyle(.apexPlain)
-                        .disabled(isGeneratingRecurring)
-                    }
-                }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: training.name)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                Text(verbatim: client)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
-            .navigationDestination(isPresented: $showCreateAppointmentForm) {
-                CreateAppointmentView()
+
+            Spacer(minLength: 8)
+
+            if let startedAt = training.startedAt {
+                // Time since the start, counting up.
+                Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.trailing)
+                    .frame(minWidth: 56, alignment: .trailing)
             }
-            .sheet(isPresented: $showSentRequests) {
-                AppointmentRequestsView()
-                    // A sheet over appointments, not a tab: no chat button.
-                    .environment(\.openChat, nil)
-                    .presentationDragIndicator(.visible)
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 10)
+        .contentShape(Rectangle())
+    }
+
+    private var generatingOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                Image("logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .tint(Color.apexMainColor)
+                
+                Text("generating_recurring_appointments")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
             }
+            .padding(40)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+            )
+            .padding(.horizontal, 40)
         }
     }
 
@@ -571,10 +801,17 @@ struct AppointmentsView: View {
                 requests = []
             }
             
+            // Staff: trainings in progress for today's overview; the
+            // appointments work without them.
+            let loadedTrainings: [Training]? = canManageRequests ? try? await Training.loadAll() : nil
+
             await MainActor.run {
                 appointments = mapped
                 pendingAppointments = mappedPending
                 appointmentRequests = requests.sorted { $0.appointment.startTime < $1.appointment.startTime }
+                if let loadedTrainings {
+                    trainings = loadedTrainings
+                }
             }
         } catch is CancellationError {
             return

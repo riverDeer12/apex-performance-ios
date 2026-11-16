@@ -81,6 +81,7 @@
 		61CFB55C2F0A6D1D009E9624 /* StatTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */; };
 		61CFB55E2F0A6D2E009E9624 /* SettingsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */; };
 		61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E63F612F0A7633004D74F3 /* BadgeView.swift */; };
+		C8CCA3E4C9EFFDD8A128E8BB /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E982E75D877184A0BCCD706 /* EmptyStateView.swift */; };
 		5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */; };
 		CB075B04A94A6AE1831A2184 /* BodyMapPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */; };
 		1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */; };
@@ -264,6 +265,7 @@
 		61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTileView.swift; sourceTree = "<group>"; };
 		61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowView.swift; sourceTree = "<group>"; };
 		61E63F612F0A7633004D74F3 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		2E982E75D877184A0BCCD706 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EmptyStateView.swift"; sourceTree = "<group>"; };
 		1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuscleMapView.swift; sourceTree = "<group>"; };
 		EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMapPaths.swift; sourceTree = "<group>"; };
 		5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsavedChangesGuard.swift; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 				61CFB55B2F0A6D1D009E9624 /* StatTileView.swift */,
 				61CFB55D2F0A6D2E009E9624 /* SettingsRowView.swift */,
 				61E63F612F0A7633004D74F3 /* BadgeView.swift */,
+				2E982E75D877184A0BCCD706 /* EmptyStateView.swift */,
 				1AFCAE2093206BF5010483D0 /* MuscleMapView.swift */,
 				EC5804DBD2AF59BD61B5D657 /* BodyMapPaths.swift */,
 				5D7F16B7F2907C6B1D3F8E13 /* UnsavedChangesGuard.swift */,
@@ -969,6 +972,7 @@
 				A0A84524662DC84F06B590E3 /* AppleHealth.swift in Sources */,
 				113114A4BA4F6C11A5D53657 /* AppLanguage.swift in Sources */,
 				61E63F622F0A7633004D74F3 /* BadgeView.swift in Sources */,
+				C8CCA3E4C9EFFDD8A128E8BB /* EmptyStateView.swift in Sources */,
 				5108698B35FE7AFBB6E88EA0 /* MuscleMapView.swift in Sources */,
 				CB075B04A94A6AE1831A2184 /* BodyMapPaths.swift in Sources */,
 				1C3EEABE5DF1BAFE2405AC9F /* UnsavedChangesGuard.swift in Sources */,

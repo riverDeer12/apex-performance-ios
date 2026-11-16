@@ -110,6 +110,32 @@ final class DemoAPITests: XCTestCase {
         XCTAssertTrue(trainings.allSatisfy(\.isCompleted))
     }
 
+    @MainActor
+    func testCoachTodayHasATrainingInProgress() throws {
+        let trainings = try APIClient.decoder.decode(
+            [Training].self, from: DemoAPI.fixture("GET", "trainings", role: .coach).data
+        )
+        XCTAssertTrue(trainings.contains { $0.isInProgress })
+    }
+
+    @MainActor
+    func testNewRecordsAreWorkedOutFromHistory() throws {
+        let trainings = try APIClient.decoder.decode(
+            [Training].self, from: DemoAPI.fixture("GET", "trainings", role: .client).data
+        )
+        // Ana's latest training: bench press 70 kg after 67.5 kg before.
+        let latest = try XCTUnwrap(trainings.max { $0.date < $1.date })
+        let records = TrainingRecords.newRecords(in: latest, history: trainings)
+        let bench = DemoAPI.id(.workout, DemoAPI.WorkoutNumber.bench)
+        XCTAssertEqual(records.first { $0.workoutId == bench }?.weight, 70)
+        // First time done: no record yet.
+        let curl = DemoAPI.id(.workout, DemoAPI.WorkoutNumber.curl)
+        XCTAssertFalse(records.contains { $0.workoutId == curl })
+
+        let bests = TrainingRecords.bests(in: trainings)
+        XCTAssertEqual(bests.first { $0.workoutId == bench }?.weight, 70)
+    }
+
     func testUnknownPathIsNotFound() {
         XCTAssertEqual(DemoAPI.fixture("GET", "no-such-endpoint", role: .client).status, 404)
         XCTAssertEqual(DemoAPI.fixture("GET", "profile/picture", role: .client).status, 404)

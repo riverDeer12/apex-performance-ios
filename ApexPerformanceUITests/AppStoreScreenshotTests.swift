@@ -60,10 +60,16 @@ final class AppStoreScreenshotTests: XCTestCase {
         try waitForTabs()
         XCTAssertTrue(tab("Clients").exists, "Not a coach account (no Clients tab)")
 
-        // Appointments calendar with requests above it.
+        // Today's overview, then the appointments calendar with requests above it.
         if tab("Appointments").exists {
             tab("Appointments").tap()
             waitForContent()
+            takeScreenshot("coach", "today")
+            let calendar = app.buttons.matching(NSPredicate(format: "label ==[c] %@", "Calendar")).firstMatch
+            if calendar.waitForExistence(timeout: 3) {
+                calendar.tap()
+                waitForContent(seconds: 1)
+            }
             takeScreenshot("coach", "appointments")
         }
 
