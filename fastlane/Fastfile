@@ -50,10 +50,6 @@ platform :ios do
     enable_capability(app_id, "HEALTHKIT")
     # Live Activity of a training in progress (widget extension).
     ensure_bundle_id("#{app_id}.TrainingActivity", "Apex Training Activity#{test_app ? ' Test' : ''}")
-    # Home screen widget: the app and the widget extension share data
-    # through the App Group group.<app id>.
-    enable_capability(app_id, "APP_GROUPS")
-    enable_capability("#{app_id}.TrainingActivity", "APP_GROUPS")
 
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
@@ -291,10 +287,6 @@ platform :ios do
       level = entitlements.include?("aps-environment") ? "notice" : "error"
       puts "::#{level} title=Entitlements::#{entitlements.gsub("\n", "%0A")}"
       UI.user_error!("The exported app has no aps-environment entitlement") if level == "error"
-      # The widget shows nothing new without the App Group (a warning only).
-      unless entitlements.include?("com.apple.security.application-groups")
-        puts "::warning title=App Group::The exported app has no App Group, the home screen widget gets no data"
-      end
     end
   end
 
