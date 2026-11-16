@@ -1,3 +1,9 @@
-• Findet der Coach beim Hinzufügen von Übungen zu einem Training eine Übung nicht, kann er sie direkt als neue anlegen (Name und Kategorie) und sie kommt sofort ins Training. Den Rest bearbeitet er später unter Übungen.
-• Läuft ein Training schon seit einer Stunde, bekommt der Coach eine Mitteilung mit der Taste Training beenden, die es beendet, ohne die App zu öffnen.
-• Kleinere Verbesserungen und Fehlerbehebungen.
+• Trainer: Termine öffnen sich mit der Übersicht Heute – heutige Termine, laufende Trainings und Anfragen, die du direkt annehmen oder ablehnen kannst.
+• Letztes Training wiederholen: Ein neues Training des Kunden wird aus seinem letzten gefüllt (Übungen, Sätze, Drop-Sätze und Notizen).
+• Ohne Internet geht kein Training verloren: Es wird auf dem Gerät gespeichert und gesendet, sobald die Verbindung zurück ist.
+• Ein gelöschter Satz, Drop-Satz oder eine Übung kommt mit Rückgängig zurück.
+• Persönliche Rekorde im Trainingsfortschritt und das Abzeichen 🏆 Neuer Rekord im Training.
+• Widget für den Home-Bildschirm: dein nächster Termin und dein Paket, für Trainer der nächste Termin heute und offene Anfragen.
+• Eine Erinnerung 2 Stunden vor einem bestätigten Termin.
+• Leere Listen zeigen den nächsten Schritt, Text folgt der eingestellten Schriftgröße und ist im Dunkelmodus besser lesbar.
+• Kleine Verbesserungen und Fehlerbehebungen.
