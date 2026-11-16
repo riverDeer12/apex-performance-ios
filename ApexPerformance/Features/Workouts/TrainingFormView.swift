@@ -41,6 +41,11 @@ struct TrainingFormView: View {
     @State private var autosaved: Training?
     // Live Activity started with the timer, before the training is saved.
     @State private var activityKey: String?
+    // This form's trainings in the save queue (kept on the device when offline).
+    @State private var saveKey = UUID()
+    // Kept on the device to be saved when the connection is back.
+    @State private var isQueued = false
+    @ObservedObject private var saveQueue = TrainingSaveQueue.shared
 
     // The training being edited: the given one or the autosaved new one.
     private var currentTraining: Training? {
@@ -57,6 +62,10 @@ struct TrainingFormView: View {
     // Templates a new training can be filled from.
     @State private var templates: [TrainingTemplate] = []
     @State private var selectedTemplateId: UUID?
+    // Training "Repeat last training" filled the form from.
+    @State private var repeatedFrom: Training?
+    // Set, drop set or exercise just removed, until undone or the snackbar goes.
+    @State private var lastRemoval: Removal?
 
     init(clientId: UUID, training: Training? = nil, history: [Training], onSaved: ((Training) -> Void)? = nil) {
         self.clientId = clientId
@@ -167,6 +176,10 @@ struct TrainingFormView: View {
                     }
                 }
 
+                if canUseTemplates, let source = trainingToRepeat {
+                    repeatSection(source)
+                }
+
                 Section {
                     TextField("name", text: $name)
                         .onChange(of: name) { _, _ in
@@ -228,9 +241,24 @@ struct TrainingFormView: View {
             .onChange(of: isPlanned) { _, _ in updateDraftActivity() }
             .onDisappear {
                 // Closed without saving: nothing runs.
-                if let activityKey, autosaved == nil {
+                if let activityKey, autosaved == nil, !isQueued {
                     TrainingLiveActivity.endDraft(activityKey)
                 }
+            }
+            // No connection: saved later; a small banner says so.
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if !isTemplate {
+                    TrainingSaveBanner()
+                        .padding(.vertical, saveQueue.entries.isEmpty && !saveQueue.showsSaved ? 0 : 6)
+                }
+            }
+            // Saved from the queue while the form is open: it goes on editing that training.
+            .onChange(of: saveQueue.lastSynced) { _, synced in
+                guard let synced, synced.key == saveKey else { return }
+                autosaved = synced.training
+                isQueued = false
+                activityKey = nil
+                onSaved?(synced.training)
             }
             // Locking the phone or leaving the app saves the running training.
             .onChange(of: scenePhase) { _, phase in
@@ -280,6 +308,139 @@ struct TrainingFormView: View {
             .onChange(of: selectedTemplateId) {
                 applySelectedTemplate()
             }
+            // "Deleted · Undo" instead of asking before removing.
+            .overlay(alignment: .bottom) {
+                if let lastRemoval {
+                    UndoSnackbar {
+                        undo(lastRemoval)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .task(id: lastRemoval.id) {
+                        try? await Task.sleep(for: .seconds(5))
+                        guard !Task.isCancelled, self.lastRemoval?.id == lastRemoval.id else { return }
+                        withAnimation { self.lastRemoval = nil }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Repeat last training
+
+    /// The client's latest training with the name typed so far, otherwise
+    /// the latest one; nil when the client has no training with exercises.
+    private var trainingToRepeat: Training? {
+        guard let clientId else { return nil }
+        let earlier = history
+            .filter { $0.client.id == clientId && $0.id != currentTraining?.id && !$0.exercises.isEmpty }
+            .sorted { $0.date > $1.date }
+        let typed = trimmed(name)
+        if !typed.isEmpty, let sameName = earlier.first(where: {
+            trimmed($0.name).compare(typed, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }) {
+            return sameName
+        }
+        return earlier.first
+    }
+
+    // "12.11.2026 · Legs"
+    private static func trainingDescription(_ training: Training) -> String {
+        "\(DateFormatter.dateWithDots.string(from: training.date)) · \(training.name)"
+    }
+
+    private func repeatSection(_ source: Training) -> some View {
+        Section {
+            Button {
+                repeatTraining(source)
+            } label: {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("repeat_last_training")
+                            .foregroundStyle(Color.apexMainColor)
+                        Text(verbatim: Self.trainingDescription(source))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            }
+            .accessibilityIdentifier("repeat-last-training")
+        } footer: {
+            if let repeatedFrom {
+                Text("repeated_from \(Self.trainingDescription(repeatedFrom))")
+            }
+        }
+    }
+
+    /// Fills the name and the exercises with their sets, drop sets and notes
+    /// from the training; its times and completion are not copied.
+    private func repeatTraining(_ source: Training) {
+        name = source.name
+        selectedTemplateId = nil
+        withAnimation {
+            exercises = source.exercises
+                .sorted { $0.order < $1.order }
+                .map(ExerciseDraft.init)
+            repeatedFrom = source
+        }
+    }
+
+    // MARK: - Undo
+
+    struct Removal {
+        enum Kind {
+            // Exercise at the index; nextWasLinked when the next exercise was
+            // in a superset with it (it lost the link when this one went).
+            case exercise(index: Int, draft: ExerciseDraft, nextWasLinked: Bool)
+            // Sets of an exercise with their indexes, and the set whose drop
+            // set mark was cleared because it became the first one.
+            case sets(exerciseId: UUID, removed: [(index: Int, set: SetDraft)], clearedDropSetId: UUID?)
+        }
+
+        let id = UUID()
+        let kind: Kind
+    }
+
+    private func undo(_ removal: Removal) {
+        withAnimation {
+            switch removal.kind {
+            case let .exercise(index, draft, nextWasLinked):
+                let position = min(index, exercises.count)
+                exercises.insert(draft, at: position)
+                if nextWasLinked, exercises.indices.contains(position + 1) {
+                    exercises[position + 1].isSupersetWithPrevious = true
+                }
+            case let .sets(exerciseId, removed, clearedDropSetId):
+                guard let exerciseIndex = exercises.firstIndex(where: { $0.id == exerciseId }) else { break }
+                if let clearedDropSetId,
+                   let setIndex = exercises[exerciseIndex].sets.firstIndex(where: { $0.id == clearedDropSetId }) {
+                    exercises[exerciseIndex].sets[setIndex].isDropSet = true
+                }
+                for item in removed.sorted(by: { $0.index < $1.index }) {
+                    let position = min(item.index, exercises[exerciseIndex].sets.count)
+                    exercises[exerciseIndex].sets.insert(item.set, at: position)
+                }
+            }
+            lastRemoval = nil
+        }
+    }
+
+    private func removeSets(of exerciseId: UUID, atOffsets offsets: IndexSet) {
+        guard let exerciseIndex = exercises.firstIndex(where: { $0.id == exerciseId }) else { return }
+        let sets = exercises[exerciseIndex].sets
+        let removed = offsets.filter { sets.indices.contains($0) }.map { (index: $0, set: sets[$0]) }
+        guard !removed.isEmpty else { return }
+        exercises[exerciseIndex].removeSets(atOffsets: offsets)
+        // The first set left can't be a drop set: remembered to restore it.
+        let first = exercises[exerciseIndex].sets.first
+        let wasDropSet = first.flatMap { first in sets.first { $0.id == first.id } }?.isDropSet == true
+        withAnimation {
+            lastRemoval = Removal(kind: .sets(exerciseId: exerciseId, removed: removed,
+                                              clearedDropSetId: wasDropSet ? first?.id : nil))
         }
     }
 
@@ -408,7 +569,7 @@ struct TrainingFormView: View {
                 }
             }
             .onDelete { offsets in
-                exercise.wrappedValue.removeSets(atOffsets: offsets)
+                removeSets(of: exercise.wrappedValue.id, atOffsets: offsets)
             }
 
             if exercise.wrappedValue.sets.isEmpty {
@@ -688,11 +849,13 @@ struct TrainingFormView: View {
         guard exercises.indices.contains(index) else { return }
         // When the first exercise of a superset is removed,
         // the next one starts the superset instead.
-        if !isLinked(index) && isLinked(index + 1) {
+        let nextWasLinked = !isLinked(index) && isLinked(index + 1)
+        if nextWasLinked {
             exercises[index + 1].isSupersetWithPrevious = false
         }
         withAnimation {
-            _ = exercises.remove(at: index)
+            let draft = exercises.remove(at: index)
+            lastRemoval = Removal(kind: .exercise(index: index, draft: draft, nextWasLinked: nextWasLinked))
         }
     }
 
@@ -868,18 +1031,26 @@ struct TrainingFormView: View {
             notifyClient: autosaved == nil && notifyClient
         )
 
-        do {
-            var saved = try await Training.save(request, id: autosaved?.id)
-            if autosaved == nil {
-                if let activityKey { await TrainingLiveActivity.link(activityKey, to: saved) }
-                saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
-            }
+        // Without a connection it is kept on the device and saved later.
+        let outcome = await saveQueue.save(
+            key: saveKey, request: request, trainingId: autosaved?.id,
+            startedAt: autosaved == nil ? start : nil,
+            activityKey: autosaved == nil ? activityKey : nil
+        )
+        switch outcome {
+        case .saved(let saved):
             autosaved = saved
+            isQueued = false
             notifyClient = false
             // Nothing to discard any more: it is saved.
             initialFingerprint = fingerprint
             onSaved?(saved)
-        } catch {
+        case .queued:
+            isQueued = true
+            notifyClient = false
+            // Kept on the device, nothing is lost when the form closes.
+            initialFingerprint = fingerprint
+        case .failed(let error):
             print("Training not autosaved: \(error)")
         }
     }
@@ -932,18 +1103,26 @@ struct TrainingFormView: View {
             notifyClient: notifyClient
         )
 
-        do {
-            var saved = try await Training.save(request, id: currentTraining?.id)
-            if starting {
-                if let activityKey { await TrainingLiveActivity.link(activityKey, to: saved) }
-                saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
-            }
+        // Without a connection it is kept on the device and saved later.
+        let outcome = await saveQueue.save(
+            key: saveKey, request: request, trainingId: currentTraining?.id,
+            startedAt: starting ? start : nil,
+            activityKey: starting ? activityKey : nil
+        )
+        switch outcome {
+        case .saved(let saved):
             // Saved: the activity stays with the training.
             activityKey = nil
             onSaved?(saved)
             toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
             dismiss()
-        } catch {
+        case .queued:
+            // The queue links the activity once the training is saved.
+            activityKey = nil
+            isQueued = true
+            toastManager.show("offline_will_save", type: .info)
+            dismiss()
+        case .failed(let error):
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
@@ -973,7 +1152,7 @@ struct TrainingFormView: View {
 
 // MARK: - Drafts
 
-private struct ExerciseDraft: Identifiable {
+struct ExerciseDraft: Identifiable {
     static let maxSets = 50
 
     let id = UUID()
@@ -1091,7 +1270,7 @@ private struct ExerciseDraft: Identifiable {
     }
 }
 
-private struct SetDraft: Identifiable {
+struct SetDraft: Identifiable {
     let id = UUID()
     var reps = ""
     var weight = ""
@@ -1169,6 +1348,41 @@ private struct SetDraft: Identifiable {
         return SaveTrainingRequest.ExerciseSet(reps: reps.isEmpty ? nil : reps, weight: parsedWeight,
                                                isDropSet: isDropSet, durationSeconds: durationSeconds,
                                                distanceMeters: distanceMeters)
+    }
+}
+
+// MARK: - Undo snackbar
+
+/// "Deleted · Undo" at the bottom of a form for a few seconds.
+struct UndoSnackbar: View {
+    var message: LocalizedStringKey = "deleted"
+    let onUndo: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "trash")
+                .foregroundStyle(.secondary)
+            Text(message)
+                .font(.subheadline.weight(.semibold))
+            Spacer(minLength: 8)
+            Button(action: onUndo) {
+                Text("undo")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Color.apexMainColor)
+                    .padding(.horizontal, 8)
+                    .frame(minHeight: 44)
+            }
+            .accessibilityIdentifier("undo-button")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.apexBorder, lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
+        .accessibilityElement(children: .contain)
     }
 }
 

@@ -297,7 +297,7 @@ extension Training {
 }
 
 /// Body of POST trainings and PUT trainings/{id}.
-struct SaveTrainingRequest: Encodable {
+struct SaveTrainingRequest: Codable {
     let client: UUID
     let name: String
     // ISO 8601, as the API expects a DateTimeOffset.
@@ -309,14 +309,14 @@ struct SaveTrainingRequest: Encodable {
     // training and not for an edited one when this is nil.
     var notifyClient: Bool? = nil
 
-    struct Exercise: Encodable {
+    struct Exercise: Codable {
         let workout: UUID
         let note: String?
         let sets: [ExerciseSet]
         let isSupersetWithPrevious: Bool
     }
 
-    struct ExerciseSet: Encodable {
+    struct ExerciseSet: Codable {
         let reps: String?
         let weight: Decimal?
         var isDropSet = false

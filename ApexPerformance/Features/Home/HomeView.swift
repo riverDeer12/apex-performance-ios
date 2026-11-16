@@ -181,6 +181,11 @@ struct HomeView: View {
             NotificationInbox.shared.reset()
         }
         .tint(.apexAccent)
+        // Trainings kept on the device without a connection, above the tabs.
+        .overlay(alignment: .bottom) {
+            TrainingSaveBanner()
+                .padding(.bottom, 58)
+        }
         .onAppear {
             // Clients start on home, others on their first tab.
             if !hasSelectedFirstTab || !availableTabs.contains(selectedTab) {

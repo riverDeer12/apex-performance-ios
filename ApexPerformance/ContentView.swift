@@ -26,6 +26,11 @@ struct ContentView: View {
         .task {
             availableUpdate = await AppUpdateChecker.availableUpdate()
         }
+        // Trainings saved without a connection go to the server once it is back.
+        .task {
+            TrainingSaveQueue.shared.start()
+            await TrainingSaveQueue.shared.syncAll()
+        }
         // A token can expire while the app is in the background.
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
@@ -33,6 +38,7 @@ struct ContentView: View {
                 // Notifications may have come while the app was in the background.
                 if authManager.isAuthenticated {
                     Task { await NotificationInbox.shared.refreshCount() }
+                    Task { await TrainingSaveQueue.shared.syncAll() }
                     // A training on the lock screen may have ended elsewhere.
                     if TrainingLiveActivity.hasActivities {
                         Task { _ = try? await Training.loadAll() }
