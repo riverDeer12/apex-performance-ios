@@ -76,7 +76,8 @@ struct CompletedTrainingsView: View {
             }
             .navigationDestination(isPresented: $showsOpenedTraining) {
                 if let openedTraining {
-                    TrainingDetailView(training: openedTraining, heroImageURL: imageURL(for: openedTraining))
+                    TrainingDetailView(training: openedTraining, heroImageURL: imageURL(for: openedTraining),
+                                       history: trainings)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -120,7 +121,8 @@ struct CompletedTrainingsView: View {
                 LazyVStack(spacing: 12) {
                     ShowMoreForEach(items: trainings) { training in
                         NavigationLink {
-                            TrainingDetailView(training: training, heroImageURL: imageURL(for: training))
+                            TrainingDetailView(training: training, heroImageURL: imageURL(for: training),
+                                               history: trainings)
                         } label: {
                             TrainingCardView(training: training, imageURL: imageURL(for: training))
                         }
@@ -376,6 +378,13 @@ struct TrainingDetailView: View {
     // "Save as template" asks for the template's name.
     @State private var showSaveAsTemplate = false
     @State private var templateName = ""
+    // New records shown to the client once, the first time the training is opened.
+    @State private var celebratedRecords: [TrainingRecords.NewRecord] = []
+
+    // Sets heavier than any earlier set of their exercise.
+    private var newRecords: [TrainingRecords.NewRecord] {
+        TrainingRecords.newRecords(in: training, history: history)
+    }
 
     init(training: Training, heroImageURL: URL? = nil, history: [Training] = [],
          onSaved: ((Training) -> Void)? = nil, onDeleted: ((UUID) -> Void)? = nil) {
@@ -421,6 +430,12 @@ struct TrainingDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
 
+                if !celebratedRecords.isEmpty {
+                    NewRecordBanner(records: celebratedRecords)
+                        .padding(.horizontal, 20)
+                        .transition(.scale.combined(with: .opacity))
+                }
+
                 // Start and end marked by the coach, heart rate from the client's Apple Health.
                 TrainingTimesCard(training: $training, isStaff: !authManager.hasRole(role: "Client")) { changed in
                     onSaved?(changed)
@@ -435,7 +450,8 @@ struct TrainingDetailView: View {
                     .padding(.horizontal, 20)
                 }
 
-                TrainingExerciseCards(exercises: training.exercises)
+                TrainingExerciseCards(exercises: training.exercises,
+                                      recordSetIds: Set(newRecords.map(\.setId)))
 
                 if let note = training.note, !note.isEmpty {
                     CardView(title: "notes") {
@@ -449,6 +465,17 @@ struct TrainingDetailView: View {
         .background(Color.apexBackground)
         .navigationTitle(Text(verbatim: training.name))
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // The client's celebration, once per training.
+            guard authManager.hasRole(role: "Client"), celebratedRecords.isEmpty else { return }
+            let records = newRecords
+            guard !records.isEmpty, TrainingRecords.shouldCelebrate(training.id) else { return }
+            TrainingRecords.markCelebrated(training.id)
+            try? await Task.sleep(for: .milliseconds(300))
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
+                celebratedRecords = records
+            }
+        }
         .toolbar {
             if onSaved != nil {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -582,6 +609,8 @@ struct TrainingDetailView: View {
 /// numbered "1.", "2a", "2b"... like the web.
 struct TrainingExerciseCards: View {
     let exercises: [Training.Exercise]
+    // Sets that are new records, marked with a trophy.
+    var recordSetIds: Set<UUID> = []
 
     var body: some View {
         let sorted = exercises.sorted { $0.order < $1.order }
@@ -614,10 +643,13 @@ struct TrainingExerciseCards: View {
                 } label: {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(verbatim: "\(label) \(exercise.workoutName.localized)")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.headline)
                             .foregroundStyle(Color.primary)
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
+                        if exercise.sets.contains(where: { recordSetIds.contains($0.id) }) {
+                            NewRecordBadge()
+                        }
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(.tertiary)
@@ -641,9 +673,10 @@ struct TrainingExerciseCards: View {
                 }
                 ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
                     let number = numbers[index]
+                    let isRecord = recordSetIds.contains(set.id)
                     Divider().overlay(Color.apexBorder)
                     setRow(
-                        number.map { Text(verbatim: "\($0)") }
+                        number.map { Text(verbatim: isRecord ? "\($0) 🏆" : "\($0)") }
                             // Drop set of the set above, done right after it.
                             ?? Text("\(Image(systemName: "arrow.turn.down.right")) \(Text("drop_set_short"))"),
                         Text(verbatim: set.distanceText(paceType: exercise.paceType)
@@ -692,6 +725,55 @@ struct TrainingExerciseCards: View {
 
 private extension String {
     var nilIfEmpty: String? { isEmpty ? nil : self }
+}
+
+/// "🏆 Novi rekord" next to an exercise with a new record.
+struct NewRecordBadge: View {
+    var body: some View {
+        Text("new_record_badge")
+            .font(.caption.weight(.bold))
+            .foregroundStyle(Color.apexOnAccent)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Capsule().fill(Color.apexAccent))
+            .fixedSize()
+            .accessibilityIdentifier("new-record-badge")
+    }
+}
+
+/// Celebration of the training's new records, e.g. "Novi rekord: Bench press 72,5 kg".
+struct NewRecordBanner: View {
+    let records: [TrainingRecords.NewRecord]
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text(verbatim: "🏆")
+                .font(.largeTitle)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(records) { record in
+                    Text("new_record_celebration \(record.text)")
+                        .font(.headline)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text("new_record_celebration_hint")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.apexAccent.opacity(0.15))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.apexAccent.opacity(0.5), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("new-record-banner")
+    }
 }
 
 /// Workout of an exercise in a training, loaded by its id.

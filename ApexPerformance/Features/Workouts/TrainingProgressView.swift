@@ -21,9 +21,15 @@ struct TrainingProgressView: View {
     var body: some View {
         let sessions = sessions
 
+        ScrollViewReader { proxy in
         VStack(spacing: 16) {
             if !recentCompleted.isEmpty {
                 recentCard
+            }
+
+            let bests = TrainingRecords.bests(in: trainings)
+            if !bests.isEmpty {
+                recordsCard(bests, sessions: sessions, proxy: proxy)
             }
 
             if sessions.isEmpty {
@@ -43,6 +49,7 @@ struct TrainingProgressView: View {
             } else {
                 summaryCard(sessions)
                 maxWeightCard(sessions)
+                    .id(Self.maxWeightChartId)
                 volumeCard(sessions)
                 totalRepsCard(sessions)
                 averageRepsCard(sessions)
@@ -50,6 +57,74 @@ struct TrainingProgressView: View {
                 muscleGroupsCard(sessions)
             }
         }
+        }
+    }
+
+    // MARK: - Personal records
+
+    private static let maxWeightChartId = "max-weight-chart"
+
+    /// Best weight of every exercise (not a drop set) with its repetitions and
+    /// date, the latest records first. A tap shows the exercise's max weight chart.
+    private func recordsCard(_ bests: [TrainingRecords.Best], sessions: [Session],
+                             proxy: ScrollViewProxy) -> some View {
+        let charted = Set(exerciseOptions(sessions).map(\.id))
+        return CardView {
+            VStack(alignment: .leading, spacing: 0) {
+                Label {
+                    Text("personal_records")
+                        .apexSectionTitle()
+                } icon: {
+                    Image(systemName: "trophy")
+                        .foregroundStyle(Color.apexAccent)
+                }
+                .padding(.bottom, 8)
+
+                ShowMoreForEach(items: bests) { best in
+                    let hasChart = charted.contains(best.workoutId)
+                    Button {
+                        selectedWorkoutId = best.workoutId
+                        withAnimation { proxy.scrollTo(Self.maxWeightChartId, anchor: .top) }
+                    } label: {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(verbatim: best.name)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(Color.primary)
+                                    .multilineTextAlignment(.leading)
+                                Text(verbatim: DateFormatter.dateWithDots.string(from: best.date))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer(minLength: 8)
+                            Text(verbatim: Self.bestText(best))
+                                .font(.subheadline.weight(.bold))
+                                .monospacedDigit()
+                                .foregroundStyle(Color.primary)
+                                .multilineTextAlignment(.trailing)
+                            if hasChart {
+                                Image(systemName: "chevron.right")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.apexPlain)
+                    .disabled(!hasChart)
+                    .accessibilityIdentifier("personal-record-row")
+                }
+            }
+        }
+        .accessibilityIdentifier("personal-records-card")
+    }
+
+    // "72,5 kg × 6"
+    private static func bestText(_ best: TrainingRecords.Best) -> String {
+        let weight = PersonalRecordFormat.kilograms(best.weight)
+        guard let reps = best.reps?.trimmingCharacters(in: .whitespaces), !reps.isEmpty else { return weight }
+        return "\(weight) × \(reps)"
     }
 
     // MARK: - Charts

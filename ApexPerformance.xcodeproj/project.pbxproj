@@ -11,6 +11,7 @@
 		D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994547E6AED188E1535B5C1D /* TrainingTemplate.swift */; };
 		25D01749BFFA5CFD3FA16FD3 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927C0A06565346930978D4CF /* Chat.swift */; };
 		62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */; };
+		F2E46A3E0E5FE48BB8617E4B /* TrainingRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BD7D6A9E39B30941A139C /* TrainingRecords.swift */; };
 		06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */; };
 		09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */; };
 		71243576B9D04AF92523043B /* TrainingTimesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085DA481528853551D937980 /* TrainingTimesCard.swift */; };
@@ -190,6 +191,7 @@
 		994547E6AED188E1535B5C1D /* TrainingTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTemplate.swift; sourceTree = "<group>"; };
 		927C0A06565346930978D4CF /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecord.swift; sourceTree = "<group>"; };
+		845BD7D6A9E39B30941A139C /* TrainingRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingRecords.swift"; sourceTree = "<group>"; };
 		D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientGoal.swift; sourceTree = "<group>"; };
 		EA5C82917B3F8D733CAC7CF1 /* CompletedTrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTrainingsView.swift; sourceTree = "<group>"; };
 		085DA481528853551D937980 /* TrainingTimesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingTimesCard.swift"; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 				994547E6AED188E1535B5C1D /* TrainingTemplate.swift */,
 				927C0A06565346930978D4CF /* Chat.swift */,
 				5A32862C50E00D90CBA24EAF /* PersonalRecord.swift */,
+				845BD7D6A9E39B30941A139C /* TrainingRecords.swift */,
 				D43205B1C0EA23C8671B5C26 /* ClientGoal.swift */,
 				D3ED39D82612CDBC15BEA47B /* Workout.swift */,
 				61CFB52E2EF44338009E9624 /* Appointment.swift */,
@@ -926,6 +929,7 @@
 				D9932689967D24D99F8951A8 /* TrainingTemplate.swift in Sources */,
 				25D01749BFFA5CFD3FA16FD3 /* Chat.swift in Sources */,
 				62BEC01DD28D9C169051216A /* PersonalRecord.swift in Sources */,
+				F2E46A3E0E5FE48BB8617E4B /* TrainingRecords.swift in Sources */,
 				06FEE767910CD332F03370D5 /* ClientGoal.swift in Sources */,
 				09D37FD270ED7DAF2A7AFCF3 /* CompletedTrainingsView.swift in Sources */,
 				71243576B9D04AF92523043B /* TrainingTimesCard.swift in Sources */,
