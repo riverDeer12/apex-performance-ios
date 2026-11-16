@@ -829,7 +829,10 @@ struct AppointmentsView: View {
             
             // Staff: trainings in progress for today's overview; the
             // appointments work without them.
-            let loadedTrainings: [Training]? = canManageRequests ? try? await Training.loadAll() : nil
+            var loadedTrainings: [Training]?
+            if canManageRequests {
+                loadedTrainings = try? await Training.loadAll()
+            }
 
             await MainActor.run {
                 appointments = mapped
