@@ -39,7 +39,23 @@ final class NotificationRouter: ObservableObject {
     /// apexperformance://training/<id>, from a tap on the training's Live
     /// Activity: opens the training like a training push does.
     func handle(url: URL) {
-        guard url.scheme == "apexperformance", url.host == "training" else { return }
+        guard url.scheme == "apexperformance" else { return }
+        // The home screen widget: an appointment, the appointments or home.
+        switch url.host {
+        case "appointment":
+            pendingAppointmentId = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:))
+            pendingTab = .appointments
+            return
+        case "appointments":
+            pendingTab = .appointments
+            return
+        case "home":
+            pendingTab = .home
+            return
+        default:
+            break
+        }
+        guard url.host == "training" else { return }
         let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:))
         // Not saved yet: the app opens on the new training form, still open.
         guard let id else { return }

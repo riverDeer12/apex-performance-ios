@@ -44,6 +44,7 @@ final class AuthManager: ObservableObject {
         KeychainService.shared.deleteToken()
         sessionExpired = true
         isAuthenticated = false
+        HomeWidgetWriter.loggedOut()
     }
     
     /// Checks the token again, e.g. when the app comes back to the foreground.
@@ -101,6 +102,8 @@ final class AuthManager: ObservableObject {
         KeychainService.shared.deleteToken()
         isAuthenticated = false
         Task { @MainActor in TrainingLiveActivity.endAll() }
+        // The home screen widget asks to log in.
+        HomeWidgetWriter.loggedOut()
     }
     
     func hasPermission(permission: String) -> Bool {

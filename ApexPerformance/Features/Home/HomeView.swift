@@ -233,6 +233,9 @@ struct HomeView: View {
             } else {
                 tab = .clients
             }
+        case .home where !availableTabs.contains(.home):
+            // Staff have no home: their first tab.
+            tab = availableTabs.first ?? .profile
         case .appointments where !availableTabs.contains(.appointments):
             // Without the appointments tab (clients without the permission) the requests open.
             tab = availableTabs.contains(.appointmentRequests) ? .appointmentRequests : (availableTabs.first ?? .profile)

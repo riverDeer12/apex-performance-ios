@@ -841,6 +841,11 @@ struct AppointmentsView: View {
                 if let loadedTrainings {
                     trainings = loadedTrainings
                 }
+                // Staff's home screen widget: next appointment today and the requests waiting.
+                if canManageRequests {
+                    HomeWidgetWriter.coach(appointments: mapped,
+                                           pendingRequests: mappedPending.count + requests.count)
+                }
             }
         } catch is CancellationError {
             return

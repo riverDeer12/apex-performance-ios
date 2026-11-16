@@ -486,6 +486,15 @@ struct ClientHomeView: View {
                 .joined(separator: " ")
             coachName = name.isEmpty ? nil : name
         }
+
+        // The home screen widget: next appointment and package.
+        if appointments != nil {
+            HomeWidgetWriter.client(
+                appointments: approvedAppointments,
+                coachName: coachName,
+                package: PackageSummary(client: client, approvedAppointments: approvedAppointments)
+            )
+        }
     }
 
     @MainActor

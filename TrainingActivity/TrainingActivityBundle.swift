@@ -10,5 +10,6 @@ import WidgetKit
 struct TrainingActivityBundle: WidgetBundle {
     var body: some Widget {
         TrainingLiveActivityWidget()
+        ApexHomeWidget()
     }
 }

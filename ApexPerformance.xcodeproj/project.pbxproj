@@ -123,6 +123,8 @@
 		E0D72D5E0CEC0776DE6302DC /* TrainingSaveQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D8F29E1007CD50508A9B3 /* TrainingSaveQueue.swift */; };
 		E57F79574FE192C846058759 /* ChatHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */; };
 		8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A884F28D08EB4F168066D594 /* NotificationRouter.swift */; };
+		6573EDC8111BF6391427DC5A /* HomeWidgetWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69BB0A718E69DA515CC5989 /* HomeWidgetWriter.swift */; };
+		79F1682E71CCA5E7B8351C87 /* HomeWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F4192726C405B7ED5D9AB3 /* HomeWidgetSnapshot.swift */; };
 		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */; };
@@ -144,6 +146,8 @@
 		7362A1929FA7BB82D86BAE77 /* TrainingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */; };
 		AA58FA67E478172632785F15 /* EndTrainingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */; };
 		63DDC9BD13DC21F05917C520 /* TrainingActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */; };
+		4E7A2C91D3B85F06A1C2E3D4 /* HomeWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F4192726C405B7ED5D9AB3 /* HomeWidgetSnapshot.swift */; };
+		5F8B3DA2E4C9607B2D3F4E5A /* ApexHomeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C4EB3F5DA718C3E405F6B /* ApexHomeWidget.swift */; };
 		262D1D84BE5FF3269DE8F1AD /* TrainingLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E706A6D42DE11C9F3F68EA8E /* TrainingLiveActivityWidget.swift */; };
 		05D284F9D53E23186DAD4236 /* TrainingActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DFC9E56AAF52415F87BEDB3A /* TrainingActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FB0FD345E8C454A899E3E752 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F0CA4F1AD31E885E7C87403D /* FirebaseCrashlytics */; };
@@ -309,6 +313,8 @@
 		DF2D8F29E1007CD50508A9B3 /* TrainingSaveQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSaveQueue.swift"; sourceTree = "<group>"; };
 		FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHub.swift; sourceTree = "<group>"; };
 		A884F28D08EB4F168066D594 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
+		D69BB0A718E69DA515CC5989 /* HomeWidgetWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeWidgetWriter.swift"; sourceTree = "<group>"; };
+		B5F4192726C405B7ED5D9AB3 /* HomeWidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeWidgetSnapshot.swift"; sourceTree = "<group>"; };
 		AA8B4D7D1B899F544123D70A /* BodyProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyProgressView.swift; sourceTree = "<group>"; };
 		E0521C00E796AB3FF207B3DF /* ClientProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientProgressView.swift; sourceTree = "<group>"; };
 		C0283CE12F6DEFF700582836 /* CreateClientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClientView.swift; sourceTree = "<group>"; };
@@ -329,6 +335,7 @@
 		F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivity.swift; sourceTree = "<group>"; };
 		CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LiveActivityPushService.swift"; sourceTree = "<group>"; };
 		F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityBundle.swift; sourceTree = "<group>"; };
+		6A9C4EB3F5DA718C3E405F6B /* ApexHomeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexHomeWidget.swift; sourceTree = "<group>"; };
 		E706A6D42DE11C9F3F68EA8E /* TrainingLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivityWidget.swift; sourceTree = "<group>"; };
 		FE45599CF3C3160A8D126DE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A1C3E5B9D2F4A6B8C0E1F23 /* TrainingActivity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TrainingActivity.entitlements; sourceTree = "<group>"; };
@@ -565,6 +572,8 @@
 				F3496021DF920E0F3E7FDF58 /* AppLanguage.swift */,
 				61E63F912F1C3491004D74F3 /* DateManager.swift */,
 				A884F28D08EB4F168066D594 /* NotificationRouter.swift */,
+				D69BB0A718E69DA515CC5989 /* HomeWidgetWriter.swift */,
+				B5F4192726C405B7ED5D9AB3 /* HomeWidgetSnapshot.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -737,6 +746,7 @@
 			isa = PBXGroup;
 			children = (
 				F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */,
+				6A9C4EB3F5DA718C3E405F6B /* ApexHomeWidget.swift */,
 				E706A6D42DE11C9F3F68EA8E /* TrainingLiveActivityWidget.swift */,
 				FE45599CF3C3160A8D126DE8 /* Info.plist */,
 				7A1C3E5B9D2F4A6B8C0E1F23 /* TrainingActivity.entitlements */,
@@ -1027,6 +1037,8 @@
 				E0D72D5E0CEC0776DE6302DC /* TrainingSaveQueue.swift in Sources */,
 				E57F79574FE192C846058759 /* ChatHub.swift in Sources */,
 				8BAD01FABE01AEC115C30DE3 /* NotificationRouter.swift in Sources */,
+				6573EDC8111BF6391427DC5A /* HomeWidgetWriter.swift in Sources */,
+				79F1682E71CCA5E7B8351C87 /* HomeWidgetSnapshot.swift in Sources */,
 				61CFB53B2EF5FB81009E9624 /* JWTDecoder.swift in Sources */,
 				C0283CF02F8C1B5A00582836 /* AppointmentRequestsView.swift in Sources */,
 				61E63F6B2F0C368C004D74F3 /* ToastType.swift in Sources */,
@@ -1065,6 +1077,8 @@
 				7362A1929FA7BB82D86BAE77 /* TrainingActivityAttributes.swift in Sources */,
 				AA58FA67E478172632785F15 /* EndTrainingIntent.swift in Sources */,
 				63DDC9BD13DC21F05917C520 /* TrainingActivityBundle.swift in Sources */,
+				4E7A2C91D3B85F06A1C2E3D4 /* HomeWidgetSnapshot.swift in Sources */,
+				5F8B3DA2E4C9607B2D3F4E5A /* ApexHomeWidget.swift in Sources */,
 				262D1D84BE5FF3269DE8F1AD /* TrainingLiveActivityWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
