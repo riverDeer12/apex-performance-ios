@@ -30,9 +30,7 @@ struct BodyProgressView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("no_measurements")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            EmptyStateView(systemImage: "ruler", message: "no_measurements")
                         }
                     }
                     .padding(.vertical, 8)

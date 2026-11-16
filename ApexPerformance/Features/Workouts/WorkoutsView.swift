@@ -101,10 +101,13 @@ struct WorkoutsView: View {
 
                     CardView {
                         if filteredWorkouts.isEmpty, !isLoading {
-                            (searchText.isEmpty && category == nil ? Text("no_workouts") : Text("no_workouts_found"))
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 8)
+                            EmptyStateView(
+                                systemImage: searchText.isEmpty && category == nil ? "dumbbell" : "magnifyingglass",
+                                message: searchText.isEmpty && category == nil ? "no_workouts" : "no_workouts_found",
+                                actionTitle: canManageWorkouts ? "add_exercise" : nil
+                            ) {
+                                showCreateWorkout = true
+                            }
                         } else {
                             LazyVStack(spacing: 0) {
                                 ShowMoreForEach(items: filteredWorkouts) { workout in

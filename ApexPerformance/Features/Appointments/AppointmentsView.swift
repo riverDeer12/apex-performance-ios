@@ -212,10 +212,7 @@ struct AppointmentsView: View {
 
                         CardView {
                             if appointmentsForSelectedDate.isEmpty, !isInitialLoading {
-                                Text("no_appointments_for_selected_day")
-                                    .foregroundStyle(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.vertical, 8)
+                                EmptyStateView(systemImage: "calendar", message: "no_appointments_for_selected_day")
                             } else {
                                 VStack(spacing: 0) {
                                     ShowMoreForEach(items: appointmentsForSelectedDate) { appointment in

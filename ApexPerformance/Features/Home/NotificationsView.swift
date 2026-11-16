@@ -138,8 +138,8 @@ struct NotificationsView: View {
         NavigationStack {
             List {
                 if inbox.notifications.isEmpty && inbox.hasLoaded {
-                    Text("no_notifications")
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(systemImage: "bell.slash", message: "no_notifications")
+                        .listRowBackground(Color.clear)
                 }
                 ShowMoreForEach(items: inbox.notifications) { notification in
                     Button {

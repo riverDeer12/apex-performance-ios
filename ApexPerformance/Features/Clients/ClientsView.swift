@@ -66,6 +66,14 @@ struct ClientsView: View {
                         VStack(spacing: 0) {
                             
                             let list = filteredClients
+
+                            if list.isEmpty, !isLoading {
+                                EmptyStateView(systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass",
+                                               message: searchText.isEmpty ? "no_clients_yet" : "no_clients_found",
+                                               actionTitle: searchText.isEmpty ? "add_client" : nil) {
+                                    showCreateClientForm = true
+                                }
+                            }
                             
                             ShowMoreForEach(items: list) { client in
                                 NavigationLink {

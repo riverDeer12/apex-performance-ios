@@ -39,9 +39,8 @@ struct TrainingProgressView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("no_completed_trainings_in_period")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            EmptyStateView(systemImage: "chart.line.uptrend.xyaxis",
+                                           message: "no_completed_trainings_in_period")
                         }
                     }
                     .padding(.vertical, 8)

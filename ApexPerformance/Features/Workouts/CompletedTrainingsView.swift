@@ -42,10 +42,8 @@ struct CompletedTrainingsView: View {
 
                     if filteredTrainings.isEmpty, !isLoading {
                         CardView {
-                            (searchText.isEmpty ? Text("no_client_trainings") : Text("no_trainings_found"))
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 8)
+                            EmptyStateView(systemImage: searchText.isEmpty ? "dumbbell" : "magnifyingglass",
+                                           message: searchText.isEmpty ? "no_client_trainings" : "no_trainings_found")
                         }
                         .padding(.horizontal, 20)
                     } else {
