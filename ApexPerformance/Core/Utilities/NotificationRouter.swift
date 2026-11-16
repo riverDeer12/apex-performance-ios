@@ -31,6 +31,8 @@ final class NotificationRouter: ObservableObject {
     @Published var pendingConversationId: UUID?
     // Training a tapped training push opens.
     @Published var pendingTrainingId: UUID?
+    // Appointment a tapped appointment reminder opens.
+    @Published var pendingAppointmentId: UUID?
 
     private init() {}
 
@@ -45,7 +47,8 @@ final class NotificationRouter: ObservableObject {
         pendingTab = .trainings
     }
 
-    func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil) {
+    func handle(notificationType: String, conversationId: String? = nil, trainingId: String? = nil,
+                appointmentId: String? = nil) {
         switch notificationType {
         // The reminder to end a training still running opens it too.
         case "training", "training_end_reminder":
@@ -57,6 +60,10 @@ final class NotificationRouter: ObservableObject {
         case "appointment_request":
             pendingTab = .appointmentRequests
         case "appointment_updated":
+            pendingTab = .appointments
+        // "Training in 2 h": opens that appointment.
+        case "appointment_reminder":
+            pendingAppointmentId = appointmentId.flatMap(UUID.init(uuidString:))
             pendingTab = .appointments
         case "body_measurement":
             pendingTab = .bodyMeasurements

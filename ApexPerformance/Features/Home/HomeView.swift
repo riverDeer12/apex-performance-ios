@@ -233,6 +233,10 @@ struct HomeView: View {
             } else {
                 tab = .clients
             }
+        case .appointments where !availableTabs.contains(.appointments):
+            // Without the appointments tab (clients without the permission) the requests open.
+            tab = availableTabs.contains(.appointmentRequests) ? .appointmentRequests : (availableTabs.first ?? .profile)
+            notificationRouter.pendingAppointmentId = nil
         case .appointmentRequests where !availableTabs.contains(.appointmentRequests):
             // Requests open from appointments when there is no requests tab.
             tab = .appointments

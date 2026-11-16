@@ -20,6 +20,7 @@ struct AppNotification: Identifiable, Decodable, Hashable {
     var systemImage: String {
         switch type {
         case "appointment_request", "appointment_updated": "calendar"
+        case "appointment_reminder": "alarm"
         case "body_measurement": "ruler"
         case "client_goal": "scope"
         case "monthly_review", "monthly_review_reminder": "doc.text"
@@ -247,7 +248,8 @@ struct NotificationsView: View {
         NotificationRouter.shared.handle(
             notificationType: notification.type,
             conversationId: notification.data["conversationId"],
-            trainingId: notification.data["trainingId"]
+            trainingId: notification.data["trainingId"],
+            appointmentId: notification.data["appointmentId"]
         )
     }
 

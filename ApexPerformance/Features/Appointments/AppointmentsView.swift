@@ -20,6 +20,9 @@ struct AppointmentsView: View {
     @State private var trainings: [Training] = []
     // Training in progress opened from today's overview, in its form.
     @State private var openedTraining: Training?
+    // Appointment of a tapped reminder ("Training in 2 h").
+    @State private var openedAppointment: Appointment?
+    @State private var showsOpenedAppointment = false
 
     enum StaffMode: Hashable {
         case today, calendar
@@ -95,6 +98,15 @@ struct AppointmentsView: View {
             }
             .onAppear { openRequestsFromNotification() }
             .onChange(of: notificationRouter.opensAppointmentRequests) { openRequestsFromNotification() }
+            .task { await openPendingAppointment() }
+            .onChange(of: notificationRouter.pendingAppointmentId) {
+                Task { await openPendingAppointment() }
+            }
+            .navigationDestination(isPresented: $showsOpenedAppointment) {
+                if let openedAppointment {
+                    AppointmentDetailsView(appointment: openedAppointment)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .chatToolbarButton()
             .toolbar {
@@ -448,6 +460,23 @@ struct AppointmentsView: View {
 
     private var showsRequestsButton: Bool {
         isClient || authManager.hasPermission(permission: Permissions.canGetAppointmentRequests)
+    }
+
+    /// Opens the appointment of a tapped reminder, loading the
+    /// appointments first when it isn't among them yet.
+    @MainActor
+    private func openPendingAppointment() async {
+        guard let id = notificationRouter.pendingAppointmentId else { return }
+        notificationRouter.pendingAppointmentId = nil
+
+        if !(appointments + pendingAppointments).contains(where: { $0.id == id }) {
+            await loadData(showInitialSpinner: appointments.isEmpty)
+        }
+        if let appointment = (appointments + pendingAppointments).first(where: { $0.id == id }) {
+            selectedDate = Calendar.current.startOfDay(for: appointment.startTime)
+            openedAppointment = appointment
+            showsOpenedAppointment = true
+        }
     }
 
     private func openRequestsFromNotification() {
