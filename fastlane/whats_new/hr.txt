@@ -2,7 +2,7 @@
 • Ponovi zadnji trening: novi trening klijenta popuni se iz njegovog zadnjeg treninga (vježbe, serije, drop serije i bilješke).
 • Bez interneta se unos treninga ne gubi: sprema se na uređaju i šalje čim se veza vrati.
 • Obrisana serija, drop serija ili vježba vraća se dodirom na Poništi.
-• Osobni rekordi u napretku treninga i oznaka 🏆 Novi rekord na treningu.
+• Osobni rekordi u napretku treninga i oznaka Novi rekord na treningu.
 • Widget na početnom zaslonu: sljedeći termin i paket, a za trenere današnji termin i zahtjevi na čekanju.
 • Podsjetnik 2 sata prije odobrenog termina.
 • Prazni popisi pokazuju što dalje, a tekst prati veličinu slova iz postavki i čitljiviji je u tamnom načinu.

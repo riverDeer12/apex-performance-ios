@@ -2,7 +2,7 @@
 • Letztes Training wiederholen: Ein neues Training des Kunden wird aus seinem letzten gefüllt (Übungen, Sätze, Drop-Sätze und Notizen).
 • Ohne Internet geht kein Training verloren: Es wird auf dem Gerät gespeichert und gesendet, sobald die Verbindung zurück ist.
 • Ein gelöschter Satz, Drop-Satz oder eine Übung kommt mit Rückgängig zurück.
-• Persönliche Rekorde im Trainingsfortschritt und das Abzeichen 🏆 Neuer Rekord im Training.
+• Persönliche Rekorde im Trainingsfortschritt und das Abzeichen Neuer Rekord im Training.
 • Widget für den Home-Bildschirm: dein nächster Termin und dein Paket, für Trainer der nächste Termin heute und offene Anfragen.
 • Eine Erinnerung 2 Stunden vor einem bestätigten Termin.
 • Leere Listen zeigen den nächsten Schritt, Text folgt der eingestellten Schriftgröße und ist im Dunkelmodus besser lesbar.

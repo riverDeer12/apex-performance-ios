@@ -2,7 +2,7 @@
 • Ripeti l'ultimo allenamento: il nuovo allenamento del cliente si compila dal suo ultimo (esercizi, serie, drop set e note).
 • Senza internet l'allenamento inserito non si perde: viene salvato sul dispositivo e inviato appena torna la connessione.
 • Una serie, un drop set o un esercizio eliminato torna con Annulla.
-• Record personali nei progressi degli allenamenti e il badge 🏆 Nuovo record sull'allenamento.
+• Record personali nei progressi degli allenamenti e il badge Nuovo record sull'allenamento.
 • Widget nella schermata Home: il prossimo appuntamento e il pacchetto, per gli allenatori il prossimo appuntamento di oggi e le richieste in attesa.
 • Un promemoria 2 ore prima di un appuntamento confermato.
 • Le liste vuote indicano cosa fare, il testo segue la dimensione impostata ed è più leggibile in modalità scura.

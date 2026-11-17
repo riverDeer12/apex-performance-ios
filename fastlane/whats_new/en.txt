@@ -2,7 +2,7 @@
 • Repeat last training: a client's new training is filled from their latest one (exercises, sets, drop sets and notes).
 • Training entries aren't lost without internet: they're kept on the device and sent as soon as the connection is back.
 • A deleted set, drop set or exercise comes back with Undo.
-• Personal records in training progress and a 🏆 New record badge on the training.
+• Personal records in training progress and a New record badge on the training.
 • Home screen widget: your next appointment and package, or for coaches the next appointment today and pending requests.
 • A reminder 2 hours before an approved appointment.
 • Empty lists show what to do next, text follows your text size setting and reads better in dark mode.
