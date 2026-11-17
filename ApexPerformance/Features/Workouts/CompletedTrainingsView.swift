@@ -434,7 +434,7 @@ struct TrainingDetailView: View {
                         .transition(.scale.combined(with: .opacity))
                 }
 
-                // Start and end marked by the coach, heart rate from the client's Apple Health.
+                // Start and end marked by the coach, heart rate from the client's phone (Apple Health or Health Connect).
                 TrainingTimesCard(training: $training, isStaff: !authManager.hasRole(role: "Client")) { changed in
                     onSaved?(changed)
                 }
