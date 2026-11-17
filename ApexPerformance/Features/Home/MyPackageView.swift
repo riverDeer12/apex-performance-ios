@@ -17,7 +17,9 @@ struct PackageSummary {
     let available: Int
 
     init(client: UserProfile?, approvedAppointments: [Appointment], now: Date = .now) {
-        done = approvedAppointments.filter {
+        // GET appointments gives a client only upcoming appointments, so the
+        // done ones come from the API; counted here only without it (demo data).
+        done = client?.doneThisMonth ?? approvedAppointments.filter {
             $0.endTime <= now && Calendar.current.isDate($0.startTime, equalTo: now, toGranularity: .month)
         }.count
         reserved = approvedAppointments.filter { $0.startTime > now }.count
