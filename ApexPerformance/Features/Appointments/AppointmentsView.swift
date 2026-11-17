@@ -163,7 +163,8 @@ struct AppointmentsView: View {
                     // Pending Appointments Section
                     if !pendingAppointments.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("pending_approvals")
+                            // Clients: their own bookings waiting for the coach.
+                            Text(canManageRequests ? LocalizedStringKey("pending_approvals") : LocalizedStringKey("awaiting_coach_approval"))
                                 .apexLabel()
                                 .padding(.horizontal, 20)
                             
@@ -482,8 +483,9 @@ struct AppointmentsView: View {
         showSentRequests = true
     }
     
+    /// Staff only: approve / reject buttons and the pending requests.
     private var canManageRequests: Bool {
-        !isClient
+        authManager.canApproveAppointments
     }
     
     private var cancelationRequests: [AppointmentRequest] {
@@ -729,54 +731,60 @@ struct AppointmentsView: View {
                 }
                 
                 Spacer()
+
+                if !canManageRequests {
+                    BadgeView(text: "appointment_status_pending", color: .orange)
+                }
             }
             .padding(.vertical, 12)
             
-            // Action buttons
-            HStack(spacing: 12) {
-                Button {
-                    Task { await approveAppointment(appointment) }
-                } label: {
-                    HStack {
-                        if processingAppointmentId == appointment.id {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                                .tint(.green)
-                        } else {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .semibold))
+            // Action buttons, staff only: the API refuses a client anyway.
+            if canManageRequests {
+                HStack(spacing: 12) {
+                    Button {
+                        Task { await approveAppointment(appointment) }
+                    } label: {
+                        HStack {
+                            if processingAppointmentId == appointment.id {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .tint(.green)
+                            } else {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                            Text("approve")
+                                .font(.subheadline.weight(.medium))
                         }
-                        Text("approve")
-                            .font(.subheadline.weight(.medium))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.green.opacity(0.1))
+                        .foregroundStyle(.green)
+                        .cornerRadius(8)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(Color.green.opacity(0.1))
-                    .foregroundStyle(.green)
-                    .cornerRadius(8)
-                }
-                .buttonStyle(.apexPlain)
-                .disabled(processingAppointmentId == appointment.id)
+                    .buttonStyle(.apexPlain)
+                    .disabled(processingAppointmentId == appointment.id)
                 
-                Button {
-                    Task { await declineAppointment(appointment) }
-                } label: {
-                    HStack {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
-                        Text("reject")
-                            .font(.subheadline.weight(.medium))
+                    Button {
+                        Task { await declineAppointment(appointment) }
+                    } label: {
+                        HStack {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text("reject")
+                                .font(.subheadline.weight(.medium))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.red.opacity(0.1))
+                        .foregroundStyle(.red)
+                        .cornerRadius(8)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(Color.red.opacity(0.1))
-                    .foregroundStyle(.red)
-                    .cornerRadius(8)
+                    .buttonStyle(.apexPlain)
+                    .disabled(processingAppointmentId == appointment.id)
                 }
-                .buttonStyle(.apexPlain)
-                .disabled(processingAppointmentId == appointment.id)
+                .padding(.bottom, 8)
             }
-            .padding(.bottom, 8)
         }
     }
     

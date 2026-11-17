@@ -113,6 +113,16 @@ final class AuthManager: ObservableObject {
     func hasRole(role: String) -> Bool{
         return userRole == role;
     }
+
+    /// Approving or rejecting appointments and requests is for staff only; a
+    /// client sees their own bookings waiting for the coach, without the buttons.
+    static func canApproveAppointments(role: String) -> Bool {
+        !role.isEmpty && role != "Client"
+    }
+
+    var canApproveAppointments: Bool {
+        Self.canApproveAppointments(role: userRole)
+    }
     
     func sendLoginRequest(username: String, password: String) async throws -> LoginResponse {
         
