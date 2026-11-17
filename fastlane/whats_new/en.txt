@@ -8,5 +8,5 @@
 • Empty lists show what to do next, text follows your text size setting and reads better in dark mode.
 • Mark workouts as favorites with a star; a Favorites filter, and favorites come first when adding exercises to a training.
 • Profile pictures of clients and coaches show everywhere: clients, appointments, requests, trainings and chat.
-• The My package card and the widget now show this month's completed trainings correctly, and appointments waiting for the coach are marked Awaiting coach approval.
+• The My package card and the widget now show this month's completed trainings correctly, and appointments waiting for the coach are marked Waiting for your coach.
 • Minor improvements and fixes.
