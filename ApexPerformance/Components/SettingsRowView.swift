@@ -15,17 +15,28 @@ struct SettingsRowView: View {
     let showChevron: Bool
     var titleColor: Color = .primary
     var badge: LocalizedStringKey? = nil
+    // Row of a person: their profile picture (or initials) instead of the icon.
+    var person: (name: String, pictureUrl: String?)? = nil
+    // Small icon on the person's picture, e.g. the status of their training.
+    var personBadge: (systemImage: String, tint: Color)? = nil
     
     var body: some View {
         HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(iconTint.opacity(0.15))
-                    .frame(width: 34, height: 34)
-                
-                Image(systemName: icon)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(iconTint)
+            if let person, let personBadge {
+                UserAvatarView(name: person.name, pictureUrl: person.pictureUrl, size: 34)
+                    .avatarBadge(systemImage: personBadge.systemImage, tint: personBadge.tint, size: 16)
+            } else if let person {
+                UserAvatarView(name: person.name, pictureUrl: person.pictureUrl, size: 34)
+            } else {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(iconTint.opacity(0.15))
+                        .frame(width: 34, height: 34)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(iconTint)
+                }
             }
             
             VStack(alignment: .leading, spacing: 2) {

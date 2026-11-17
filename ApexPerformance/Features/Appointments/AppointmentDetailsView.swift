@@ -74,7 +74,8 @@ struct AppointmentDetailsView: View {
                                 iconTint: Color.apexMainColor,
                                 title: Text("\(client.firstName) \(client.lastName)"),
                                 subtitle: nil,
-                                showChevron: false
+                                showChevron: false,
+                                person: (client.fullName, client.pictureUrl)
                             )
                             if client.id != appointment.clients.last?.id {
                                 Divider().padding(.leading, 52)

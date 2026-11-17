@@ -48,15 +48,8 @@ struct ClientDetailsView: View {
                 
                 CardView {
                     HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(.systemGray5))
-                                .frame(width: 56, height: 56)
-                            
-                            Image(systemName: "person.fill")
-                                .font(.title2)
-                                .foregroundStyle(.secondary)
-                        }
+                        UserAvatarView(name: client.fullName, pictureUrl: client.pictureUrl, size: 56,
+                                       opensFullScreen: true)
                         
                         VStack(alignment: .leading, spacing: 6) {
                             Text("\(client.firstName) \(client.lastName)")

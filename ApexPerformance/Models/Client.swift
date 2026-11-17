@@ -19,6 +19,8 @@ struct Client: Identifiable, Decodable, Encodable {
     var lastCreditsIncrease: Date?
     // One of ClientPlan raw values.
     var plan: String? = nil
+    // Profile picture link, nil when there is none (or from an older API).
+    var pictureUrl: String? = nil
     
     var fullName: String {
         return self.firstName + " " + self.lastName

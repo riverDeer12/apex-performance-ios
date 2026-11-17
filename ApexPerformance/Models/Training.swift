@@ -54,6 +54,8 @@ struct Training: Identifiable, Decodable, Hashable {
         let id: UUID
         let firstName: String?
         let lastName: String?
+        // Profile picture link, nil when there is none (or from an older API).
+        var pictureUrl: String? = nil
     }
 
     struct Exercise: Identifiable, Decodable, Hashable {

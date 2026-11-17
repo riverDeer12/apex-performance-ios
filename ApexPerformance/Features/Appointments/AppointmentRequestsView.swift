@@ -186,7 +186,9 @@ struct AppointmentRequestsView: View {
                 iconTint: requestColor(for: request.type.name),
                 title: Text(LocalizedStringKey(title)),
                 subtitle: Text(LocalizedStringKey(subtitle)),
-                showChevron: true
+                showChevron: true,
+                // Staff see who sent it; a client sees the type (their own requests).
+                person: authManager.hasRole(role: "Client") ? nil : (request.sender.fullName, request.sender.pictureUrl)
             )
             
             if !request.comment.isEmpty {

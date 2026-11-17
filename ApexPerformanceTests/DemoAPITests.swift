@@ -167,6 +167,7 @@ final class DemoAPITests: XCTestCase {
     func testUnknownPathIsNotFound() {
         XCTAssertEqual(DemoAPI.fixture("GET", "no-such-endpoint", role: .client).status, 404)
         XCTAssertEqual(DemoAPI.fixture("GET", "profile/picture", role: .client).status, 404)
+        XCTAssertEqual(DemoAPI.fixture("GET", "users/\(DemoAPI.coachUserId)/picture", role: .client).status, 404)
         XCTAssertEqual(DemoAPI.fixture("GET", "hubs/chat", role: .client).status, 404)
     }
 

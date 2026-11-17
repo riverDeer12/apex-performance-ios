@@ -36,6 +36,8 @@ struct AppointmentRequestDetailsView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             Spacer()
+                            UserAvatarView(name: request.sender.fullName, pictureUrl: request.sender.pictureUrl,
+                                           size: 24)
                             Text(request.sender.fullName)
                                 .font(.subheadline.weight(.medium))
                         }
