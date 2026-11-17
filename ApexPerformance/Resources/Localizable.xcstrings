@@ -7321,25 +7321,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Herzfrequenz kommt vom iPhone des Kunden (Apple Health), wenn der Kunde seine Trainings öffnet."
+            "value" : "Die Herzfrequenz kommt vom Handy des Kunden (Apple Health oder Health Connect), wenn der Kunde seine Trainings öffnet."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The heart rate comes from the client's iPhone (Apple Health) when the client opens their trainings."
+            "value" : "The heart rate comes from the client's phone (Apple Health or Health Connect) when the client opens their trainings."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puls dolazi s klijentovog iPhonea (Apple Health) kad klijent otvori svoje treninge."
+            "value" : "Puls dolazi s klijentovog mobitela (Apple Health ili Health Connect) kad klijent otvori svoje treninge."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La frequenza cardiaca arriva dall'iPhone del cliente (Apple Salute) quando il cliente apre i suoi allenamenti."
+            "value" : "La frequenza cardiaca arriva dal telefono del cliente (Apple Salute o Health Connect) quando il cliente apre i suoi allenamenti."
           }
         }
       }
@@ -16297,25 +16297,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Markiere Beginn und Ende des Trainings. Das iPhone des Kunden ergänzt dann die niedrigste, höchste und durchschnittliche Herzfrequenz aus Apple Health."
+            "value" : "Markiere Beginn und Ende des Trainings. Das Handy des Kunden ergänzt dann die niedrigste, höchste und durchschnittliche Herzfrequenz aus Apple Health oder Health Connect."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mark when the training starts and ends. The client's iPhone then adds the lowest, highest and average heart rate from Apple Health."
+            "value" : "Mark when the training starts and ends. The client's phone then adds the lowest, highest and average heart rate from Apple Health or Health Connect."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Označi početak i kraj treninga. Klijentov iPhone tada iz Apple Healtha dodaje najniži, najviši i prosječni puls."
+            "value" : "Označi početak i kraj treninga. Klijentov mobitel tada iz Apple Healtha ili Health Connecta dodaje najniži, najviši i prosječni puls."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segna l'inizio e la fine dell'allenamento. L'iPhone del cliente aggiunge poi la frequenza cardiaca minima, massima e media da Apple Salute."
+            "value" : "Segna l'inizio e la fine dell'allenamento. Il telefono del cliente aggiunge poi la frequenza cardiaca minima, massima e media da Apple Salute o Health Connect."
           }
         }
       }
@@ -18845,6 +18845,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non hai ancora inviato richieste."
+          }
+        }
+      }
+    },
+    "heart_rate_source_apple_health" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Salute"
           }
         }
       }

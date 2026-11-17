@@ -103,9 +103,17 @@ struct TrainingTimesCard: View {
     private var heartRate: some View {
         if let heartRate = training.heartRate {
             VStack(alignment: .leading, spacing: 8) {
-                Label("heart_rate", systemImage: "heart.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.red)
+                HStack(spacing: 6) {
+                    Label("heart_rate", systemImage: "heart.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.red)
+                    // Where the client's phone read it.
+                    if let source = heartRate.sourceName {
+                        Text(verbatim: "· \(source)")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 HStack(spacing: 0) {
                     value("heart_rate_min", "\(heartRate.min)", unit: "bpm")
                     value("heart_rate_average", "\(heartRate.average)", unit: "bpm")

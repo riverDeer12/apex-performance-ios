@@ -20,7 +20,8 @@ struct Training: Identifiable, Decodable, Hashable {
     // Started and not completed is in progress, clients see it then.
     var startedAt: Date? = nil
     var endedAt: Date? = nil
-    // Client's heart rate in between, from Apple Health on the client's iPhone.
+    // Client's heart rate in between, from the client's phone:
+    // Apple Health on an iPhone, Health Connect on Android.
     var heartRate: HeartRate? = nil
 
     /// Beats per minute.
@@ -28,6 +29,20 @@ struct Training: Identifiable, Decodable, Hashable {
         let min: Int
         let max: Int
         let average: Int
+        // Where the client's phone read it: "apple_health" or "health_connect".
+        var source: String? = nil
+
+        static let appleHealth = "apple_health"
+        static let healthConnect = "health_connect"
+
+        /// "Apple Health" or "Health Connect", shown with the values.
+        var sourceName: String? {
+            switch source {
+            case Self.appleHealth: String(localized: "heart_rate_source_apple_health")
+            case Self.healthConnect: "Health Connect"
+            default: nil
+            }
+        }
     }
 
     /// Started by the coach, not completed yet.
