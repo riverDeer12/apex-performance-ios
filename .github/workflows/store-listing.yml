@@ -27,6 +27,14 @@ on:
         description: "Leave the screenshots as they are (What's New and the build only)"
         type: boolean
         default: false
+      build_version:
+        description: "Version of the build the calling run just uploaded (empty: the newest on App Store Connect)"
+        type: string
+        default: ""
+      build_number:
+        description: "Number of the build the calling run just uploaded"
+        type: string
+        default: ""
 
 env:
   ONLY_BUILD: ${{ inputs.only_build == true }}
@@ -83,6 +91,8 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
           SCREENSHOTS_DIR: ${{ github.workspace }}/store-screenshots
+          STORE_BUILD_VERSION: ${{ inputs.build_version }}
+          STORE_BUILD_NUMBER: ${{ inputs.build_number }}
 
       - name: Show the errors
         if: failure()
