@@ -18849,6 +18849,34 @@
         }
       }
     },
+    "awaiting_coach_approval" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf deinen Coach"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for your coach"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čeka potvrdu trenera"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa di conferma del coach"
+          }
+        }
+      }
+    },
     "heart_rate_source_apple_health" : {
       "localizations" : {
         "de" : {
