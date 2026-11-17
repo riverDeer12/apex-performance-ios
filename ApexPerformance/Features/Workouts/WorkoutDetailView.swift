@@ -11,6 +11,8 @@ struct WorkoutDetailView: View {
     @State private var isPlayingVideo = false
     @State private var showDeleteDialog = false
     @State private var isDeleting = false
+    // Set once the star is tapped, so a later answer of the refresh doesn't undo it.
+    @State private var hasToggledFavorite = false
     let canEdit: Bool
     var onSaved: (Workout) -> Void
     var onDeleted: (() -> Void)?
@@ -94,10 +96,23 @@ struct WorkoutDetailView: View {
         .navigationTitle(Text(workout.name.localized))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // Everyone marks their own favorites; not with an API without them.
+            if workout.isFavorite != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    FavoriteStarButton(isFavorite: workout.isFavoriteWorkout) {
+                        Task { await toggleFavorite() }
+                    }
+                }
+            }
             if canEdit {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        WorkoutEditView(workout: workout) { updated in
+                        WorkoutEditView(workout: workout) { saved in
+                            var updated = saved
+                            // An answer without favorites keeps the star as it was.
+                            if updated.isFavorite == nil {
+                                updated.isFavorite = workout.isFavorite
+                            }
                             workout = updated
                             isPlayingVideo = false
                             onSaved(updated)
@@ -130,6 +145,37 @@ struct WorkoutDetailView: View {
             Button("cancel", role: .cancel) {}
         } message: {
             Text("can_not_be_undone")
+        }
+        // Opened from a training or the chat, the workout may not say
+        // whether it is a favorite of this user: the API's answer does.
+        .task {
+            await refreshFavorite()
+        }
+    }
+
+    @MainActor
+    private func refreshFavorite() async {
+        guard let fresh = try? await Workout.load(id: workout.id),
+              let isFavorite = fresh.isFavorite,
+              !hasToggledFavorite,
+              isFavorite != workout.isFavorite else { return }
+        workout.isFavorite = isFavorite
+    }
+
+    /// Shows the star at once and puts it back when the API fails.
+    @MainActor
+    private func toggleFavorite() async {
+        hasToggledFavorite = true
+        let isFavorite = !workout.isFavoriteWorkout
+        workout.isFavorite = isFavorite
+        onSaved(workout)
+
+        do {
+            try await Workout.setFavorite(id: workout.id, isFavorite)
+        } catch {
+            workout.isFavorite = !isFavorite
+            onSaved(workout)
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
 

@@ -136,6 +136,34 @@ final class DemoAPITests: XCTestCase {
         XCTAssertEqual(bests.first { $0.workoutId == bench }?.weight, 70)
     }
 
+    @MainActor
+    func testFavoriteWorkoutsArePerUserAndToggle() throws {
+        func favorites(_ role: DemoAPI.Role) throws -> Set<UUID> {
+            let reply = DemoAPI.fixture("GET", "workouts", role: role)
+            let workouts = try APIClient.decoder.decode([Workout].self, from: reply.data)
+            XCTAssertTrue(workouts.allSatisfy { $0.isFavorite != nil }, "isFavorite in every workout")
+            return Set(workouts.filter(\.isFavoriteWorkout).map(\.id))
+        }
+
+        let saved = DemoAPI.favoriteWorkouts
+        defer { DemoAPI.favoriteWorkouts = saved }
+
+        let plank = DemoAPI.id(.workout, DemoAPI.WorkoutNumber.plank)
+        let coachFavorites = try favorites(.coach)
+        XCTAssertFalse(coachFavorites.isEmpty)
+        XCTAssertNotEqual(coachFavorites, try favorites(.client))
+        XCTAssertFalse(coachFavorites.contains(plank))
+
+        XCTAssertEqual(DemoAPI.fixture("PUT", "workouts/\(plank.uuidString)/favorite", role: .coach).status, 204)
+        XCTAssertTrue(try favorites(.coach).contains(plank))
+        XCTAssertFalse(try favorites(.client).contains(plank))
+        let detail = DemoAPI.fixture("GET", "workouts/\(plank.uuidString)", role: .coach)
+        XCTAssertEqual(try APIClient.decoder.decode(Workout.self, from: detail.data).isFavorite, true)
+
+        XCTAssertEqual(DemoAPI.fixture("DELETE", "workouts/\(plank.uuidString)/favorite", role: .coach).status, 204)
+        XCTAssertEqual(try favorites(.coach), coachFavorites)
+    }
+
     func testUnknownPathIsNotFound() {
         XCTAssertEqual(DemoAPI.fixture("GET", "no-such-endpoint", role: .client).status, 404)
         XCTAssertEqual(DemoAPI.fixture("GET", "profile/picture", role: .client).status, 404)
