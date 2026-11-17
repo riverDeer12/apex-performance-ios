@@ -144,7 +144,8 @@ enum AppleHealth {
               let min = statistics.minimumQuantity()?.doubleValue(for: unit),
               let max = statistics.maximumQuantity()?.doubleValue(for: unit),
               let average = statistics.averageQuantity()?.doubleValue(for: unit) else { return nil }
-        return Training.HeartRate(min: Int(min.rounded()), max: Int(max.rounded()), average: Int(average.rounded()))
+        return Training.HeartRate(min: Int(min.rounded()), max: Int(max.rounded()), average: Int(average.rounded()),
+                                  source: Training.HeartRate.appleHealth)
     }
 
     /// Whether the training has a start and end but no heart rate yet.
