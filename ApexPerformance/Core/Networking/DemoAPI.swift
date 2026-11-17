@@ -1658,6 +1658,10 @@ fileprivate struct Fixtures {
         if route("GET", "profile/picture") != nil {
             return .notFound
         }
+        // Demo people have no profile pictures (initials only), never real photos.
+        if route("GET", "users/*/picture") != nil {
+            return .notFound
+        }
         if route("GET", "clients/current-client") != nil {
             return .json(client(C.ana))
         }
