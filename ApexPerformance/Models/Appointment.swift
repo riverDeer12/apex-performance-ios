@@ -14,6 +14,15 @@ struct Appointment: Decodable, Identifiable {
     let timeSlot: TimeSlot
     let status: AppointmentStatus
     let clients: [Client]
+    // Coaches of the appointment, for their pictures; nil from an older API.
+    var coaches: [Coach]? = nil
+}
+
+extension Appointment {
+    /// Clients of the appointment for the avatars (name and picture).
+    var clientAvatars: [(name: String, pictureUrl: String?)] {
+        clients.map { ($0.fullName, $0.pictureUrl) }
+    }
 }
 
 extension Appointment {

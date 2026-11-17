@@ -182,7 +182,8 @@ struct ClientsView: View {
             title: Text("\(client.firstName) \(client.lastName)"),
             subtitle: planSubtitle(for: client),
             showChevron: true,
-            badge: outOfCredits ? "out_of_credits" : nil
+            badge: outOfCredits ? "out_of_credits" : nil,
+            person: (client.fullName, client.pictureUrl)
         )
         .contentShape(Rectangle())
         .background(Color.clear)
@@ -208,7 +209,8 @@ struct ClientsView: View {
                     credits: $0.credits,
                     bodyMeasurements: $0.bodyMeasurements,
                     lastCreditsIncrease: $0.lastCreditsIncrease,
-                    plan: $0.plan
+                    plan: $0.plan,
+                    pictureUrl: $0.pictureUrl
                 )
             }
             errorMessage = nil

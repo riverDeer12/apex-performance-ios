@@ -117,6 +117,19 @@ struct ChatConversationView: View {
         .navigationTitle(Text(verbatim: conversation?.otherParticipant(for: store.userId).fullName ?? ""))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if let other = conversation?.otherParticipant(for: store.userId) {
+                // Picture and name of the other side, like other chat apps.
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 8) {
+                        UserAvatarView(name: other.fullName, pictureUrl: other.pictureUrl, size: 30,
+                                       opensFullScreen: true)
+                        Text(verbatim: other.fullName)
+                            .font(.headline)
+                            .lineLimit(1)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
             if let conversation {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {

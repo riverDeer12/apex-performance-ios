@@ -243,7 +243,9 @@ struct StaffTrainingsView: View {
             iconTint: training.statusTint,
             title: Text(verbatim: training.name),
             subtitle: Text(verbatim: "\(Self.name(training.client)) · \(DateFormatter.dateWithDots.string(from: training.date))"),
-            showChevron: true
+            showChevron: true,
+            person: (Self.name(training.client), training.client.pictureUrl),
+            personBadge: (training.isCompleted ? "checkmark" : training.statusIcon, training.statusTint)
         )
     }
 
@@ -328,7 +330,7 @@ struct ClientPickerView: View {
                 Button {
                     onPick(client)
                 } label: {
-                    Text(verbatim: client.fullName)
+                    UserNameLabel(name: client.fullName, pictureUrl: client.pictureUrl)
                         .foregroundStyle(Color.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
@@ -358,7 +360,7 @@ struct PersonalRecordsClientsView: View {
             NavigationLink {
                 PersonalRecordsView(clientId: client.id, clientName: client.fullName)
             } label: {
-                Text(verbatim: client.fullName)
+                UserNameLabel(name: client.fullName, pictureUrl: client.pictureUrl)
             }
         }
         .navigationTitle("personal_records")

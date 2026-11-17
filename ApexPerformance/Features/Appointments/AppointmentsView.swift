@@ -348,12 +348,16 @@ struct AppointmentsView: View {
         let tint: Color = isPending ? .orange : (isOver ? .green : Color.apexMainColor)
 
         return HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(tint.opacity(0.15))
-                    .frame(width: 40, height: 40)
-                Image(systemName: isPending ? "calendar.badge.exclamationmark" : (isOver ? "checkmark.diamond" : "calendar"))
-                    .foregroundStyle(tint)
+            if appointment.clients.isEmpty {
+                ZStack {
+                    Circle()
+                        .fill(tint.opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: isPending ? "calendar.badge.exclamationmark" : (isOver ? "checkmark.diamond" : "calendar"))
+                        .foregroundStyle(tint)
+                }
+            } else {
+                UserAvatarStack(people: appointment.clientAvatars, size: 40)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -384,13 +388,8 @@ struct AppointmentsView: View {
     private func trainingInProgressRow(_ training: Training) -> some View {
         let client = [training.client.firstName, training.client.lastName].compactMap { $0 }.joined(separator: " ")
         return HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.15))
-                    .frame(width: 40, height: 40)
-                Image(systemName: "timer")
-                    .foregroundStyle(.orange)
-            }
+            UserAvatarView(name: client, pictureUrl: training.client.pictureUrl, size: 40)
+                .avatarBadge(systemImage: "timer", tint: .orange)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: training.name)
@@ -525,15 +524,8 @@ struct AppointmentsView: View {
         
         return VStack(spacing: 0) {
             HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(tint.opacity(0.15))
-                        .frame(width: 40, height: 40)
-                    
-                    Image(systemName: isCancelation ? "calendar.badge.minus" : "person.badge.plus")
-                        .foregroundStyle(tint)
-                        .font(.system(size: 18))
-                }
+                UserAvatarView(name: request.sender.fullName, pictureUrl: request.sender.pictureUrl, size: 40)
+                    .avatarBadge(systemImage: isCancelation ? "minus" : "plus", tint: tint)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(request.sender.fullName)
@@ -641,15 +633,22 @@ struct AppointmentsView: View {
 
     private func appointmentRow(_ appointment: Appointment) -> some View {
         HStack(spacing: 12) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill((appointment.isActive ? Color.apexMainColor : Color.green).opacity(0.15))
-                    .frame(width: 40, height: 40)
-                
-                Image(systemName: appointment.isActive ? "calendar" : "checkmark.diamond")
-                    .foregroundStyle(appointment.isActive ? Color.apexMainColor : .green)
-                    .font(.system(size: 18))
+            // Client picture(s), a check when it is over
+            if appointment.clients.isEmpty {
+                ZStack {
+                    Circle()
+                        .fill((appointment.isActive ? Color.apexMainColor : Color.green).opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    
+                    Image(systemName: appointment.isActive ? "calendar" : "checkmark.diamond")
+                        .foregroundStyle(appointment.isActive ? Color.apexMainColor : .green)
+                        .font(.system(size: 18))
+                }
+            } else if appointment.isActive {
+                UserAvatarStack(people: appointment.clientAvatars, size: 40)
+            } else {
+                UserAvatarStack(people: appointment.clientAvatars, size: 40)
+                    .avatarBadge(systemImage: "checkmark", tint: .green)
             }
             
             // Client name(s) on the left
@@ -699,15 +698,20 @@ struct AppointmentsView: View {
     private func pendingAppointmentRow(_ appointment: Appointment) -> some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(Color.orange.opacity(0.15))
-                        .frame(width: 40, height: 40)
-                    
-                    Image(systemName: "calendar.badge.exclamationmark")
-                        .foregroundStyle(Color.orange)
-                        .font(.system(size: 18))
+                // Client picture(s), marked as waiting
+                if appointment.clients.isEmpty {
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                        
+                        Image(systemName: "calendar.badge.exclamationmark")
+                            .foregroundStyle(Color.orange)
+                            .font(.system(size: 18))
+                    }
+                } else {
+                    UserAvatarStack(people: appointment.clientAvatars, size: 40)
+                        .avatarBadge(systemImage: "exclamationmark", tint: .orange)
                 }
                 
                 // Content

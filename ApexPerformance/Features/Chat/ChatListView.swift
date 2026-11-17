@@ -115,7 +115,7 @@ struct ChatListView: View {
     private func row(_ conversation: ChatConversation) -> some View {
         let other = conversation.otherParticipant(for: store.userId)
         return HStack(spacing: 12) {
-            ChatAvatar(name: other.fullName)
+            UserAvatarView(name: other.fullName, pictureUrl: other.pictureUrl)
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack {
@@ -209,25 +209,6 @@ struct ChatListView: View {
     }
 }
 
-/// Round initials of a participant.
-struct ChatAvatar: View {
-    let name: String
-    var size: CGFloat = 44
-
-    private var initials: String {
-        name.split(separator: " ").prefix(2).compactMap(\.first).map(String.init).joined().uppercased()
-    }
-
-    var body: some View {
-        Text(verbatim: initials.isEmpty ? "?" : initials)
-            .font(.system(size: size * 0.36, weight: .bold))
-            .foregroundStyle(Color.apexOnAccent)
-            .frame(width: size, height: size)
-            .background(Circle().fill(Color.apexAccent))
-            .accessibilityHidden(true)
-    }
-}
-
 /// People the user can chat with (clients for a coach, coaches for a
 /// client); tapping one picks them.
 struct ChatContactPickerView: View {
@@ -259,7 +240,7 @@ struct ChatContactPickerView: View {
                         onPick(contact)
                     } label: {
                         HStack(spacing: 12) {
-                            ChatAvatar(name: contact.fullName, size: 34)
+                            UserAvatarView(name: contact.fullName, pictureUrl: contact.pictureUrl, size: 34)
                             Text(verbatim: contact.fullName)
                                 .foregroundStyle(Color.primary)
                             Spacer()

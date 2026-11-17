@@ -14,6 +14,8 @@ struct Coach: Encodable, Decodable, Identifiable {
     let lastName: String?
     let email: String?
     let phone: String?
+    // Profile picture link, nil when there is none (or from an older API).
+    var pictureUrl: String? = nil
     
     var fullName: String {
         let first = firstName ?? ""

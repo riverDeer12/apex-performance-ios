@@ -25,6 +25,7 @@ struct ClientHomeView: View {
     @State private var showGoalSheet = false
     // The client's coach, shown with the next training when there is one.
     @State private var coachName: String?
+    @State private var coachPictureUrl: String?
     // Goal card lines cut at their line limit, for "Show more".
     @State private var truncatedGoalLines: Set<String> = []
 
@@ -194,7 +195,11 @@ struct ClientHomeView: View {
                         Text(verbatim: coachName)
                             .lineLimit(1)
                     } icon: {
-                        Image(systemName: "person")
+                        if coachPictureUrl != nil {
+                            UserAvatarView(name: coachName, pictureUrl: coachPictureUrl, size: 22)
+                        } else {
+                            Image(systemName: "person")
+                        }
                     }
                 }
             }
@@ -488,6 +493,7 @@ struct ClientHomeView: View {
                 .filter { !$0.isEmpty }
                 .joined(separator: " ")
             coachName = name.isEmpty ? nil : name
+            coachPictureUrl = coaches[0].pictureUrl
         }
 
         // The home screen widget: next appointment and package.

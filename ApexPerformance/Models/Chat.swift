@@ -11,6 +11,8 @@ struct ChatParticipant: Decodable, Hashable {
     let id: UUID
     let userId: UUID
     let fullName: String
+    // Profile picture link, nil when there is none (or from an older API).
+    var pictureUrl: String? = nil
 }
 
 struct ChatMessage: Identifiable, Decodable, Hashable {
@@ -83,6 +85,8 @@ struct ChatContact: Identifiable, Decodable, Hashable {
     let conversationId: UUID?
     // False when the coach turned the chat off or the client blocked it (read only).
     let isEnabled: Bool
+    // Profile picture link, nil when there is none (or from an older API).
+    var pictureUrl: String? = nil
 }
 
 /// "MessagesRead" hub event.

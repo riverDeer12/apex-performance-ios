@@ -116,13 +116,15 @@ struct CreateAppointmentView: View {
                         }
                         
                         ShowMoreForEach(items: clients) { client in
-                            Toggle(client.fullName, isOn: Binding(
+                            Toggle(isOn: Binding(
                                 get: { selectedClients.contains(client.id) },
                                 set: { isOn in
                                     if isOn { selectedClients.append(client.id) }
                                     else { selectedClients.removeAll { $0 == client.id } }
                                 }
-                            ))
+                            )) {
+                                UserNameLabel(name: client.fullName, pictureUrl: client.pictureUrl)
+                            }
                         }
                     }
                     .disabled(isLoadingClients || clients.isEmpty)
@@ -324,7 +326,8 @@ struct CreateAppointmentView: View {
                     firstName: $0.firstName,
                     lastName: $0.lastName,
                     email: $0.email,
-                    phone: $0.phone
+                    phone: $0.phone,
+                    pictureUrl: $0.pictureUrl
                 )
             }
             if selectedCoachId == nil, let firstCoach = coaches.first {
@@ -354,7 +357,8 @@ struct CreateAppointmentView: View {
                     phone: $0.phone,
                     credits: $0.credits,
                     bodyMeasurements: $0.bodyMeasurements,
-                    lastCreditsIncrease: $0.lastCreditsIncrease
+                    lastCreditsIncrease: $0.lastCreditsIncrease,
+                    pictureUrl: $0.pictureUrl
                 )
             }
         } catch {

@@ -390,7 +390,7 @@ struct AssignTrainingTemplateView: View {
                             toggle(client.id)
                         } label: {
                             HStack {
-                                Text(verbatim: client.fullName)
+                                UserNameLabel(name: client.fullName, pictureUrl: client.pictureUrl)
                                     .foregroundStyle(Color.primary)
                                 Spacer()
                                 if selectedClients.contains(client.id) {

@@ -32,8 +32,10 @@
 		302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */; };
 		90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */; };
 		59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */; };
+		F3B06379479B62C506BBAEDD /* UserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1A823333FB1F162D0F7DB2 /* UserAvatarView.swift */; };
 		0D2D386D2A68155933107B52 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFEE2C8B62315F575C1AD89 /* Profile.swift */; };
 		0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */; };
+		E73BC42267D09FF36314199B /* UserPictureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44065590693AE0A5653FA22B /* UserPictureTests.swift */; };
 		61CFB5032EF17D8B009E9624 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */; };
 		61CFB5072EF17DC8009E9624 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5062EF17DC8009E9624 /* UserProfileView.swift */; };
 		61CFB5092EF17DDC009E9624 /* BodyMeasurementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CFB5082EF17DDC009E9624 /* BodyMeasurementDetailsView.swift */; };
@@ -217,6 +219,7 @@
 		CB8CDED1A4FE33D7382055DD /* FunctionalMovementScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalMovementScreenView.swift; sourceTree = "<group>"; };
 		4C316966DECD4E8A3AC81F61 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePictureView.swift; sourceTree = "<group>"; };
+		DC1A823333FB1F162D0F7DB2 /* UserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserAvatarView.swift"; sourceTree = "<group>"; };
 		AAFEE2C8B62315F575C1AD89 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		1C0D873D691520A8AD453624 /* CalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarMonthView.swift; sourceTree = "<group>"; };
 		61CFB5022EF17D8B009E9624 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
@@ -309,6 +312,7 @@
 		61E974362EF0AB9300D225C5 /* ApexPerformanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITests.swift; sourceTree = "<group>"; };
 		61E974382EF0AB9300D225C5 /* ApexPerformanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexPerformanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTDecoderTests.swift; sourceTree = "<group>"; };
+		44065590693AE0A5653FA22B /* UserPictureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserPictureTests.swift"; sourceTree = "<group>"; };
 		96920DE3EEA0A6620BD41065 /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		DF2D8F29E1007CD50508A9B3 /* TrainingSaveQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSaveQueue.swift"; sourceTree = "<group>"; };
 		FF332FC8AF87A73C1F9AA9AB /* ChatHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHub.swift; sourceTree = "<group>"; };
@@ -508,6 +512,7 @@
 			isa = PBXGroup;
 			children = (
 				B6A6068590452D0C42D81A0E /* ProfilePictureView.swift */,
+				DC1A823333FB1F162D0F7DB2 /* UserAvatarView.swift */,
 				AE563F367A1BBDC83D7B83C9 /* AppearanceSwitcherView.swift */,
 				13A2D53DE7A834D5DF9ED5D7 /* SplashView.swift */,
 				AD0324B3307091769C04277E /* WeightProgressChartView.swift */,
@@ -715,6 +720,7 @@
 			children = (
 				61E9742C2EF0AB9300D225C5 /* ApexPerformanceTests.swift */,
 				6342F0428EC73491B1BB41D0 /* JWTDecoderTests.swift */,
+				44065590693AE0A5653FA22B /* UserPictureTests.swift */,
 				F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */,
 				2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */,
 			);
@@ -961,6 +967,7 @@
 				302ED0011EA89614AD0175C3 /* FunctionalMovementScreenView.swift in Sources */,
 				90EE3D3B53D74C4F256ECBF7 /* EditProfileView.swift in Sources */,
 				59BA15938CEFCA91CD3C0309 /* ProfilePictureView.swift in Sources */,
+				F3B06379479B62C506BBAEDD /* UserAvatarView.swift in Sources */,
 				E20EB7E37D29FB0574B3D943 /* WeightProgressChartView.swift in Sources */,
 				0D2D386D2A68155933107B52 /* Profile.swift in Sources */,
 				61CFB53D2EFAD55D009E9624 /* BodyMeasurement.swift in Sources */,
@@ -1055,6 +1062,7 @@
 			files = (
 				61E9742D2EF0AB9300D225C5 /* ApexPerformanceTests.swift in Sources */,
 				0B33A1497140FC493B67757D /* JWTDecoderTests.swift in Sources */,
+				E73BC42267D09FF36314199B /* UserPictureTests.swift in Sources */,
 				B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */,
 				02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */,
 			);

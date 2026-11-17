@@ -121,7 +121,7 @@ struct CreateClientView: View {
                             ProgressView("loading_coaches")
                         }
                         ForEach(coaches) { coach in
-                            Toggle(coach.fullName, isOn: Binding(
+                            Toggle(isOn: Binding(
                                 get: { selectedCoaches.contains(coach.id) },
                                 set: { isOn in
                                     if isOn {
@@ -130,7 +130,9 @@ struct CreateClientView: View {
                                         selectedCoaches.removeAll { $0 == coach.id }
                                     }
                                 }
-                            ))
+                            )) {
+                                UserNameLabel(name: coach.fullName, pictureUrl: coach.pictureUrl)
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
