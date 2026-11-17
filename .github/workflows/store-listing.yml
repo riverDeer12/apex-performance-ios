@@ -17,6 +17,14 @@ on:
         description: "Leave the screenshots as they are (What's New and the build only)"
         type: boolean
         default: false
+      build_version:
+        description: "Build version, e.g. 1.15 (empty: the newest on App Store Connect)"
+        type: string
+        default: ""
+      build_number:
+        description: "Build number, e.g. 19 (with build_version)"
+        type: string
+        default: ""
   workflow_call:
     inputs:
       screenshots_from_this_run:
