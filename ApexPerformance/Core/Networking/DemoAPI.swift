@@ -23,6 +23,13 @@ enum DemoAPI {
     /// them after every login, so the screenshots show the popup.
     nonisolated(unsafe) static var rulesAcceptedAt: Date?
 
+    /// Workouts each user marked with the star in this launch (WorkoutNumber):
+    /// the coach's strength favorites, Ana's mobility ones.
+    nonisolated(unsafe) static var favoriteWorkouts: [Role: Set<Int>] = [
+        .coach: [WorkoutNumber.bench, WorkoutNumber.squat, WorkoutNumber.romanianDeadlift, WorkoutNumber.hipThrust],
+        .client: [WorkoutNumber.hipFlexorStretch, WorkoutNumber.catCow]
+    ]
+
     /// Answers requests to the API host from now on (URLSession.shared).
     static func start() {
         URLProtocol.registerClass(DemoURLProtocol.self)
@@ -850,7 +857,8 @@ fileprivate struct Fixtures {
             // Plank sets record a duration, row erg sets a distance and a duration.
             "isTimed": info.number == DemoAPI.WorkoutNumber.plank || DemoAPI.paceTypes[info.number] != nil,
             "category": info.types.contains(DemoAPI.mobilityTypeNumber) ? "MobilityFlexibility" : "StrengthConditioning",
-            "paceType": paceType(info.number)
+            "paceType": paceType(info.number),
+            "isFavorite": DemoAPI.favoriteWorkouts[role, default: []].contains(info.number)
         ]
     }
 
@@ -1601,7 +1609,9 @@ fileprivate struct Fixtures {
             "secondaryMuscles": input["secondaryMuscles"] as? [String] ?? [String](),
             "isTimed": (input["isTimed"] as? Bool ?? false) || paceType != nil,
             "category": input["category"] as? String ?? "StrengthConditioning",
-            "paceType": null(paceType)
+            "paceType": null(paceType),
+            "isFavorite": workoutNumber(id.uuidString).map { DemoAPI.favoriteWorkouts[role, default: []].contains($0) }
+                ?? false
         ]
     }
 
@@ -1828,6 +1838,18 @@ fileprivate struct Fixtures {
                 "content": input["content"] as? String ?? "",
                 "updatedAt": iso(now)
             ] as JSON)
+        }
+        // Favorites: 204 like the API; only the demo's own workouts keep the star.
+        if let ids = route("PUT", "workouts/*/favorite") {
+            guard let number = workoutNumber(ids[0]) else { return Reply(status: 204) }
+            DemoAPI.favoriteWorkouts[role, default: []].insert(number)
+            return Reply(status: 204)
+        }
+        if let ids = route("DELETE", "workouts/*/favorite") {
+            if let number = workoutNumber(ids[0]) {
+                DemoAPI.favoriteWorkouts[role, default: []].remove(number)
+            }
+            return Reply(status: 204)
         }
         if route("POST", "workouts/import") != nil {
             return .json(["id": UUID().uuidString, "status": true, "queuedWorkoutsCount": 0] as JSON)

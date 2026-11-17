@@ -24,6 +24,11 @@ struct Workout: Identifiable, Decodable, Hashable {
     // cycling): sets record the distance too and show the pace this way.
     // Nil for other workouts and from an API without it.
     var paceType: String? = nil
+    // The user marked it with the star (each user has their own favorites).
+    // Nil from an API without favorites: then the star isn't shown.
+    var isFavorite: Bool? = nil
+
+    var isFavoriteWorkout: Bool { isFavorite ?? false }
 
     /// Category for filtering; before the API had them, taken from the types.
     var workoutCategory: WorkoutCategory {
@@ -187,6 +192,16 @@ extension Workout {
             .appendingPathComponent("workouts")
             .appendingPathComponent(id.uuidString)
         return try await APIClient.shared.request(url)
+    }
+
+    /// Marks the workout as a favorite of the user (PUT) or removes it (DELETE).
+    @MainActor
+    static func setFavorite(id: UUID, _ isFavorite: Bool) async throws {
+        let url = AppEnvironment.apiURL
+            .appendingPathComponent("workouts")
+            .appendingPathComponent(id.uuidString)
+            .appendingPathComponent("favorite")
+        try await APIClient.shared.requestData(url, method: isFavorite ? .put : .delete)
     }
 
     /// Deletes the workout (soft delete on the API, staff only).

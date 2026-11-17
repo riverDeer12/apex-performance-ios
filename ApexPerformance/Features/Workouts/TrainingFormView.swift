@@ -470,7 +470,8 @@ struct TrainingFormView: View {
         return Section {
             NavigationLink {
                 WorkoutPickerView(workouts: workouts, trainingName: name, selection: exercise.workoutId,
-                                  onCreated: canCreateWorkouts ? { addCreatedWorkout($0) } : nil)
+                                  onCreated: canCreateWorkouts ? { addCreatedWorkout($0) } : nil,
+                                  onToggleFavorite: { workout in Task { await toggleFavorite(workout) } })
             } label: {
                 HStack {
                     Text("exercise")
@@ -871,6 +872,23 @@ struct TrainingFormView: View {
         workouts.append(created)
         workouts.sort {
             $0.name.localized.localizedStandardCompare($1.name.localized) == .orderedAscending
+        }
+    }
+
+    /// Star swiped in the exercise picker: shown at once, put back when the API fails.
+    @MainActor
+    private func toggleFavorite(_ workout: Workout) async {
+        guard let index = workouts.firstIndex(where: { $0.id == workout.id }) else { return }
+        let isFavorite = !workouts[index].isFavoriteWorkout
+        workouts[index].isFavorite = isFavorite
+
+        do {
+            try await Workout.setFavorite(id: workout.id, isFavorite)
+        } catch {
+            if let index = workouts.firstIndex(where: { $0.id == workout.id }) {
+                workouts[index].isFavorite = !isFavorite
+            }
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
 
@@ -1388,8 +1406,9 @@ struct UndoSnackbar: View {
 
 // MARK: - Workout picker
 
-/// Searchable list of all workouts to choose a training exercise, with
-/// the ones that fit the training's name on top (GET workouts/suggested).
+/// Searchable list of all workouts to choose a training exercise, with the
+/// user's favorites on top, then the ones that fit the training's name
+/// (GET workouts/suggested). A swipe marks or unmarks a favorite.
 /// A coach who can't find the exercise adds it here with just a name and
 /// a category; it is picked right away and edited later in Workouts.
 private struct WorkoutPickerView: View {
@@ -1398,6 +1417,7 @@ private struct WorkoutPickerView: View {
     @Binding var selection: UUID?
     // Given when the user can add workouts: gets the new one.
     var onCreated: ((Workout) -> Void)? = nil
+    var onToggleFavorite: ((Workout) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
@@ -1417,8 +1437,25 @@ private struct WorkoutPickerView: View {
         return suggestedIds.compactMap { byId[$0] }
     }
 
+    // An API without favorites leaves isFavorite out: no section, no swipe.
+    private var supportsFavorites: Bool {
+        workouts.contains { $0.isFavorite != nil }
+    }
+
+    // The user's favorites the search finds, so the coach picks them fast.
+    private var favorites: [Workout] {
+        workouts.filter { $0.isFavoriteWorkout && $0.matches(searchText) }
+    }
+
     var body: some View {
         List {
+            if !favorites.isEmpty {
+                Section {
+                    ForEach(favorites) { row($0) }
+                } header: {
+                    Label("favorites", systemImage: "star.fill")
+                }
+            }
             if !suggested.isEmpty {
                 Section {
                     ForEach(suggested) { row($0) }
@@ -1429,7 +1466,7 @@ private struct WorkoutPickerView: View {
             Section {
                 ShowMoreForEach(items: workouts.filter { $0.matches(searchText) }) { row($0) }
             } header: {
-                if !suggested.isEmpty {
+                if !suggested.isEmpty || !favorites.isEmpty {
                     Text("all_workouts")
                 }
             }
@@ -1490,10 +1527,30 @@ private struct WorkoutPickerView: View {
                 Text(verbatim: workout.name.localized)
                     .foregroundStyle(Color.primary)
                 Spacer()
+                if workout.isFavoriteWorkout {
+                    Image(systemName: "star.fill")
+                        .font(.caption)
+                        .foregroundStyle(Color.yellow)
+                        .accessibilityLabel(Text("favorites"))
+                }
                 if workout.id == selection {
                     Image(systemName: "checkmark")
                         .foregroundStyle(Color.apexMainColor)
                 }
+            }
+        }
+        .swipeActions(edge: .leading) {
+            if supportsFavorites, let onToggleFavorite {
+                Button {
+                    onToggleFavorite(workout)
+                } label: {
+                    if workout.isFavoriteWorkout {
+                        Label("remove_from_favorites", systemImage: "star.slash")
+                    } else {
+                        Label("add_to_favorites", systemImage: "star")
+                    }
+                }
+                .tint(.yellow)
             }
         }
     }

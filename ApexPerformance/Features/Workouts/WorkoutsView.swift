@@ -14,6 +14,8 @@ struct WorkoutsView: View {
     @State private var searchText = ""
     // Nil shows all workouts.
     @State private var category: WorkoutCategory?
+    // Only the user's favorites (with the category, if one is picked).
+    @State private var showsOnlyFavorites = false
     @State private var isLoading = false
     @State private var showFileImporter = false
     @State private var isImporting = false
@@ -56,9 +58,23 @@ struct WorkoutsView: View {
         Set(visibleWorkouts.map(\.workoutCategory)).count > 1
     }
 
+    // An API without favorites leaves isFavorite out: no stars, no filter.
+    private var supportsFavorites: Bool {
+        workouts.contains { $0.isFavorite != nil }
+    }
+
+    private var showsFilters: Bool {
+        showsCategoryFilter || supportsFavorites
+    }
+
+    private var isFiltering: Bool {
+        category != nil || showsOnlyFavorites
+    }
+
     private var filteredWorkouts: [Workout] {
         visibleWorkouts
             .filter { category == nil || $0.workoutCategory == category }
+            .filter { !showsOnlyFavorites || $0.isFavoriteWorkout }
             .filter { $0.matches(searchText) }
             .sorted { $0.name.localized.localizedStandardCompare($1.name.localized) == .orderedAscending }
     }
@@ -94,38 +110,57 @@ struct WorkoutsView: View {
                     searchField
                         .padding(.horizontal, 20)
 
-                    if showsCategoryFilter {
+                    if showsFilters {
                         categoryFilter
                             .padding(.horizontal, 20)
                     }
 
                     CardView {
                         if filteredWorkouts.isEmpty, !isLoading {
-                            EmptyStateView(
-                                systemImage: searchText.isEmpty && category == nil ? "dumbbell" : "magnifyingglass",
-                                message: searchText.isEmpty && category == nil ? "no_workouts" : "no_workouts_found",
-                                actionTitle: canManageWorkouts ? "add_exercise" : nil
-                            ) {
-                                showCreateWorkout = true
+                            if showsOnlyFavorites && searchText.isEmpty && category == nil {
+                                EmptyStateView(systemImage: "star", message: "no_favorite_workouts")
+                            } else {
+                                EmptyStateView(
+                                    systemImage: searchText.isEmpty && !isFiltering ? "dumbbell" : "magnifyingglass",
+                                    message: searchText.isEmpty && !isFiltering ? "no_workouts" : "no_workouts_found",
+                                    actionTitle: canManageWorkouts ? "add_exercise" : nil
+                                ) {
+                                    showCreateWorkout = true
+                                }
                             }
                         } else {
                             LazyVStack(spacing: 0) {
                                 ShowMoreForEach(items: filteredWorkouts) { workout in
-                                    // Destination link, not a value link: the library is also
-                                    // pushed from the client's home, where a value destination
-                                    // registered in the pushed view only opened after going back.
-                                    NavigationLink {
-                                        workoutDetail(workout)
-                                    } label: {
-                                        workoutRow(workout)
-                                    }
-                                    .buttonStyle(.apexPlain)
-                                    .accessibilityIdentifier("workout-row")
-                                    .contextMenu {
-                                        if canManageWorkouts {
-                                            Button("delete_workout", systemImage: "trash", role: .destructive) {
-                                                workoutToDelete = workout
+                                    HStack(spacing: 4) {
+                                        // Destination link, not a value link: the library is also
+                                        // pushed from the client's home, where a value destination
+                                        // registered in the pushed view only opened after going back.
+                                        NavigationLink {
+                                            workoutDetail(workout)
+                                        } label: {
+                                            workoutRow(workout, showsChevron: !supportsFavorites)
+                                        }
+                                        .buttonStyle(.apexPlain)
+                                        .accessibilityIdentifier("workout-row")
+                                        .contextMenu {
+                                            if supportsFavorites {
+                                                favoriteMenuButton(workout)
                                             }
+                                            if canManageWorkouts {
+                                                Button("delete_workout", systemImage: "trash", role: .destructive) {
+                                                    workoutToDelete = workout
+                                                }
+                                            }
+                                        }
+
+                                        // Next to the link, not in it, so tapping the star
+                                        // doesn't open the workout.
+                                        if supportsFavorites {
+                                            FavoriteStarButton(isFavorite: workout.isFavoriteWorkout) {
+                                                Task { await toggleFavorite(workout) }
+                                            }
+                                            chevron
+                                                .accessibilityHidden(true)
                                         }
                                     }
 
@@ -194,6 +229,11 @@ struct WorkoutsView: View {
     private func workoutDetail(_ workout: Workout) -> some View {
         WorkoutDetailView(workout: workout, canEdit: canManageWorkouts) { updated in
             if let index = workouts.firstIndex(where: { $0.id == updated.id }) {
+                var updated = updated
+                // An answer without favorites keeps the star as it was.
+                if updated.isFavorite == nil {
+                    updated.isFavorite = workouts[index].isFavorite
+                }
                 workouts[index] = updated
             }
         } onDeleted: {
@@ -231,45 +271,78 @@ struct WorkoutsView: View {
         .accessibilityIdentifier("workouts-add-menu")
     }
 
-    // Workouts per category among the ones the search finds.
+    // Workouts per category among the ones the search (and favorites filter) finds.
     private func count(of category: WorkoutCategory) -> Int {
-        visibleWorkouts.filter { $0.workoutCategory == category && $0.matches(searchText) }.count
+        visibleWorkouts.filter {
+            $0.workoutCategory == category && (!showsOnlyFavorites || $0.isFavoriteWorkout) && $0.matches(searchText)
+        }.count
     }
 
-    /// Two buttons, one per category: a tapped one shows only its workouts,
-    /// tapped again all of them.
+    // Favorites among the ones the search (and picked category) finds.
+    private var favoritesCount: Int {
+        visibleWorkouts.filter {
+            $0.isFavoriteWorkout && (category == nil || $0.workoutCategory == category) && $0.matches(searchText)
+        }.count
+    }
+
+    /// The favorites and one button per category: a tapped one shows only
+    /// its workouts, tapped again all of them. Favorites combine with a category.
     private var categoryFilter: some View {
         HStack(spacing: 8) {
-            ForEach(WorkoutCategory.allCases) { option in
-                let isSelected = category == option
-                Button {
-                    withAnimation(.easeInOut(duration: 0.15)) {
+            if supportsFavorites {
+                filterButton(title: "favorites", count: favoritesCount,
+                             systemImage: showsOnlyFavorites ? "star.fill" : "star",
+                             isSelected: showsOnlyFavorites, identifier: "category-Favorites") {
+                    showsOnlyFavorites.toggle()
+                }
+            }
+            if showsCategoryFilter {
+                ForEach(WorkoutCategory.allCases) { option in
+                    let isSelected = category == option
+                    filterButton(title: option.title, count: count(of: option), systemImage: option.systemImage,
+                                 isSelected: isSelected, identifier: "category-\(option.rawValue)") {
                         category = isSelected ? nil : option
                     }
-                } label: {
-                    // e.g. "Mobility and flexibility · 11".
-                    Label {
-                        Text(option.title) + Text(verbatim: " · \(count(of: option))")
-                    } icon: {
-                        Image(systemName: option.systemImage)
-                    }
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .minimumScaleFactor(0.85)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .padding(.horizontal, 8)
-                        // Dark text on the selected button's sky blue.
-                        .foregroundStyle(isSelected ? Color.apexOnAccent : Color.apexMainColor)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(isSelected ? Color.apexMainColor : Color.apexMainColor.opacity(0.1))
-                        )
                 }
-                .buttonStyle(.apexPlain)
-                .accessibilityAddTraits(isSelected ? .isSelected : [])
-                .accessibilityIdentifier("category-\(option.rawValue)")
             }
+        }
+    }
+
+    private func filterButton(title: LocalizedStringKey, count: Int, systemImage: String, isSelected: Bool,
+                              identifier: String, action: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.15)) {
+                action()
+            }
+        } label: {
+            // e.g. "Mobility and flexibility · 11".
+            Label {
+                Text(title) + Text(verbatim: " · \(count)")
+            } icon: {
+                Image(systemName: systemImage)
+            }
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .padding(.horizontal, 8)
+                // Dark text on the selected button's sky blue.
+                .foregroundStyle(isSelected ? Color.apexOnAccent : Color.apexMainColor)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(isSelected ? Color.apexMainColor : Color.apexMainColor.opacity(0.1))
+                )
+        }
+        .buttonStyle(.apexPlain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityIdentifier(identifier)
+    }
+
+    private func favoriteMenuButton(_ workout: Workout) -> some View {
+        Button(workout.isFavoriteWorkout ? LocalizedStringKey("remove_from_favorites") : LocalizedStringKey("add_to_favorites"),
+               systemImage: workout.isFavoriteWorkout ? "star.slash" : "star") {
+            Task { await toggleFavorite(workout) }
         }
     }
 
@@ -299,7 +372,13 @@ struct WorkoutsView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
     }
 
-    private func workoutRow(_ workout: Workout) -> some View {
+    private var chevron: some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(.tertiary)
+    }
+
+    private func workoutRow(_ workout: Workout, showsChevron: Bool = true) -> some View {
         HStack(spacing: 12) {
             WorkoutThumbnailView(url: workout.thumbnailUrl, category: workout.workoutCategory)
                 .frame(width: 96, height: 54)
@@ -329,9 +408,9 @@ struct WorkoutsView: View {
 
             Spacer(minLength: 0)
 
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.tertiary)
+            if showsChevron {
+                chevron
+            }
         }
         .padding(.vertical, 10)
         .contentShape(Rectangle())
@@ -348,6 +427,23 @@ struct WorkoutsView: View {
         } catch let error where error.isCancellation {
             return
         } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    /// Shows the star at once and puts it back when the API fails.
+    @MainActor
+    private func toggleFavorite(_ workout: Workout) async {
+        guard let index = workouts.firstIndex(where: { $0.id == workout.id }) else { return }
+        let isFavorite = !workouts[index].isFavoriteWorkout
+        workouts[index].isFavorite = isFavorite
+
+        do {
+            try await Workout.setFavorite(id: workout.id, isFavorite)
+        } catch {
+            if let index = workouts.firstIndex(where: { $0.id == workout.id }) {
+                workouts[index].isFavorite = !isFavorite
+            }
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
@@ -400,6 +496,29 @@ struct WorkoutsView: View {
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
+    }
+}
+
+/// Star that marks a workout as a favorite of the user, or removes it.
+struct FavoriteStarButton: View {
+    let isFavorite: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isFavorite ? "star.fill" : "star")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(isFavorite ? Color.yellow : Color.secondary)
+                .symbolEffect(.bounce, value: isFavorite)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.apexPlain)
+        .sensoryFeedback(.selection, trigger: isFavorite)
+        .accessibilityLabel(Text(isFavorite ? LocalizedStringKey("remove_from_favorites")
+                                            : LocalizedStringKey("add_to_favorites")))
+        .accessibilityAddTraits(isFavorite ? .isSelected : [])
+        .accessibilityIdentifier("workout-favorite")
     }
 }
 
