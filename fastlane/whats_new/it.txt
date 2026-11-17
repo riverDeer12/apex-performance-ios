@@ -6,4 +6,7 @@
 • Widget nella schermata Home: il prossimo appuntamento e il pacchetto, per gli allenatori il prossimo appuntamento di oggi e le richieste in attesa.
 • Un promemoria 2 ore prima di un appuntamento confermato.
 • Le liste vuote indicano cosa fare, il testo segue la dimensione impostata ed è più leggibile in modalità scura.
+• Puoi segnare gli esercizi come preferiti con una stella; filtro Preferiti, e i preferiti sono in cima quando aggiungi esercizi a un allenamento.
+• Le foto profilo di clienti e allenatori si vedono ovunque: clienti, appuntamenti, richieste, allenamenti e chat.
+• La scheda Il mio pacchetto e il widget mostrano correttamente gli allenamenti svolti questo mese, e gli appuntamenti in attesa dell'allenatore sono segnati come In attesa di conferma del coach.
 • Piccoli miglioramenti e correzioni.

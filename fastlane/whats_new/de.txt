@@ -6,4 +6,7 @@
 • Widget für den Home-Bildschirm: dein nächster Termin und dein Paket, für Trainer der nächste Termin heute und offene Anfragen.
 • Eine Erinnerung 2 Stunden vor einem bestätigten Termin.
 • Leere Listen zeigen den nächsten Schritt, Text folgt der eingestellten Schriftgröße und ist im Dunkelmodus besser lesbar.
+• Übungen lassen sich mit einem Stern als Favoriten markieren; ein Favoriten-Filter, und beim Hinzufügen zu einem Training stehen Favoriten oben.
+• Profilbilder von Kunden und Coaches sind überall zu sehen: Kunden, Termine, Anfragen, Trainings und Chat.
+• Die Karte Mein Paket und das Widget zeigen die erledigten Trainings dieses Monats jetzt richtig, und Termine, die auf den Coach warten, sind als Wartet auf deinen Coach markiert.
 • Kleine Verbesserungen und Fehlerbehebungen.

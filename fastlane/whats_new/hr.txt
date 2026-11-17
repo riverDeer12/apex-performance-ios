@@ -6,4 +6,7 @@
 • Widget na početnom zaslonu: sljedeći termin i paket, a za trenere današnji termin i zahtjevi na čekanju.
 • Podsjetnik 2 sata prije odobrenog termina.
 • Prazni popisi pokazuju što dalje, a tekst prati veličinu slova iz postavki i čitljiviji je u tamnom načinu.
+• Vježbe možeš označiti zvjezdicom kao favorite; filter Favoriti, a u odabiru vježbe za trening favoriti su na vrhu.
+• Profilne slike klijenata i trenera vide se svugdje: klijenti, termini, zahtjevi, treninzi i chat.
+• Kartica Moj paket i widget točno pokazuju odrađene treninge ovog mjeseca, a termini koji čekaju trenera označeni su s Čeka potvrdu trenera.
 • Manja poboljšanja i ispravci.
