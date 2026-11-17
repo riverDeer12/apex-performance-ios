@@ -177,5 +177,45 @@ final class DemoAPITests: XCTestCase {
         let otherRequest = URLRequest(url: try XCTUnwrap(URL(string: "https://itunes.apple.com/lookup")))
         XCTAssertFalse(DemoURLProtocol.canInit(with: otherRequest))
     }
+
+    /// GET appointments gives a client only upcoming appointments, so the
+    /// trainings done this month come from current-client's doneThisMonth.
+    @MainActor
+    func testPackageDoneComesFromTheAPI() throws {
+        let json = #"{"firstName":"Ana","lastName":"Kovač","email":"ana@example.com","credits":6,"plan":"PrivateCoaching","doneThisMonth":4}"#
+        let client = try APIClient.decoder.decode(UserProfile.self, from: Data(json.utf8))
+        XCTAssertEqual(client.doneThisMonth, 4)
+
+        let now = Date()
+        let upcoming = [1.0, 3.0].map { days in
+            Appointment(
+                id: UUID(),
+                startTime: now.addingTimeInterval(days * 86_400),
+                endTime: now.addingTimeInterval(days * 86_400 + 3_600),
+                timeSlot: TimeSlot(id: UUID()),
+                status: AppointmentStatus(id: UUID(), name: "Approved", description: ""),
+                clients: []
+            )
+        }
+        let package = PackageSummary(client: client, approvedAppointments: upcoming, now: now)
+        XCTAssertEqual(package.done, 4)
+        XCTAssertEqual(package.reserved, 2)
+        XCTAssertEqual(package.total, 12)
+
+        // Without it (older API) the field is missing and decoding still works.
+        let older = try APIClient.decoder.decode(
+            UserProfile.self, from: Data(#"{"firstName":"Ana","lastName":"Kovač","email":"a@b.c","credits":6}"#.utf8)
+        )
+        XCTAssertNil(older.doneThisMonth)
+        XCTAssertEqual(PackageSummary(client: older, approvedAppointments: upcoming, now: now).done, 0)
+    }
+
+    /// Clients never get Approve / Reject, only staff.
+    func testOnlyStaffApproveAppointments() {
+        XCTAssertFalse(AuthManager.canApproveAppointments(role: "Client"))
+        XCTAssertFalse(AuthManager.canApproveAppointments(role: ""))
+        XCTAssertTrue(AuthManager.canApproveAppointments(role: "Coach"))
+        XCTAssertTrue(AuthManager.canApproveAppointments(role: "Administrator"))
+    }
 }
 #endif
