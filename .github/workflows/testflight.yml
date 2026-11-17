@@ -33,6 +33,9 @@ jobs:
   testflight:
     runs-on: macos-latest
     timeout-minutes: 60
+    outputs:
+      version: ${{ steps.upload.outputs.version }}
+      build_number: ${{ steps.upload.outputs.build_number }}
 
     steps:
       - name: Checkout
@@ -50,6 +53,7 @@ jobs:
           bundler-cache: true
 
       - name: Build and upload to TestFlight
+        id: upload
         run: |
           set -o pipefail
           bundle exec fastlane beta 2>&1 | tee fastlane.log
@@ -97,6 +101,8 @@ jobs:
     with:
       screenshots_from_this_run: ${{ inputs.screenshots == true }}
       skip_screenshots: ${{ inputs.screenshots != true }}
+      build_version: ${{ needs.testflight.outputs.version }}
+      build_number: ${{ needs.testflight.outputs.build_number }}
     secrets: inherit
     permissions:
       contents: read

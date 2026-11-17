@@ -44,6 +44,10 @@ platform :ios do
 
     version = app_version(api_key, store_id, versions.compact)
     UI.message("Building #{app_id} version #{version} (#{build_number})")
+    # The store listing job after this one selects exactly this build.
+    if ENV["GITHUB_OUTPUT"]
+      File.open(ENV["GITHUB_OUTPUT"], "a") { |f| f.puts("version=#{version}", "build_number=#{build_number}") }
+    end
 
     # Apple Health: the cloud managed profiles include HealthKit only when
     # the App ID has the capability.
@@ -200,13 +204,19 @@ platform :ios do
 
     app = Spaceship::ConnectAPI::App.find(store_id)
     UI.user_error!("No app #{store_id} on App Store Connect") unless app
-    build = Spaceship::ConnectAPI::Build.all(
-      app_id: app.id, platform: Spaceship::ConnectAPI::Platform::IOS, sort: "-uploadedDate", limit: 1
-    ).first
-    UI.user_error!("No builds of #{store_id} on App Store Connect") unless build
+    # Right after an upload Apple may not list the new build yet, so the
+    # TestFlight workflow passes the version and number it just uploaded.
+    version = ENV["STORE_BUILD_VERSION"].to_s.strip
+    build_number = ENV["STORE_BUILD_NUMBER"].to_s.strip
+    if version.empty? || build_number.empty?
+      build = Spaceship::ConnectAPI::Build.all(
+        app_id: app.id, platform: Spaceship::ConnectAPI::Platform::IOS, sort: "-uploadedDate", limit: 1
+      ).first
+      UI.user_error!("No builds of #{store_id} on App Store Connect") unless build
 
-    version = build.app_version
-    build_number = build.version.to_s
+      version = build.app_version
+      build_number = build.version.to_s
+    end
     UI.message("App Store version #{version} with build #{build_number}")
     [store_id, api_key, version, build_number]
   end
