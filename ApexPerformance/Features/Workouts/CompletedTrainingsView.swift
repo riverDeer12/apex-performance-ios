@@ -267,23 +267,27 @@ struct TrainingRowsView: View {
 
     @EnvironmentObject private var toastManager: ToastManager
     @State private var trainingToDelete: Training?
+    // Staff: a training of a session (clients training at the same time) opens the session.
+    @State private var sessionTraining: Training?
 
     var body: some View {
         VStack(spacing: 0) {
             ShowMoreForEach(items: trainings) { training in
-                NavigationLink {
-                    TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
-                        .topBarActions()
-                } label: {
-                    SettingsRowView(
-                        icon: training.statusIcon,
-                        iconTint: training.statusTint,
-                        title: Text(verbatim: training.name),
-                        subtitle: Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
-                            + Text(verbatim: " · ")
-                            + Text("exercises_count \(training.exercises.count)"),
-                        showChevron: true
-                    )
+                Group {
+                    if onSaved != nil && training.sessionId != nil {
+                        Button {
+                            sessionTraining = training
+                        } label: {
+                            rowLabel(training)
+                        }
+                    } else {
+                        NavigationLink {
+                            TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
+                                .topBarActions()
+                        } label: {
+                            rowLabel(training)
+                        }
+                    }
                 }
                 .buttonStyle(.apexPlain)
                 .contextMenu {
@@ -307,6 +311,9 @@ struct TrainingRowsView: View {
                 }
             }
         }
+        .sheet(item: $sessionTraining) { training in
+            TrainingEditView(training: training, history: trainings, onSaved: onSaved)
+        }
         .confirmationDialog(
             "delete_training_question",
             isPresented: Binding(
@@ -321,6 +328,18 @@ struct TrainingRowsView: View {
             }
             Button("cancel", role: .cancel) {}
         }
+    }
+
+    private func rowLabel(_ training: Training) -> some View {
+        SettingsRowView(
+            icon: training.statusIcon,
+            iconTint: training.statusTint,
+            title: Text(verbatim: training.name),
+            subtitle: Text(verbatim: DateFormatter.dateWithDots.string(from: training.date))
+                + Text(verbatim: " · ")
+                + Text("exercises_count \(training.exercises.count)"),
+            showChevron: true
+        )
     }
 
     @MainActor

@@ -640,6 +640,8 @@ struct TrainingSessionFormView: View {
 struct TrainingEditView: View {
     let training: Training
     let history: [Training]
+    // The session's trainings when the caller loaded them already.
+    var preloaded: [Training]? = nil
     var onSaved: ((Training) -> Void)? = nil
 
     @EnvironmentObject private var authManager: AuthManager
@@ -673,9 +675,12 @@ struct TrainingEditView: View {
     private func load() async {
         guard !isLoaded else { return }
         defer { isLoaded = true }
-        guard isStaff, TrainingSession.mayHaveSession(training),
-              let trainings = try? await Training.loadSession(of: training.id),
-              trainings.count > 1 else { return }
+        guard isStaff, TrainingSession.mayHaveSession(training) else { return }
+        var loaded = preloaded
+        if loaded == nil {
+            loaded = try? await Training.loadSession(of: training.id)
+        }
+        guard let trainings = loaded, trainings.count > 1 else { return }
         // "Last time" of every client of the session; without it the forms still work.
         sessionHistory = (try? await Training.loadAll()) ?? history
         sessionTrainings = trainings

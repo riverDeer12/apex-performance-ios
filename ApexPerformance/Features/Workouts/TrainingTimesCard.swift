@@ -300,8 +300,13 @@ extension Training {
     /// and is ended from its own screen.
     @MainActor
     private static func endSiblings(of ids: [UUID], startedAt: Date, endedAt: Date) async {
+        // Started on this iPhone (kept on it) or elsewhere (the API knows the session).
+        var fromAPI: [UUID] = []
+        if let first = ids.first, let session = try? await loadSession(of: first) {
+            fromAPI = session.filter { $0.endedAt == nil && $0.startedAt != nil }.map(\.id)
+        }
         var others: [UUID] = []
-        for id in ids + ids.flatMap({ TrainingSessionRegistry.siblings(of: $0) }) where !others.contains(id) {
+        for id in ids + ids.flatMap({ TrainingSessionRegistry.siblings(of: $0) }) + fromAPI where !others.contains(id) {
             others.append(id)
         }
         others.removeAll { $0 == ids.first }
