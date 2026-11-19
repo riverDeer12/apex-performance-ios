@@ -339,8 +339,15 @@ struct ClientDetailsView: View {
             }
         }
         .sheet(isPresented: $showCreateTrainingSheet) {
-            TrainingFormView(clientId: client.id, history: trainings) { saved in
-                upsertTraining(saved)
+            TrainingSessionFormView(
+                client: Training.Person(id: client.id, firstName: client.firstName, lastName: client.lastName,
+                                        pictureUrl: client.pictureUrl),
+                history: trainings
+            ) { saved in
+                // Trainings of other clients of the session belong to them.
+                if saved.client.id == client.id {
+                    upsertTraining(saved)
+                }
             }
         }
         .sheet(isPresented: $showCreateFunctionalMovementScreenSheet) {

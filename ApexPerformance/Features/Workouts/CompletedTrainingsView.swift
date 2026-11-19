@@ -549,7 +549,7 @@ struct TrainingDetailView: View {
         }
         .sheet(isPresented: $showCopySheet) {
             // The copy is a new training, so it is only added to the list.
-            TrainingFormView(copying: training, history: history) { saved in
+            TrainingSessionFormView(copying: training, history: history) { saved in
                 onSaved?(saved)
             }
         }
