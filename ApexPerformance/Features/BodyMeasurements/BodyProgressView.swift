@@ -220,6 +220,7 @@ struct BodyProgressView: View {
 
                     NavigationLink {
                         BodyMeasurementDetailsView(bodyMeasurement: measurement, isEditable: false)
+                            .topBarActions()
                     } label: {
                         historyRow(measurement, previous: previous)
                     }

@@ -315,23 +315,75 @@ extension EnvironmentValues {
     }
 }
 
-extension View {
-    /// Round chat button with the unread count on the leading side of the
-    /// top bar, for the root screen of a tab. Nothing for users who can't chat.
-    func chatToolbarButton() -> some View {
-        modifier(ChatToolbarModifier())
+/// Whether the top bars show the notification bell: set by HomeView for
+/// the tabs of users who have it (clients, staff with appointments).
+private struct ShowsNotificationBellKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+/// Told by a tab's first screen when it appears and disappears (also when a
+/// screen is pushed over it), so HomeView knows whether a tab shows a pushed
+/// screen when the user taps it in the tab bar.
+struct TabRootVisibilityAction {
+    let action: (Bool) -> Void
+
+    func callAsFunction(_ isVisible: Bool) {
+        action(isVisible)
     }
 }
 
-private struct ChatToolbarModifier: ViewModifier {
+private struct TabRootVisibilityKey: EnvironmentKey {
+    static let defaultValue: TabRootVisibilityAction? = nil
+}
+
+extension EnvironmentValues {
+    var showsNotificationBell: Bool {
+        get { self[ShowsNotificationBellKey.self] }
+        set { self[ShowsNotificationBellKey.self] = newValue }
+    }
+
+    var tabRootVisibility: TabRootVisibilityAction? {
+        get { self[TabRootVisibilityKey.self] }
+        set { self[TabRootVisibilityKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Round chat button with the unread count on the leading side of the
+    /// top bar and the notification bell on the trailing side, on every
+    /// screen of the tabs: their first screens (`isTabRoot`) and the screens
+    /// pushed from them. Nothing for users who can't chat or have no bell,
+    /// nor in sheets (chat, forms), where HomeView's values don't reach.
+    func topBarActions(isTabRoot: Bool = false) -> some View {
+        modifier(TopBarActionsModifier(isTabRoot: isTabRoot))
+    }
+}
+
+private struct TopBarActionsModifier: ViewModifier {
+    let isTabRoot: Bool
+
     @Environment(\.openChat) private var openChat
+    @Environment(\.showsNotificationBell) private var showsNotificationBell
+    @Environment(\.tabRootVisibility) private var tabRootVisibility
 
     func body(content: Content) -> some View {
-        content.toolbar {
-            if let openChat {
-                ChatToolbarItem(action: openChat.action)
+        content
+            .toolbar {
+                if let openChat {
+                    ChatToolbarItem(action: openChat.action)
+                }
+                if showsNotificationBell {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NotificationBellButton()
+                    }
+                }
             }
-        }
+            .onAppear {
+                if isTabRoot { tabRootVisibility?.action(true) }
+            }
+            .onDisappear {
+                if isTabRoot { tabRootVisibility?.action(false) }
+            }
     }
 }
 

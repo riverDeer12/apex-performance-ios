@@ -242,6 +242,7 @@ struct ClientDetailsView: View {
                                         BodyMeasurementDetailsView(bodyMeasurement: bodyMeasurement) { id in
                                             form.bodyMeasurements?.removeAll { $0.id == id }
                                         }
+                                            .topBarActions()
                                     } label: {
                                         SettingsRowView(
                                             icon: "ruler",
@@ -537,6 +538,7 @@ struct ClientDetailsView: View {
                     if trainings.contains(where: \.isCompleted) {
                         NavigationLink {
                             ClientTrainingProgressView(clientName: client.fullName, trainings: trainings)
+                                .topBarActions()
                         } label: {
                             SettingsRowView(
                                 icon: "chart.line.uptrend.xyaxis",
@@ -553,6 +555,7 @@ struct ClientDetailsView: View {
                         // Records come from completed trainings.
                         NavigationLink {
                             PersonalRecordsView(clientId: client.id, clientName: client.fullName)
+                                .topBarActions()
                         } label: {
                             SettingsRowView(
                                 icon: "trophy",

@@ -76,10 +76,11 @@ struct CompletedTrainingsView: View {
                 if let openedTraining {
                     TrainingDetailView(training: openedTraining, heroImageURL: imageURL(for: openedTraining),
                                        history: trainings)
+                        .topBarActions()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
         }
     }
 
@@ -121,6 +122,7 @@ struct CompletedTrainingsView: View {
                         NavigationLink {
                             TrainingDetailView(training: training, heroImageURL: imageURL(for: training),
                                                history: trainings)
+                                .topBarActions()
                         } label: {
                             TrainingCardView(training: training, imageURL: imageURL(for: training))
                         }
@@ -271,6 +273,7 @@ struct TrainingRowsView: View {
             ShowMoreForEach(items: trainings) { training in
                 NavigationLink {
                     TrainingDetailView(training: training, history: trainings, onSaved: onSaved, onDeleted: onDeleted)
+                        .topBarActions()
                 } label: {
                     SettingsRowView(
                         icon: training.statusIcon,
@@ -638,6 +641,7 @@ struct TrainingExerciseCards: View {
                 // Opens the workout with its description, video and muscles.
                 NavigationLink {
                     TrainingWorkoutView(workoutId: exercise.workoutId, name: exercise.workoutName)
+                        .topBarActions()
                 } label: {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(verbatim: "\(label) \(exercise.workoutName.localized)")

@@ -66,7 +66,7 @@ struct StaffTrainingsView: View {
     var body: some View {
         NavigationStack {
             content
-                .chatToolbarButton()
+                .topBarActions(isTabRoot: true)
         }
     }
 
@@ -135,6 +135,7 @@ struct StaffTrainingsView: View {
                                         onSaved: { upsert($0) },
                                         onDeleted: { id in trainings.removeAll { $0.id == id } }
                                     )
+                                        .topBarActions()
                                 } label: {
                                     row(training)
                                 }
@@ -179,6 +180,7 @@ struct StaffTrainingsView: View {
                     onSaved: { upsert($0) },
                     onDeleted: { id in trainings.removeAll { $0.id == id } }
                 )
+                    .topBarActions()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -206,6 +208,7 @@ struct StaffTrainingsView: View {
         VStack(spacing: 0) {
             NavigationLink {
                 TrainingTemplatesView()
+                    .topBarActions()
             } label: {
                 SettingsRowView(
                     icon: "doc.on.clipboard",
@@ -221,6 +224,7 @@ struct StaffTrainingsView: View {
 
             NavigationLink {
                 PersonalRecordsClientsView()
+                    .topBarActions()
             } label: {
                 SettingsRowView(
                     icon: "trophy",
@@ -359,6 +363,7 @@ struct PersonalRecordsClientsView: View {
         ClientsList { client in
             NavigationLink {
                 PersonalRecordsView(clientId: client.id, clientName: client.fullName)
+                    .topBarActions()
             } label: {
                 UserNameLabel(name: client.fullName, pictureUrl: client.pictureUrl)
             }

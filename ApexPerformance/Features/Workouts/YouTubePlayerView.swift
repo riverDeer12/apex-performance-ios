@@ -34,6 +34,10 @@ struct YouTubePlayerView: UIViewRepresentable {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
+        // The player's fullscreen button asks for element fullscreen, which
+        // WKWebView ignores unless it is turned on; the video then rotates
+        // to landscape with the iPhone like any fullscreen video.
+        configuration.preferences.isElementFullscreenEnabled = true
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
@@ -58,7 +62,7 @@ struct YouTubePlayerView: UIViewRepresentable {
         </style>
         </head>
         <body>
-        <iframe src="https://www.youtube.com/embed/\(videoId)?playsinline=1&autoplay=1&rel=0"
+        <iframe src="https://www.youtube.com/embed/\(videoId)?playsinline=1&autoplay=1&rel=0&fs=1"
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>

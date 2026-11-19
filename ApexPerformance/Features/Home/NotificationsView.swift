@@ -45,11 +45,21 @@ final class NotificationInbox: ObservableObject {
 
     private init() {}
 
+    private var countRefreshedAt: Date?
+
     func refreshCount() async {
         struct Response: Decodable { let count: Int }
+        countRefreshedAt = .now
         if let response: Response = try? await APIClient.shared.request(baseURL.appendingPathComponent("unread-count")) {
             unreadCount = response.count
         }
+    }
+
+    /// For the bell of every screen: pushes bring new notifications too,
+    /// so the count isn't asked again on each screen opened right after.
+    func refreshCountIfStale() async {
+        if let countRefreshedAt, Date.now.timeIntervalSince(countRefreshedAt) < 30 { return }
+        await refreshCount()
     }
 
     func load() async throws {
@@ -88,6 +98,7 @@ final class NotificationInbox: ObservableObject {
         notifications = []
         unreadCount = 0
         hasLoaded = false
+        countRefreshedAt = nil
     }
 }
 
@@ -118,7 +129,7 @@ struct NotificationBellButton: View {
         .accessibilityLabel(Text("notifications"))
         .accessibilityValue(Text(verbatim: "\(inbox.unreadCount)"))
         .task {
-            await inbox.refreshCount()
+            await inbox.refreshCountIfStale()
         }
         .sheet(isPresented: $showsNotifications) {
             NotificationsView()

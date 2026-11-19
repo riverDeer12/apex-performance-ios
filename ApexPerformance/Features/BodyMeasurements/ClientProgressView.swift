@@ -92,6 +92,7 @@ struct ClientProgressView: View {
 
                 NavigationLink {
                     ClientTrainingProgressView(clientName: "", trainings: trainings)
+                        .topBarActions()
                 } label: {
                     HStack {
                         Text("training_progress_title")
@@ -111,6 +112,7 @@ struct ClientProgressView: View {
                 // The client's own records from completed trainings.
                 NavigationLink {
                     PersonalRecordsView()
+                        .topBarActions()
                 } label: {
                     HStack {
                         Label {
@@ -226,6 +228,7 @@ struct ClientProgressView: View {
                 Divider().overlay(Color.apexBorder)
                 NavigationLink {
                     MonthlyReviewsView(reviews: reviews)
+                        .topBarActions()
                 } label: {
                     HStack {
                         Text("previous_reviews")
@@ -360,6 +363,7 @@ struct ClientProgressView: View {
 
                 NavigationLink {
                     AllMeasurementsView(measurements: measurements)
+                        .topBarActions()
                 } label: {
                     HStack(spacing: 4) {
                         Text("show_all_measurements")

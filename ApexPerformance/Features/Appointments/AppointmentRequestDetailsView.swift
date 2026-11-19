@@ -82,6 +82,7 @@ struct AppointmentRequestDetailsView: View {
                 CardView(title: "related_appointment") {
                     NavigationLink {
                         AppointmentDetailsView(appointment: request.appointment)
+                            .topBarActions()
                     } label: {
                         SettingsRowView(
                             icon: "calendar",
