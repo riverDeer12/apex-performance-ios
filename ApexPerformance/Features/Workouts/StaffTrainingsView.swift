@@ -27,6 +27,15 @@ struct StaffTrainingsView: View {
     @ObservedObject private var notificationRouter = NotificationRouter.shared
     @State private var openedTraining: Training?
     @State private var showsOpenedTraining = false
+    // A training of a session (clients training at the same time) opens the
+    // session with all its trainings.
+    @State private var openedSession: OpenedSession?
+
+    struct OpenedSession: Identifiable {
+        let training: Training
+        var trainings: [Training]? = nil
+        var id: UUID { training.id }
+    }
 
     enum StatusFilter: Hashable, CaseIterable {
         case all, planned, completed
@@ -81,6 +90,12 @@ struct StaffTrainingsView: View {
             await load()
         }
         if let training = trainings.first(where: { $0.id == id }) {
+            // A session's training (also from its Live Activity) opens the session.
+            if TrainingSession.mayHaveSession(training),
+               let session = try? await Training.loadSession(of: training.id), session.count > 1 {
+                openedSession = OpenedSession(training: training, trainings: session)
+                return
+            }
             openedTraining = training
             showsOpenedTraining = true
         }
@@ -128,16 +143,27 @@ struct StaffTrainingsView: View {
                     } else {
                         LazyVStack(spacing: 0) {
                             ShowMoreForEach(items: filteredTrainings) { training in
-                                NavigationLink {
-                                    TrainingDetailView(
-                                        training: training,
-                                        history: trainings.filter { $0.client.id == training.client.id },
-                                        onSaved: { upsert($0) },
-                                        onDeleted: { id in trainings.removeAll { $0.id == id } }
-                                    )
-                                        .topBarActions()
-                                } label: {
-                                    row(training)
+                                Group {
+                                    if training.sessionId != nil {
+                                        // A training of a session opens the session.
+                                        Button {
+                                            openedSession = OpenedSession(training: training)
+                                        } label: {
+                                            row(training)
+                                        }
+                                    } else {
+                                        NavigationLink {
+                                            TrainingDetailView(
+                                                training: training,
+                                                history: trainings.filter { $0.client.id == training.client.id },
+                                                onSaved: { upsert($0) },
+                                                onDeleted: { id in trainings.removeAll { $0.id == id } }
+                                            )
+                                                .topBarActions()
+                                        } label: {
+                                            row(training)
+                                        }
+                                    }
                                 }
                                 .buttonStyle(.apexPlain)
                                 .accessibilityIdentifier("staff-training-row")
@@ -191,6 +217,11 @@ struct StaffTrainingsView: View {
             ClientPickerView(title: "new_training") { client in
                 pickedClient = client
                 showClientPicker = false
+            }
+        }
+        .sheet(item: $openedSession) { opened in
+            TrainingEditView(training: opened.training, history: trainings, preloaded: opened.trainings) { saved in
+                upsert(saved)
             }
         }
         .sheet(item: $clientForNewTraining) { client in
