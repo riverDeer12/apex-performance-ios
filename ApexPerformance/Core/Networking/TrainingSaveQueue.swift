@@ -33,6 +33,9 @@ final class TrainingSaveQueue: ObservableObject {
         // The server's error when it rejected the training.
         var rejectedMessage: String?
         var updatedAt: Date
+        // Session of clients training at the same time it belongs to
+        // (TrainingSessionRegistry), so ending one ends all of them.
+        var sessionKey: UUID? = nil
 
         var id: UUID { key }
     }
@@ -88,7 +91,7 @@ final class TrainingSaveQueue: ObservableObject {
     /// Saves the training now; without a connection it is kept and saved later.
     /// startedAt marks a training that starts now as started once it exists.
     func save(key: UUID, request: SaveTrainingRequest, trainingId: UUID?, startedAt: Date?,
-              activityKey: String?) async -> Outcome {
+              activityKey: String?, sessionKey: UUID? = nil) async -> Outcome {
         await waitUntilIdle(key)
 
         let previous = entries.first { $0.key == key }
@@ -102,7 +105,8 @@ final class TrainingSaveQueue: ObservableObject {
             startedAt: startedAt ?? previous?.startedAt,
             activityKey: activityKey ?? previous?.activityKey,
             rejectedMessage: nil,
-            updatedAt: .now
+            updatedAt: .now,
+            sessionKey: sessionKey ?? previous?.sessionKey
         )
         remove(key)
 
@@ -176,12 +180,18 @@ final class TrainingSaveQueue: ObservableObject {
             entry.trainingId = saved.id
             savedIds[entry.key] = saved.id
             entry.request.notifyClient = nil
+            if let sessionKey = entry.sessionKey {
+                TrainingSessionRegistry.add(saved.id, toSession: sessionKey)
+            }
             if let start = entry.startedAt {
+                // A session has one activity, linked to its first training;
+                // the others don't start their own on this iPhone.
+                let showsActivity = entry.sessionKey == nil || entry.activityKey != nil
                 if let activityKey = entry.activityKey {
                     await TrainingLiveActivity.link(activityKey, to: saved)
                     entry.activityKey = nil
                 }
-                saved = try await saved.settingTimes(startedAt: start, endedAt: nil)
+                saved = try await saved.settingTimes(startedAt: start, endedAt: nil, updatesActivity: showsActivity)
                 entry.startedAt = nil
             }
             return .success(saved)
