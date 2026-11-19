@@ -340,8 +340,15 @@ struct ClientDetailsView: View {
             }
         }
         .sheet(isPresented: $showCreateTrainingSheet) {
-            TrainingFormView(clientId: client.id, history: trainings) { saved in
-                upsertTraining(saved)
+            TrainingSessionFormView(
+                client: Training.Person(id: client.id, firstName: client.firstName, lastName: client.lastName,
+                                        pictureUrl: client.pictureUrl),
+                history: trainings
+            ) { saved in
+                // Trainings of other clients of the session belong to them.
+                if saved.client.id == client.id {
+                    upsertTraining(saved)
+                }
             }
         }
         .sheet(isPresented: $showCreateFunctionalMovementScreenSheet) {
@@ -656,6 +663,8 @@ struct ClientDetailsView: View {
     }
     
     private func upsertTraining(_ training: Training) {
+        // Trainings of other clients of a session belong to them.
+        guard training.client.id == client.id else { return }
         trainings.removeAll { $0.id == training.id }
         trainings.append(training)
         trainings.sort { $0.date > $1.date }

@@ -80,8 +80,8 @@ struct AppointmentsView: View {
                 }
             }
             .sheet(item: $openedTraining) { training in
-                TrainingFormView(
-                    clientId: training.client.id,
+                // A training of a session opens the session with all its trainings.
+                TrainingEditView(
                     training: training,
                     history: trainings.filter { $0.client.id == training.client.id }
                 ) { saved in

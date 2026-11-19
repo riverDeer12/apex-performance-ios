@@ -181,6 +181,32 @@ struct TrainingTimesCard: View {
             onChanged?(training)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+            return
+        }
+        await saveSessionTimes(startedAt: startedAt, endedAt: endedAt)
+    }
+
+    /// The other trainings of its session (clients training at the same
+    /// time) share the time: they get the same start and end.
+    @MainActor
+    private func saveSessionTimes(startedAt: Date?, endedAt: Date?) async {
+        guard training.sessionId != nil,
+              let session = try? await Training.loadSession(of: training.id) else { return }
+        // A running session keeps the one Live Activity of the coach's iPhone;
+        // ended or cleared ones end theirs.
+        let isRunning = startedAt != nil && endedAt == nil
+        var failed = false
+        for other in session where other.id != training.id {
+            do {
+                let updated = try await other.settingTimes(startedAt: startedAt, endedAt: endedAt,
+                                                           updatesActivity: !isRunning)
+                onChanged?(updated)
+            } catch {
+                failed = true
+            }
+        }
+        if failed {
+            toastManager.show("session_times_not_saved", type: .error)
         }
     }
 
@@ -227,8 +253,10 @@ extension Training {
 
     /// Marks when the training started and ended (PUT trainings/{id}/times,
     /// staff only); the Live Activity follows.
+    /// `updatesActivity` false: another training of its session has the
+    /// activity (one for the session on the coach's iPhone).
     @MainActor
-    func settingTimes(startedAt: Date?, endedAt: Date?) async throws -> Training {
+    func settingTimes(startedAt: Date?, endedAt: Date?, updatesActivity: Bool = true) async throws -> Training {
         let response = try await Self.putTimes(id: id, startedAt: startedAt, endedAt: endedAt)
         var updated = self
         updated.startedAt = response.startedAt
@@ -236,25 +264,56 @@ extension Training {
         updated.heartRate = response.heartRate
         updated.isCompleted = response.isCompleted
         updated.completedAt = response.completedAt
-        TrainingLiveActivity.update(for: updated)
+        if updatesActivity {
+            TrainingLiveActivity.update(for: updated)
+        }
         return updated
     }
 
-    /// Ends the training from the button of its Live Activity.
+    /// Ends the training from the button of its Live Activity, and the other
+    /// trainings of its session (clients training at the same time).
     @MainActor
     static func endFromLiveActivity(id: UUID, startedAt: Date) async throws {
-        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: .now)
-        TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: response.endedAt ?? .now)
+        let endedAt = Date.now
+        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: endedAt)
+        TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: response.endedAt ?? endedAt)
+        await endSiblings(of: [id], startedAt: startedAt, endedAt: endedAt)
     }
 
     /// Ends the training from "End training" of the reminder that it still
     /// runs an hour after its start, only if it still runs with that start.
+    /// The reminder of a session names all its trainings (`otherIds`); those
+    /// of the session started on this iPhone are ended too.
     @MainActor
-    static func endFromReminder(id: UUID, startedAt: Date) async throws {
-        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: .now, onlyIfRunning: true)
+    static func endFromReminder(id: UUID, startedAt: Date, otherIds: [UUID] = []) async throws {
+        let endedAt = Date.now
+        let response = try await putTimes(id: id, startedAt: startedAt, endedAt: endedAt, onlyIfRunning: true)
         // Ended here or elsewhere: its activity on this iPhone ends.
-        if let endedAt = response.endedAt {
-            TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: endedAt)
+        if let ended = response.endedAt {
+            TrainingLiveActivity.ended(id, startedAt: response.startedAt ?? startedAt, endedAt: ended)
+        }
+        await endSiblings(of: [id] + otherIds, startedAt: startedAt, endedAt: endedAt)
+    }
+
+    /// The other trainings of the session end at the same time, only those
+    /// still running with the shared start. One that fails stays running
+    /// and is ended from its own screen.
+    @MainActor
+    private static func endSiblings(of ids: [UUID], startedAt: Date, endedAt: Date) async {
+        var others: [UUID] = []
+        for id in ids + ids.flatMap({ TrainingSessionRegistry.siblings(of: $0) }) where !others.contains(id) {
+            others.append(id)
+        }
+        others.removeAll { $0 == ids.first }
+        for other in others {
+            do {
+                let response = try await putTimes(id: other, startedAt: startedAt, endedAt: endedAt, onlyIfRunning: true)
+                if let ended = response.endedAt {
+                    TrainingLiveActivity.ended(other, startedAt: response.startedAt ?? startedAt, endedAt: ended)
+                }
+            } catch {
+                print("Training \(other) of the session not ended: \(error)")
+            }
         }
     }
 

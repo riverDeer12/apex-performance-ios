@@ -124,8 +124,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         guard let id = (userInfo["trainingId"] as? String).flatMap(UUID.init(uuidString:)),
               let startedAt = (userInfo["startedAt"] as? String).flatMap(date(fromISO8601:)) else { return }
 
+        // A session's reminder: all its trainings ("id,id"), ended together.
+        let otherIds = ((userInfo["trainingIds"] as? String) ?? "")
+            .split(separator: ",")
+            .compactMap { UUID(uuidString: String($0).trimmingCharacters(in: .whitespaces)) }
+            .filter { $0 != id }
+
         do {
-            try await Training.endFromReminder(id: id, startedAt: startedAt)
+            try await Training.endFromReminder(id: id, startedAt: startedAt, otherIds: otherIds)
         } catch {
             #if DEBUG
             print("❌ Training \(id) could not be ended from the reminder: \(error)")

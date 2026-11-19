@@ -22,6 +22,11 @@ struct TrainingFormView: View {
     private let template: TrainingTemplate?
     private var onTemplateSaved: ((TrainingTemplate) -> Void)? = nil
 
+    // Given when this is one client's training of a session of several
+    // clients (TrainingSessionFormView), which has the toolbar, the shared
+    // time and the Live Activity.
+    private var session: TrainingSessionContext? = nil
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var toastManager: ToastManager
@@ -66,11 +71,15 @@ struct TrainingFormView: View {
     @State private var repeatedFrom: Training?
     // Set, drop set or exercise just removed, until undone or the snackbar goes.
     @State private var lastRemoval: Removal?
+    // The set entered last, told to the session for the other client's line.
+    @State private var lastSet: TrainingSession.SetActivity?
 
-    init(clientId: UUID, training: Training? = nil, history: [Training], onSaved: ((Training) -> Void)? = nil) {
+    init(clientId: UUID, training: Training? = nil, history: [Training], session: TrainingSessionContext? = nil,
+         onSaved: ((Training) -> Void)? = nil) {
         self.clientId = clientId
         self.training = training
         self.history = history
+        self.session = session
         self.onSaved = onSaved
         isTemplate = false
         template = nil
@@ -87,8 +96,9 @@ struct TrainingFormView: View {
 
     /// New training for the same client with the exercises and sets of
     /// the given one ("Copy training"), planned for today.
-    init(copying source: Training, history: [Training], onSaved: ((Training) -> Void)? = nil) {
-        self.init(clientId: source.client.id, history: history, onSaved: onSaved)
+    init(copying source: Training, history: [Training], session: TrainingSessionContext? = nil,
+         onSaved: ((Training) -> Void)? = nil) {
+        self.init(clientId: source.client.id, history: history, session: session, onSaved: onSaved)
         _name = State(initialValue: source.name)
         _note = State(initialValue: source.note ?? "")
         _exercises = State(initialValue: source.exercises
@@ -160,168 +170,188 @@ struct TrainingFormView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                if canUseTemplates && !templates.isEmpty {
-                    Section {
-                        Picker("from_template", selection: $selectedTemplateId) {
-                            Text("no_template").tag(UUID?.none)
-                            ForEach(templates) { template in
-                                Text(verbatim: template.name).tag(UUID?.some(template.id))
+        if let session {
+            // The session gives the navigation, the toolbar and the banner.
+            formContent
+                .onChange(of: session.saveRequest) { _, _ in
+                    Task { await save() }
+                }
+                .onChange(of: sessionReport, initial: true) { _, report in
+                    session.onReport(report)
+                }
+                .onChange(of: setsFingerprint) { old, new in
+                    noteLastSet(old: old, new: new)
+                }
+        } else {
+            NavigationStack {
+                formContent
+                    .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
+                        dismiss()
+                    }
+                    // No connection: saved later; a small banner says so.
+                    .safeAreaInset(edge: .top, spacing: 0) {
+                        if !isTemplate {
+                            TrainingSaveBanner()
+                                .padding(.vertical, saveQueue.entries.isEmpty && !saveQueue.showsSaved ? 0 : 6)
+                        }
+                    }
+                    .navigationTitle(title)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                Task { await save() }
+                            } label: {
+                                ZStack {
+                                    if isSaving {
+                                        ProgressView().scaleEffect(0.9)
+                                    } else {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(Color.apexMainColor)
+                                    }
+                                }
                             }
+                            .disabled(isSaving || !isValid)
                         }
-                        .tint(Color.apexMainColor)
-                    } footer: {
-                        Text("from_template_hint")
-                    }
-                }
-
-                if canUseTemplates, let source = trainingToRepeat {
-                    repeatSection(source)
-                }
-
-                Section {
-                    TextField("name", text: $name)
-                        .onChange(of: name) { _, _ in
-                            startTimerIfNeeded()
-                            if let activityKey {
-                                TrainingLiveActivity.renameDraft(activityKey, name: trimmed(name))
-                            }
-                        }
-                    if let startedAt, startsOnSave || autosaved != nil {
-                        LabeledContent {
-                            Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
-                                .monospacedDigit()
-                                .foregroundStyle(.orange)
-                        } label: {
-                            Label("training_in_progress", systemImage: "timer")
-                                .foregroundStyle(.orange)
-                        }
-                    }
-                    if !isTemplate {
-                        DatePicker("date", selection: $date, displayedComponents: .date)
-                        Toggle("completed", isOn: $isCompleted)
-                            .tint(Color.apexMainColor)
-                        if canBePlanned {
-                            Toggle("planned", isOn: $isPlanned)
-                                .tint(Color.apexMainColor)
-                        }
-                        NotifyClientToggle(isOn: $notifyClient)
-                    }
-                    TextField("note", text: $note, axis: .vertical)
-                        .lineLimit(1...4)
-                } footer: {
-                    if !isTemplate && canBePlanned {
-                        Text(isPlanned ? "planned_training_hint" : "starts_on_save_hint")
-                    }
-                }
-
-                ForEach($exercises) { $exercise in
-                    exerciseSection($exercise)
-                }
-
-                Section {
-                    Button {
-                        exercises.append(ExerciseDraft())
-                    } label: {
-                        Label("add_exercise", systemImage: "plus")
-                            .foregroundStyle(Color.apexMainColor)
-                    }
-                } footer: {
-                    if exercises.isEmpty {
-                        Text("no_exercises_yet")
-                    }
-                }
-            }
-            .confirmsDiscardingChanges(hasChanges, isConfirming: $isConfirmingDiscard) {
-                dismiss()
-            }
-            // A planned training doesn't run: its activity goes away (and comes
-            // back when it isn't planned any more).
-            .onChange(of: isPlanned) { _, _ in updateDraftActivity() }
-            .onDisappear {
-                // Closed without saving: nothing runs.
-                if let activityKey, autosaved == nil, !isQueued {
-                    TrainingLiveActivity.endDraft(activityKey)
-                }
-            }
-            // No connection: saved later; a small banner says so.
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if !isTemplate {
-                    TrainingSaveBanner()
-                        .padding(.vertical, saveQueue.entries.isEmpty && !saveQueue.showsSaved ? 0 : 6)
-                }
-            }
-            // Saved from the queue while the form is open: it goes on editing that training.
-            .onChange(of: saveQueue.lastSynced) { _, synced in
-                guard let synced, synced.key == saveKey else { return }
-                autosaved = synced.training
-                isQueued = false
-                activityKey = nil
-                onSaved?(synced.training)
-            }
-            // Locking the phone or leaving the app saves the running training.
-            .onChange(of: scenePhase) { _, phase in
-                if phase == .background {
-                    Task { await autosave() }
-                }
-            }
-            .onAppear {
-                // A copied training comes with its name.
-                startTimerIfNeeded()
-                if initialFingerprint == nil { initialFingerprint = fingerprint }
-            }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task { await save() }
-                    } label: {
-                        ZStack {
-                            if isSaving {
-                                ProgressView().scaleEffect(0.9)
-                            } else {
-                                Image(systemName: "checkmark")
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button {
+                                requestClose()
+                            } label: {
+                                Image(systemName: "chevron.backward")
                                     .foregroundStyle(Color.apexMainColor)
                             }
+                            .accessibilityIdentifier("training-form-close")
                         }
                     }
-                    .disabled(isSaving || !isValid)
+            }
+        }
+    }
+
+    private var formContent: some View {
+        Form {
+            if canUseTemplates && !templates.isEmpty {
+                Section {
+                    Picker("from_template", selection: $selectedTemplateId) {
+                        Text("no_template").tag(UUID?.none)
+                        ForEach(templates) { template in
+                            Text(verbatim: template.name).tag(UUID?.some(template.id))
+                        }
+                    }
+                    .tint(Color.apexMainColor)
+                } footer: {
+                    Text("from_template_hint")
                 }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        requestClose()
+            }
+
+            if canUseTemplates, let source = trainingToRepeat {
+                repeatSection(source)
+            }
+
+            Section {
+                TextField("name", text: $name)
+                    .onChange(of: name) { _, _ in
+                        startTimerIfNeeded()
+                        if let activityKey {
+                            TrainingLiveActivity.renameDraft(activityKey, name: trimmed(name))
+                        }
+                    }
+                // With several clients the session shows the time above them.
+                if let startedAt = runningStart, startsOnSave || autosaved != nil, session?.isShared != true {
+                    LabeledContent {
+                        Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
+                            .monospacedDigit()
+                            .foregroundStyle(.orange)
                     } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(Color.apexMainColor)
+                        Label("training_in_progress", systemImage: "timer")
+                            .foregroundStyle(.orange)
                     }
-                    .accessibilityIdentifier("training-form-close")
+                }
+                if !isTemplate {
+                    DatePicker("date", selection: $date, displayedComponents: .date)
+                    Toggle("completed", isOn: $isCompleted)
+                        .tint(Color.apexMainColor)
+                    // Trainings of several clients all run at the session's time.
+                    if canBePlanned && session?.isShared != true {
+                        Toggle("planned", isOn: $isPlanned)
+                            .tint(Color.apexMainColor)
+                    }
+                    NotifyClientToggle(isOn: $notifyClient)
+                }
+                TextField("note", text: $note, axis: .vertical)
+                    .lineLimit(1...4)
+            } footer: {
+                if !isTemplate && canBePlanned {
+                    Text(isPlannedNow ? "planned_training_hint" : "starts_on_save_hint")
                 }
             }
-            .task {
-                await loadWorkouts()
+
+            ForEach($exercises) { $exercise in
+                exerciseSection($exercise)
             }
-            .task {
-                await loadTemplates()
+
+            Section {
+                Button {
+                    exercises.append(ExerciseDraft())
+                } label: {
+                    Label("add_exercise", systemImage: "plus")
+                        .foregroundStyle(Color.apexMainColor)
+                }
+            } footer: {
+                if exercises.isEmpty {
+                    Text("no_exercises_yet")
+                }
             }
-            .onChange(of: selectedTemplateId) {
-                applySelectedTemplate()
+        }
+        // A planned training doesn't run: its activity goes away (and comes
+        // back when it isn't planned any more).
+        .onChange(of: isPlanned) { _, _ in updateDraftActivity() }
+        .onDisappear {
+            // Closed without saving: nothing runs.
+            if let activityKey, autosaved == nil, !isQueued {
+                TrainingLiveActivity.endDraft(activityKey)
             }
-            // "Deleted · Undo" instead of asking before removing.
-            .overlay(alignment: .bottom) {
-                if let lastRemoval {
-                    UndoSnackbar {
-                        undo(lastRemoval)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .task(id: lastRemoval.id) {
-                        try? await Task.sleep(for: .seconds(5))
-                        guard !Task.isCancelled, self.lastRemoval?.id == lastRemoval.id else { return }
-                        withAnimation { self.lastRemoval = nil }
-                    }
+        }
+        // Saved from the queue while the form is open: it goes on editing that training.
+        .onChange(of: saveQueue.lastSynced) { _, synced in
+            guard let synced, synced.key == saveKey else { return }
+            autosaved = synced.training
+            isQueued = false
+            activityKey = nil
+            onSaved?(synced.training)
+        }
+        // Locking the phone or leaving the app saves the running training.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background {
+                Task { await autosave() }
+            }
+        }
+        .onAppear {
+            // A copied training comes with its name.
+            startTimerIfNeeded()
+            if initialFingerprint == nil { initialFingerprint = fingerprint }
+        }
+        .task {
+            await loadWorkouts()
+        }
+        .task {
+            await loadTemplates()
+        }
+        .onChange(of: selectedTemplateId) {
+            applySelectedTemplate()
+        }
+        // "Deleted · Undo" instead of asking before removing.
+        .overlay(alignment: .bottom) {
+            if let lastRemoval {
+                UndoSnackbar {
+                    undo(lastRemoval)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .task(id: lastRemoval.id) {
+                    try? await Task.sleep(for: .seconds(5))
+                    guard !Task.isCancelled, self.lastRemoval?.id == lastRemoval.id else { return }
+                    withAnimation { self.lastRemoval = nil }
                 }
             }
         }
@@ -1014,7 +1044,68 @@ struct TrainingFormView: View {
     /// A training not marked as planned starts when it is saved, so its
     /// time is measured without another tap.
     private var startsOnSave: Bool {
-        !isTemplate && canBePlanned && !isPlanned
+        !isTemplate && canBePlanned && !isPlannedNow
+    }
+
+    // Trainings of several clients aren't planned: they run at the session's time.
+    private var isPlannedNow: Bool {
+        isPlanned && session?.isShared != true
+    }
+
+    // Trainings of several clients are linked by the session's id; a training
+    // on its own sends none (an edit keeps the session it has).
+    private var sessionIdToSave: UUID? {
+        session?.isShared == true ? session?.sessionKey : nil
+    }
+
+    // The start of the new training: the session's shared one, or the form's own.
+    private var runningStart: Date? {
+        if let session { return session.startedAt }
+        return startedAt
+    }
+
+    // MARK: - Session
+
+    /// What the session shows of this client's training and needs to save it.
+    private var sessionReport: TrainingFormReport {
+        TrainingFormReport(
+            trainingName: trimmed(name),
+            enteredSets: exercises.reduce(0) { total, exercise in total + exercise.sets.filter { $0.request != nil }.count },
+            lastSet: lastSet,
+            hasChanges: hasChanges,
+            isValid: isValid,
+            startsOnSave: startsOnSave,
+            saved: autosaved,
+            isQueued: isQueued,
+            queueKey: saveKey
+        )
+    }
+
+    // The sets of every exercise, to tell which one the coach just changed.
+    private var setsFingerprint: [String] {
+        exercises.map { exercise in
+            let sets = exercise.sets.map {
+                "\($0.reps)x\($0.weight)t\($0.durationSeconds ?? -1)m\($0.distance)"
+            }.joined(separator: ",")
+            return "\(exercise.id.uuidString)|\(exercise.workoutId?.uuidString ?? "")|\(sets)"
+        }
+    }
+
+    /// Remembers the exercise whose sets just changed, e.g. "Squat 3/4",
+    /// for the line the other clients' trainings show about this one.
+    private func noteLastSet(old: [String], new: [String]) {
+        let before = Set(old)
+        guard let index = new.firstIndex(where: { !before.contains($0) }),
+              exercises.indices.contains(index) else { return }
+        let exercise = exercises[index]
+        let entered = exercise.sets.filter { $0.request != nil }.count
+        guard entered > 0 else { return }
+        lastSet = TrainingSession.SetActivity(
+            at: .now,
+            exerciseName: workout(exercise.workoutId)?.name.localized ?? "",
+            enteredSets: entered,
+            setCount: exercise.sets.count
+        )
     }
 
     /// Saves the running new training as in progress when the app goes to
@@ -1024,7 +1115,7 @@ struct TrainingFormView: View {
     @MainActor
     private func autosave() async {
         // An unfinished exercise (no workout picked yet) waits for the next save.
-        guard let start = startedAt, let clientId, !isTemplate, !isSaving, !trimmed(name).isEmpty,
+        guard let start = runningStart, let clientId, !isTemplate, !isSaving, !trimmed(name).isEmpty,
               autosaved != nil || startsOnSave else { return }
 
         // iOS gives the app a little time in the background to finish.
@@ -1046,14 +1137,16 @@ struct TrainingFormView: View {
             isCompleted: false,
             exercises: exercises.filter(\.isValid).compactMap(\.request),
             // The client hears about the new training once.
-            notifyClient: autosaved == nil && notifyClient
+            notifyClient: autosaved == nil && notifyClient,
+            sessionId: sessionIdToSave
         )
 
         // Without a connection it is kept on the device and saved later.
         let outcome = await saveQueue.save(
             key: saveKey, request: request, trainingId: autosaved?.id,
             startedAt: autosaved == nil ? start : nil,
-            activityKey: autosaved == nil ? activityKey : nil
+            activityKey: autosaved == nil ? (session?.activityKey ?? activityKey) : nil,
+            sessionKey: session?.sessionKey
         )
         switch outcome {
         case .saved(let saved):
@@ -1075,8 +1168,13 @@ struct TrainingFormView: View {
 
     /// A new training starts when its name is written, not when it is saved.
     private func startTimerIfNeeded() {
-        guard startedAt == nil, training == nil, !isTemplate,
-              !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard training == nil, !isTemplate, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        // The session's time is shared by all its trainings: the first name starts it.
+        if let session {
+            if session.startedAt == nil { session.onStart() }
+            return
+        }
+        guard startedAt == nil else { return }
         startedAt = .now
         updateDraftActivity()
     }
@@ -1084,7 +1182,8 @@ struct TrainingFormView: View {
     /// Shows the running new training on the lock screen and in the Dynamic
     /// Island right away: iOS starts activities only while the app is open.
     private func updateDraftActivity() {
-        guard autosaved == nil, let startedAt else { return }
+        // The session has one activity for all its trainings.
+        guard session == nil, autosaved == nil, let startedAt else { return }
         if startsOnSave, activityKey == nil {
             let client = history.first { $0.client.id == clientId }?.client
             let clientName = [client?.firstName, client?.lastName].compactMap { $0 }.joined(separator: " ")
@@ -1100,7 +1199,7 @@ struct TrainingFormView: View {
     @MainActor
     private func save() async {
         let starting = startsOnSave
-        let start = startedAt ?? .now
+        let start = runningStart ?? .now
         isSaving = true
         defer { isSaving = false }
 
@@ -1109,6 +1208,11 @@ struct TrainingFormView: View {
             return
         }
         guard let clientId else { return }
+        // An unfinished form answers the session's Save, which waits for every training.
+        if let session, !isValid {
+            session.onSaveOutcome(.failed(message: String(localized: "training_session_incomplete")))
+            return
+        }
 
         let request = SaveTrainingRequest(
             client: clientId,
@@ -1118,29 +1222,51 @@ struct TrainingFormView: View {
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
             exercises: exercises.compactMap(\.request),
-            notifyClient: notifyClient
+            notifyClient: notifyClient,
+            sessionId: sessionIdToSave
         )
 
         // Without a connection it is kept on the device and saved later.
         let outcome = await saveQueue.save(
             key: saveKey, request: request, trainingId: currentTraining?.id,
             startedAt: starting ? start : nil,
-            activityKey: starting ? activityKey : nil
+            activityKey: starting ? (session?.activityKey ?? activityKey) : nil,
+            sessionKey: session?.sessionKey
         )
         switch outcome {
         case .saved(let saved):
             // Saved: the activity stays with the training.
             activityKey = nil
             onSaved?(saved)
+            if let session {
+                // The session closes once all its trainings are saved; until
+                // then this one is edited, so another try doesn't create it again.
+                autosaved = saved
+                isQueued = false
+                notifyClient = false
+                initialFingerprint = fingerprint
+                session.onSaveOutcome(.saved)
+                return
+            }
             toastManager.show(starting ? "training_started_toast" : "training_saved_successfully", type: .success)
             dismiss()
         case .queued:
             // The queue links the activity once the training is saved.
             activityKey = nil
             isQueued = true
+            if let session {
+                notifyClient = false
+                initialFingerprint = fingerprint
+                session.onSaveOutcome(.queued)
+                return
+            }
             toastManager.show("offline_will_save", type: .info)
             dismiss()
         case .failed(let error):
+            if let session {
+                session.onSaveOutcome(.failed(message: mapError(error)))
+                return
+            }
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
         }
     }
@@ -1166,6 +1292,38 @@ struct TrainingFormView: View {
     private func trimmed(_ value: String) -> String {
         value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+}
+
+// MARK: - Session
+
+/// What a training form of a session (TrainingSessionFormView) gets from it.
+struct TrainingSessionContext {
+    let sessionKey: UUID
+    // The shared start of all trainings of the session, nil until a name is written.
+    let startedAt: Date?
+    // More than one client: the session shows the time and the switcher.
+    let isShared: Bool
+    // The session's Live Activity: linked to this training when it is saved (first client only).
+    let activityKey: String?
+    // Changes when the session's Save is tapped: every form saves its training.
+    let saveRequest: Int
+    // A name was written: the session's time starts.
+    let onStart: () -> Void
+    let onReport: (TrainingFormReport) -> Void
+    let onSaveOutcome: (TrainingSession.SaveOutcome) -> Void
+}
+
+/// What a training form of a session tells the session.
+struct TrainingFormReport: Equatable {
+    var trainingName: String
+    var enteredSets: Int
+    var lastSet: TrainingSession.SetActivity?
+    var hasChanges: Bool
+    var isValid: Bool
+    var startsOnSave: Bool
+    var saved: Training?
+    var isQueued: Bool
+    var queueKey: UUID
 }
 
 // MARK: - Drafts

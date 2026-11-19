@@ -194,9 +194,11 @@ struct StaffTrainingsView: View {
             }
         }
         .sheet(item: $clientForNewTraining) { client in
-            TrainingFormView(
-                clientId: client.id,
-                history: trainings.filter { $0.client.id == client.id }
+            // "+ Client" adds the trainings of clients training at the same time.
+            TrainingSessionFormView(
+                client: Training.Person(id: client.id, firstName: client.firstName, lastName: client.lastName,
+                                        pictureUrl: client.pictureUrl),
+                history: trainings
             ) { saved in
                 upsert(saved)
             }

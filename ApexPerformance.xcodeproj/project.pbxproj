@@ -22,6 +22,8 @@
 		3EA8EC0361EAB592E2F4E27C /* ChatMediaViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992211AACBC284E7D7AAA49B /* ChatMediaViews.swift */; };
 		32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */; };
 		0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */; };
+		BD8DAA9836B278C32EBAE1A3 /* TrainingSessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12725A753BABE42F5563BB87 /* TrainingSessionFormView.swift */; };
+		1EFA53F9929AABBCBA87779B /* TrainingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AF71A639842BD8441DED3 /* TrainingSession.swift */; };
 		AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */; };
 		96FBF155F3B0CAD41F504DBC /* AppearanceSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE563F367A1BBDC83D7B83C9 /* AppearanceSwitcherView.swift */; };
 		96F9DBC3D5C6E535DA7FCBF1 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A2D53DE7A834D5DF9ED5D7 /* SplashView.swift */; };
@@ -130,6 +132,7 @@
 		ACDB7C23FAB478C5CFC89984 /* CalendarMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D873D691520A8AD453624 /* CalendarMonthView.swift */; };
 		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */; };
+		8C0D9A1574174E95EA40C065 /* TrainingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
@@ -209,6 +212,8 @@
 		992211AACBC284E7D7AAA49B /* ChatMediaViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMediaViews.swift; sourceTree = "<group>"; };
 		3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordsView.swift; sourceTree = "<group>"; };
 		1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingFormView.swift; sourceTree = "<group>"; };
+		12725A753BABE42F5563BB87 /* TrainingSessionFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSessionFormView.swift"; sourceTree = "<group>"; };
+		7D9AF71A639842BD8441DED3 /* TrainingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSession.swift"; sourceTree = "<group>"; };
 		7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingProgressView.swift; sourceTree = "<group>"; };
 		AE563F367A1BBDC83D7B83C9 /* AppearanceSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSwitcherView.swift; sourceTree = "<group>"; };
 		13A2D53DE7A834D5DF9ED5D7 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -334,6 +339,7 @@
 		C0BF34F22F900F3B002BFF76 /* ApexPerformance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApexPerformance.entitlements; sourceTree = "<group>"; };
 		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPITests.swift; sourceTree = "<group>"; };
+		54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSessionTests.swift"; sourceTree = "<group>"; };
 		8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityAttributes.swift; sourceTree = "<group>"; };
 		F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTrainingIntent.swift; sourceTree = "<group>"; };
 		F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivity.swift; sourceTree = "<group>"; };
@@ -645,6 +651,8 @@
 				F05F45FB6972493676063892 /* StaffTrainingsView.swift */,
 				3EE0B12072F160F545D69C86 /* PersonalRecordsView.swift */,
 				1523D7DAA12B1B95C88E0761 /* TrainingFormView.swift */,
+				12725A753BABE42F5563BB87 /* TrainingSessionFormView.swift */,
+				7D9AF71A639842BD8441DED3 /* TrainingSession.swift */,
 				7C11FCC07C7533AECFBF49F6 /* TrainingProgressView.swift */,
 				3C49604A1D3B1BC797529EA0 /* WorkoutDetailView.swift */,
 				213ABCAEFE80E4161E00087B /* WorkoutEditView.swift */,
@@ -723,6 +731,7 @@
 				44065590693AE0A5653FA22B /* UserPictureTests.swift */,
 				F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */,
 				2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */,
+				54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */,
 			);
 			path = ApexPerformanceTests;
 			sourceTree = "<group>";
@@ -959,6 +968,8 @@
 				3EA8EC0361EAB592E2F4E27C /* ChatMediaViews.swift in Sources */,
 				32419A6AE914F615C7395C6B /* PersonalRecordsView.swift in Sources */,
 				0F5BC6EB0873CAD7207F575F /* TrainingFormView.swift in Sources */,
+				BD8DAA9836B278C32EBAE1A3 /* TrainingSessionFormView.swift in Sources */,
+				1EFA53F9929AABBCBA87779B /* TrainingSession.swift in Sources */,
 				AC4A846B9703A0B7CF1B01FE /* TrainingProgressView.swift in Sources */,
 				96FBF155F3B0CAD41F504DBC /* AppearanceSwitcherView.swift in Sources */,
 				96F9DBC3D5C6E535DA7FCBF1 /* SplashView.swift in Sources */,
@@ -1065,6 +1076,7 @@
 				E73BC42267D09FF36314199B /* UserPictureTests.swift in Sources */,
 				B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */,
 				02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */,
+				8C0D9A1574174E95EA40C065 /* TrainingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
