@@ -1,12 +1,7 @@
-• Treneri: Termini se otvaraju na pregledu Danas – današnji termini, treninzi u tijeku i zahtjevi koje možeš odmah prihvatiti ili odbiti.
-• Ponovi zadnji trening: novi trening klijenta popuni se iz njegovog zadnjeg treninga (vježbe, serije, drop serije i bilješke).
-• Bez interneta se unos treninga ne gubi: sprema se na uređaju i šalje čim se veza vrati.
-• Obrisana serija, drop serija ili vježba vraća se dodirom na Poništi.
-• Osobni rekordi u napretku treninga i oznaka Novi rekord na treningu.
-• Widget na početnom zaslonu: sljedeći termin i paket, a za trenere današnji termin i zahtjevi na čekanju.
-• Podsjetnik 2 sata prije odobrenog termina.
-• Prazni popisi pokazuju što dalje, a tekst prati veličinu slova iz postavki i čitljiviji je u tamnom načinu.
-• Vježbe možeš označiti zvjezdicom kao favorite; filter Favoriti, a u odabiru vježbe za trening favoriti su na vrhu.
-• Profilne slike klijenata i trenera vide se svugdje: klijenti, termini, zahtjevi, treninzi i chat.
-• Kartica Moj paket i widget točno pokazuju odrađene treninge ovog mjeseca, a termini koji čekaju trenera označeni su s Čeka potvrdu trenera.
+• Zajednički termin: trener vodi treninge za više klijenata koji treniraju u isto vrijeme. Tipka + Klijent dodaje klijenta, prekidač na vrhu prebacuje između njihovih treninga, vrijeme je zajedničko, a Spremi sprema sve.
+• Trening iz zajedničkog termina uvijek se otvara kao cijeli termin: iz popisa treninga, s Live Activityja, iz obavijesti i kod uređivanja.
+• Jedan podsjetnik i jedan Završi trening završavaju treninge svih klijenata u terminu.
+• Zvonce s obavijestima i gumb za poruke su u gornjoj traci svakog ekrana.
+• Gumb za povećanje YouTube videa otvara video preko cijelog zaslona.
+• Dodir na karticu u donjem izborniku uvijek otvara njen početni ekran.
 • Manja poboljšanja i ispravci.
