@@ -37,6 +37,8 @@ struct TrainingSession {
         var isQueued = false
         // The form's key in the save queue.
         var queueKey: UUID? = nil
+        // The saved training being edited (a session opened to edit).
+        var existing: Training? = nil
 
         init(id: UUID = UUID(), clientId: UUID, firstName: String?, lastName: String?, pictureUrl: String? = nil) {
             self.id = id
@@ -57,7 +59,12 @@ struct TrainingSession {
 
         /// Saved or kept on the device: closing the form loses nothing of it.
         var isPersisted: Bool {
-            saved != nil || isQueued
+            saved != nil || isQueued || existing != nil
+        }
+
+        /// The training on the server: edited, autosaved or saved.
+        var serverTraining: Training? {
+            saved ?? existing
         }
     }
 
@@ -92,6 +99,21 @@ struct TrainingSession {
         case failed([UUID])
     }
 
+    /// Sent as the session id to take a training out of its session.
+    static let noSession = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+
+    /// Whether to open a saved training's edit as a session: only staff, and
+    /// only when the API returned more than the training itself.
+    static func opensAsSession(_ trainings: [Training], isStaff: Bool) -> Bool {
+        isStaff && trainings.count > 1
+    }
+
+    /// Worth asking the API for the training's session: it has a session id, or
+    /// it was started (older sessions are grouped by their start).
+    static func mayHaveSession(_ training: Training) -> Bool {
+        training.sessionId != nil || training.startedAt != nil
+    }
+
     private(set) var participants: [Participant]
     private(set) var activeId: UUID
     // The shared start: when the first training's name was written.
@@ -103,6 +125,14 @@ struct TrainingSession {
     init(first: Participant, startedAt: Date? = nil) {
         participants = [first]
         activeId = first.id
+        self.startedAt = startedAt
+    }
+
+    /// A saved session opened to edit, with the given client's training shown.
+    init?(editing participants: [Participant], selected: UUID?, startedAt: Date?) {
+        guard let first = participants.first else { return nil }
+        self.participants = participants
+        activeId = participants.first { $0.id == selected }?.id ?? first.id
         self.startedAt = startedAt
     }
 

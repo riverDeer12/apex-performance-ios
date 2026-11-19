@@ -34,11 +34,17 @@ struct TrainingSessionFormView: View {
     @State private var isAddingClient = false
     @State private var removing: TrainingSession.Participant?
     @State private var isConfirmingDiscard = false
+    // A saved session opened to edit: its trainings are edited together.
+    private var isEditing = false
+    // When the edited session ended; clients added to it get the same times.
+    @State private var endedAt: Date?
     @ObservedObject private var saveQueue = TrainingSaveQueue.shared
 
     private struct Seed {
         let history: [Training]
         var copying: Training? = nil
+        // The saved training this client's form edits.
+        var training: Training? = nil
     }
 
     init(client: Training.Person, history: [Training], onSaved: ((Training) -> Void)? = nil) {
@@ -56,6 +62,44 @@ struct TrainingSessionFormView: View {
                                                 lastName: source.client.lastName, pictureUrl: source.client.pictureUrl)
         _session = State(initialValue: TrainingSession(first: first))
         _seeds = State(initialValue: [first.id: Seed(history: history, copying: source)])
+    }
+
+    /// A saved session (trainings of clients who trained at the same time)
+    /// opened to edit, with the tapped training's client shown.
+    init(editing trainings: [Training], selected: UUID, history: [Training], onSaved: ((Training) -> Void)? = nil) {
+        self.onSaved = onSaved
+        isEditing = true
+        var seeds: [UUID: Seed] = [:]
+        var participants: [TrainingSession.Participant] = []
+        var selectedParticipant: UUID?
+        for training in trainings {
+            var participant = TrainingSession.Participant(clientId: training.client.id,
+                                                          firstName: training.client.firstName,
+                                                          lastName: training.client.lastName,
+                                                          pictureUrl: training.client.pictureUrl)
+            participant.existing = training
+            participant.trainingName = training.name
+            participant.isValid = true
+            participant.startsOnSave = false
+            if training.id == selected { selectedParticipant = participant.id }
+            participants.append(participant)
+            seeds[participant.id] = Seed(history: history.filter { $0.client.id == training.client.id },
+                                         training: training)
+        }
+        let first = trainings.first { $0.startedAt != nil }
+        let session = TrainingSession(editing: participants, selected: selectedParticipant, startedAt: first?.startedAt)
+            ?? TrainingSession(first: TrainingSession.Participant(clientId: UUID(), firstName: nil, lastName: nil))
+        _session = State(initialValue: session)
+        _seeds = State(initialValue: seeds)
+        _endedAt = State(initialValue: first?.endedAt)
+        // Trainings saved before the session id get it with this save.
+        _sessionKey = State(initialValue: trainings.compactMap(\.sessionId).first ?? UUID())
+        _allTrainings = State(initialValue: history.isEmpty ? nil : history)
+    }
+
+    private var title: LocalizedStringKey {
+        if session.isShared { return "training_session" }
+        return isEditing ? "edit_training" : "new_training"
     }
 
     var body: some View {
@@ -87,7 +131,7 @@ struct TrainingSessionFormView: View {
             .confirmsDiscardingChanges(session.hasChanges, isConfirming: $isConfirmingDiscard) {
                 dismiss()
             }
-            .navigationTitle(session.isShared ? LocalizedStringKey("training_session") : LocalizedStringKey("new_training"))
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -169,7 +213,10 @@ struct TrainingSessionFormView: View {
         )
         let seed = seeds[id] ?? Seed(history: [])
         return Group {
-            if let copying = seed.copying {
+            if let training = seed.training {
+                TrainingFormView(clientId: participant.clientId, training: training, history: seed.history,
+                                 session: context, onSaved: onSaved)
+            } else if let copying = seed.copying {
                 TrainingFormView(copying: copying, history: seed.history, session: context, onSaved: onSaved)
             } else {
                 TrainingFormView(clientId: participant.clientId, history: seed.history, session: context,
@@ -194,7 +241,13 @@ struct TrainingSessionFormView: View {
                             .lineLimit(1)
                     }
                     Spacer(minLength: 8)
-                    if let startedAt = session.startedAt {
+                    if let startedAt = session.startedAt, let endedAt {
+                        // An ended session (edited later): its times.
+                        Text(verbatim: "\(startedAt.formatted(date: .omitted, time: .shortened))–\(endedAt.formatted(date: .omitted, time: .shortened))")
+                            .font(.headline)
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                    } else if let startedAt = session.startedAt {
                         Text(timerInterval: startedAt...Date.distantFuture, countsDown: false)
                             .font(.title3.weight(.bold))
                             .monospacedDigit()
@@ -215,12 +268,29 @@ struct TrainingSessionFormView: View {
             .padding(.horizontal, 16)
             .confirmationDialog("remove_client_question", isPresented: isConfirmingRemoval,
                                 titleVisibility: .visible, presenting: removing) { participant in
-                Button("remove_client", role: .destructive) {
-                    Task { await remove(participant) }
+                if let existing = participant.existing {
+                    // A saved training: closing its tab changes nothing of it.
+                    Button("close_client_tab") {
+                        Task { await remove(participant) }
+                    }
+                    Button("remove_from_session") {
+                        Task { await detach(participant, existing) }
+                    }
+                    Button("delete_training", role: .destructive) {
+                        Task { await delete(participant, existing) }
+                    }
+                } else {
+                    Button("remove_client", role: .destructive) {
+                        Task { await remove(participant) }
+                    }
                 }
                 Button("cancel", role: .cancel) {}
             } message: { participant in
-                Text("remove_client_info \(participant.fullName)")
+                if participant.existing != nil {
+                    Text("remove_saved_client_info \(participant.fullName)")
+                } else {
+                    Text("remove_client_info \(participant.fullName)")
+                }
             }
         } else {
             // One client: whose training it is, and another client can join.
@@ -416,8 +486,40 @@ struct TrainingSessionFormView: View {
         }
     }
 
-    /// A training saved already (e.g. autosaved in the background) is deleted;
-    /// one kept on the device is dropped.
+    /// Takes a saved training out of the session (it stays as a training on
+    /// its own, as it was last saved) and closes its tab.
+    @MainActor
+    private func detach(_ participant: TrainingSession.Participant, _ training: Training) async {
+        do {
+            let saved = try await Training.save(training.saveRequest(sessionId: TrainingSession.noSession), id: training.id)
+            onSaved?(saved)
+            close(participant)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    /// Deletes a saved training of the session and closes its tab.
+    @MainActor
+    private func delete(_ participant: TrainingSession.Participant, _ training: Training) async {
+        do {
+            try await Training.delete(id: training.id)
+            close(participant)
+            toastManager.show("training_deleted_successfully", type: .success)
+        } catch {
+            toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+        }
+    }
+
+    private func close(_ participant: TrainingSession.Participant) {
+        withAnimation {
+            _ = session.remove(participant.id)
+        }
+        seeds[participant.id] = nil
+    }
+
+    /// A new training saved already (e.g. autosaved in the background) is deleted;
+    /// one kept on the device is dropped. A saved one being edited only closes.
     @MainActor
     private func remove(_ removed: TrainingSession.Participant) async {
         // As it is now, it may have been autosaved since it was asked.
@@ -452,6 +554,19 @@ struct TrainingSessionFormView: View {
         guard let result = session.record(outcome, for: id) else { return }
         switch result {
         case .saved(let anyQueued):
+            // Clients added to an ended session get its times too.
+            if let startedAt = session.startedAt, let endedAt {
+                let added = session.participants.filter { $0.existing == nil }.compactMap(\.saved)
+                    .filter { $0.endedAt == nil }
+                Task {
+                    for training in added {
+                        if let updated = try? await training.settingTimes(startedAt: startedAt, endedAt: endedAt,
+                                                                           updatesActivity: false) {
+                            onSaved?(updated)
+                        }
+                    }
+                }
+            }
             if anyQueued {
                 toastManager.show("offline_will_save", type: .info)
             } else {
@@ -515,5 +630,54 @@ struct TrainingSessionFormView: View {
         if let key = activityKey, let saved = wish.leaderSaved, saved.startedAt != nil {
             Task { await TrainingLiveActivity.link(key, to: saved) }
         }
+    }
+}
+
+/// Edit of a saved training. A training of a session (clients who trained at
+/// the same time with the coach) opens the session with all its trainings and
+/// the tapped client shown; any other training (or an API without sessions)
+/// opens the usual form. Clients never see the session.
+struct TrainingEditView: View {
+    let training: Training
+    let history: [Training]
+    var onSaved: ((Training) -> Void)? = nil
+
+    @EnvironmentObject private var authManager: AuthManager
+    @State private var sessionTrainings: [Training]?
+    @State private var sessionHistory: [Training] = []
+    @State private var isLoaded = false
+
+    private var isStaff: Bool {
+        !authManager.hasRole(role: "Client")
+    }
+
+    var body: some View {
+        Group {
+            if !isLoaded {
+                NavigationStack {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color(.systemGroupedBackground))
+                }
+            } else if let sessionTrainings, TrainingSession.opensAsSession(sessionTrainings, isStaff: isStaff) {
+                TrainingSessionFormView(editing: sessionTrainings, selected: training.id, history: sessionHistory,
+                                        onSaved: onSaved)
+            } else {
+                TrainingFormView(clientId: training.client.id, training: training, history: history, onSaved: onSaved)
+            }
+        }
+        .task { await load() }
+    }
+
+    @MainActor
+    private func load() async {
+        guard !isLoaded else { return }
+        defer { isLoaded = true }
+        guard isStaff, TrainingSession.mayHaveSession(training),
+              let trainings = try? await Training.loadSession(of: training.id),
+              trainings.count > 1 else { return }
+        // "Last time" of every client of the session; without it the forms still work.
+        sessionHistory = (try? await Training.loadAll()) ?? history
+        sessionTrainings = trainings
     }
 }

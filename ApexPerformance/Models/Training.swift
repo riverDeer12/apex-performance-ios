@@ -23,6 +23,9 @@ struct Training: Identifiable, Decodable, Hashable {
     // Client's heart rate in between, from the client's phone:
     // Apple Health on an iPhone, Health Connect on Android.
     var heartRate: HeartRate? = nil
+    // Shared by the trainings of clients training at the same time with the
+    // coach (one session, one time); nil on its own or from an older API.
+    var sessionId: UUID? = nil
 
     /// Beats per minute.
     struct HeartRate: Codable, Hashable {
@@ -260,6 +263,39 @@ extension Training {
         try await loadAll().filter { $0.isCompleted || $0.isInProgress }
     }
 
+    /// The trainings of the session the training belongs to, itself included
+    /// (GET trainings/{id}/session). Throws with an API that doesn't have it.
+    @MainActor
+    static func loadSession(of id: UUID) async throws -> [Training] {
+        let url = AppEnvironment.apiURL.appendingPathComponent("trainings/\(id.uuidString)/session")
+        return try await APIClient.shared.request(url)
+    }
+
+    /// The training as it is saved, e.g. to take it out of its session.
+    func saveRequest(sessionId: UUID?) -> SaveTrainingRequest {
+        SaveTrainingRequest(
+            client: client.id,
+            name: name,
+            date: ISO8601DateFormatter().string(from: date),
+            note: note,
+            isCompleted: isCompleted,
+            exercises: exercises.sorted { $0.order < $1.order }.map { exercise in
+                SaveTrainingRequest.Exercise(
+                    workout: exercise.workoutId,
+                    note: exercise.note,
+                    sets: exercise.sets.sorted { $0.order < $1.order }.map {
+                        SaveTrainingRequest.ExerciseSet(reps: $0.reps, weight: $0.weight, isDropSet: $0.isDropSet,
+                                                        durationSeconds: $0.durationSeconds,
+                                                        distanceMeters: $0.distanceMeters)
+                    },
+                    isSupersetWithPrevious: exercise.isSupersetWithPrevious
+                )
+            },
+            notifyClient: false,
+            sessionId: sessionId
+        )
+    }
+
     /// Creates a training, or updates it when an id is given (staff only).
     @MainActor
     static func save(_ request: SaveTrainingRequest, id: UUID? = nil) async throws -> Training {
@@ -325,6 +361,9 @@ struct SaveTrainingRequest: Codable {
     // Push notification to the client. The API sends it for a new
     // training and not for an edited one when this is nil.
     var notifyClient: Bool? = nil
+    // The session of clients training at the same time (the form's id for
+    // it); nil keeps the training's session, an empty id takes it out.
+    var sessionId: UUID? = nil
 
     struct Exercise: Codable {
         let workout: UUID

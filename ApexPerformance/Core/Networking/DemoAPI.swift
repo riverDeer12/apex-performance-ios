@@ -1806,6 +1806,10 @@ fileprivate struct Fixtures {
             let isCompleted = input["isCompleted"] as? Bool ?? true
             return .json(["isCompleted": isCompleted, "completedAt": null(isCompleted ? iso(now) : nil)] as JSON)
         }
+        // Demo trainings are on their own: no session to edit together.
+        if route("GET", "trainings/*/session") != nil {
+            return .json([] as [Any])
+        }
         // Training started or ended (the new training form, its Live Activity).
         if route("PUT", "trainings/*/times") != nil {
             let endedAt = input["endedAt"] as? String
@@ -2053,6 +2057,7 @@ extension DemoAPI {
             check([Training].self, "trainings", as: .coach),
             check(Training.self, "trainings", method: "POST", as: .coach, body: trainingBody),
             check(Training.self, "trainings/\(training)", method: "PUT", as: .coach, body: trainingBody),
+            check([Training].self, "trainings/\(training)/session", as: .coach),
             check(TimesResponse.self, "trainings/\(training)/times", method: "PUT", as: .coach,
                   body: jsonBody(["startedAt": "2026-10-21T16:00:00Z"])),
             check(CompletionResponse.self, "trainings/\(training)/completion", method: "PUT", as: .coach,

@@ -207,4 +207,39 @@ final class TrainingSessionTests: XCTestCase {
         XCTAssertEqual(TrainingSessionRegistry.siblings(of: first, defaults: defaults), [])
         defaults.removePersistentDomain(forName: "TrainingSessionTests")
     }
+    // MARK: - Editing a saved session
+
+    private func training(startedAt: Date? = nil, sessionId: UUID? = nil) -> Training {
+        Training(id: UUID(), name: "Noge", date: .now, note: nil, isCompleted: false, completedAt: nil,
+                 client: Training.Person(id: UUID(), firstName: "Marko", lastName: "Marić"), exercises: [],
+                 startedAt: startedAt, sessionId: sessionId)
+    }
+
+    func testOnlyStaffEditSessionsOfMoreTrainings() {
+        let two = [training(), training()]
+        XCTAssertTrue(TrainingSession.opensAsSession(two, isStaff: true))
+        XCTAssertFalse(TrainingSession.opensAsSession(two, isStaff: false))
+        XCTAssertFalse(TrainingSession.opensAsSession([training()], isStaff: true))
+        XCTAssertFalse(TrainingSession.opensAsSession([], isStaff: true))
+    }
+
+    func testSessionIsAskedForOnlyWhenThereCanBeOne() {
+        XCTAssertFalse(TrainingSession.mayHaveSession(training()))
+        XCTAssertTrue(TrainingSession.mayHaveSession(training(startedAt: .now)))
+        XCTAssertTrue(TrainingSession.mayHaveSession(training(sessionId: UUID())))
+    }
+
+    func testEditedSessionShowsTheTappedClient() throws {
+        var first = ana, second = marko
+        first.existing = training(startedAt: .now)
+        second.existing = training(startedAt: .now)
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        let session = try XCTUnwrap(TrainingSession(editing: [first, second], selected: marko.id, startedAt: start))
+        XCTAssertEqual(session.activeId, marko.id)
+        XCTAssertEqual(session.startedAt, start)
+        // Saved trainings: something is lost only on purpose.
+        XCTAssertTrue(session.needsConfirmationToRemove(ana.id))
+        XCTAssertNil(TrainingSession(editing: [], selected: nil, startedAt: nil))
+        XCTAssertEqual(TrainingSession(editing: [first, second], selected: UUID(), startedAt: nil)?.activeId, ana.id)
+    }
 }

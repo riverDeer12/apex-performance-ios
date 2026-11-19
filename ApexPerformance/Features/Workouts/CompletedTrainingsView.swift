@@ -542,8 +542,11 @@ struct TrainingDetailView: View {
             Button("cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showEditSheet) {
-            TrainingFormView(clientId: training.client.id, training: training, history: history) { saved in
-                training = saved
+            // A training of a session opens the session with all its trainings.
+            TrainingEditView(training: training, history: history) { saved in
+                if saved.id == training.id {
+                    training = saved
+                }
                 onSaved?(saved)
             }
         }

@@ -181,6 +181,32 @@ struct TrainingTimesCard: View {
             onChanged?(training)
         } catch {
             toastManager.show(LocalizedStringKey(mapError(error)), type: .error)
+            return
+        }
+        await saveSessionTimes(startedAt: startedAt, endedAt: endedAt)
+    }
+
+    /// The other trainings of its session (clients training at the same
+    /// time) share the time: they get the same start and end.
+    @MainActor
+    private func saveSessionTimes(startedAt: Date?, endedAt: Date?) async {
+        guard training.sessionId != nil,
+              let session = try? await Training.loadSession(of: training.id) else { return }
+        // A running session keeps the one Live Activity of the coach's iPhone;
+        // ended or cleared ones end theirs.
+        let isRunning = startedAt != nil && endedAt == nil
+        var failed = false
+        for other in session where other.id != training.id {
+            do {
+                let updated = try await other.settingTimes(startedAt: startedAt, endedAt: endedAt,
+                                                           updatesActivity: !isRunning)
+                onChanged?(updated)
+            } catch {
+                failed = true
+            }
+        }
+        if failed {
+            toastManager.show("session_times_not_saved", type: .error)
         }
     }
 
