@@ -78,6 +78,7 @@ struct ClientsView: View {
                             ShowMoreForEach(items: list) { client in
                                 NavigationLink {
                                     ClientDetailsView(client: client)
+                                        .topBarActions()
                                 } label: {
                                     clientRow(client)
                                 }
@@ -116,7 +117,7 @@ struct ClientsView: View {
                 await Task { await loadData() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {

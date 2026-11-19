@@ -105,17 +105,12 @@ struct AppointmentsView: View {
             .navigationDestination(isPresented: $showsOpenedAppointment) {
                 if let openedAppointment {
                     AppointmentDetailsView(appointment: openedAppointment)
+                        .topBarActions()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
             .toolbar {
-                // Clients have the bell on home.
-                ToolbarItem(placement: .topBarLeading) {
-                    if !isClient {
-                        NotificationBellButton()
-                    }
-                }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     
                     if showsRequestsButton {
@@ -151,8 +146,10 @@ struct AppointmentsView: View {
             }
             .sheet(isPresented: $showSentRequests) {
                 AppointmentRequestsView()
-                    // A sheet over appointments, not a tab: no chat button.
+                    // A sheet over appointments, not a tab: no chat button or bell.
                     .environment(\.openChat, nil)
+                    .environment(\.showsNotificationBell, false)
+                    .environment(\.tabRootVisibility, nil)
                     .presentationDragIndicator(.visible)
             }
         }
@@ -219,6 +216,7 @@ struct AppointmentsView: View {
                                     ShowMoreForEach(items: appointmentsForSelectedDate) { appointment in
                                         NavigationLink {
                                             AppointmentDetailsView(appointment: appointment)
+                                                .topBarActions()
                                         } label: {
                                             appointmentRow(appointment)
                                         }
@@ -253,6 +251,7 @@ struct AppointmentsView: View {
                     ForEach(todaysAppointments) { appointment in
                         NavigationLink {
                             AppointmentDetailsView(appointment: appointment)
+                                .topBarActions()
                         } label: {
                             todayAppointmentRow(appointment)
                         }

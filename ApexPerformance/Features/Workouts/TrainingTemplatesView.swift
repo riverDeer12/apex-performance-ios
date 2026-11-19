@@ -60,6 +60,7 @@ struct TrainingTemplatesView: View {
                                     } onDeleted: {
                                         templates.removeAll { $0.id == template.id }
                                     }
+                                        .topBarActions()
                                 } label: {
                                     row(template)
                                 }

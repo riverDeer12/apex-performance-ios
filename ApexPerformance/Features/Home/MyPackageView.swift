@@ -163,6 +163,7 @@ struct MyPackageView: View {
                 Divider().overlay(Color.apexBorder)
                 NavigationLink {
                     AppointmentDetailsView(appointment: appointment)
+                        .topBarActions()
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "calendar")

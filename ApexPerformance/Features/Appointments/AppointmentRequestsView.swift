@@ -40,6 +40,7 @@ struct AppointmentRequestsView: View {
                                     ShowMoreForEach(items: requests) { request in
                                         NavigationLink {
                                             AppointmentRequestDetailsView(request: request)
+                                                .topBarActions()
                                         } label: {
                                             requestRow(request)
                                         }
@@ -77,7 +78,7 @@ struct AppointmentRequestsView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
         }
     }
     

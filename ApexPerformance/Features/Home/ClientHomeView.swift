@@ -64,13 +64,10 @@ struct ClientHomeView: View {
                 await Task { await load() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     ApexTitleBar(subtitle: ClientPlan.title(for: client?.plan))
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NotificationBellButton()
                 }
             }
             .navigationDestination(isPresented: $showCreateAppointment) {
@@ -78,6 +75,7 @@ struct ClientHomeView: View {
             }
             .navigationDestination(isPresented: $showsProgress) {
                 ClientProgressView()
+                    .topBarActions()
             }
             .sheet(isPresented: $showGoalSheet, onDismiss: markGoalSeen) {
                 if let goal {
@@ -235,6 +233,7 @@ struct ClientHomeView: View {
                 approvedAppointments: approvedAppointments,
                 pendingAppointments: pendingAppointments
             )
+                .topBarActions()
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
@@ -268,6 +267,7 @@ struct ClientHomeView: View {
     private func goalCard(_ goal: ClientGoal) -> some View {
         NavigationLink {
             ClientGoalDetailView(goal: goal)
+                .topBarActions()
         } label: {
             HStack(alignment: .top, spacing: 14) {
                 Image(systemName: "scope")
@@ -369,6 +369,7 @@ struct ClientHomeView: View {
                         subtitle: access == .all ? "exercise_library_subtitle" : "mobility_and_stretching_subtitle",
                         wrapsInNavigationStack: false
                     )
+                        .topBarActions()
                 } label: {
                     shortcutRow(
                         title: access == .all ? "exercise_library" : "mobility_and_stretching",

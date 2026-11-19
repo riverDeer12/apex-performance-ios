@@ -142,7 +142,7 @@ struct UserProfileView: View {
                 await Task { await loadUserProfile() }.value
             }
             .navigationBarTitleDisplayMode(.inline)
-            .chatToolbarButton()
+            .topBarActions(isTabRoot: true)
             .confirmationDialog("logout_question", isPresented: $showLogoutDialog) {
                 Button("logout", role: .destructive) {
                     PushTokenService.unregister()

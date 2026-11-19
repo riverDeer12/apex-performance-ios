@@ -50,6 +50,7 @@ struct PersonalRecordsView: View {
                     ShowMoreForEach(items: filteredExercises) { exercise in
                         NavigationLink {
                             PersonalRecordHistoryView(exercise: exercise)
+                                .topBarActions()
                         } label: {
                             card(exercise)
                         }

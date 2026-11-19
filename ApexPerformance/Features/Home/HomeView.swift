@@ -22,6 +22,10 @@ struct HomeView: View {
     @State private var showsChat = false
     // Cooperation rules the client has to accept before using the app.
     @State private var rulesToAccept: CooperationRules?
+    // A tab tapped in the tab bar opens at its first screen: a new identity
+    // rebuilds it without the screens pushed on it before.
+    @State private var tabResets: [AppTab: Int] = [:]
+    @State private var tabRoots = TabRoots()
 
     private var isClient: Bool {
         authManager.hasRole(role: "Client")
@@ -38,6 +42,11 @@ struct HomeView: View {
 
     private var canGetAppointments: Bool {
         authManager.hasPermission(permission: Permissions.canGetAppointments)
+    }
+
+    // The bell is in the top bars of clients and of staff with appointments.
+    private var showsNotificationBell: Bool {
+        isClient || availableTabs.contains(.appointments)
     }
 
     private var canGetAppointmentRequests: Bool {
@@ -76,9 +85,10 @@ struct HomeView: View {
 
     var body: some View {
 
-        TabView(selection: $selectedTab) {
+        TabView(selection: tabBarSelection) {
             if availableTabs.contains(.home) {
-                ClientHomeView(selectedTab: $selectedTab, showsProgress: $showsProgress)
+                ClientHomeView(selectedTab: programmaticSelection, showsProgress: $showsProgress)
+                    .tabRoot(.home, roots: tabRoots, resets: tabResets)
                     .tabItem {
                         Label("tab_home", systemImage: "house")
                     }
@@ -87,6 +97,7 @@ struct HomeView: View {
 
             if availableTabs.contains(.appointments) {
                 AppointmentsView()
+                    .tabRoot(.appointments, roots: tabRoots, resets: tabResets)
                     .tabItem {
                         Label("tab_appointments", systemImage: "calendar")
                     }
@@ -95,6 +106,7 @@ struct HomeView: View {
 
             if availableTabs.contains(.appointmentRequests) {
                 AppointmentRequestsView()
+                    .tabRoot(.appointmentRequests, roots: tabRoots, resets: tabResets)
                     .tabItem {
                         Label("tab_requests", systemImage: "calendar.badge.clock")
                     }
@@ -109,6 +121,7 @@ struct HomeView: View {
                         StaffTrainingsView()
                     }
                 }
+                .tabRoot(.trainings, roots: tabRoots, resets: tabResets)
                 .tabItem {
                     Label("tab_trainings", systemImage: isClient ? "dumbbell" : "list.bullet.clipboard")
                 }
@@ -117,6 +130,7 @@ struct HomeView: View {
 
             if availableTabs.contains(.workouts) {
                 WorkoutsView()
+                    .tabRoot(.workouts, roots: tabRoots, resets: tabResets)
                     .tabItem {
                         Label("tab_workouts", systemImage: "dumbbell.fill")
                     }
@@ -125,6 +139,7 @@ struct HomeView: View {
 
             if availableTabs.contains(.clients) {
                 ClientsView()
+                    .tabRoot(.clients, roots: tabRoots, resets: tabResets)
                     .tabItem {
                         Label("tab_clients", systemImage: "person.3")
                     }
@@ -132,6 +147,7 @@ struct HomeView: View {
             }
 
             UserProfileView()
+                .tabRoot(.profile, roots: tabRoots, resets: tabResets)
                 .tabItem {
                     Label {
                         Text("tab_profile")
@@ -144,9 +160,11 @@ struct HomeView: View {
         .task {
             await profilePicture.refresh()
         }
-        // Chat opens from a round button in the top bar of every tab's
-        // root screen (chatToolbarButton), so nothing covers the content.
+        // Chat and the bell are round buttons in the top bar of every screen
+        // of the tabs (topBarActions), so nothing covers the content. Set
+        // before the sheet: the chat sheet has neither.
         .environment(\.openChat, canChat ? OpenChatAction(action: { showsChat = true }) : nil)
+        .environment(\.showsNotificationBell, showsNotificationBell)
         .sheet(isPresented: $showsChat) {
             ChatListView(showsCloseButton: true)
         }
@@ -192,11 +210,40 @@ struct HomeView: View {
                 hasSelectedFirstTab = true
                 selectedTab = availableTabs.first ?? .profile
             }
+            tabRoots.selectedTab = selectedTab
             openPendingTab()
         }
         .onChange(of: notificationRouter.pendingTab) {
             openPendingTab()
         }
+    }
+
+    /// The selection as the tab bar changes it: only the user's taps come
+    /// through here (notifications, widgets and Live Activities set
+    /// selectedTab directly and open their screen in the tab). A tab left on
+    /// a pushed screen opens at its first screen again; tapping the open tab
+    /// goes back to its first screen by itself.
+    private var tabBarSelection: Binding<AppTab> {
+        Binding {
+            selectedTab
+        } set: { tab in
+            if tab != selectedTab, tabRoots.isShowingPushedScreen(tab) {
+                if tab == .home { showsProgress = false }
+                tabRoots.reset(tab)
+                tabResets[tab, default: 0] += 1
+            }
+            select(tab)
+        }
+    }
+
+    /// Changes the tab from code (notifications, home's shortcuts).
+    private var programmaticSelection: Binding<AppTab> {
+        Binding { selectedTab } set: { select($0) }
+    }
+
+    private func select(_ tab: AppTab) {
+        tabRoots.selectedTab = tab
+        selectedTab = tab
     }
 
     // Small profile picture when the user has one, otherwise the person icon.
@@ -248,8 +295,45 @@ struct HomeView: View {
             break
         }
         if availableTabs.contains(tab) {
-            selectedTab = tab
+            select(tab)
         }
+    }
+}
+
+/// Whether each tab's first screen is on screen, told by the screens
+/// themselves (topBarActions(isTabRoot:)). Not observed: only read when a
+/// tab is tapped.
+final class TabRoots {
+    /// Set before selectedTab changes, so a first screen that disappears
+    /// because another tab was opened isn't taken for one under a pushed screen.
+    var selectedTab: AppTab?
+    private var isVisible: [AppTab: Bool] = [:]
+
+    func set(_ tab: AppTab, visible: Bool) {
+        if visible {
+            isVisible[tab] = true
+        } else if tab == selectedTab {
+            // Gone while its tab is open: a screen was pushed over it.
+            isVisible[tab] = false
+        }
+    }
+
+    /// A screen is pushed over the tab's first screen.
+    func isShowingPushedScreen(_ tab: AppTab) -> Bool {
+        isVisible[tab] == false
+    }
+
+    func reset(_ tab: AppTab) {
+        isVisible[tab] = nil
+    }
+}
+
+private extension View {
+    /// A tab's content: its first screen reports whether it is visible, and
+    /// a new reset count rebuilds it at its first screen.
+    func tabRoot(_ tab: AppTab, roots: TabRoots, resets: [AppTab: Int]) -> some View {
+        environment(\.tabRootVisibility, TabRootVisibilityAction { roots.set(tab, visible: $0) })
+            .id(resets[tab, default: 0])
     }
 }
 

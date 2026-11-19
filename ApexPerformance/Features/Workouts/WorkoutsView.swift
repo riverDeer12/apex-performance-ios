@@ -92,7 +92,7 @@ struct WorkoutsView: View {
         if wrapsInNavigationStack {
             NavigationStack {
                 content
-                    .chatToolbarButton()
+                    .topBarActions(isTabRoot: true)
             }
         } else {
             content
@@ -137,6 +137,7 @@ struct WorkoutsView: View {
                                         // registered in the pushed view only opened after going back.
                                         NavigationLink {
                                             workoutDetail(workout)
+                                                .topBarActions()
                                         } label: {
                                             workoutRow(workout, showsChevron: !supportsFavorites)
                                         }
