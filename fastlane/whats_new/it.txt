@@ -1,12 +1,7 @@
-• Allenatori: gli Appuntamenti si aprono sulla panoramica Oggi – appuntamenti di oggi, allenamenti in corso e richieste da approvare o rifiutare subito.
-• Ripeti l'ultimo allenamento: il nuovo allenamento del cliente si compila dal suo ultimo (esercizi, serie, drop set e note).
-• Senza internet l'allenamento inserito non si perde: viene salvato sul dispositivo e inviato appena torna la connessione.
-• Una serie, un drop set o un esercizio eliminato torna con Annulla.
-• Record personali nei progressi degli allenamenti e il badge Nuovo record sull'allenamento.
-• Widget nella schermata Home: il prossimo appuntamento e il pacchetto, per gli allenatori il prossimo appuntamento di oggi e le richieste in attesa.
-• Un promemoria 2 ore prima di un appuntamento confermato.
-• Le liste vuote indicano cosa fare, il testo segue la dimensione impostata ed è più leggibile in modalità scura.
-• Puoi segnare gli esercizi come preferiti con una stella; filtro Preferiti, e i preferiti sono in cima quando aggiungi esercizi a un allenamento.
-• Le foto profilo di clienti e allenatori si vedono ovunque: clienti, appuntamenti, richieste, allenamenti e chat.
-• La scheda Il mio pacchetto e il widget mostrano correttamente gli allenamenti svolti questo mese, e gli appuntamenti in attesa dell'allenatore sono segnati come In attesa di conferma del coach.
+• Sessione condivisa: l'allenatore può gestire gli allenamenti di più clienti che si allenano nello stesso momento. + Cliente aggiunge un cliente, il selettore in alto passa da un allenamento all'altro, il tempo è condiviso e Salva li salva tutti.
+• Un allenamento di una sessione condivisa si apre sempre come l'intera sessione: dall'elenco degli allenamenti, dalla Live Activity, dalle notifiche e in modifica.
+• Un solo promemoria e un solo Termina allenamento chiudono gli allenamenti di tutti i clienti della sessione.
+• La campanella delle notifiche e il pulsante della chat sono nella barra in alto di ogni schermata.
+• Il pulsante per ingrandire i video di YouTube apre il video a schermo intero.
+• Toccando una scheda nella barra in basso si apre sempre la sua schermata iniziale.
 • Piccoli miglioramenti e correzioni.
