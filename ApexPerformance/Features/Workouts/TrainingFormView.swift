@@ -1052,6 +1052,12 @@ struct TrainingFormView: View {
         isPlanned && session?.isShared != true
     }
 
+    // Trainings of several clients are linked by the session's id; a training
+    // on its own sends none (an edit keeps the session it has).
+    private var sessionIdToSave: UUID? {
+        session?.isShared == true ? session?.sessionKey : nil
+    }
+
     // The start of the new training: the session's shared one, or the form's own.
     private var runningStart: Date? {
         if let session { return session.startedAt }
@@ -1131,7 +1137,8 @@ struct TrainingFormView: View {
             isCompleted: false,
             exercises: exercises.filter(\.isValid).compactMap(\.request),
             // The client hears about the new training once.
-            notifyClient: autosaved == nil && notifyClient
+            notifyClient: autosaved == nil && notifyClient,
+            sessionId: sessionIdToSave
         )
 
         // Without a connection it is kept on the device and saved later.
@@ -1215,7 +1222,8 @@ struct TrainingFormView: View {
             note: trimmed(note).isEmpty ? nil : trimmed(note),
             isCompleted: isCompleted,
             exercises: exercises.compactMap(\.request),
-            notifyClient: notifyClient
+            notifyClient: notifyClient,
+            sessionId: sessionIdToSave
         )
 
         // Without a connection it is kept on the device and saved later.

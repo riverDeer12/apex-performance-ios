@@ -19397,6 +19397,122 @@
           }
         }
       }
+    },
+    "close_client_tab" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close the tab"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvori karticu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi la scheda"
+          }
+        }
+      }
+    },
+    "remove_from_session" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus dem Termin entfernen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from the session"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukloni iz termina"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi dalla sessione"
+          }
+        }
+      }
+    },
+    "remove_saved_client_info %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab schließen: Das Training von %@ bleibt, wie es ist, im Termin. Aus dem Termin entfernen: Das Training bleibt für sich. Training löschen: Das Training wird gelöscht. Nicht gespeicherte Änderungen im Tab gehen verloren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close the tab: %@'s training stays as it is, in the session. Remove from the session: the training stays on its own. Delete training: the training is deleted. Unsaved changes on the tab are lost."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvori karticu: trening klijenta %@ ostaje kakav je, u terminu. Ukloni iz termina: trening ostaje kao samostalni. Obriši trening: trening se briše. Nespremljene izmjene na kartici se gube."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi la scheda: l'allenamento di %@ resta com'è, nella sessione. Rimuovi dalla sessione: l'allenamento resta da solo. Elimina allenamento: l'allenamento viene eliminato. Le modifiche non salvate della scheda vanno perse."
+          }
+        }
+      }
+    },
+    "session_times_not_saved" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zeit wurde nicht bei allen Trainings des Termins geändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The time was not changed on every training of the session."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrijeme nije promijenjeno na svim treninzima termina."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'orario non è stato cambiato in tutti gli allenamenti della sessione."
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

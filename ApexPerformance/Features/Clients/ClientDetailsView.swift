@@ -660,6 +660,8 @@ struct ClientDetailsView: View {
     }
     
     private func upsertTraining(_ training: Training) {
+        // Trainings of other clients of a session belong to them.
+        guard training.client.id == client.id else { return }
         trainings.removeAll { $0.id == training.id }
         trainings.append(training)
         trainings.sort { $0.date > $1.date }
