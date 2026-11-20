@@ -1,7 +1,3 @@
-• Sessione condivisa: l'allenatore può gestire gli allenamenti di più clienti che si allenano nello stesso momento. + Cliente aggiunge un cliente, il selettore in alto passa da un allenamento all'altro, il tempo è condiviso e Salva li salva tutti.
-• Un allenamento di una sessione condivisa si apre sempre come l'intera sessione: dall'elenco degli allenamenti, dalla Live Activity, dalle notifiche e in modifica.
-• Un solo promemoria e un solo Termina allenamento chiudono gli allenamenti di tutti i clienti della sessione.
-• La campanella delle notifiche e il pulsante della chat sono nella barra in alto di ogni schermata.
-• Il pulsante per ingrandire i video di YouTube apre il video a schermo intero.
-• Toccando una scheda nella barra in basso si apre sempre la sua schermata iniziale.
+• La Live Activity dell'allenamento ora resta sulla schermata di blocco anche quando il telefono viene bloccato durante l'allenamento, e se scompare torna appena apri l'app.
+• Se le Live Activity sono disattivate per Apex, il modulo dell'allenamento mostra come attivarle.
 • Piccoli miglioramenti e correzioni.

@@ -1,7 +1,3 @@
-• Shared session: a coach can run trainings for several clients who train at the same time. + Client adds a client, the switcher at the top moves between their trainings, the time is shared and Save saves them all.
-• A training from a shared session always opens as the whole session: from the trainings list, the Live Activity, notifications and when editing.
-• One reminder and one End training end the trainings of all clients in the session.
-• The notification bell and the chat button are in the top bar of every screen.
-• The enlarge button of YouTube videos opens the video in full screen.
-• Tapping a tab in the bottom bar always opens its first screen.
+• The training's Live Activity now stays on the lock screen when the phone is locked during a training, and if it disappears it comes back as soon as you open the app.
+• If Live Activities are turned off for Apex, the training form shows how to turn them on.
 • Minor improvements and fixes.
