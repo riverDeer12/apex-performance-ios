@@ -1,7 +1,3 @@
-• Zajednički termin: trener vodi treninge za više klijenata koji treniraju u isto vrijeme. Tipka + Klijent dodaje klijenta, prekidač na vrhu prebacuje između njihovih treninga, vrijeme je zajedničko, a Spremi sprema sve.
-• Trening iz zajedničkog termina uvijek se otvara kao cijeli termin: iz popisa treninga, s Live Activityja, iz obavijesti i kod uređivanja.
-• Jedan podsjetnik i jedan Završi trening završavaju treninge svih klijenata u terminu.
-• Zvonce s obavijestima i gumb za poruke su u gornjoj traci svakog ekrana.
-• Gumb za povećanje YouTube videa otvara video preko cijelog zaslona.
-• Dodir na karticu u donjem izborniku uvijek otvara njen početni ekran.
+• Live Activity treninga sada ostaje na zaključanom zaslonu i kad se mobitel zaključa tijekom treninga, a ako nestane, sam se vrati čim otvoriš aplikaciju.
+• Ako je Live Activity isključen za Apex, obrazac treninga pokaže kako ga uključiti.
 • Manja poboljšanja i ispravci.
