@@ -333,13 +333,13 @@ struct TrainingFormView: View {
                 Task { await autosave() }
             } else if phase == .active {
                 // Its activity may have gone while the phone was locked.
-                reconcileActivity()
+                reconcileActivity(restartsDraft: true)
             }
         }
         .onAppear {
             // A copied training comes with its name.
             startTimerIfNeeded()
-            reconcileActivity()
+            reconcileActivity(restartsDraft: false)
             if initialFingerprint == nil { initialFingerprint = fingerprint }
         }
         .task {
@@ -1213,7 +1213,9 @@ struct TrainingFormView: View {
     /// The running training has its Live Activity: the form appeared or the
     /// app came back to the foreground, and it went away meanwhile (e.g.
     /// while the phone was locked) or never started. Foreground only.
-    private func reconcileActivity() {
+    /// The draft of a new training is checked when the app comes back (on
+    /// appearing it was just started).
+    private func reconcileActivity(restartsDraft: Bool) {
         guard !isTemplate else { return }
         activitiesEnabled = TrainingLiveActivity.areEnabled
         // Saved: started again if it was started on this iPhone.
@@ -1222,7 +1224,7 @@ struct TrainingFormView: View {
             return
         }
         // Not saved yet: the form's draft (a session's is the session's).
-        guard session == nil, autosaved == nil, let startedAt, startsOnSave else { return }
+        guard restartsDraft, session == nil, autosaved == nil, let startedAt, startsOnSave else { return }
         activityKey = TrainingLiveActivity.restartDraftIfNeeded(activityKey, isRunning: true, name: trimmed(name),
                                                                 clientName: draftClientName, startedAt: startedAt)
     }

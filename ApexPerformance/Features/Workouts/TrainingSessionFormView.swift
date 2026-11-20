@@ -175,7 +175,7 @@ struct TrainingSessionFormView: View {
             .onChange(of: activityWish) { _, _ in updateActivity() }
             // The activity may have gone while the phone was locked.
             .onChange(of: scenePhase) { _, phase in
-                if phase == .active { updateActivity() }
+                if phase == .active { updateActivity(restartsDraft: true) }
             }
             .onDisappear {
                 // Closed without anything saved: nothing runs.
@@ -606,7 +606,9 @@ struct TrainingSessionFormView: View {
                      leaderSaved: session.leader.saved)
     }
 
-    private func updateActivity() {
+    /// `restartsDraft`: the app came back to the foreground, the draft is
+    /// started again if it went away meanwhile.
+    private func updateActivity(restartsDraft: Bool = false) {
         let wish = activityWish
         guard let startedAt = wish.startedAt else { return }
 
@@ -633,7 +635,7 @@ struct TrainingSessionFormView: View {
         if let key = activityKey {
             // Not saved yet and its activity went away: started again. A saved
             // one is started again by its training (TrainingLiveActivity.reconcile).
-            if wish.leaderSaved == nil {
+            if restartsDraft, wish.leaderSaved == nil {
                 let current = TrainingLiveActivity.restartDraftIfNeeded(
                     key, isRunning: true, name: wish.name, clientName: wish.clients, startedAt: startedAt)
                 if current != key {
