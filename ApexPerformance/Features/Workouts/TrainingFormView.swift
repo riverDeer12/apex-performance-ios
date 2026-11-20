@@ -46,6 +46,8 @@ struct TrainingFormView: View {
     @State private var autosaved: Training?
     // Live Activity started with the timer, before the training is saved.
     @State private var activityKey: String?
+    // Live Activities allowed for the app; a hint tells how to turn them on.
+    @State private var activitiesEnabled = true
     // This form's trainings in the save queue (kept on the device when offline).
     @State private var saveKey = UUID()
     // Kept on the device to be saved when the connection is back.
@@ -266,6 +268,12 @@ struct TrainingFormView: View {
                             .foregroundStyle(.orange)
                     }
                 }
+                if showsActivitiesOffHint {
+                    Label("live_activities_off_hint", systemImage: "exclamationmark.circle")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("live-activities-off-hint")
+                }
                 if !isTemplate {
                     DatePicker("date", selection: $date, displayedComponents: .date)
                     Toggle("completed", isOn: $isCompleted)
@@ -323,11 +331,15 @@ struct TrainingFormView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {
                 Task { await autosave() }
+            } else if phase == .active {
+                // Its activity may have gone while the phone was locked.
+                reconcileActivity(restartsDraft: true)
             }
         }
         .onAppear {
             // A copied training comes with its name.
             startTimerIfNeeded()
+            reconcileActivity(restartsDraft: false)
             if initialFingerprint == nil { initialFingerprint = fingerprint }
         }
         .task {
@@ -1185,13 +1197,42 @@ struct TrainingFormView: View {
         // The session has one activity for all its trainings.
         guard session == nil, autosaved == nil, let startedAt else { return }
         if startsOnSave, activityKey == nil {
-            let client = history.first { $0.client.id == clientId }?.client
-            let clientName = [client?.firstName, client?.lastName].compactMap { $0 }.joined(separator: " ")
-            activityKey = TrainingLiveActivity.startDraft(name: trimmed(name), clientName: clientName, startedAt: startedAt)
+            activityKey = TrainingLiveActivity.startDraft(name: trimmed(name), clientName: draftClientName,
+                                                          startedAt: startedAt)
         } else if !startsOnSave, let activityKey {
             TrainingLiveActivity.endDraft(activityKey)
             self.activityKey = nil
         }
+    }
+
+    private var draftClientName: String {
+        let client = history.first { $0.client.id == clientId }?.client
+        return [client?.firstName, client?.lastName].compactMap { $0 }.joined(separator: " ")
+    }
+
+    /// The running training has its Live Activity: the form appeared or the
+    /// app came back to the foreground, and it went away meanwhile (e.g.
+    /// while the phone was locked) or never started. Foreground only.
+    /// The draft of a new training is checked when the app comes back (on
+    /// appearing it was just started).
+    private func reconcileActivity(restartsDraft: Bool) {
+        guard !isTemplate else { return }
+        activitiesEnabled = TrainingLiveActivity.areEnabled
+        // Saved: started again if it was started on this iPhone.
+        if let current = currentTraining, current.isRunning {
+            TrainingLiveActivity.reconcile(current)
+            return
+        }
+        // Not saved yet: the form's draft (a session's is the session's).
+        guard restartsDraft, session == nil, autosaved == nil, let startedAt, startsOnSave else { return }
+        activityKey = TrainingLiveActivity.restartDraftIfNeeded(activityKey, isRunning: true, name: trimmed(name),
+                                                                clientName: draftClientName, startedAt: startedAt)
+    }
+
+    // The training runs (or starts on save) and Live Activities are off.
+    private var showsActivitiesOffHint: Bool {
+        guard !isTemplate, !activitiesEnabled else { return false }
+        return (runningStart != nil && startsOnSave) || currentTraining?.isRunning == true
     }
 
     /// Saves the training; one not marked as planned is also marked as
