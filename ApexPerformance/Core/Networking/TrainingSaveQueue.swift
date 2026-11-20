@@ -162,6 +162,14 @@ final class TrainingSaveQueue: ObservableObject {
         }
     }
 
+    /// The form started its draft activity again (the old one went away):
+    /// a waiting training links the new one once it is saved.
+    func replaceActivityKey(_ old: String, with new: String) {
+        guard let index = entries.firstIndex(where: { $0.activityKey == old }) else { return }
+        entries[index].activityKey = new
+        write()
+    }
+
     /// Drops a waiting training, e.g. one the server keeps rejecting.
     func discard(_ key: UUID) {
         if let activityKey = entries.first(where: { $0.key == key })?.activityKey {
@@ -185,14 +193,20 @@ final class TrainingSaveQueue: ObservableObject {
             }
             if let start = entry.startedAt {
                 // A session has one activity, linked to its first training;
-                // the others don't start their own on this iPhone.
+                // the others don't start their own on this iPhone. The draft
+                // is linked once the training is started, never before: a
+                // training list loaded meanwhile would see it not started
+                // and end the activity. Linking only updates the draft, also
+                // in the background (locked phone), where iOS can't start
+                // another one.
                 let showsActivity = entry.sessionKey == nil || entry.activityKey != nil
+                saved = try await saved.settingTimes(startedAt: start, endedAt: nil,
+                                                     updatesActivity: showsActivity && entry.activityKey == nil)
+                entry.startedAt = nil
                 if let activityKey = entry.activityKey {
                     await TrainingLiveActivity.link(activityKey, to: saved)
                     entry.activityKey = nil
                 }
-                saved = try await saved.settingTimes(startedAt: start, endedAt: nil, updatesActivity: showsActivity)
-                entry.startedAt = nil
             }
             return .success(saved)
         } catch {

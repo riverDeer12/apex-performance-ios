@@ -19513,6 +19513,34 @@
           }
         }
       }
+    },
+    "live_activities_off_hint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live-Aktivitäten sind für Apex aus – aktiviere sie unter Einstellungen › Apex › Live-Aktivitäten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activities are off for Apex – turn them on in Settings › Apex › Live Activities"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity je isključen za Apex – uključi ga u Postavke › Apex › Live Activities"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Live Activity sono disattivate per Apex – attivale in Impostazioni › Apex › Live Activity"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

@@ -115,37 +115,19 @@ final class LiveActivityPushService {
         Task {
             for await state in activity.activityStateUpdates where state == .ended || state == .dismissed {
                 updateTokens[activity.id] = nil
+                // Not ended by the app: the reason goes to Crashlytics.
+                TrainingLiveActivity.stateChanged(activity, to: state)
                 break
             }
         }
     }
 
-    private static func isShown(_ activity: TrainingActivity) -> Bool {
-        activity.activityState == .active || activity.activityState == .stale
-    }
-
-    /// The activity of each training on this iPhone. A push start can cross
-    /// the training being started here: the one the app started itself
-    /// (no `showsEndButton`) stays, otherwise the first.
-    private func survivors() -> [String: TrainingActivity] {
-        var result: [String: TrainingActivity] = [:]
-        for activity in TrainingActivity.activities where Self.isShown(activity) {
-            guard let id = activity.content.state.trainingId else { continue }
-            if let kept = result[id], kept.attributes.showsEndButton == nil || activity.attributes.showsEndButton != nil {
-                continue
-            }
-            result[id] = activity
-        }
-        return result
-    }
-
+    /// A push start can cross the training being started here: only one
+    /// activity of a training stays (`LiveActivityLogic.survivors`), the one
+    /// the app started itself.
     private func endDuplicates() {
-        let kept = survivors()
-        for activity in TrainingActivity.activities where Self.isShown(activity) {
-            guard let id = activity.content.state.trainingId, let survivor = kept[id],
-                  survivor.id != activity.id else { continue }
-            updateTokens[activity.id] = nil
-            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+        for id in TrainingLiveActivity.endDuplicates() {
+            updateTokens[id] = nil
         }
     }
 
@@ -163,8 +145,8 @@ final class LiveActivityPushService {
             wanted.append(("pushToStart", TokenBody(deviceToken: deviceToken, kind: "pushToStart",
                                                     trainingId: nil, token: pushToStartToken)))
         }
-        for (trainingId, activity) in survivors() {
-            guard let token = updateTokens[activity.id] else { continue }
+        for (trainingId, activityId) in TrainingLiveActivity.survivors() {
+            guard let token = updateTokens[activityId] else { continue }
             wanted.append((trainingId, TokenBody(deviceToken: deviceToken, kind: "update",
                                                  trainingId: trainingId, token: token)))
         }

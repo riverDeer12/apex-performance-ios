@@ -30,6 +30,11 @@ struct ContentView: View {
         .task {
             TrainingSaveQueue.shared.start()
             await TrainingSaveQueue.shared.syncAll()
+            // Trainings on the lock screen or started here: still running,
+            // and their activity still shown (started again if it went away).
+            if authManager.isAuthenticated && TrainingLiveActivity.hasActivities {
+                _ = try? await Training.loadAll()
+            }
         }
         // A token can expire while the app is in the background.
         .onChange(of: scenePhase) { _, phase in
@@ -38,10 +43,15 @@ struct ContentView: View {
                 // Notifications may have come while the app was in the background.
                 if authManager.isAuthenticated {
                     Task { await NotificationInbox.shared.refreshCount() }
-                    Task { await TrainingSaveQueue.shared.syncAll() }
-                    // A training on the lock screen may have ended elsewhere.
-                    if TrainingLiveActivity.hasActivities {
-                        Task { _ = try? await Training.loadAll() }
+                    // A training on the lock screen may have ended elsewhere,
+                    // or its activity went away while the phone was locked
+                    // (started again). After the waiting trainings are saved,
+                    // so a training started meanwhile is seen as running.
+                    Task {
+                        await TrainingSaveQueue.shared.syncAll()
+                        if TrainingLiveActivity.hasActivities {
+                            _ = try? await Training.loadAll()
+                        }
                     }
                 }
             }

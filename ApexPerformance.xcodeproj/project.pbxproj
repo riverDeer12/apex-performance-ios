@@ -133,6 +133,7 @@
 		B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */; };
 		02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */; };
 		8C0D9A1574174E95EA40C065 /* TrainingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */; };
+		157B7CDC4FCA549FFBCFA1FD /* LiveActivityLogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA9F61156DF308735041A99 /* LiveActivityLogicTests.swift */; };
 		C0283CE22F6DEFF700582836 /* CreateClientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE12F6DEFF700582836 /* CreateClientView.swift */; };
 		C0283CE62F709F2800582836 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE52F709F2800582836 /* ChangePasswordView.swift */; };
 		C0283CE82F709F3800582836 /* ChangeUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0283CE72F709F3800582836 /* ChangeUsernameView.swift */; };
@@ -147,6 +148,7 @@
 		01B5C8CEDEC58C1D70C0B3F0 /* TrainingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */; };
 		1AD2437BC6643B397C225E6F /* EndTrainingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */; };
 		00E50CBC6B73F2608BBEC346 /* TrainingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */; };
+		2AF50595D923EA237AF270C2 /* LiveActivityLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBCA96CA745CF804665D4B1 /* LiveActivityLogic.swift */; };
 		03ECA55C165EC42ACDE14FF8 /* LiveActivityPushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */; };
 		7362A1929FA7BB82D86BAE77 /* TrainingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */; };
 		AA58FA67E478172632785F15 /* EndTrainingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */; };
@@ -340,9 +342,11 @@
 		F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPITests.swift; sourceTree = "<group>"; };
 		54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingSessionTests.swift"; sourceTree = "<group>"; };
+		1FA9F61156DF308735041A99 /* LiveActivityLogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LiveActivityLogicTests.swift"; sourceTree = "<group>"; };
 		8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityAttributes.swift; sourceTree = "<group>"; };
 		F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTrainingIntent.swift; sourceTree = "<group>"; };
 		F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLiveActivity.swift; sourceTree = "<group>"; };
+		FCBCA96CA745CF804665D4B1 /* LiveActivityLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LiveActivityLogic.swift"; sourceTree = "<group>"; };
 		CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LiveActivityPushService.swift"; sourceTree = "<group>"; };
 		F8FEC773A920EF110D58D2E5 /* TrainingActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingActivityBundle.swift; sourceTree = "<group>"; };
 		6A9C4EB3F5DA718C3E405F6B /* ApexHomeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApexHomeWidget.swift; sourceTree = "<group>"; };
@@ -732,6 +736,7 @@
 				F841153CD322426EB1A7EA5E /* AuthManagerTests.swift */,
 				2A42F6C47B252115EFD34D65 /* DemoAPITests.swift */,
 				54E70B12464A70238E51E6D2 /* TrainingSessionTests.swift */,
+				1FA9F61156DF308735041A99 /* LiveActivityLogicTests.swift */,
 			);
 			path = ApexPerformanceTests;
 			sourceTree = "<group>";
@@ -752,6 +757,7 @@
 				8CB59B042B23AB0D962DEA91 /* TrainingActivityAttributes.swift */,
 				F357FA02BF5D377BFD3B6FF5 /* EndTrainingIntent.swift */,
 				F1A057BEAD4DD24690C7A519 /* TrainingLiveActivity.swift */,
+				FCBCA96CA745CF804665D4B1 /* LiveActivityLogic.swift */,
 				CCF7AD073B6ECEC14DDD8B02 /* LiveActivityPushService.swift */,
 			);
 			path = LiveActivity;
@@ -1063,6 +1069,7 @@
 				01B5C8CEDEC58C1D70C0B3F0 /* TrainingActivityAttributes.swift in Sources */,
 				1AD2437BC6643B397C225E6F /* EndTrainingIntent.swift in Sources */,
 				00E50CBC6B73F2608BBEC346 /* TrainingLiveActivity.swift in Sources */,
+				2AF50595D923EA237AF270C2 /* LiveActivityLogic.swift in Sources */,
 				03ECA55C165EC42ACDE14FF8 /* LiveActivityPushService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1077,6 +1084,7 @@
 				B773C660F7FB589F9A6F7D55 /* AuthManagerTests.swift in Sources */,
 				02857ACCA6C5FCBFC9236D6D /* DemoAPITests.swift in Sources */,
 				8C0D9A1574174E95EA40C065 /* TrainingSessionTests.swift in Sources */,
+				157B7CDC4FCA549FFBCFA1FD /* LiveActivityLogicTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

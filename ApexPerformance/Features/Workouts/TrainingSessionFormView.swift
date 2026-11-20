@@ -15,6 +15,7 @@ struct TrainingSessionFormView: View {
     var onSaved: ((Training) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var toastManager: ToastManager
 
     @State private var session: TrainingSession
@@ -172,6 +173,10 @@ struct TrainingSessionFormView: View {
                 }
             }
             .onChange(of: activityWish) { _, _ in updateActivity() }
+            // The activity may have gone while the phone was locked.
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { updateActivity() }
+            }
             .onDisappear {
                 // Closed without anything saved: nothing runs.
                 if let activityKey, !session.isPersisted {
@@ -613,18 +618,35 @@ struct TrainingSessionFormView: View {
             return
         }
 
-        if let activityKey, activityClients != wish.clients {
+        // iOS starts activities only in the foreground: in the background
+        // (e.g. the leader's training autosaved when the phone was locked)
+        // the activity is only updated, never ended to start another one.
+        let isForeground = UIApplication.shared.applicationState == .active
+
+        if let activityKey, activityClients != wish.clients, isForeground {
             // A client joined or left: the clients are fixed when an activity
             // starts, so a new one takes its place (linked if the training is saved).
             TrainingLiveActivity.endDraft(activityKey)
             self.activityKey = nil
         }
 
-        if let activityKey {
-            TrainingLiveActivity.renameDraft(activityKey, name: wish.name)
+        if let key = activityKey {
+            // Not saved yet and its activity went away: started again. A saved
+            // one is started again by its training (TrainingLiveActivity.reconcile).
+            if wish.leaderSaved == nil {
+                let current = TrainingLiveActivity.restartDraftIfNeeded(
+                    key, isRunning: true, name: wish.name, clientName: wish.clients, startedAt: startedAt)
+                if current != key {
+                    activityKey = current
+                    activityClients = wish.clients
+                    return
+                }
+            }
+            TrainingLiveActivity.renameDraft(key, name: wish.name)
             return
         }
 
+        guard isForeground else { return }
         activityKey = TrainingLiveActivity.startDraft(name: wish.name, clientName: wish.clients, startedAt: startedAt)
         activityClients = wish.clients
         if let key = activityKey, let saved = wish.leaderSaved, saved.startedAt != nil {
