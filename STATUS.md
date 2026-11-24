@@ -6,15 +6,15 @@
 - **Klijent:** Apex Performance (fitness studio)
 - **Status:** Aktivan
 - **Verzija:** 1.17
-- **Zadnje ažurirano:** 2026-11-22
+- **Zadnje ažurirano:** 2026-11-24
 
 ## Zadnje isporučeno
+- 2026-11-24 Dnevni workflow „Store status”: stanje u App Storeu i TestFlightu zapisuje u store-status.json (grana store-status) za dashboard
 - 2026-11-20 Store build 1.17: Live Activity ostaje kod zaključavanja mobitela i sam se vraća
 - 2026-11-19 Zajednički trening više klijenata u isto vrijeme (otvaranje i uređivanje kao jedna sesija)
 - 2026-11-19 Chat i obavijesti na svakom tabu, YouTube preko cijelog ekrana
 - 2026-11-19 What's New za 1.16
 - 2026-10-14 Prijava chata, video kao splash ekran
-- 2026-10-13 Chat trener–klijent
 
 ## Čeka
 - iOS 1.17 poslati na review (na vlasniku).
