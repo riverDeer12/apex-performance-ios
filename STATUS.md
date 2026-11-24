@@ -19,7 +19,7 @@
 ## Čeka
 - iOS 1.17 poslati na review (na vlasniku).
 - Android 1.45 na zatvorenom testiranju; za produkciju treba dovoljno testera (na vlasniku).
-- Rotirati Google API ključ za slanje mailova (GitHub secret scanning, rok 2026-11-21).
+- Rotirati Google API ključ za slanje mailova (GitHub secret scanning). Rok 2026-11-21 je prošao, zadatak je još otvoren u Todoistu.
 
 ## Klijent
 - Aplikacija je u stvarnoj upotrebi (termini, krediti i prijave klijenata).
