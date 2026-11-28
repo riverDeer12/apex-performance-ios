@@ -1,0 +1,20 @@
+{
+  "checked": "2026-11-28T13:15:14.708Z",
+  "appStore": {
+    "bundle": "software.rdd.ApexPerformance",
+    "appId": "6767208005",
+    "name": "Apex Performance Fit",
+    "live": {
+      "version": "1.17",
+      "state": "READY_FOR_DISTRIBUTION",
+      "created": "2026-11-20T13:04:38-08:00"
+    },
+    "inProgress": [],
+    "testflight": {
+      "version": "1.17",
+      "build": "21",
+      "uploaded": "2026-11-20T13:05:04-08:00",
+      "processing": "VALID"
+    }
+  }
+}
